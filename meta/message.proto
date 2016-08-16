@@ -1,0 +1,114 @@
+syntax = "proto3";                                                                                                                                                                                                                       
+package candy.meta;
+
+option go_package = "meta";
+
+
+service Message {
+    rpc Register (UserRegisterRequest) returns (UserRegisterResponse);
+    rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
+
+    rpc Login (UserLoginRequest) returns (UserLoginResponse);
+    rpc Logout (UserLogoutRequest) returns (UserLoginResponse);
+
+    rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+    rpc RecvMessage (RecvMessageRequest) returns (RecvMessageResponse);
+
+    rpc Heartbeat (HeartbeatRequest) returns (HeartbeatResponse);
+
+    rpc UploadImage (UploadImageRequest) returns (UploadImageResponse);
+    rpc DownloadImage (DownloadImageRequest) returns (DownloadImageResponse);
+}
+
+message ResponseHeader {
+    int32 Code = 1;
+    string Msg = 2;
+}
+
+
+message UserRegisterRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message UserRegisterResponse {
+    ResponseHeader header = 1;
+}
+
+message UpdateUserInfoRequest {
+    string Nickname = 1;
+    bytes Avatar = 2;
+}
+
+message UpdateUserInfoResponse {
+    ResponseHeader header = 1;
+}
+
+
+message HeartbeatRequest {}
+message HeartbeatResponse {}
+
+message UserLoginRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message UserLoginResponse {
+    ResponseHeader header = 1;
+    int64 UserID = 2;
+}
+
+
+message UserLogoutRequest {
+    int64 UserID = 1;
+}
+
+message UserLogoutResponse {
+    ResponseHeader header = 1;
+}
+
+message MessageBody {
+    int64 From = 1;
+    int64 To = 2;
+    int64 ImageID = 3;
+}
+
+message SendMessageRequest {
+    MessageBody Msg = 1;
+}
+
+message SendMessageResponse {
+    ResponseHeader header = 1;
+}
+
+message RecvMessageRequest {
+    int64 LastMessageID = 1;
+}
+
+message RecvMessageResponse {
+    repeated MessageBody MsgList = 1;
+}
+
+message UserMessageList {
+    repeated MessageBody MsgList = 1;
+}
+
+
+message UploadImageRequest {
+    bytes Image = 1;
+}
+
+message UploadImageResponse {
+    ResponseHeader header = 1;
+    int64 ImageID = 2;
+}
+
+message DownloadImageRequest {
+    repeated int64 ImageID = 1;
+}
+
+message DownloadImageResponse {
+    repeated bytes Image = 1;
+}
+
+
