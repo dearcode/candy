@@ -1,6 +1,6 @@
-all: sync golint meta gate
+all: sync golint meta gate master notice store 
 
-.PHONY: meta gate
+.PHONY: meta gate master notice store
 
 GLOCK := glock
 
@@ -31,3 +31,11 @@ vet:
 gate:
 	go build -o bin/gate ./cmd/gate/main.go
 
+master:
+	go build -o bin/master ./cmd/master/main.go
+
+notice:
+	go build -o bin/notice ./cmd/notice/main.go
+
+store:
+	go build -o bin/store ./cmd/store/main.go

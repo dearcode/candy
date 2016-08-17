@@ -1,10 +1,12 @@
-syntax = "proto3";                                                                                                                                                                                                                       
+syntax = "proto3";
 package candy.meta;
 
 option go_package = "meta";
 
+import "common.proto";
 
-service Message {
+
+service Gate {
     rpc Register (UserRegisterRequest) returns (UserRegisterResponse);
     rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
 
@@ -18,12 +20,14 @@ service Message {
 
     rpc UploadImage (UploadImageRequest) returns (UploadImageResponse);
     rpc DownloadImage (DownloadImageRequest) returns (DownloadImageResponse);
+
+
+    // server interface.
+    rpc Notice (NoticeRequest) returns (NoticeResponse);
+
 }
 
-message ResponseHeader {
-    int32 Code = 1;
-    string Msg = 2;
-}
+
 
 
 message UserRegisterRequest {
@@ -33,6 +37,7 @@ message UserRegisterRequest {
 
 message UserRegisterResponse {
     ResponseHeader header = 1;
+    int64 ID = 2;
 }
 
 message UpdateUserInfoRequest {
@@ -55,23 +60,17 @@ message UserLoginRequest {
 
 message UserLoginResponse {
     ResponseHeader header = 1;
-    int64 UserID = 2;
+    int64 ID = 2;
 }
 
 
 message UserLogoutRequest {
-    int64 UserID = 1;
 }
 
 message UserLogoutResponse {
     ResponseHeader header = 1;
 }
 
-message MessageBody {
-    int64 From = 1;
-    int64 To = 2;
-    int64 ImageID = 3;
-}
 
 message SendMessageRequest {
     MessageBody Msg = 1;
@@ -79,6 +78,7 @@ message SendMessageRequest {
 
 message SendMessageResponse {
     ResponseHeader header = 1;
+    int64 MessageID = 2;
 }
 
 message RecvMessageRequest {
@@ -111,4 +111,13 @@ message DownloadImageResponse {
     repeated bytes Image = 1;
 }
 
+message NoticeRequest {
+    int64 ChannelID = 1;
+    MessageBody Msg = 2;
+}
+
+
+message NoticeResponse {
+    ResponseHeader header = 1;
+}
 

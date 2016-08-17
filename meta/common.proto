@@ -1,0 +1,17 @@
+syntax = "proto3";
+package candy.meta;
+
+option go_package = "meta";
+
+
+message ResponseHeader {
+    int32 Code = 1;
+    string Msg = 2;
+}
+
+message MessageBody {
+    int64 From = 1;
+    int64 To = 2;
+    int64 ImageID = 3;
+}
+
