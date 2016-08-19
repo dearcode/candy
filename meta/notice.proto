@@ -34,7 +34,7 @@ message UnsubscribeResponse {
 
 message PushRequest {
     int64 ID = 1;
-    MessageBody Msg = 2;
+    Message Msg = 2;
 }
 
 message PushResponse {

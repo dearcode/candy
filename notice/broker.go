@@ -22,7 +22,7 @@ type channel struct {
 type message struct {
 	id   int64
 	addr string
-	meta.MessageBody
+	meta.Message
 }
 
 type broker struct {
@@ -55,7 +55,7 @@ func (b *broker) sendMessage(m message) error {
 		log.Errorf("connect to %s error:%s", m.addr, err.Error())
 		return errors.Trace(err)
 	}
-	req := &meta.NoticeRequest{ChannelID: m.id, Msg: &m.MessageBody}
+	req := &meta.NoticeRequest{ChannelID: m.id, Msg: &m.Message}
 	_, err = g.Notice(nil, req)
 
 	return errors.Trace(err)
@@ -98,7 +98,7 @@ func (b *broker) Unsubscribe(id int64, addr string) {
 	b.Unlock()
 }
 
-func (b *broker) Push(id int64, msg meta.MessageBody) {
+func (b *broker) Push(id int64, msg meta.Message) {
 	b.RLock()
 	c, cok := b.channels[id]
 	b.RUnlock()
@@ -108,7 +108,7 @@ func (b *broker) Push(id int64, msg meta.MessageBody) {
 
 	c.RLock()
 	for _, g := range c.gates {
-		b.pusher <- message{id: id, addr: g.addr, MessageBody: msg}
+		b.pusher <- message{id: id, addr: g.addr, Message: msg}
 	}
 	c.RUnlock()
 }
