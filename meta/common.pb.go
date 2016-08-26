@@ -15,6 +15,12 @@ It is generated from these files:
 It has these top-level messages:
 	ResponseHeader
 	Message
+	UserFindUserRequest
+	UserFindUserResponse
+	UserAddFriendRequest
+	UserAddFriendResponse
+	UserCreateGroupRequest
+	UserCreateGroupResponse
 	UserRegisterRequest
 	UserRegisterResponse
 	UpdateUserInfoRequest
@@ -44,10 +50,18 @@ It has these top-level messages:
 	UnsubscribeResponse
 	PushRequest
 	PushResponse
+	FindUserRequest
+	FindUserResponse
+	AddFriendRequest
+	AddFriendResponse
 	RegisterRequest
 	RegisterResponse
 	AuthRequest
 	AuthResponse
+	CreateGroupRequest
+	CreateGroupResponse
+	NewMessageRequest
+	NewMessageResponse
 */
 package meta
 

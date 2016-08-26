@@ -11,14 +11,15 @@ import (
 
 // Store save user, message.
 type Store struct {
-	host   string
-	dbPath string
-	user   *userDB
+	host    string
+	dbPath  string
+	user    *userDB
+	message *messageDB
 }
 
 // NewStore new Store server.
 func NewStore(host, dbPath string) *Store {
-	return &Store{host: host, dbPath: dbPath, user: newUserDB(dbPath)}
+	return &Store{host: host, dbPath: dbPath, user: newUserDB(dbPath), message: newMessageDB(dbPath)}
 }
 
 // Start start service.
@@ -32,6 +33,10 @@ func (s *Store) Start() error {
 	}
 
 	if err = s.user.start(); err != nil {
+		return err
+	}
+
+	if err = s.message.start(); err != nil {
 		return err
 	}
 
@@ -54,4 +59,28 @@ func (s *Store) Auth(_ context.Context, req *meta.AuthRequest) (*meta.AuthRespon
 		return &meta.AuthResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 	return &meta.AuthResponse{ID: id}, nil
+}
+
+// AddFriend 添加好友，两人都添加过对方后才可以聊天.
+func (s *Store) AddFriend(_ context.Context, req *meta.AddFriendRequest) (*meta.AddFriendResponse, error) {
+	if err := s.user.friend.add(req.From, req.To, req.Confrim); err != nil {
+		return &meta.AddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	if req.Confrim {
+		if err := s.user.friend.add(req.To, req.From, req.Confrim); err != nil {
+			return &meta.AddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		return &meta.AddFriendResponse{Confrim: true}, nil
+	}
+
+	return &meta.AddFriendResponse{}, nil
+}
+
+func (s *Store) CreateGroup(_ context.Context, req *meta.NewGroupRequest) (*meta.NewGroupResponse, error) {
+
+}
+
+func (s *Store) NewMessage(_ context.Context, req *meta.NewMessageRequest) (*meta.NewMessageResponse, error) {
+
 }

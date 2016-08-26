@@ -18,6 +18,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+type FindUserRequest struct {
+	User string `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
+}
+
+func (m *FindUserRequest) Reset()                    { *m = FindUserRequest{} }
+func (m *FindUserRequest) String() string            { return proto.CompactTextString(m) }
+func (*FindUserRequest) ProtoMessage()               {}
+func (*FindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+
+type FindUserResponse struct {
+	ID int64 `protobuf:"varint,1,opt,name=ID,json=iD" json:"ID,omitempty"`
+}
+
+func (m *FindUserResponse) Reset()                    { *m = FindUserResponse{} }
+func (m *FindUserResponse) String() string            { return proto.CompactTextString(m) }
+func (*FindUserResponse) ProtoMessage()               {}
+func (*FindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+
+type AddFriendRequest struct {
+	From    int64 `protobuf:"varint,1,opt,name=From,json=from" json:"From,omitempty"`
+	To      int64 `protobuf:"varint,2,opt,name=To,json=to" json:"To,omitempty"`
+	Confirm bool  `protobuf:"varint,3,opt,name=Confirm,json=confirm" json:"Confirm,omitempty"`
+}
+
+func (m *AddFriendRequest) Reset()                    { *m = AddFriendRequest{} }
+func (m *AddFriendRequest) String() string            { return proto.CompactTextString(m) }
+func (*AddFriendRequest) ProtoMessage()               {}
+func (*AddFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+
+type AddFriendResponse struct {
+	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Confirm bool            `protobuf:"varint,2,opt,name=Confirm,json=confirm" json:"Confirm,omitempty"`
+}
+
+func (m *AddFriendResponse) Reset()                    { *m = AddFriendResponse{} }
+func (m *AddFriendResponse) String() string            { return proto.CompactTextString(m) }
+func (*AddFriendResponse) ProtoMessage()               {}
+func (*AddFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+
+func (m *AddFriendResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
 type RegisterRequest struct {
 	ID       int64  `protobuf:"varint,1,opt,name=ID,json=iD" json:"ID,omitempty"`
 	User     string `protobuf:"bytes,2,opt,name=User,json=user" json:"User,omitempty"`
@@ -27,7 +73,7 @@ type RegisterRequest struct {
 func (m *RegisterRequest) Reset()                    { *m = RegisterRequest{} }
 func (m *RegisterRequest) String() string            { return proto.CompactTextString(m) }
 func (*RegisterRequest) ProtoMessage()               {}
-func (*RegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*RegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
 
 type RegisterResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -36,7 +82,7 @@ type RegisterResponse struct {
 func (m *RegisterResponse) Reset()                    { *m = RegisterResponse{} }
 func (m *RegisterResponse) String() string            { return proto.CompactTextString(m) }
 func (*RegisterResponse) ProtoMessage()               {}
-func (*RegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (*RegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
 
 func (m *RegisterResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -53,7 +99,7 @@ type AuthRequest struct {
 func (m *AuthRequest) Reset()                    { *m = AuthRequest{} }
 func (m *AuthRequest) String() string            { return proto.CompactTextString(m) }
 func (*AuthRequest) ProtoMessage()               {}
-func (*AuthRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+func (*AuthRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
 
 type AuthResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -63,7 +109,7 @@ type AuthResponse struct {
 func (m *AuthResponse) Reset()                    { *m = AuthResponse{} }
 func (m *AuthResponse) String() string            { return proto.CompactTextString(m) }
 func (*AuthResponse) ProtoMessage()               {}
-func (*AuthResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+func (*AuthResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
 
 func (m *AuthResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -72,11 +118,77 @@ func (m *AuthResponse) GetHeader() *ResponseHeader {
 	return nil
 }
 
+type CreateGroupRequest struct {
+	UserID  int64 `protobuf:"varint,1,opt,name=UserID,json=userID" json:"UserID,omitempty"`
+	GroupID int64 `protobuf:"varint,2,opt,name=GroupID,json=groupID" json:"GroupID,omitempty"`
+}
+
+func (m *CreateGroupRequest) Reset()                    { *m = CreateGroupRequest{} }
+func (m *CreateGroupRequest) String() string            { return proto.CompactTextString(m) }
+func (*CreateGroupRequest) ProtoMessage()               {}
+func (*CreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
+
+type CreateGroupResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+}
+
+func (m *CreateGroupResponse) Reset()                    { *m = CreateGroupResponse{} }
+func (m *CreateGroupResponse) String() string            { return proto.CompactTextString(m) }
+func (*CreateGroupResponse) ProtoMessage()               {}
+func (*CreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
+
+func (m *CreateGroupResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type NewMessageRequest struct {
+	Msg *Message `protobuf:"bytes,1,opt,name=Msg,json=msg" json:"Msg,omitempty"`
+}
+
+func (m *NewMessageRequest) Reset()                    { *m = NewMessageRequest{} }
+func (m *NewMessageRequest) String() string            { return proto.CompactTextString(m) }
+func (*NewMessageRequest) ProtoMessage()               {}
+func (*NewMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
+
+func (m *NewMessageRequest) GetMsg() *Message {
+	if m != nil {
+		return m.Msg
+	}
+	return nil
+}
+
+type NewMessageResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+}
+
+func (m *NewMessageResponse) Reset()                    { *m = NewMessageResponse{} }
+func (m *NewMessageResponse) String() string            { return proto.CompactTextString(m) }
+func (*NewMessageResponse) ProtoMessage()               {}
+func (*NewMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{11} }
+
+func (m *NewMessageResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
 func init() {
+	proto.RegisterType((*FindUserRequest)(nil), "candy.meta.FindUserRequest")
+	proto.RegisterType((*FindUserResponse)(nil), "candy.meta.FindUserResponse")
+	proto.RegisterType((*AddFriendRequest)(nil), "candy.meta.AddFriendRequest")
+	proto.RegisterType((*AddFriendResponse)(nil), "candy.meta.AddFriendResponse")
 	proto.RegisterType((*RegisterRequest)(nil), "candy.meta.RegisterRequest")
 	proto.RegisterType((*RegisterResponse)(nil), "candy.meta.RegisterResponse")
 	proto.RegisterType((*AuthRequest)(nil), "candy.meta.AuthRequest")
 	proto.RegisterType((*AuthResponse)(nil), "candy.meta.AuthResponse")
+	proto.RegisterType((*CreateGroupRequest)(nil), "candy.meta.CreateGroupRequest")
+	proto.RegisterType((*CreateGroupResponse)(nil), "candy.meta.CreateGroupResponse")
+	proto.RegisterType((*NewMessageRequest)(nil), "candy.meta.NewMessageRequest")
+	proto.RegisterType((*NewMessageResponse)(nil), "candy.meta.NewMessageResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -92,6 +204,12 @@ const _ = grpc.SupportPackageIsVersion3
 type StoreClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
+	// AddFriend 添加好友，两人都添加过对方后才可以聊天.
+	AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*AddFriendResponse, error)
+	// FindUser 根据字符串的用户名查的用户信息.
+	FindUser(ctx context.Context, in *FindUserRequest, opts ...grpc.CallOption) (*FindUserResponse, error)
+	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
+	NewMessage(ctx context.Context, in *NewMessageRequest, opts ...grpc.CallOption) (*NewMessageResponse, error)
 }
 
 type storeClient struct {
@@ -120,11 +238,53 @@ func (c *storeClient) Auth(ctx context.Context, in *AuthRequest, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *storeClient) AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*AddFriendResponse, error) {
+	out := new(AddFriendResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/AddFriend", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeClient) FindUser(ctx context.Context, in *FindUserRequest, opts ...grpc.CallOption) (*FindUserResponse, error) {
+	out := new(FindUserResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/FindUser", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error) {
+	out := new(CreateGroupResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/CreateGroup", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeClient) NewMessage(ctx context.Context, in *NewMessageRequest, opts ...grpc.CallOption) (*NewMessageResponse, error) {
+	out := new(NewMessageResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/NewMessage", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Store service
 
 type StoreServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	Auth(context.Context, *AuthRequest) (*AuthResponse, error)
+	// AddFriend 添加好友，两人都添加过对方后才可以聊天.
+	AddFriend(context.Context, *AddFriendRequest) (*AddFriendResponse, error)
+	// FindUser 根据字符串的用户名查的用户信息.
+	FindUser(context.Context, *FindUserRequest) (*FindUserResponse, error)
+	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
+	NewMessage(context.Context, *NewMessageRequest) (*NewMessageResponse, error)
 }
 
 func RegisterStoreServer(s *grpc.Server, srv StoreServer) {
@@ -167,6 +327,78 @@ func _Store_Auth_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Store_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddFriendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServer).AddFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Store/AddFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServer).AddFriend(ctx, req.(*AddFriendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Store_FindUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServer).FindUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Store/FindUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServer).FindUser(ctx, req.(*FindUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Store_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServer).CreateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Store/CreateGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServer).CreateGroup(ctx, req.(*CreateGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Store_NewMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServer).NewMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Store/NewMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServer).NewMessage(ctx, req.(*NewMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Store_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "candy.meta.Store",
 	HandlerType: (*StoreServer)(nil),
@@ -179,6 +411,22 @@ var _Store_serviceDesc = grpc.ServiceDesc{
 			MethodName: "Auth",
 			Handler:    _Store_Auth_Handler,
 		},
+		{
+			MethodName: "AddFriend",
+			Handler:    _Store_AddFriend_Handler,
+		},
+		{
+			MethodName: "FindUser",
+			Handler:    _Store_FindUser_Handler,
+		},
+		{
+			MethodName: "CreateGroup",
+			Handler:    _Store_CreateGroup_Handler,
+		},
+		{
+			MethodName: "NewMessage",
+			Handler:    _Store_NewMessage_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: fileDescriptor4,
@@ -187,22 +435,36 @@ var _Store_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("store.proto", fileDescriptor4) }
 
 var fileDescriptor4 = []byte{
-	// 261 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x91, 0x3f, 0x4f, 0xc3, 0x30,
-	0x10, 0xc5, 0x65, 0x37, 0x44, 0xe1, 0x52, 0x01, 0xba, 0x85, 0xc8, 0x30, 0x54, 0x99, 0x3a, 0x65,
-	0x08, 0x13, 0x03, 0x03, 0xa8, 0x20, 0xd8, 0xc0, 0x88, 0x85, 0x2d, 0x34, 0x27, 0xda, 0x21, 0x71,
-	0xf0, 0x39, 0x42, 0x7c, 0x04, 0xbe, 0x35, 0xca, 0x1f, 0xab, 0x2d, 0x7f, 0x16, 0x46, 0xdf, 0x7b,
-	0xf7, 0xf4, 0xbb, 0x67, 0x88, 0xd9, 0x19, 0x4b, 0x59, 0x63, 0x8d, 0x33, 0x08, 0xcb, 0xa2, 0x2e,
-	0x3f, 0xb2, 0x8a, 0x5c, 0xa1, 0xa6, 0x4b, 0x53, 0x55, 0xa6, 0x1e, 0x94, 0xf4, 0x01, 0x0e, 0x35,
-	0xbd, 0xae, 0xd9, 0x91, 0xd5, 0xf4, 0xd6, 0x12, 0x3b, 0x3c, 0x00, 0x79, 0xb7, 0x48, 0xc4, 0x4c,
-	0xcc, 0x27, 0x5a, 0xae, 0x17, 0x88, 0x10, 0x3c, 0x31, 0xd9, 0x44, 0xce, 0xc4, 0x7c, 0x5f, 0x07,
-	0x2d, 0x93, 0x45, 0x05, 0xd1, 0x7d, 0xc1, 0xfc, 0x6e, 0x6c, 0x99, 0x4c, 0xfa, 0x79, 0xd4, 0x8c,
-	0xef, 0xf4, 0x06, 0x8e, 0x36, 0x91, 0xdc, 0x98, 0x9a, 0x09, 0x73, 0x08, 0x57, 0x54, 0x94, 0x64,
-	0xfb, 0xdc, 0x38, 0x57, 0xd9, 0x86, 0x28, 0xf3, 0xae, 0xdb, 0xde, 0xa1, 0x47, 0x67, 0x7a, 0x01,
-	0xf1, 0x65, 0xeb, 0x56, 0x1e, 0xcb, 0x63, 0x88, 0x3f, 0x30, 0xe4, 0x37, 0x0c, 0x0d, 0xd3, 0x61,
-	0xfd, 0xff, 0x08, 0x63, 0x15, 0xd2, 0x57, 0x91, 0x7f, 0x0a, 0xd8, 0x7b, 0xec, 0x7a, 0xc5, 0x6b,
-	0x88, 0xfc, 0x91, 0x78, 0xb2, 0x9b, 0xb4, 0xd3, 0xa6, 0x3a, 0xfd, 0x5d, 0x1c, 0xa1, 0xce, 0x21,
-	0xe8, 0x20, 0xf1, 0x78, 0xdb, 0xb5, 0x75, 0xb5, 0x4a, 0x7e, 0x0a, 0xc3, 0xea, 0x55, 0xf8, 0x1c,
-	0x74, 0xc3, 0x97, 0xb0, 0xff, 0xc8, 0xb3, 0xaf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x14, 0x89, 0x58,
-	0x21, 0xf1, 0x01, 0x00, 0x00,
+	// 483 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x54, 0xcf, 0x6f, 0xd3, 0x30,
+	0x14, 0x56, 0x93, 0x92, 0xa6, 0xaf, 0x13, 0xeb, 0x3c, 0x09, 0xa2, 0x00, 0x63, 0xb2, 0x34, 0x69,
+	0xa7, 0x1e, 0xca, 0x09, 0x24, 0x0e, 0x63, 0x5b, 0xe8, 0x84, 0x36, 0x0d, 0xc3, 0x2e, 0xdc, 0x42,
+	0xe3, 0x65, 0x39, 0x24, 0x2e, 0xb6, 0xa3, 0x89, 0xbf, 0x8c, 0x7f, 0x0f, 0xd9, 0x71, 0x1a, 0x3b,
+	0x5d, 0x2f, 0xeb, 0x2d, 0xd6, 0xfb, 0xde, 0xf7, 0xbe, 0xef, 0xfd, 0x08, 0x4c, 0x84, 0x64, 0x9c,
+	0xce, 0x56, 0x9c, 0x49, 0x86, 0x60, 0x99, 0x56, 0xd9, 0xdf, 0x59, 0x49, 0x65, 0x1a, 0xef, 0x2d,
+	0x59, 0x59, 0xb2, 0xaa, 0x89, 0xe0, 0x13, 0xd8, 0x4f, 0x8a, 0x2a, 0xbb, 0x13, 0x94, 0x13, 0xfa,
+	0xa7, 0xa6, 0x42, 0x22, 0x04, 0xc3, 0x5a, 0x50, 0x1e, 0x0d, 0x8e, 0x07, 0xa7, 0x63, 0xa2, 0xbf,
+	0x31, 0x86, 0x69, 0x07, 0x13, 0x2b, 0x56, 0x09, 0x8a, 0x5e, 0x82, 0x77, 0x75, 0xa1, 0x51, 0x3e,
+	0xf1, 0x8a, 0x0b, 0x7c, 0x0b, 0xd3, 0xb3, 0x2c, 0x4b, 0x78, 0x41, 0xab, 0xcc, 0xe2, 0x4a, 0x38,
+	0x2b, 0x0d, 0x6a, 0x78, 0xcf, 0x59, 0xa9, 0xf2, 0x7e, 0xb2, 0xc8, 0x6b, 0xf2, 0x24, 0x43, 0x11,
+	0x8c, 0xce, 0x59, 0x75, 0x5f, 0xf0, 0x32, 0xf2, 0x8f, 0x07, 0xa7, 0x21, 0x19, 0x2d, 0x9b, 0x27,
+	0x4e, 0xe1, 0xc0, 0x62, 0x34, 0x65, 0xe7, 0x10, 0x3c, 0xd0, 0x34, 0x33, 0x02, 0x27, 0xf3, 0x78,
+	0xd6, 0x99, 0x9b, 0xb5, 0xa8, 0x85, 0x46, 0x10, 0x83, 0xb4, 0x4b, 0x78, 0x6e, 0x89, 0xef, 0xb0,
+	0x4f, 0x68, 0x5e, 0x08, 0xd9, 0xf9, 0xef, 0xf9, 0x52, 0x1e, 0x94, 0x6f, 0x9d, 0x69, 0xfa, 0x81,
+	0x62, 0x08, 0x6f, 0x53, 0x21, 0x1e, 0x19, 0xcf, 0xb4, 0xe8, 0x31, 0x09, 0x57, 0xe6, 0x8d, 0x13,
+	0x98, 0x76, 0x94, 0xcf, 0x17, 0x8d, 0x3f, 0xc3, 0xe4, 0xac, 0x96, 0x0f, 0x56, 0x2b, 0xef, 0x7a,
+	0x63, 0x71, 0x64, 0x78, 0x3d, 0x19, 0x04, 0xf6, 0x9a, 0xf4, 0x1d, 0xfa, 0xd6, 0xb4, 0xc2, 0x5b,
+	0x8f, 0x38, 0x01, 0x74, 0xce, 0x69, 0x2a, 0xe9, 0x57, 0xce, 0xea, 0x55, 0xab, 0xec, 0x15, 0x04,
+	0x4a, 0xd9, 0xba, 0x69, 0x41, 0xad, 0x5f, 0xaa, 0xeb, 0x1a, 0xb7, 0xa6, 0x18, 0xe5, 0xcd, 0x13,
+	0x5f, 0xc1, 0xa1, 0xc3, 0xb3, 0x43, 0x97, 0x3e, 0xc1, 0xc1, 0x0d, 0x7d, 0xbc, 0xa6, 0x42, 0xa4,
+	0x39, 0x6d, 0x15, 0x9d, 0x80, 0x7f, 0x2d, 0x72, 0xc3, 0x72, 0x68, 0xb3, 0xb4, 0x40, 0xbf, 0x14,
+	0x39, 0x5e, 0x00, 0xb2, 0x73, 0x9f, 0xaf, 0x62, 0xfe, 0xcf, 0x87, 0x17, 0x3f, 0xd4, 0xc1, 0xa1,
+	0x4b, 0x08, 0xdb, 0xe9, 0xa3, 0x37, 0x6e, 0xa6, 0xb3, 0x66, 0xf1, 0xdb, 0xa7, 0x83, 0x46, 0xc4,
+	0x47, 0x18, 0xaa, 0xe9, 0xa1, 0xd7, 0x36, 0xca, 0x5a, 0x87, 0x38, 0xda, 0x0c, 0x98, 0xd4, 0x05,
+	0x8c, 0xd7, 0x57, 0x83, 0x9c, 0x2a, 0xfd, 0xf3, 0x8c, 0xdf, 0x6d, 0x89, 0x1a, 0xa6, 0x4b, 0x08,
+	0xdb, 0xab, 0x77, 0xbd, 0xf4, 0x7e, 0x19, 0xae, 0x97, 0x8d, 0x1f, 0xc5, 0x0d, 0x4c, 0xac, 0x69,
+	0xa3, 0x23, 0x1b, 0xbc, 0xb9, 0x4e, 0xf1, 0xfb, 0xad, 0x71, 0xc3, 0xf7, 0x0d, 0xa0, 0x1b, 0x1b,
+	0x72, 0x3c, 0x6c, 0xac, 0x42, 0x7c, 0xb4, 0x2d, 0xdc, 0x90, 0x7d, 0x09, 0x7e, 0x0d, 0x55, 0xe8,
+	0x77, 0xa0, 0xff, 0x87, 0x1f, 0xfe, 0x07, 0x00, 0x00, 0xff, 0xff, 0x62, 0xa4, 0x7d, 0xed, 0x38,
+	0x05, 0x00, 0x00,
 }

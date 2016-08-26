@@ -1,14 +1,6 @@
-all: sync golint meta gate master notice store 
+all: golint meta gate master notice store 
 
 .PHONY: meta gate master notice store
-
-GLOCK := glock
-
-$(GLOCK): 
-	go get github.com/robfig/glock
-
-sync: $(GLOCK)
-	$(GLOCK) sync github.com/dearcode/candy/
 
 meta:
 	 @cd meta; make; cd ..; 
@@ -29,13 +21,13 @@ vet:
 
 
 gate:
-	go build -o bin/gate ./cmd/gate/main.go
+	godep go build -o bin/gate ./cmd/gate/main.go
 
 master:
-	go build -o bin/master ./cmd/master/main.go
+	godep go build -o bin/master ./cmd/master/main.go
 
 notice:
-	go build -o bin/notice ./cmd/notice/main.go
+	godep go build -o bin/notice ./cmd/notice/main.go
 
 store:
-	go build -o bin/store ./cmd/store/main.go
+	godep go build -o bin/store ./cmd/store/main.go

@@ -9,6 +9,34 @@ service Store {
     rpc Register(RegisterRequest) returns (RegisterResponse);
     rpc Auth(AuthRequest) returns (AuthResponse);
 
+    // AddFriend 添加好友，两人都添加过对方后才可以聊天.
+    rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
+
+    // FindUser 根据字符串的用户名查的用户信息.
+    rpc FindUser(FindUserRequest) returns (FindUserResponse);
+
+    rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
+    rpc NewMessage(NewMessageRequest) returns (NewMessageResponse);
+}
+
+
+message FindUserRequest {
+    string user = 1;
+}
+
+message FindUserResponse {
+    int64 ID = 1;
+}
+
+message AddFriendRequest {
+    int64 From = 1;
+    int64 To = 2;
+    bool Confirm = 3;
+}
+
+message AddFriendResponse {
+    ResponseHeader header = 1;
+    bool Confirm = 2;
 }
 
 message RegisterRequest {
@@ -30,4 +58,21 @@ message AuthRequest {
 message AuthResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
+}
+
+message CreateGroupRequest {
+    int64 UserID = 1;
+    int64 GroupID = 2;
+}
+
+message CreateGroupResponse {
+    ResponseHeader header = 1;
+}
+
+message NewMessageRequest {
+    Message Msg = 1;
+}
+
+message NewMessageResponse {
+    ResponseHeader header = 1;
 }

@@ -16,6 +16,13 @@ service Gate {
     rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
     rpc RecvMessage (RecvMessageRequest) returns (RecvMessageResponse);
 
+    // AddFriend 添加好友或确认接受添加.
+    rpc AddFriend (UserAddFriendRequest) returns (UserAddFriendResponse);
+    // FindUser 添加好友前先查找出来对应的ID.
+    rpc FindUser (UserFindUserRequest) returns (UserFindUserResponse);
+
+    rpc CreateGroup (UserCreateGroupRequest) returns (UserCreateGroupResponse);
+
     rpc Heartbeat (HeartbeatRequest) returns (HeartbeatResponse);
 
     rpc UploadImage (UploadImageRequest) returns (UploadImageResponse);
@@ -27,7 +34,33 @@ service Gate {
 
 }
 
+message UserFindUserRequest {
+    string User = 1;
+}
 
+message UserFindUserResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+
+}
+
+message UserAddFriendRequest {
+    int64 UserID = 1;
+    bool Confirm = 2;
+}
+
+message UserAddFriendResponse {
+    ResponseHeader header = 1;
+}
+
+message UserCreateGroupRequest {
+    repeated int64 UserID = 1;
+}
+
+message UserCreateGroupResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
 
 
 message UserRegisterRequest {

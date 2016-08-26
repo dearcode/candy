@@ -18,6 +18,84 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+type UserFindUserRequest struct {
+	User string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+}
+
+func (m *UserFindUserRequest) Reset()                    { *m = UserFindUserRequest{} }
+func (m *UserFindUserRequest) String() string            { return proto.CompactTextString(m) }
+func (*UserFindUserRequest) ProtoMessage()               {}
+func (*UserFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+
+type UserFindUserResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
+}
+
+func (m *UserFindUserResponse) Reset()                    { *m = UserFindUserResponse{} }
+func (m *UserFindUserResponse) String() string            { return proto.CompactTextString(m) }
+func (*UserFindUserResponse) ProtoMessage()               {}
+func (*UserFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+
+func (m *UserFindUserResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type UserAddFriendRequest struct {
+	UserID  int64 `protobuf:"varint,1,opt,name=UserID,json=userID" json:"UserID,omitempty"`
+	Confirm bool  `protobuf:"varint,2,opt,name=Confirm,json=confirm" json:"Confirm,omitempty"`
+}
+
+func (m *UserAddFriendRequest) Reset()                    { *m = UserAddFriendRequest{} }
+func (m *UserAddFriendRequest) String() string            { return proto.CompactTextString(m) }
+func (*UserAddFriendRequest) ProtoMessage()               {}
+func (*UserAddFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+
+type UserAddFriendResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+}
+
+func (m *UserAddFriendResponse) Reset()                    { *m = UserAddFriendResponse{} }
+func (m *UserAddFriendResponse) String() string            { return proto.CompactTextString(m) }
+func (*UserAddFriendResponse) ProtoMessage()               {}
+func (*UserAddFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+
+func (m *UserAddFriendResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type UserCreateGroupRequest struct {
+	UserID []int64 `protobuf:"varint,1,rep,packed,name=UserID,json=userID" json:"UserID,omitempty"`
+}
+
+func (m *UserCreateGroupRequest) Reset()                    { *m = UserCreateGroupRequest{} }
+func (m *UserCreateGroupRequest) String() string            { return proto.CompactTextString(m) }
+func (*UserCreateGroupRequest) ProtoMessage()               {}
+func (*UserCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+
+type UserCreateGroupResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
+}
+
+func (m *UserCreateGroupResponse) Reset()                    { *m = UserCreateGroupResponse{} }
+func (m *UserCreateGroupResponse) String() string            { return proto.CompactTextString(m) }
+func (*UserCreateGroupResponse) ProtoMessage()               {}
+func (*UserCreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+
+func (m *UserCreateGroupResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
 type UserRegisterRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=Password,json=password" json:"Password,omitempty"`
@@ -26,7 +104,7 @@ type UserRegisterRequest struct {
 func (m *UserRegisterRequest) Reset()                    { *m = UserRegisterRequest{} }
 func (m *UserRegisterRequest) String() string            { return proto.CompactTextString(m) }
 func (*UserRegisterRequest) ProtoMessage()               {}
-func (*UserRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*UserRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
 
 type UserRegisterResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -36,7 +114,7 @@ type UserRegisterResponse struct {
 func (m *UserRegisterResponse) Reset()                    { *m = UserRegisterResponse{} }
 func (m *UserRegisterResponse) String() string            { return proto.CompactTextString(m) }
 func (*UserRegisterResponse) ProtoMessage()               {}
-func (*UserRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (*UserRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
 
 func (m *UserRegisterResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -53,7 +131,7 @@ type UpdateUserInfoRequest struct {
 func (m *UpdateUserInfoRequest) Reset()                    { *m = UpdateUserInfoRequest{} }
 func (m *UpdateUserInfoRequest) String() string            { return proto.CompactTextString(m) }
 func (*UpdateUserInfoRequest) ProtoMessage()               {}
-func (*UpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (*UpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
 
 type UpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -62,7 +140,7 @@ type UpdateUserInfoResponse struct {
 func (m *UpdateUserInfoResponse) Reset()                    { *m = UpdateUserInfoResponse{} }
 func (m *UpdateUserInfoResponse) String() string            { return proto.CompactTextString(m) }
 func (*UpdateUserInfoResponse) ProtoMessage()               {}
-func (*UpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+func (*UpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
 
 func (m *UpdateUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -77,7 +155,7 @@ type HeartbeatRequest struct {
 func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
 
 type HeartbeatResponse struct {
 }
@@ -85,7 +163,7 @@ type HeartbeatResponse struct {
 func (m *HeartbeatResponse) Reset()                    { *m = HeartbeatResponse{} }
 func (m *HeartbeatResponse) String() string            { return proto.CompactTextString(m) }
 func (*HeartbeatResponse) ProtoMessage()               {}
-func (*HeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+func (*HeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
 
 type UserLoginRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
@@ -95,7 +173,7 @@ type UserLoginRequest struct {
 func (m *UserLoginRequest) Reset()                    { *m = UserLoginRequest{} }
 func (m *UserLoginRequest) String() string            { return proto.CompactTextString(m) }
 func (*UserLoginRequest) ProtoMessage()               {}
-func (*UserLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
+func (*UserLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{12} }
 
 type UserLoginResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -105,7 +183,7 @@ type UserLoginResponse struct {
 func (m *UserLoginResponse) Reset()                    { *m = UserLoginResponse{} }
 func (m *UserLoginResponse) String() string            { return proto.CompactTextString(m) }
 func (*UserLoginResponse) ProtoMessage()               {}
-func (*UserLoginResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
+func (*UserLoginResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{13} }
 
 func (m *UserLoginResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -120,7 +198,7 @@ type UserLogoutRequest struct {
 func (m *UserLogoutRequest) Reset()                    { *m = UserLogoutRequest{} }
 func (m *UserLogoutRequest) String() string            { return proto.CompactTextString(m) }
 func (*UserLogoutRequest) ProtoMessage()               {}
-func (*UserLogoutRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
+func (*UserLogoutRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{14} }
 
 type UserLogoutResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -129,7 +207,7 @@ type UserLogoutResponse struct {
 func (m *UserLogoutResponse) Reset()                    { *m = UserLogoutResponse{} }
 func (m *UserLogoutResponse) String() string            { return proto.CompactTextString(m) }
 func (*UserLogoutResponse) ProtoMessage()               {}
-func (*UserLogoutResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
+func (*UserLogoutResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{15} }
 
 func (m *UserLogoutResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -145,7 +223,7 @@ type SendMessageRequest struct {
 func (m *SendMessageRequest) Reset()                    { *m = SendMessageRequest{} }
 func (m *SendMessageRequest) String() string            { return proto.CompactTextString(m) }
 func (*SendMessageRequest) ProtoMessage()               {}
-func (*SendMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
+func (*SendMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{16} }
 
 func (m *SendMessageRequest) GetMsg() *Message {
 	if m != nil {
@@ -162,7 +240,7 @@ type SendMessageResponse struct {
 func (m *SendMessageResponse) Reset()                    { *m = SendMessageResponse{} }
 func (m *SendMessageResponse) String() string            { return proto.CompactTextString(m) }
 func (*SendMessageResponse) ProtoMessage()               {}
-func (*SendMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
+func (*SendMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{17} }
 
 func (m *SendMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -178,7 +256,7 @@ type RecvMessageRequest struct {
 func (m *RecvMessageRequest) Reset()                    { *m = RecvMessageRequest{} }
 func (m *RecvMessageRequest) String() string            { return proto.CompactTextString(m) }
 func (*RecvMessageRequest) ProtoMessage()               {}
-func (*RecvMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{12} }
+func (*RecvMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{18} }
 
 type RecvMessageResponse struct {
 	MsgList []*Message `protobuf:"bytes,1,rep,name=MsgList,json=msgList" json:"MsgList,omitempty"`
@@ -187,7 +265,7 @@ type RecvMessageResponse struct {
 func (m *RecvMessageResponse) Reset()                    { *m = RecvMessageResponse{} }
 func (m *RecvMessageResponse) String() string            { return proto.CompactTextString(m) }
 func (*RecvMessageResponse) ProtoMessage()               {}
-func (*RecvMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{13} }
+func (*RecvMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{19} }
 
 func (m *RecvMessageResponse) GetMsgList() []*Message {
 	if m != nil {
@@ -203,7 +281,7 @@ type UserMessageList struct {
 func (m *UserMessageList) Reset()                    { *m = UserMessageList{} }
 func (m *UserMessageList) String() string            { return proto.CompactTextString(m) }
 func (*UserMessageList) ProtoMessage()               {}
-func (*UserMessageList) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{14} }
+func (*UserMessageList) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
 
 func (m *UserMessageList) GetMsgList() []*Message {
 	if m != nil {
@@ -219,7 +297,7 @@ type UploadImageRequest struct {
 func (m *UploadImageRequest) Reset()                    { *m = UploadImageRequest{} }
 func (m *UploadImageRequest) String() string            { return proto.CompactTextString(m) }
 func (*UploadImageRequest) ProtoMessage()               {}
-func (*UploadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{15} }
+func (*UploadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{21} }
 
 type UploadImageResponse struct {
 	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -229,7 +307,7 @@ type UploadImageResponse struct {
 func (m *UploadImageResponse) Reset()                    { *m = UploadImageResponse{} }
 func (m *UploadImageResponse) String() string            { return proto.CompactTextString(m) }
 func (*UploadImageResponse) ProtoMessage()               {}
-func (*UploadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{16} }
+func (*UploadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{22} }
 
 func (m *UploadImageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -245,7 +323,7 @@ type DownloadImageRequest struct {
 func (m *DownloadImageRequest) Reset()                    { *m = DownloadImageRequest{} }
 func (m *DownloadImageRequest) String() string            { return proto.CompactTextString(m) }
 func (*DownloadImageRequest) ProtoMessage()               {}
-func (*DownloadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{17} }
+func (*DownloadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{23} }
 
 type DownloadImageResponse struct {
 	Image [][]byte `protobuf:"bytes,1,rep,name=Image,json=image,proto3" json:"Image,omitempty"`
@@ -254,7 +332,7 @@ type DownloadImageResponse struct {
 func (m *DownloadImageResponse) Reset()                    { *m = DownloadImageResponse{} }
 func (m *DownloadImageResponse) String() string            { return proto.CompactTextString(m) }
 func (*DownloadImageResponse) ProtoMessage()               {}
-func (*DownloadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{18} }
+func (*DownloadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{24} }
 
 type NoticeRequest struct {
 	ChannelID int64    `protobuf:"varint,1,opt,name=ChannelID,json=channelID" json:"ChannelID,omitempty"`
@@ -264,7 +342,7 @@ type NoticeRequest struct {
 func (m *NoticeRequest) Reset()                    { *m = NoticeRequest{} }
 func (m *NoticeRequest) String() string            { return proto.CompactTextString(m) }
 func (*NoticeRequest) ProtoMessage()               {}
-func (*NoticeRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{19} }
+func (*NoticeRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{25} }
 
 func (m *NoticeRequest) GetMsg() *Message {
 	if m != nil {
@@ -280,7 +358,7 @@ type NoticeResponse struct {
 func (m *NoticeResponse) Reset()                    { *m = NoticeResponse{} }
 func (m *NoticeResponse) String() string            { return proto.CompactTextString(m) }
 func (*NoticeResponse) ProtoMessage()               {}
-func (*NoticeResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
+func (*NoticeResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{26} }
 
 func (m *NoticeResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -290,6 +368,12 @@ func (m *NoticeResponse) GetHeader() *ResponseHeader {
 }
 
 func init() {
+	proto.RegisterType((*UserFindUserRequest)(nil), "candy.meta.UserFindUserRequest")
+	proto.RegisterType((*UserFindUserResponse)(nil), "candy.meta.UserFindUserResponse")
+	proto.RegisterType((*UserAddFriendRequest)(nil), "candy.meta.UserAddFriendRequest")
+	proto.RegisterType((*UserAddFriendResponse)(nil), "candy.meta.UserAddFriendResponse")
+	proto.RegisterType((*UserCreateGroupRequest)(nil), "candy.meta.UserCreateGroupRequest")
+	proto.RegisterType((*UserCreateGroupResponse)(nil), "candy.meta.UserCreateGroupResponse")
 	proto.RegisterType((*UserRegisterRequest)(nil), "candy.meta.UserRegisterRequest")
 	proto.RegisterType((*UserRegisterResponse)(nil), "candy.meta.UserRegisterResponse")
 	proto.RegisterType((*UpdateUserInfoRequest)(nil), "candy.meta.UpdateUserInfoRequest")
@@ -330,6 +414,11 @@ type GateClient interface {
 	Logout(ctx context.Context, in *UserLogoutRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
 	RecvMessage(ctx context.Context, in *RecvMessageRequest, opts ...grpc.CallOption) (*RecvMessageResponse, error)
+	// AddFriend 添加好友或确认接受添加.
+	AddFriend(ctx context.Context, in *UserAddFriendRequest, opts ...grpc.CallOption) (*UserAddFriendResponse, error)
+	// FindUser 添加好友前先查找出来对应的ID.
+	FindUser(ctx context.Context, in *UserFindUserRequest, opts ...grpc.CallOption) (*UserFindUserResponse, error)
+	CreateGroup(ctx context.Context, in *UserCreateGroupRequest, opts ...grpc.CallOption) (*UserCreateGroupResponse, error)
 	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error)
 	UploadImage(ctx context.Context, in *UploadImageRequest, opts ...grpc.CallOption) (*UploadImageResponse, error)
 	DownloadImage(ctx context.Context, in *DownloadImageRequest, opts ...grpc.CallOption) (*DownloadImageResponse, error)
@@ -399,6 +488,33 @@ func (c *gateClient) RecvMessage(ctx context.Context, in *RecvMessageRequest, op
 	return out, nil
 }
 
+func (c *gateClient) AddFriend(ctx context.Context, in *UserAddFriendRequest, opts ...grpc.CallOption) (*UserAddFriendResponse, error) {
+	out := new(UserAddFriendResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/AddFriend", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gateClient) FindUser(ctx context.Context, in *UserFindUserRequest, opts ...grpc.CallOption) (*UserFindUserResponse, error) {
+	out := new(UserFindUserResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/FindUser", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gateClient) CreateGroup(ctx context.Context, in *UserCreateGroupRequest, opts ...grpc.CallOption) (*UserCreateGroupResponse, error) {
+	out := new(UserCreateGroupResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/CreateGroup", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gateClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error) {
 	out := new(HeartbeatResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/Heartbeat", in, out, c.cc, opts...)
@@ -444,6 +560,11 @@ type GateServer interface {
 	Logout(context.Context, *UserLogoutRequest) (*UserLoginResponse, error)
 	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
 	RecvMessage(context.Context, *RecvMessageRequest) (*RecvMessageResponse, error)
+	// AddFriend 添加好友或确认接受添加.
+	AddFriend(context.Context, *UserAddFriendRequest) (*UserAddFriendResponse, error)
+	// FindUser 添加好友前先查找出来对应的ID.
+	FindUser(context.Context, *UserFindUserRequest) (*UserFindUserResponse, error)
+	CreateGroup(context.Context, *UserCreateGroupRequest) (*UserCreateGroupResponse, error)
 	Heartbeat(context.Context, *HeartbeatRequest) (*HeartbeatResponse, error)
 	UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error)
 	DownloadImage(context.Context, *DownloadImageRequest) (*DownloadImageResponse, error)
@@ -563,6 +684,60 @@ func _Gate_RecvMessage_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gate_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAddFriendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GateServer).AddFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Gate/AddFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GateServer).AddFriend(ctx, req.(*UserAddFriendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gate_FindUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserFindUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GateServer).FindUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Gate/FindUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GateServer).FindUser(ctx, req.(*UserFindUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gate_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserCreateGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GateServer).CreateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Gate/CreateGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GateServer).CreateGroup(ctx, req.(*UserCreateGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Gate_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HeartbeatRequest)
 	if err := dec(in); err != nil {
@@ -664,6 +839,18 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Gate_RecvMessage_Handler,
 		},
 		{
+			MethodName: "AddFriend",
+			Handler:    _Gate_AddFriend_Handler,
+		},
+		{
+			MethodName: "FindUser",
+			Handler:    _Gate_FindUser_Handler,
+		},
+		{
+			MethodName: "CreateGroup",
+			Handler:    _Gate_CreateGroup_Handler,
+		},
+		{
 			MethodName: "Heartbeat",
 			Handler:    _Gate_Heartbeat_Handler,
 		},
@@ -687,47 +874,55 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("gate.proto", fileDescriptor1) }
 
 var fileDescriptor1 = []byte{
-	// 659 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x56, 0xdf, 0x4f, 0xdb, 0x30,
-	0x10, 0x56, 0x7f, 0x90, 0x36, 0x07, 0x65, 0xe0, 0x00, 0xea, 0x22, 0x36, 0xc0, 0xda, 0xa4, 0x69,
-	0x12, 0xd5, 0xc4, 0xde, 0xb6, 0x87, 0x6d, 0x2c, 0xdb, 0x8a, 0xd6, 0xa2, 0x29, 0x03, 0x21, 0xf1,
-	0x66, 0x12, 0x2f, 0x44, 0x23, 0x71, 0x17, 0xbb, 0xa0, 0xfd, 0x11, 0xfb, 0x9f, 0xa7, 0x24, 0x4e,
-	0x6a, 0xb7, 0x29, 0x68, 0xed, 0x9e, 0xd0, 0x9d, 0xbf, 0xfb, 0xfc, 0xdd, 0xe1, 0xef, 0x52, 0x80,
-	0x80, 0x08, 0xda, 0x1b, 0x25, 0x4c, 0x30, 0x04, 0x1e, 0x89, 0xfd, 0xdf, 0xbd, 0x88, 0x0a, 0x62,
-	0xaf, 0x79, 0x2c, 0x8a, 0x58, 0x9c, 0x9f, 0xe0, 0x4f, 0x60, 0x9d, 0x73, 0x9a, 0xb8, 0x34, 0x08,
-	0xb9, 0x48, 0xff, 0xfe, 0x1a, 0x53, 0x2e, 0x10, 0x82, 0x66, 0x9a, 0xee, 0xd6, 0xf6, 0x6b, 0x2f,
-	0x4c, 0xb7, 0x39, 0xe6, 0x34, 0x41, 0x36, 0xb4, 0xbf, 0x11, 0xce, 0xef, 0x58, 0xe2, 0x77, 0xeb,
-	0x59, 0xbe, 0x3d, 0x92, 0x31, 0xbe, 0x84, 0x2d, 0x9d, 0x86, 0x8f, 0x58, 0xcc, 0x29, 0x3a, 0x02,
-	0xe3, 0x9a, 0x12, 0x5f, 0x32, 0xad, 0x1e, 0xd9, 0xbd, 0x89, 0x92, 0x5e, 0x81, 0xea, 0x67, 0x08,
-	0x57, 0x22, 0xd1, 0x3a, 0xd4, 0x4f, 0x9c, 0xec, 0x86, 0x86, 0x5b, 0x0f, 0x1d, 0xfc, 0x15, 0xb6,
-	0xcf, 0x47, 0x3e, 0x11, 0x34, 0xbd, 0xe1, 0x24, 0xfe, 0xc1, 0x0a, 0x91, 0x36, 0xb4, 0x4f, 0x43,
-	0xef, 0x67, 0x4c, 0x22, 0x2a, 0x85, 0xb6, 0x63, 0x19, 0xa3, 0x1d, 0x30, 0x3e, 0xdc, 0x12, 0x41,
-	0x92, 0x8c, 0x68, 0xcd, 0x35, 0x48, 0x16, 0xe1, 0x01, 0xec, 0x4c, 0x93, 0x2d, 0x2e, 0x15, 0x23,
-	0xd8, 0xe8, 0x53, 0x92, 0x88, 0x2b, 0x4a, 0x84, 0x54, 0x85, 0x2d, 0xd8, 0x54, 0x72, 0x79, 0x19,
-	0x3e, 0x86, 0x8d, 0xf4, 0xc2, 0x01, 0x0b, 0xc2, 0x78, 0xd1, 0x19, 0x5f, 0xc0, 0xa6, 0xc2, 0xf1,
-	0x1f, 0x07, 0x6c, 0x95, 0xc4, 0x6c, 0x5c, 0xb6, 0xd1, 0x07, 0xa4, 0x26, 0x97, 0x18, 0xd2, 0x5b,
-	0x40, 0xdf, 0x69, 0xec, 0x0f, 0x29, 0xe7, 0x24, 0xa0, 0x45, 0xf7, 0xcf, 0xa1, 0x31, 0xe4, 0x81,
-	0xa4, 0xb1, 0x54, 0x9a, 0x02, 0xd8, 0x88, 0x78, 0x80, 0x03, 0xb0, 0xb4, 0xe2, 0x25, 0xda, 0xde,
-	0x05, 0x53, 0xd2, 0x94, 0xdd, 0x9b, 0x51, 0x91, 0xc0, 0x6f, 0x00, 0xb9, 0xd4, 0xbb, 0x9d, 0x52,
-	0xf9, 0x0c, 0x3a, 0x03, 0xc2, 0xc5, 0xa4, 0xae, 0x96, 0xd5, 0x75, 0x6e, 0xd4, 0x24, 0x76, 0xc0,
-	0xd2, 0x6a, 0xa5, 0xc8, 0x43, 0x68, 0x0d, 0x79, 0x30, 0x08, 0xb9, 0xe8, 0xd6, 0xf6, 0x1b, 0xf3,
-	0xda, 0x6c, 0x45, 0x39, 0x06, 0xbf, 0x87, 0x47, 0xe9, 0xc4, 0x65, 0x3e, 0x4d, 0xfd, 0x2b, 0xc3,
-	0x4b, 0x40, 0xe7, 0xa3, 0x1b, 0x46, 0xfc, 0x93, 0x48, 0xe9, 0x61, 0x0b, 0x56, 0xb2, 0x38, 0xd3,
-	0xbe, 0xe6, 0xae, 0x84, 0x69, 0x80, 0x3d, 0xb0, 0x34, 0xec, 0x12, 0x83, 0xed, 0x42, 0x2b, 0x23,
-	0x29, 0xc7, 0xda, 0x0a, 0xf3, 0x10, 0xbf, 0x82, 0x2d, 0x87, 0xdd, 0xc5, 0x33, 0x92, 0x94, 0x8a,
-	0xb4, 0x2f, 0xa5, 0xe2, 0x10, 0xb6, 0xa7, 0x2a, 0xa4, 0x30, 0xa5, 0x8b, 0xc6, 0xa4, 0x8b, 0x33,
-	0xe8, 0x9c, 0x32, 0x11, 0x7a, 0x25, 0xf3, 0x2e, 0x98, 0x1f, 0xaf, 0x49, 0x1c, 0xd3, 0x9b, 0xf2,
-	0x9f, 0x65, 0x7a, 0x45, 0xa2, 0x78, 0x74, 0xf5, 0x07, 0x1e, 0x9d, 0x03, 0xeb, 0x05, 0xeb, 0xe2,
-	0x63, 0x39, 0xfa, 0x63, 0x40, 0xf3, 0x0b, 0x11, 0x14, 0x0d, 0xa1, 0x5d, 0x2c, 0x46, 0xb4, 0xa7,
-	0x16, 0x56, 0x6c, 0x5e, 0x7b, 0x7f, 0x3e, 0x40, 0x6a, 0xb9, 0x80, 0x75, 0x7d, 0x85, 0xa1, 0x03,
-	0xad, 0xa6, 0x6a, 0x57, 0xda, 0xf8, 0x3e, 0x88, 0x24, 0x76, 0x60, 0x25, 0x5b, 0x2e, 0x68, 0x77,
-	0x5a, 0x83, 0xba, 0xb7, 0xec, 0x27, 0x73, 0x4e, 0x25, 0xcb, 0x67, 0x30, 0xf2, 0xa5, 0x81, 0xaa,
-	0x80, 0x93, 0x0d, 0xf3, 0x10, 0xcf, 0x29, 0xac, 0x2a, 0xce, 0x47, 0x4f, 0x55, 0xf4, 0xec, 0x3e,
-	0xb1, 0xf7, 0xe6, 0x9e, 0x4f, 0xf8, 0x14, 0x93, 0xea, 0x7c, 0xb3, 0xce, 0xd7, 0xf9, 0xaa, 0xdc,
-	0xdd, 0x07, 0xb3, 0xdc, 0xf3, 0xfa, 0xc4, 0xa6, 0x3f, 0x09, 0x7a, 0xa7, 0x33, 0x1f, 0x87, 0x54,
-	0x99, 0x62, 0x45, 0x5d, 0xd9, 0xac, 0x9f, 0x75, 0x65, 0x55, 0x1e, 0x3e, 0x83, 0x8e, 0xe6, 0x21,
-	0xa4, 0xbd, 0xa9, 0x2a, 0x43, 0xda, 0x07, 0xf7, 0x20, 0x24, 0xeb, 0x3b, 0x30, 0x72, 0x53, 0xa0,
-	0xc7, 0x2a, 0x58, 0xb3, 0x9f, 0x6d, 0x57, 0x1d, 0xe5, 0x04, 0xc7, 0xc6, 0x65, 0x33, 0x4d, 0x5f,
-	0x19, 0xd9, 0x2f, 0x8f, 0xd7, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0xbd, 0xfe, 0xf0, 0xc5, 0xa1,
-	0x08, 0x00, 0x00,
+	// 797 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x56, 0x51, 0x4f, 0xdb, 0x30,
+	0x10, 0x16, 0x6d, 0x49, 0x93, 0x83, 0x32, 0x70, 0x81, 0x75, 0x11, 0x1b, 0xe0, 0x6d, 0x12, 0x9b,
+	0x44, 0x85, 0xd8, 0xdb, 0xf6, 0xb0, 0x01, 0x1d, 0x14, 0xad, 0x45, 0x28, 0x83, 0x21, 0x21, 0xed,
+	0xc1, 0x24, 0x26, 0x44, 0x23, 0x49, 0x17, 0xa7, 0xa0, 0xfd, 0x81, 0xfd, 0xee, 0x29, 0x89, 0x93,
+	0xda, 0x49, 0x5a, 0x34, 0xca, 0x53, 0x75, 0xe7, 0xbb, 0xaf, 0xdf, 0xdd, 0xd9, 0x5f, 0x0e, 0xc0,
+	0x26, 0x21, 0x6d, 0x0f, 0x02, 0x3f, 0xf4, 0x11, 0x98, 0xc4, 0xb3, 0xfe, 0xb4, 0x5d, 0x1a, 0x12,
+	0x7d, 0xde, 0xf4, 0x5d, 0xd7, 0xf7, 0x92, 0x13, 0xfc, 0x0e, 0x9a, 0xe7, 0x8c, 0x06, 0x87, 0x8e,
+	0x67, 0x45, 0xbf, 0x06, 0xfd, 0x3d, 0xa4, 0x2c, 0x44, 0x08, 0x6a, 0x91, 0xd9, 0x9a, 0xd9, 0x98,
+	0xd9, 0xd2, 0x8c, 0xda, 0x90, 0xd1, 0x00, 0x5f, 0xc2, 0xb2, 0x1c, 0xca, 0x06, 0xbe, 0xc7, 0x28,
+	0xda, 0x05, 0xe5, 0x86, 0x12, 0x8b, 0x47, 0xcf, 0xed, 0xea, 0xed, 0xd1, 0xbf, 0xb5, 0xd3, 0xa8,
+	0x6e, 0x1c, 0x61, 0xf0, 0x48, 0xb4, 0x00, 0x95, 0xe3, 0x4e, 0xab, 0xb2, 0x31, 0xb3, 0x55, 0x35,
+	0x2a, 0x4e, 0x07, 0x77, 0x13, 0xec, 0x3d, 0xcb, 0x3a, 0x0c, 0x1c, 0xea, 0x59, 0x29, 0x8f, 0x55,
+	0x50, 0x22, 0xff, 0x71, 0x27, 0xc6, 0xae, 0x1a, 0xca, 0x30, 0xb6, 0x50, 0x0b, 0xea, 0x07, 0xbe,
+	0x77, 0xed, 0x04, 0x6e, 0x0c, 0xa2, 0x1a, 0x75, 0x33, 0x31, 0xf1, 0x37, 0x58, 0xc9, 0x21, 0x3d,
+	0x9e, 0x26, 0xde, 0x81, 0xd5, 0x08, 0xec, 0x20, 0xa0, 0x24, 0xa4, 0x47, 0x81, 0x3f, 0x1c, 0x94,
+	0x11, 0xab, 0x8e, 0x88, 0xe1, 0x9f, 0xf0, 0xbc, 0x90, 0xf1, 0x84, 0x7d, 0xfa, 0x9a, 0x8c, 0xcb,
+	0xa0, 0xb6, 0xc3, 0xc2, 0x89, 0xe3, 0x42, 0x3a, 0xa8, 0xa7, 0x84, 0xb1, 0x7b, 0x3f, 0xb0, 0x62,
+	0x00, 0xcd, 0x50, 0x07, 0xdc, 0x4e, 0x47, 0x39, 0x82, 0x79, 0x42, 0x8a, 0xd1, 0x00, 0x06, 0x16,
+	0x09, 0x69, 0xdc, 0x1f, 0xef, 0xda, 0x4f, 0x49, 0xea, 0xa0, 0x9e, 0x38, 0xe6, 0x2f, 0x8f, 0xb8,
+	0x94, 0x13, 0x55, 0x3d, 0x6e, 0x47, 0xed, 0xdc, 0xbb, 0x23, 0x21, 0x09, 0x62, 0xa0, 0x79, 0x43,
+	0x21, 0xb1, 0x85, 0x7b, 0xb0, 0x9a, 0x07, 0x9b, 0x62, 0x9c, 0x08, 0x16, 0xbb, 0x94, 0x04, 0xe1,
+	0x15, 0x25, 0x21, 0x67, 0x85, 0x9b, 0xb0, 0x24, 0xf8, 0x92, 0x34, 0xbc, 0x0f, 0x8b, 0xd1, 0x1f,
+	0xf6, 0x7c, 0xdb, 0xf1, 0x1e, 0xdb, 0xe3, 0x0b, 0x58, 0x12, 0x30, 0x9e, 0xb0, 0xc1, 0xcd, 0x0c,
+	0xd8, 0x1f, 0x66, 0x65, 0x74, 0x01, 0x89, 0xce, 0x29, 0x9a, 0xf4, 0x09, 0xd0, 0x77, 0xea, 0x59,
+	0x7d, 0xca, 0x18, 0xb1, 0x69, 0x5a, 0xfd, 0x5b, 0xa8, 0xf6, 0x99, 0xcd, 0x61, 0x9a, 0x22, 0x4c,
+	0x1a, 0x58, 0x75, 0x99, 0x8d, 0x6d, 0x68, 0x4a, 0xc9, 0x53, 0x94, 0xbd, 0x06, 0x1a, 0x87, 0xc9,
+	0xaa, 0xd7, 0xdc, 0xd4, 0x81, 0x3f, 0x02, 0x32, 0xa8, 0x79, 0x97, 0x63, 0xf9, 0x06, 0x1a, 0x3d,
+	0xc2, 0xc2, 0x51, 0x5e, 0xa2, 0x1a, 0x8d, 0x5b, 0xd1, 0x89, 0x3b, 0xd0, 0x94, 0x72, 0x39, 0xc9,
+	0x6d, 0xa8, 0xf7, 0x99, 0xdd, 0x73, 0x58, 0x18, 0xbf, 0xe9, 0x31, 0x65, 0xd6, 0xdd, 0x24, 0x06,
+	0x7f, 0x81, 0x67, 0x51, 0xc7, 0xb9, 0x3f, 0x72, 0xfd, 0x2f, 0xc2, 0x7b, 0x40, 0xe7, 0x83, 0x5b,
+	0x9f, 0x58, 0xc7, 0xae, 0x50, 0xc3, 0x32, 0xcc, 0xc6, 0x76, 0xcc, 0x7d, 0xde, 0x98, 0x75, 0x22,
+	0x03, 0x9b, 0xd0, 0x94, 0x62, 0xa7, 0x68, 0x6c, 0x0b, 0xea, 0x31, 0x48, 0xd6, 0xd6, 0xba, 0x93,
+	0x98, 0x78, 0x07, 0x96, 0x3b, 0xfe, 0xbd, 0x57, 0xa0, 0x24, 0x64, 0x24, 0x6a, 0x97, 0x65, 0x6c,
+	0xc3, 0x4a, 0x2e, 0x83, 0x13, 0x13, 0xaa, 0xa8, 0x8e, 0xaa, 0x38, 0x83, 0xc6, 0x89, 0x1f, 0x3a,
+	0x66, 0x86, 0xbc, 0x06, 0xda, 0xc1, 0x0d, 0xf1, 0x3c, 0x7a, 0x9b, 0x0d, 0x4b, 0x33, 0x53, 0x47,
+	0x7a, 0xe9, 0x2a, 0x0f, 0x5c, 0xba, 0x0e, 0x2c, 0xa4, 0xa8, 0x8f, 0x6f, 0xcb, 0xee, 0x5f, 0x15,
+	0x6a, 0x47, 0x24, 0xa4, 0xa8, 0x0f, 0x6a, 0x2a, 0x8c, 0x68, 0x5d, 0x4c, 0x2c, 0x51, 0x5e, 0x7d,
+	0x63, 0x7c, 0x00, 0xe7, 0x72, 0x01, 0x0b, 0xb2, 0x84, 0xa1, 0x4d, 0x29, 0xa7, 0x4c, 0x2b, 0x75,
+	0x3c, 0x29, 0x84, 0x03, 0x77, 0x60, 0x36, 0x16, 0x17, 0xb4, 0x96, 0xe7, 0x20, 0xea, 0x96, 0xfe,
+	0x72, 0xcc, 0x29, 0x47, 0x39, 0x04, 0x25, 0x11, 0x0d, 0x54, 0x16, 0x38, 0x52, 0x98, 0x87, 0x70,
+	0x4e, 0x60, 0x4e, 0x78, 0xf9, 0xe8, 0x95, 0x18, 0x5d, 0xd4, 0x13, 0x7d, 0x7d, 0xec, 0xf9, 0x08,
+	0x4f, 0x78, 0xa4, 0x32, 0x5e, 0xf1, 0xe5, 0xcb, 0x78, 0x65, 0xaf, 0xfb, 0x14, 0xb4, 0x6c, 0x27,
+	0x40, 0x85, 0xa9, 0xe5, 0x17, 0x0f, 0x7d, 0x73, 0x42, 0x04, 0x47, 0xec, 0x83, 0x9a, 0xee, 0x42,
+	0xc5, 0x7b, 0x92, 0x5b, 0xa8, 0x8a, 0xf7, 0xa4, 0xb0, 0x46, 0xfd, 0x80, 0x39, 0x61, 0x6b, 0x40,
+	0x38, 0x9f, 0x50, 0x5c, 0x42, 0xf4, 0xd7, 0x13, 0x63, 0x38, 0x6e, 0x17, 0xb4, 0xec, 0x03, 0x27,
+	0x5f, 0x95, 0xfc, 0xb7, 0x50, 0x1e, 0x71, 0xe1, 0xab, 0x18, 0x8d, 0x44, 0xd0, 0x20, 0x79, 0x24,
+	0x45, 0x21, 0x93, 0x47, 0x52, 0x26, 0x5e, 0x67, 0xd0, 0x90, 0xc4, 0x43, 0x1e, 0x4b, 0x99, 0x12,
+	0xc9, 0x63, 0x29, 0x57, 0x9e, 0xcf, 0xa0, 0x24, 0x6a, 0x80, 0x5e, 0x88, 0xc1, 0x92, 0xee, 0xe8,
+	0x7a, 0xd9, 0x51, 0x02, 0xb0, 0xaf, 0x5c, 0xd6, 0x22, 0xf7, 0x95, 0x12, 0x6f, 0xc8, 0x1f, 0xfe,
+	0x05, 0x00, 0x00, 0xff, 0xff, 0xfe, 0x7c, 0x26, 0x34, 0x49, 0x0b, 0x00, 0x00,
 }
