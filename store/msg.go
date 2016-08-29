@@ -6,7 +6,6 @@ import (
 
 	"github.com/juju/errors"
 	"github.com/syndtr/goleveldb/leveldb"
-	lu "github.com/syndtr/goleveldb/leveldb/util"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"

@@ -68,17 +68,17 @@ func (s *store) findUser(user string) (int64, error) {
 }
 
 func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
-	req := &meta.AddFriendRequest{From: from, To: to, Confrim: confirm}
+	req := &meta.AddFriendRequest{From: from, To: to, Confirm: confirm}
 	resp, err := s.api.AddFriend(nil, req)
 	if err != nil {
-		return 0, errors.Trace(err)
+		return false, errors.Trace(err)
 	}
 
 	if resp.Header != nil {
-		return 0, errors.New(resp.Header.Msg)
+		return false, errors.New(resp.Header.Msg)
 	}
 
-	return resp.Confrim, nil
+	return resp.Confirm, nil
 }
 
 func (s *store) createGroup(userID, groupID int64) error {

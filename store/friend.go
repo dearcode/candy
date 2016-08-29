@@ -2,15 +2,10 @@ package store
 
 import (
 	"encoding/json"
-	"fmt"
-	"math"
 
 	"github.com/juju/errors"
-	"github.com/ngaut/log"
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
-
-	"github.com/dearcode/candy/util"
 )
 
 type friendRelation struct {

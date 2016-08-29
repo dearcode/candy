@@ -73,6 +73,21 @@ func (u *userDB) register(user, passwd string, id int64) error {
 	return nil
 }
 
+func (u *userDB) findUser(user string) (int64, error) {
+	v, err := u.db.Get([]byte(user), nil)
+	if err != nil {
+		return 0, err
+	}
+
+	var info UserInfo
+
+	if err = json.Unmarshal(v, &info); err != nil {
+		return 0, err
+	}
+
+	return info.ID, nil
+}
+
 func (u *userDB) auth(user, passwd string) (int64, error) {
 	v, err := u.db.Get([]byte(user), nil)
 	if err != nil {

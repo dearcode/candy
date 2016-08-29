@@ -3,7 +3,6 @@ package store
 import (
 	"math"
 
-	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
 )
 
@@ -26,5 +25,3 @@ func UserFriendKey(user int64, friend int64) []byte {
 func UserFriendRange(id int64) ([]byte, []byte) {
 	return util.EncodeKey(id, util.UserFriendPrefix, int64(0)), util.EncodeKey(id, util.UserFriendPrefix, math.MaxInt64)
 }
-
-

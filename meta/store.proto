@@ -25,7 +25,8 @@ message FindUserRequest {
 }
 
 message FindUserResponse {
-    int64 ID = 1;
+    ResponseHeader header = 1;
+    int64 ID = 2;
 }
 
 message AddFriendRequest {

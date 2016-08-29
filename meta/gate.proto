@@ -51,10 +51,10 @@ message UserAddFriendRequest {
 
 message UserAddFriendResponse {
     ResponseHeader header = 1;
+    bool Confirm = 2;
 }
 
 message UserCreateGroupRequest {
-    repeated int64 UserID = 1;
 }
 
 message UserCreateGroupResponse {
