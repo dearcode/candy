@@ -1,12 +1,24 @@
-all: golint meta gate master notice store 
+all: godep lint meta gate master notice store 
+
+GOLINT := golint
+
+$(GOLINT):
+	go get -u github.com/golang/lint/golint  
+
+GODEP := godep
+
+$(GODEP):
+	go get github.com/tools/godep
 
 .PHONY: meta gate master notice store
 
-meta:
-	 @cd meta; make; cd ..; 
 
-golint:
-	golint gate/
+meta:
+	@cd meta; make; cd ..; 
+
+lint:
+	$(GOLINT) gate/
+	$(GOLINT) store/
 
 clean:
 	@rm -rf bin
@@ -21,13 +33,13 @@ vet:
 
 
 gate:
-	godep go build -o bin/gate ./cmd/gate/main.go
+	$(GODEP) go build -o bin/gate ./cmd/gate/main.go
 
 master:
-	godep go build -o bin/master ./cmd/master/main.go
+	$(GODEP) go build -o bin/master ./cmd/master/main.go
 
 notice:
-	godep go build -o bin/notice ./cmd/notice/main.go
+	$(GODEP) go build -o bin/notice ./cmd/notice/main.go
 
 store:
-	godep go build -o bin/store ./cmd/store/main.go
+	$(GODEP) go build -o bin/store ./cmd/store/main.go
