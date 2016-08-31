@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	host := flag.String("p", "127.0.0.1:9000", "listen host")
+	host := flag.String("p", "127.0.0.1:9001", "listen host")
 	flag.Parse()
 
 	s := master.NewMasterServer(*host)

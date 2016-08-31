@@ -13,7 +13,7 @@ import (
 	"github.com/dearcode/candy/util"
 )
 
-type UserInfo struct {
+type account struct {
 	ID       int64
 	Name     string
 	Password string
@@ -55,7 +55,7 @@ func (u *userDB) register(user, passwd string, id int64) error {
 		return fmt.Errorf("user:%s exist info:%s", user, string(v))
 	}
 
-	buf, err := json.Marshal(UserInfo{Name: user, Password: passwd, ID: id})
+	buf, err := json.Marshal(account{Name: user, Password: passwd, ID: id})
 	if err != nil {
 		return err
 	}
@@ -79,13 +79,13 @@ func (u *userDB) findUser(user string) (int64, error) {
 		return 0, err
 	}
 
-	var info UserInfo
+	var a account
 
-	if err = json.Unmarshal(v, &info); err != nil {
+	if err = json.Unmarshal(v, &a); err != nil {
 		return 0, err
 	}
 
-	return info.ID, nil
+	return a.ID, nil
 }
 
 func (u *userDB) auth(user, passwd string) (int64, error) {
@@ -94,17 +94,17 @@ func (u *userDB) auth(user, passwd string) (int64, error) {
 		return 0, err
 	}
 
-	var info UserInfo
+	var a account
 
-	if err = json.Unmarshal(v, &info); err != nil {
+	if err = json.Unmarshal(v, &a); err != nil {
 		return 0, err
 	}
 
-	if info.Password != passwd {
+	if a.Password != passwd {
 		return 0, fmt.Errorf("invalid passwd:%s expect:%s", string(v))
 	}
 
-	return info.ID, nil
+	return a.ID, nil
 }
 
 func (u *userDB) addMessage(userID int64, msgID int64) error {

@@ -86,10 +86,12 @@ func (s *Store) AddFriend(_ context.Context, req *meta.AddFriendRequest) (*meta.
 	return &meta.AddFriendResponse{}, nil
 }
 
+// CreateGroup create group.
 func (s *Store) CreateGroup(_ context.Context, req *meta.CreateGroupRequest) (*meta.CreateGroupResponse, error) {
 	return nil, nil
 }
 
+// NewMessage save message to leveldb.
 func (s *Store) NewMessage(_ context.Context, req *meta.NewMessageRequest) (*meta.NewMessageResponse, error) {
 	return nil, nil
 }

@@ -2,6 +2,7 @@ package gate
 
 import (
 	"github.com/juju/errors"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
@@ -9,11 +10,12 @@ import (
 
 type store struct {
 	host string
+	ctx  context.Context
 	api  meta.StoreClient
 }
 
 func newStore(host string) *store {
-	return &store{host: host}
+	return &store{host: host, ctx: context.Background()}
 }
 
 func (s *store) start() error {
@@ -27,7 +29,7 @@ func (s *store) start() error {
 
 func (s *store) register(user, passwd string, id int64) error {
 	req := &meta.RegisterRequest{User: user, Password: passwd, ID: id}
-	resp, err := s.api.Register(nil, req)
+	resp, err := s.api.Register(s.ctx, req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -41,7 +43,7 @@ func (s *store) register(user, passwd string, id int64) error {
 
 func (s *store) auth(user, passwd string) (int64, error) {
 	req := &meta.AuthRequest{User: user, Password: passwd}
-	resp, err := s.api.Auth(nil, req)
+	resp, err := s.api.Auth(s.ctx, req)
 	if err != nil {
 		return 0, errors.Trace(err)
 	}
@@ -55,7 +57,7 @@ func (s *store) auth(user, passwd string) (int64, error) {
 
 func (s *store) findUser(user string) (int64, error) {
 	req := &meta.FindUserRequest{User: user}
-	resp, err := s.api.FindUser(nil, req)
+	resp, err := s.api.FindUser(s.ctx, req)
 	if err != nil {
 		return 0, errors.Trace(err)
 	}
@@ -69,7 +71,7 @@ func (s *store) findUser(user string) (int64, error) {
 
 func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
 	req := &meta.AddFriendRequest{From: from, To: to, Confirm: confirm}
-	resp, err := s.api.AddFriend(nil, req)
+	resp, err := s.api.AddFriend(s.ctx, req)
 	if err != nil {
 		return false, errors.Trace(err)
 	}
@@ -83,7 +85,7 @@ func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
 
 func (s *store) createGroup(userID, groupID int64) error {
 	req := &meta.CreateGroupRequest{UserID: userID, GroupID: groupID}
-	resp, err := s.api.CreateGroup(nil, req)
+	resp, err := s.api.CreateGroup(s.ctx, req)
 	if err != nil {
 		return errors.Trace(err)
 	}

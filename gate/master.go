@@ -2,6 +2,7 @@ package gate
 
 import (
 	"github.com/juju/errors"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
@@ -9,11 +10,12 @@ import (
 
 type master struct {
 	host string
+	ctx  context.Context
 	meta.MasterClient
 }
 
 func newMaster(host string) *master {
-	return &master{host: host}
+	return &master{host: host, ctx: context.Background()}
 }
 
 func (m *master) start() error {
@@ -26,7 +28,7 @@ func (m *master) start() error {
 }
 
 func (m *master) newID() (int64, error) {
-	resp, err := m.NewID(nil, &meta.NewIDRequest{})
+	resp, err := m.NewID(m.ctx, &meta.NewIDRequest{})
 	if err != nil {
 		return 0, errors.Trace(err)
 	}

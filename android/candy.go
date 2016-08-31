@@ -39,6 +39,6 @@ func (c *Candy) Register(user, passwd string) (int64, error) {
 		return -1, err
 	}
 
-	return resp.ID, nil
+	return resp.ID, resp.Header
 }
 

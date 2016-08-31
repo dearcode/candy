@@ -7,17 +7,17 @@ import (
 )
 
 var (
-	test_user_db_path = "/tmp/test_user.db"
+	testUserDBPath = "/tmp/test_user.db"
 )
 
 func init() {
-	if err := os.RemoveAll(test_user_db_path); err != nil {
+	if err := os.RemoveAll(testUserDBPath); err != nil {
 		println(err.Error())
 	}
 }
 
 func TestUserDB(t *testing.T) {
-	u := newUserDB(test_user_db_path)
+	u := newUserDB(testUserDBPath)
 	if err := u.start(); err != nil {
 		t.Fatalf("start error:%s", err.Error())
 	}
@@ -43,7 +43,7 @@ func TestUserDB(t *testing.T) {
 }
 
 func TestUserLastMessage(t *testing.T) {
-	u := newUserDB(test_user_db_path)
+	u := newUserDB(testUserDBPath)
 	if err := u.start(); err != nil {
 		t.Fatalf("start error:%s", err.Error())
 	}
@@ -68,7 +68,7 @@ func TestUserLastMessage(t *testing.T) {
 }
 
 func TestUserMessageDB(t *testing.T) {
-	u := newUserDB(test_user_db_path)
+	u := newUserDB(testUserDBPath)
 	if err := u.start(); err != nil {
 		t.Fatalf("start error:%s", err.Error())
 	}
