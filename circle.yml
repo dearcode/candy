@@ -13,6 +13,7 @@ test:
   pre:
     - go version
     - go get github.com/golang/lint/golint
+    - go get github.com/dearcode/candy/server
   override:
-    - cd candy/server; make
+    - cd $GOPATH/src/github.com/dearcode/candy/server;make
 
