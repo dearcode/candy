@@ -15,6 +15,7 @@ test:
     - ls
     
   override:
-    - cd src/github.com/dearcode/server; 
+    - cd server
+    - ls
     - make
 
