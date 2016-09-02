@@ -15,7 +15,6 @@ test:
     - ls
     
   override:
-    - cd server
-    - ls
-    - make
+    - cd server;make
+
 
