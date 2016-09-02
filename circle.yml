@@ -7,13 +7,12 @@ machine:
 
 dependencies:
   post:
-      - git clone git@github.com:dearcode/candy.git
+      - go get github.com/golang/lint/golint
+      - git clone git@github.com:dearcode/candy.git .go_workspace/src/github.com/dearcode/candy
 
 test:
   pre:
     - go version
-    - go get github.com/golang/lint/golint
-    - go get github.com/dearcode/candy/server
   override:
-    - cd $GOPATH/src/github.com/dearcode/candy/server;make
+    - cd .go_workspace/src/github.com/dearcode/candy/server;make
 
