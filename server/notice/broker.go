@@ -6,7 +6,7 @@ import (
 	"github.com/juju/errors"
 	"github.com/ngaut/log"
 
-	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/server/meta"
 )
 
 type gateInfo struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/server/meta"
 )
 
 func TestMessageDB(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"github.com/juju/errors"
 	"google.golang.org/grpc"
 
-	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/server/meta"
 )
 
 type gate struct {

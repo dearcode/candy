@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/server/meta"
 )
 
 const (

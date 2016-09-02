@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/dearcode/candy/store"
+	"github.com/dearcode/candy/server/store"
 )
 
 func main() {

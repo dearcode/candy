@@ -10,7 +10,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
 
-	"github.com/dearcode/candy/util"
+	"github.com/dearcode/candy/server/util"
 )
 
 type account struct {
