@@ -1,10 +1,20 @@
+checkout:
+  pre:
+    - export GOPATH=$GOPATH:`pwd`
+  post:
+    - ls
+    - pwd
+    
 dependencies:
   post:
       - go get github.com/golang/lint/golint
+      
 test:
   pre:
     - go version
+    - ls
+    
   override:
-    - mkdir .go_workspace/src/github.com/dearcode/ 
-    - mv candy .go_workspace/src/github.com/dearcode/
+    - cd src/github.com/dearcode/server; 
+    - make
 
