@@ -7,12 +7,12 @@ machine:
 
 dependencies:
   post:
-    - go get github.com/dearcode/candy
+      - git clone git@github.com:dearcode/candy.git
 
 test:
   pre:
     - go version
   override:
-    - cd server
+    - cd candy/server
     - make
 
