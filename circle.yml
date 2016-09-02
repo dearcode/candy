@@ -2,8 +2,10 @@ checkout:
   pre:
     - export GOPATH=$GOPATH:`pwd`
   post:
-    - ls
-    - pwd
+    - rm -rf         "${GOPATH%%:*}/src/github.com/dearcode/candy"
+    - mkdir -p       "${GOPATH%%:*}/src/github.com/dearcode/"
+    - mv ~/candy     "${GOPATH%%:*}/src/github.com/dearcode/"
+    - ln -s          "${GOPATH%%:*}/src/github.com/dearcode/candy/server" ~/candy
     
 dependencies:
   post:
