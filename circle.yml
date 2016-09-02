@@ -1,18 +1,10 @@
-machine:
-  pre:
-    - curl -o go.tar.gz -sL https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz 
-    - sudo rm -rf /usr/local/go
-    - sudo tar -C /usr/local -xzf go.tar.gz
-    - sudo chmod a+w /usr/local/go/src/
-
 dependencies:
   post:
       - go get github.com/golang/lint/golint
-      - git clone git@github.com:dearcode/candy.git .go_workspace/src/github.com/dearcode/candy
-
 test:
   pre:
     - go version
   override:
-    - cd .go_workspace/src/github.com/dearcode/candy/server;make
+    - mkdir .go_workspace/src/github.com/dearcode/ 
+    - mv candy .go_workspace/src/github.com/dearcode/
 
