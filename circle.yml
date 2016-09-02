@@ -1,22 +1,13 @@
 checkout:
-  pre:
-    - export GOPATH=$GOPATH:`pwd`
   post:
     - rm -rf         "${GOPATH%%:*}/src/github.com/dearcode/candy"
     - mkdir -p       "${GOPATH%%:*}/src/github.com/dearcode/"
     - mv ~/candy     "${GOPATH%%:*}/src/github.com/dearcode/"
-    - ln -s          "${GOPATH%%:*}/src/github.com/dearcode/candy/server" ~/candy
     
-dependencies:
-  post:
-      - go get github.com/golang/lint/golint
-      
 test:
   pre:
     - go version
-    - ls
-    
   override:
-    - cd server;make
+      - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make
 
 

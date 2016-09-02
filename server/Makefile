@@ -1,24 +1,20 @@
-all: godep lint meta gate master notice store 
+all: lint gate master notice store 
 
-GOLINT := golint
+golint:
+	go get github.com/golang/lint/golint  
 
-$(GOLINT):
-	go get -u github.com/golang/lint/golint  
-
-GODEP := godep
-
-$(GODEP):
+godep:
 	go get github.com/tools/godep
 
-.PHONY: meta gate master notice store
+.PHONY: gate master notice store
 
 
 meta:
 	@cd meta; make; cd ..; 
 
-lint:
-	$(GOLINT) gate/
-	$(GOLINT) store/
+lint: golint
+	golint gate/
+	golint store/
 
 clean:
 	@rm -rf bin
@@ -32,14 +28,14 @@ vet:
 	go tool vet --shadow . 2>&1
 
 
-gate:
-	$(GODEP) go build -o bin/gate ./cmd/gate/main.go
+gate: godep
+	godep go build -o bin/gate ./cmd/gate/main.go
 
-master:
-	$(GODEP) go build -o bin/master ./cmd/master/main.go
+master: godep
+	godep go build -o bin/master ./cmd/master/main.go
 
-notice:
-	$(GODEP) go build -o bin/notice ./cmd/notice/main.go
+notice: godep
+	godep go build -o bin/notice ./cmd/notice/main.go
 
-store:
-	$(GODEP) go build -o bin/store ./cmd/store/main.go
+store: godep
+	godep go build -o bin/store ./cmd/store/main.go
