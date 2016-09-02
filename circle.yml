@@ -12,7 +12,7 @@ dependencies:
 test:
   pre:
     - go version
+    - go get github.com/golang/lint/golint
   override:
-    - cd candy/server
-    - make
+    - cd candy/server; make
 
