@@ -31,11 +31,6 @@ It has these top-level messages:
 	UserLoginResponse
 	UserLogoutRequest
 	UserLogoutResponse
-	SendMessageRequest
-	SendMessageResponse
-	RecvMessageRequest
-	RecvMessageResponse
-	UserMessageList
 	UploadImageRequest
 	UploadImageResponse
 	DownloadImageRequest

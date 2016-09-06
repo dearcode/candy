@@ -3,7 +3,6 @@ package candy.meta;
 
 option go_package = "meta";
 
-
 message ResponseHeader {
     int32 Code = 1;
     string Msg = 2;

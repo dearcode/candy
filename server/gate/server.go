@@ -152,14 +152,13 @@ func (g *Gate) Logout(ctx context.Context, req *meta.UserLogoutRequest) (*meta.U
 	return nil, ErrUndefineMethod
 }
 
-// SendMessage from,to,msg.
-func (g *Gate) SendMessage(ctx context.Context, req *meta.SendMessageRequest) (*meta.SendMessageResponse, error) {
-	return nil, ErrUndefineMethod
-}
+// UserMessage recv user message.
+func (g *Gate) UserMessage(stream meta.Gate_UserMessageServer) error {
+	for {
 
-// RecvMessage nil.
-func (g *Gate) RecvMessage(ctx context.Context, req *meta.RecvMessageRequest) (*meta.RecvMessageResponse, error) {
-	return nil, ErrUndefineMethod
+	}
+
+	return nil
 }
 
 // Heartbeat nil.

@@ -13,17 +13,17 @@ const (
 	networkTimeout = time.Second * 3
 )
 
-type Candy struct {
+type CandyClient struct {
 	host string
 	conn *grpc.ClientConn
 	api  meta.GateClient
 }
 
-func NewCandy(host string) *Candy {
-	return &Candy{host: host}
+func NewCandyClient(host string) *CandyClient {
+	return &CandyClient{host: host}
 }
 
-func (c *Candy) Start() (err error) {
+func (c *CandyClient) Start() (err error) {
 	if c.conn, err = grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout)); err != nil {
 		return
 	}
@@ -32,7 +32,7 @@ func (c *Candy) Start() (err error) {
     return
 }
 
-func (c *Candy) Register(user, passwd string) (int64, error) {
+func (c *CandyClient) Register(user, passwd string) (int64, error) {
 	req := &meta.UserRegisterRequest{User: user, Password: passwd}
 	resp, err := c.api.Register(context.Background(), req)
 	if err != nil {

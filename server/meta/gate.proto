@@ -13,8 +13,7 @@ service Gate {
     rpc Login (UserLoginRequest) returns (UserLoginResponse);
     rpc Logout (UserLogoutRequest) returns (UserLoginResponse);
 
-    rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
-    rpc RecvMessage (RecvMessageRequest) returns (RecvMessageResponse);
+    rpc UserMessage (stream Message) returns (stream Message);
 
     // AddFriend 添加好友或确认接受添加.
     rpc AddFriend (UserAddFriendRequest) returns (UserAddFriendResponse);
@@ -83,7 +82,8 @@ message UpdateUserInfoResponse {
 }
 
 
-message HeartbeatRequest {}
+message HeartbeatRequest { }
+
 message HeartbeatResponse {}
 
 message UserLoginRequest {
@@ -97,33 +97,10 @@ message UserLoginResponse {
 }
 
 
-message UserLogoutRequest {
-}
+message UserLogoutRequest {}
 
 message UserLogoutResponse {
     ResponseHeader header = 1;
-}
-
-
-message SendMessageRequest {
-    Message Msg = 1;
-}
-
-message SendMessageResponse {
-    ResponseHeader header = 1;
-    int64 MessageID = 2;
-}
-
-message RecvMessageRequest {
-    int64 LastMessageID = 1;
-}
-
-message RecvMessageResponse {
-    repeated Message MsgList = 1;
-}
-
-message UserMessageList {
-    repeated Message MsgList = 1;
 }
 
 
@@ -139,10 +116,11 @@ message UploadImageResponse {
 message DownloadImageRequest {
     repeated int64 ImageID = 1;
 }
-
 message DownloadImageResponse {
-    repeated bytes Image = 1;
+    ResponseHeader header = 1;
+    repeated bytes Image = 2;
 }
+
 
 message NoticeRequest {
     int64 ChannelID = 1;
