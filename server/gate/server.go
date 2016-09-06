@@ -46,7 +46,7 @@ func NewGate(host, master, store string) *Gate {
 	}
 }
 
-// Start start service.
+// Start Gate service.
 func (g *Gate) Start() error {
 	serv := grpc.NewServer()
 	meta.RegisterGateServer(serv, g)

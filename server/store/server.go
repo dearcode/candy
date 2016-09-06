@@ -22,7 +22,7 @@ func NewStore(host, dbPath string) *Store {
 	return &Store{host: host, dbPath: dbPath, user: newUserDB(dbPath), message: newMessageDB(dbPath)}
 }
 
-// Start start service.
+// Start Store service.
 func (s *Store) Start() error {
 	serv := grpc.NewServer()
 	meta.RegisterStoreServer(serv, s)
