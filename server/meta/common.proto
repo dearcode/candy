@@ -8,10 +8,37 @@ message ResponseHeader {
     string Msg = 2;
 }
 
+
+enum Method {
+    // 添加好友
+    FRIEND_ADD  = 0;
+    // 被删除好友
+    FRIEND_DEL  = 1;
+
+    // 申请加群
+    GROUP_ADD   = 2;
+    // 退出群组
+    GROUP_EXIT  = 3;
+    // 邀请指定用户入群
+    GROUP_INVITE= 4;
+}
+
+// Group 如果当前为群聊，设置为群组ID, 否则为0
+// User 如果当前为私聊，这个设置为收消息用户的ID, 否则为0
+// ID 客户端发送过来时这个字段为0， gate收到后写入实际从master处获取到的消息ID
+// From 发消息的人的ID
 message Message {
+    int64   ID      = 1;
+    Method  Method  = 2;
+    int64   From    = 3;
+    int64   Group   = 4;
+    int64   User    = 5;
+    string  Body    = 6;
+}
+
+message Group {
     int64   ID = 1;
-    int64   From = 2;
-    int64   To = 3;
-    string  Body = 4;
+    string  Name = 2;
+    repeated int64 Users = 3;
 }
 

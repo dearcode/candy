@@ -1,8 +1,10 @@
 package util
 
 const (
-	UserDBPath    = "user"
-	MessageDBPath = "message"
+	UserDBPath       = "user"
+	MessageDBPath    = "message"
+	GroupDBPath      = "group"
+	MessageLogDBPath = "message_log"
 
 	UserMessagePrefix     = int64(0)
 	UserLastMessagePrefix = int64(1)

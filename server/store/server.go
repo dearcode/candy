@@ -91,7 +91,16 @@ func (s *Store) CreateGroup(_ context.Context, req *meta.CreateGroupRequest) (*m
 	return nil, nil
 }
 
-// NewMessage save message to leveldb.
+// NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.NewMessageRequest) (*meta.NewMessageResponse, error) {
+	// add消息到db
+	if err := s.message.add(*req.Msg); err != nil {
+		return &meta.NewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	// 再添加未推送消息队列
+	if err := s.message.addQueue(req.Msg.ID); err != nil {
+		return &meta.NewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	// 再调用推送
 	return nil, nil
 }

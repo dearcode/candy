@@ -29,7 +29,7 @@ func (c *CandyClient) Start() (err error) {
 	}
 
 	c.api = meta.NewGateClient(c.conn)
-    return
+	return
 }
 
 func (c *CandyClient) Register(user, passwd string) (int64, error) {
@@ -41,4 +41,3 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 
 	return resp.ID, resp.Header
 }
-
