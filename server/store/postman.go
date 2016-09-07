@@ -12,8 +12,8 @@ type postman struct {
 	group  *groupDB
 }
 
-func newPostman() *postman {
-	return &postman{}
+func newPostman(user *userDB, friend *friendDB, group *groupDB) *postman {
+	return &postman{user: user, friend: friend, group: group}
 }
 
 func (p *postman) check(msg meta.Message) error {

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/juju/errors"
+	"github.com/ngaut/log"
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
 
@@ -24,15 +25,12 @@ var (
 // 2.异步启动推送，在消息推送到所有用户之后，把消息ID从queue中删除
 // 3.每次启动要检测queue中是否有未推送的消息.
 // 4.定时检测是否有之前推送失败的消息，重新推送.
-
 type messageDB struct {
-	root   string
-	queue  *leveldb.DB // 存储新到的消息
-	stable *leveldb.DB // 所有消息都存在这里
-
-	push chan meta.Message
-
-	retry map[int64]time.Time // 对应queue的内存映射
+	root    string
+	queue   *leveldb.DB // 存储新到的消息
+	stable  *leveldb.DB // 所有消息都存在这里
+	postman *postman
+	retry   map[int64]time.Time // 对应queue的内存映射
 	sync.Mutex
 }
 
@@ -40,7 +38,7 @@ func newMessageDB(dir string) *messageDB {
 	return &messageDB{root: dir, retry: make(map[int64]time.Time)}
 }
 
-func (m *messageDB) start() error {
+func (m *messageDB) start(postman *postman) error {
 	var err error
 	if m.stable, err = leveldb.OpenFile(fmt.Sprintf("%s/%s", m.root, util.MessageDBPath), nil); err != nil {
 		return errors.Trace(err)
@@ -53,23 +51,19 @@ func (m *messageDB) start() error {
 	end := util.EncodeInt64(math.MaxInt64)
 
 	it := m.queue.NewIterator(&lu.Range{Start: start, Limit: end}, nil)
-	m.Lock()
 	for it.Next(); it.Valid(); it.Next() {
-		m.retry[util.DecodeInt64(it.Key())] = m.nextPushTime()
+		m.addRetry(util.DecodeInt64(it.Key()))
 	}
-	m.Unlock()
 
-	go m.redo()
+	m.postman = postman
+
+	go m.repush()
 
 	return nil
 }
 
-func (m *messageDB) nextPushTime() time.Time {
-	return time.Now().Add(pushTimeout)
-}
-
 // 定时推送之前失败过的消息
-func (m *messageDB) redo() {
+func (m *messageDB) repush() {
 	for ; ; time.Sleep(time.Second) {
 		var ids []int64
 		now := time.Now()
@@ -84,24 +78,25 @@ func (m *messageDB) redo() {
 
 		for _, id := range ids {
 			msgs, err := m.get(id)
-			//TODO 处理
 			if err != nil {
+				log.Errorf("get message:%d error:%s", id, errors.ErrorStack(err))
+				m.addRetry(id)
 				continue
 			}
-			if len(msgs) == 0 {
+			if err = m.postman.push(msgs[0]); err != nil {
+				log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
+				m.addRetry(id)
 				continue
 			}
-			m.push <- msgs[0]
-			m.Lock()
-			m.retry[id] = m.nextPushTime()
+			delete(m.retry, id)
+			log.Debugf("remove retry message:%d", id)
 		}
 	}
-
 }
 
 func (m *messageDB) addRetry(id int64) {
 	m.Lock()
-	m.retry[id] = m.nextPushTime()
+	m.retry[id] = time.Now().Add(pushTimeout)
 	m.Unlock()
 }
 

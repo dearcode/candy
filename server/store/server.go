@@ -14,12 +14,26 @@ type Store struct {
 	host    string
 	dbPath  string
 	user    *userDB
+	group   *groupDB
 	message *messageDB
+	postman *postman
+	friend  *friendDB
 }
 
 // NewStore new Store server.
 func NewStore(host, dbPath string) *Store {
-	return &Store{host: host, dbPath: dbPath, user: newUserDB(dbPath), message: newMessageDB(dbPath)}
+	s := &Store{
+		host:    host,
+		dbPath:  dbPath,
+		user:    newUserDB(dbPath),
+		message: newMessageDB(dbPath),
+		group:   newGroupDB(dbPath),
+	}
+
+	s.friend = newFriendDB(s.user)
+	s.postman = newPostman(s.user, s.friend, s.group)
+
+	return s
 }
 
 // Start Store service.
@@ -36,7 +50,7 @@ func (s *Store) Start() error {
 		return err
 	}
 
-	if err = s.message.start(); err != nil {
+	if err = s.message.start(s.postman); err != nil {
 		return err
 	}
 
