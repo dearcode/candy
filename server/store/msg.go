@@ -83,7 +83,7 @@ func (m *messageDB) repush() {
 				m.addRetry(id)
 				continue
 			}
-			if err = m.postman.push(msgs[0]); err != nil {
+			if err = m.postman.forward(msgs[0]); err != nil {
 				log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
 				m.addRetry(id)
 				continue

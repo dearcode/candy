@@ -33,7 +33,7 @@ message UnsubscribeResponse {
 }
 
 message PushRequest {
-    int64 ID = 1;
+    repeated int64 ID = 1;
     Message Msg = 2;
 }
 

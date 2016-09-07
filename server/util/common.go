@@ -1,5 +1,9 @@
 package util
 
+import (
+	"time"
+)
+
 const (
 	UserDBPath       = "user"
 	MessageDBPath    = "message"
@@ -10,6 +14,8 @@ const (
 	UserLastMessagePrefix = int64(1)
 	UserGroupPrefix       = int64(2)
 	UserFriendPrefix      = int64(3)
+
+	NetworkTimeout = time.Second * 3
 )
 
 func EncodeInt64(v int64) []byte {

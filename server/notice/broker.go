@@ -98,7 +98,7 @@ func (b *broker) Unsubscribe(id int64, addr string) {
 	b.Unlock()
 }
 
-func (b *broker) Push(id int64, msg meta.Message) {
+func (b *broker) PushOne(msg meta.Message, id int64) {
 	b.RLock()
 	c, cok := b.channels[id]
 	b.RUnlock()
@@ -111,4 +111,10 @@ func (b *broker) Push(id int64, msg meta.Message) {
 		b.pusher <- message{id: id, addr: g.addr, Message: msg}
 	}
 	c.RUnlock()
+}
+
+func (b *broker) Push(msg meta.Message, ids ...int64) {
+	for _, id := range ids {
+		b.PushOne(msg, id)
+	}
 }

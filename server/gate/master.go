@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util"
 )
 
 type master struct {
@@ -19,7 +20,7 @@ func newMaster(host string) *master {
 }
 
 func (m *master) start() error {
-	conn, err := grpc.Dial(m.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
+	conn, err := grpc.Dial(m.host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout))
 	if err != nil {
 		return errors.Trace(err)
 	}

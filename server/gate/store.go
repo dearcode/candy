@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util"
 )
 
 type store struct {
@@ -19,7 +20,7 @@ func newStore(host string) *store {
 }
 
 func (s *store) start() error {
-	conn, err := grpc.Dial(s.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
+	conn, err := grpc.Dial(s.host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout))
 	if err != nil {
 		return errors.Trace(err)
 	}

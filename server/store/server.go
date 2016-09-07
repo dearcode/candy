@@ -12,6 +12,7 @@ import (
 // Store save user, message.
 type Store struct {
 	host    string
+	notice  string
 	dbPath  string
 	user    *userDB
 	group   *groupDB
@@ -21,7 +22,7 @@ type Store struct {
 }
 
 // NewStore new Store server.
-func NewStore(host, dbPath string) *Store {
+func NewStore(host, notice, dbPath string) *Store {
 	s := &Store{
 		host:    host,
 		dbPath:  dbPath,
@@ -31,7 +32,7 @@ func NewStore(host, dbPath string) *Store {
 	}
 
 	s.friend = newFriendDB(s.user)
-	s.postman = newPostman(s.user, s.friend, s.group)
+	s.postman = newPostman(notice, s.user, s.friend, s.group)
 
 	return s
 }

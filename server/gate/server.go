@@ -3,7 +3,6 @@ package gate
 import (
 	"net"
 	"sync"
-	"time"
 
 	"github.com/juju/errors"
 	"github.com/ngaut/log"
@@ -12,10 +11,6 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	"github.com/dearcode/candy/server/meta"
-)
-
-const (
-	networkTimeout = time.Second * 3
 )
 
 var (
