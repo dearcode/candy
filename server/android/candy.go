@@ -1,7 +1,6 @@
 package candy
 
 import (
-	"fmt"
 	"time"
 
 	"golang.org/x/net/context"
@@ -40,7 +39,7 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 		return -1, err
 	}
 
-	return resp.ID, fmt.Errorf("%v", resp.Header.Msg)
+	return resp.ID, resp.Header.Error()
 }
 
 func (c *CandyClient) Login(user, passwd string) (int64, error) {
@@ -50,5 +49,5 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 		return -1, err
 	}
 
-	return resp.ID, fmt.Errorf("%v", resp.Header.Msg)
+	return resp.ID, resp.Header.Error()
 }
