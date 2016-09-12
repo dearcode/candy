@@ -81,6 +81,7 @@ message UpdateUserInfoRequest {
 
 message UpdateUserInfoResponse {
     ResponseHeader header = 1;
+    int64 ID = 2;
 }
 
 message UpdateUserPasswordRequest {
@@ -90,6 +91,7 @@ message UpdateUserPasswordRequest {
 
 message UpdateUserPasswordResponse {
     ResponseHeader header = 1;
+    int64 ID = 2;
 }
 
 message HeartbeatRequest { }
