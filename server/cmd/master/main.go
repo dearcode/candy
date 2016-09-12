@@ -11,5 +11,7 @@ func main() {
 	flag.Parse()
 
 	s := master.NewMasterServer(*host)
-	s.Start()
+	if err := s.Start(); err != nil {
+		println(err.Error())
+	}
 }

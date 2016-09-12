@@ -2,6 +2,7 @@ package gate
 
 import (
 	"github.com/juju/errors"
+	"github.com/ngaut/log"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -20,6 +21,7 @@ func newMaster(host string) *master {
 }
 
 func (m *master) start() error {
+	log.Debug("master Start...")
 	conn, err := grpc.Dial(m.host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout))
 	if err != nil {
 		return errors.Trace(err)
@@ -29,6 +31,7 @@ func (m *master) start() error {
 }
 
 func (m *master) newID() (int64, error) {
+	log.Debug("master newID")
 	resp, err := m.NewID(m.ctx, &meta.NewIDRequest{})
 	if err != nil {
 		return 0, errors.Trace(err)

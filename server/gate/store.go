@@ -2,6 +2,7 @@ package gate
 
 import (
 	"github.com/juju/errors"
+	"github.com/ngaut/log"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -20,6 +21,7 @@ func newStore(host string) *store {
 }
 
 func (s *store) start() error {
+	log.Debug("store start...")
 	conn, err := grpc.Dial(s.host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout))
 	if err != nil {
 		return errors.Trace(err)
@@ -29,6 +31,7 @@ func (s *store) start() error {
 }
 
 func (s *store) register(user, passwd string, id int64) error {
+	log.Debugf("store register, user:%v passwd:%v", user, passwd)
 	req := &meta.RegisterRequest{User: user, Password: passwd, ID: id}
 	resp, err := s.api.Register(s.ctx, req)
 	if err != nil {
@@ -43,6 +46,7 @@ func (s *store) register(user, passwd string, id int64) error {
 }
 
 func (s *store) auth(user, passwd string) (int64, error) {
+	log.Debugf("store auth, user:%v passwd:%v", user, passwd)
 	req := &meta.AuthRequest{User: user, Password: passwd}
 	resp, err := s.api.Auth(s.ctx, req)
 	if err != nil {
@@ -57,6 +61,7 @@ func (s *store) auth(user, passwd string) (int64, error) {
 }
 
 func (s *store) findUser(user string) (int64, error) {
+	log.Debugf("store findUser, user:%v", user)
 	req := &meta.FindUserRequest{User: user}
 	resp, err := s.api.FindUser(s.ctx, req)
 	if err != nil {
@@ -71,6 +76,7 @@ func (s *store) findUser(user string) (int64, error) {
 }
 
 func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
+	log.Debugf("store addFriend, from:%v to:%v confirm:%v", from, to, confirm)
 	req := &meta.AddFriendRequest{From: from, To: to, Confirm: confirm}
 	resp, err := s.api.AddFriend(s.ctx, req)
 	if err != nil {
@@ -85,6 +91,7 @@ func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
 }
 
 func (s *store) createGroup(userID, groupID int64) error {
+	log.Debugf("store createGroup, userID:%v groupID:%v", userID, groupID)
 	req := &meta.CreateGroupRequest{UserID: userID, GroupID: groupID}
 	resp, err := s.api.CreateGroup(s.ctx, req)
 	if err != nil {

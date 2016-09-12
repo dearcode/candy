@@ -5,6 +5,6 @@ import (
 )
 
 // Error return error.
-func (r *ResponseHeader) Error() string {
-	return fmt.Sprintf("%d:%s", r.Code, r.Msg)
+func (r *ResponseHeader) Error() error {
+	return fmt.Errorf("%d:%s", r.Code, r.Msg)
 }

@@ -43,6 +43,7 @@ func NewGate(host, master, store string) *Gate {
 
 // Start Gate service.
 func (g *Gate) Start() error {
+	log.Debugf("Gate Start...")
 	serv := grpc.NewServer()
 	meta.RegisterGateServer(serv, g)
 
@@ -63,6 +64,7 @@ func (g *Gate) Start() error {
 }
 
 func (g *Gate) getSession(ctx context.Context) (*session, error) {
+	log.Debug("Gate getSession")
 	md, ok := metadata.FromContext(ctx)
 	if !ok {
 		return nil, errors.Trace(ErrInvalidContext)
@@ -88,6 +90,7 @@ func (g *Gate) getSession(ctx context.Context) (*session, error) {
 }
 
 func (g *Gate) getOnlineSession(ctx context.Context) (*session, error) {
+	log.Debug("Gate getOnlineSession")
 	s, err := g.getSession(ctx)
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -102,6 +105,7 @@ func (g *Gate) getOnlineSession(ctx context.Context) (*session, error) {
 
 // Register user, passwd.
 func (g *Gate) Register(ctx context.Context, req *meta.UserRegisterRequest) (*meta.UserRegisterResponse, error) {
+	log.Debug("Gate Register")
 	_, err := g.getSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
@@ -113,6 +117,8 @@ func (g *Gate) Register(ctx context.Context, req *meta.UserRegisterRequest) (*me
 		return &meta.UserRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
+	log.Debugf("Register user:%v password:%v", req.User, req.Password)
+
 	if err = g.store.register(req.User, req.Password, id); err != nil {
 		return &meta.UserRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -122,16 +128,20 @@ func (g *Gate) Register(ctx context.Context, req *meta.UserRegisterRequest) (*me
 
 // UpdateUserInfo nickname.
 func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.UpdateUserInfoRequest) (*meta.UpdateUserInfoResponse, error) {
+	log.Debug("Gate UpdateUserInfo")
 	return nil, ErrUndefineMethod
 }
 
 // Login user,passwd.
 func (g *Gate) Login(ctx context.Context, req *meta.UserLoginRequest) (*meta.UserLoginResponse, error) {
+	log.Debug("Gate Login")
 	s, err := g.getSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
 		return nil, err
 	}
+
+	log.Debugf("Login user:%v password:%v", req.User, req.Password)
 	id, err := g.store.auth(req.User, req.Password)
 	if err != nil {
 		return &meta.UserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
@@ -144,13 +154,15 @@ func (g *Gate) Login(ctx context.Context, req *meta.UserLoginRequest) (*meta.Use
 
 // Logout nil.
 func (g *Gate) Logout(ctx context.Context, req *meta.UserLogoutRequest) (*meta.UserLoginResponse, error) {
+	log.Debug("Gate Logout")
 	return nil, ErrUndefineMethod
 }
 
 // UserMessage recv user message.
 func (g *Gate) UserMessage(stream meta.Gate_UserMessageServer) error {
+	log.Debugf("Gate UserMessage")
 	for {
-
+		break
 	}
 
 	return nil

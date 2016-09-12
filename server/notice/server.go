@@ -4,6 +4,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/ngaut/log"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -27,6 +28,7 @@ func NewNotifer(host string) *Notifer {
 
 // Start start service.
 func (n *Notifer) Start() error {
+	log.Debug("notice Start...")
 	serv := grpc.NewServer()
 
 	meta.RegisterNoticeServer(serv, n)

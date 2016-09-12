@@ -3,6 +3,7 @@ package store
 import (
 	"net"
 
+	"github.com/ngaut/log"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -39,6 +40,7 @@ func NewStore(host, notice, dbPath string) *Store {
 
 // Start Store service.
 func (s *Store) Start() error {
+	log.Debug("Store Start...")
 	serv := grpc.NewServer()
 	meta.RegisterStoreServer(serv, s)
 
@@ -60,6 +62,7 @@ func (s *Store) Start() error {
 
 // Register add user.
 func (s *Store) Register(_ context.Context, req *meta.RegisterRequest) (*meta.RegisterResponse, error) {
+	log.Debugf("Store Register, user:%v passwd:%v ID:%v", req.User, req.Password, req.ID)
 	if err := s.user.register(req.User, req.Password, req.ID); err != nil {
 		return &meta.RegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -69,6 +72,7 @@ func (s *Store) Register(_ context.Context, req *meta.RegisterRequest) (*meta.Re
 
 // Auth check password.
 func (s *Store) Auth(_ context.Context, req *meta.AuthRequest) (*meta.AuthResponse, error) {
+	log.Debugf("Store Auth, user:%v passwd:%v", req.User, req.Password)
 	id, err := s.user.auth(req.User, req.Password)
 	if err != nil {
 		return &meta.AuthResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
@@ -78,6 +82,7 @@ func (s *Store) Auth(_ context.Context, req *meta.AuthRequest) (*meta.AuthRespon
 
 // FindUser 根据字符串的用户名查的用户信息.
 func (s *Store) FindUser(_ context.Context, req *meta.FindUserRequest) (*meta.FindUserResponse, error) {
+	log.Debugf("Store FindUser, user:%v", req.User)
 	id, err := s.user.findUser(req.User)
 	if err != nil {
 		return &meta.FindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
@@ -87,6 +92,7 @@ func (s *Store) FindUser(_ context.Context, req *meta.FindUserRequest) (*meta.Fi
 
 // AddFriend 添加好友，两人都添加过对方后才可以聊天.
 func (s *Store) AddFriend(_ context.Context, req *meta.AddFriendRequest) (*meta.AddFriendResponse, error) {
+	log.Debugf("Store AddFriend, from:%v to:%v Confirm:%v", req.From, req.To, req.Confirm)
 	if err := s.user.friend.add(req.From, req.To, req.Confirm); err != nil {
 		return &meta.AddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -103,11 +109,13 @@ func (s *Store) AddFriend(_ context.Context, req *meta.AddFriendRequest) (*meta.
 
 // CreateGroup create group.
 func (s *Store) CreateGroup(_ context.Context, req *meta.CreateGroupRequest) (*meta.CreateGroupResponse, error) {
+	log.Debugf("Store CreateGroup")
 	return nil, nil
 }
 
 // NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.NewMessageRequest) (*meta.NewMessageResponse, error) {
+	log.Debugf("Store NewMessage, msg:%v", req.Msg)
 	// add消息到db
 	if err := s.message.add(*req.Msg); err != nil {
 		return &meta.NewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil

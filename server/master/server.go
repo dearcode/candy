@@ -3,6 +3,7 @@ package master
 import (
 	"net"
 
+	"github.com/ngaut/log"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -20,6 +21,7 @@ func NewMasterServer(host string) *masterServer {
 }
 
 func (g *masterServer) Start() error {
+	log.Debugf("masterServer Start...")
 	serv := grpc.NewServer()
 	meta.RegisterMasterServer(serv, g)
 
