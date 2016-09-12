@@ -9,6 +9,7 @@ import "common.proto";
 service Gate {
     rpc Register (UserRegisterRequest) returns (UserRegisterResponse);
     rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
+    rpc UpdateUserPassword (UpdateUserPasswordRequest) returns (UpdateUserPasswordResponse);
 
     rpc Login (UserLoginRequest) returns (UserLoginResponse);
     rpc Logout (UserLogoutRequest) returns (UserLoginResponse);
@@ -73,14 +74,23 @@ message UserRegisterResponse {
 }
 
 message UpdateUserInfoRequest {
-    string Nickname = 1;
-    bytes Avatar = 2;
+    string User = 1;
+    string NickName = 2;
+    bytes Avastar = 3;
 }
 
 message UpdateUserInfoResponse {
     ResponseHeader header = 1;
 }
 
+message UpdateUserPasswordRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message UpdateUserPasswordResponse {
+    ResponseHeader header = 1;
+}
 
 message HeartbeatRequest { }
 

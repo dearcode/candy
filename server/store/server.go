@@ -70,6 +70,26 @@ func (s *Store) Register(_ context.Context, req *meta.RegisterRequest) (*meta.Re
 	return &meta.RegisterResponse{}, nil
 }
 
+// UpdateInfo update user base info, ex: nickname, picurl and so on
+func (s *Store) UpdateInfo(_ context.Context, req *meta.UpdateInfoRequest) (*meta.UpdateInfoResponse, error) {
+	log.Debugf("Store UpdateInfo, user:%v niceName:%v", req.User, req.NickName)
+	if err := s.user.updateUserInfo(req.User, req.NickName, req.Avatar); err != nil {
+		return &meta.UpdateInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.UpdateInfoResponse{}, nil
+}
+
+// UpdatePassword update user password
+func (s *Store) UpdatePassword(_ context.Context, req *meta.UpdatePasswordRequest) (*meta.UpdatePasswordResponse, error) {
+	log.Debugf("Store UpdatePassword, user:")
+	if err := s.user.updateUserPassword(req.User, req.Password); err != nil {
+		return &meta.UpdatePasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.UpdatePasswordResponse{}, nil
+}
+
 // Auth check password.
 func (s *Store) Auth(_ context.Context, req *meta.AuthRequest) (*meta.AuthResponse, error) {
 	log.Debugf("Store Auth, user:%v passwd:%v", req.User, req.Password)

@@ -7,6 +7,9 @@ import "common.proto";
 
 service Store {
     rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc UpdateInfo(UpdateInfoRequest) returns (UpdateInfoResponse);
+    rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
+
     rpc Auth(AuthRequest) returns (AuthResponse);
 
     // AddFriend 添加好友，两人都添加过对方后才可以聊天.
@@ -50,6 +53,26 @@ message RegisterResponse {
     ResponseHeader header = 1;
 }
 
+message UpdateInfoRequest {
+    int64 ID = 1;
+    string User = 2;
+    string NickName = 3;
+    bytes Avatar = 4;
+}
+
+message UpdateInfoResponse {
+    ResponseHeader header = 1;
+}
+
+message UpdatePasswordRequest {
+    int64 ID = 1;
+    string User = 2;
+    string Password = 3;
+}
+
+message UpdatePasswordResponse {
+    ResponseHeader header = 1;
+}
 
 message AuthRequest {
     string User = 1;

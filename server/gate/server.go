@@ -132,6 +132,12 @@ func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.UpdateUserInfoReque
 	return nil, ErrUndefineMethod
 }
 
+// UpdateUserPassword update user password
+func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.UpdateUserPasswordRequest) (*meta.UpdateUserPasswordResponse, error) {
+	log.Debug("Gate UpdateUserPassword")
+	return nil, ErrUndefineMethod
+}
+
 // Login user,passwd.
 func (g *Gate) Login(ctx context.Context, req *meta.UserLoginRequest) (*meta.UserLoginResponse, error) {
 	log.Debug("Gate Login")
