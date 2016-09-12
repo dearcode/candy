@@ -4,9 +4,9 @@ import (
 	"sync"
 
 	"github.com/juju/errors"
-	"github.com/ngaut/log"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util/log"
 )
 
 type gateInfo struct {

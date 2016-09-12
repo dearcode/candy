@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/juju/errors"
-	"github.com/ngaut/log"
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
 
 	"github.com/dearcode/candy/server/meta"
 	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/server/util/log"
 )
 
 var (

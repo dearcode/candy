@@ -6,11 +6,11 @@ import (
 	"math"
 
 	"github.com/juju/errors"
-	"github.com/ngaut/log"
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
 
 	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/server/util/log"
 )
 
 type account struct {

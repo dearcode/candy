@@ -3,7 +3,7 @@ package gate
 import (
 	"time"
 
-	"github.com/ngaut/log"
+	"github.com/dearcode/candy/server/util/log"
 )
 
 const (
