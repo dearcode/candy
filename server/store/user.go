@@ -41,30 +41,40 @@ func (u *userDB) start() error {
 }
 
 func (u *userDB) register(user, passwd string, id int64) error {
+	log.Debugf("user:%v passwd:%v", user, passwd)
 	txn, err := u.db.OpenTransaction()
 	if err != nil {
+		txn.Discard()
 		return err
 	}
 
+	log.Debugf("open transaction finished")
 	v, err := txn.Get([]byte(user), nil)
 	if err != nil && err != leveldb.ErrNotFound {
+		txn.Discard()
 		return err
 	}
 
+	log.Debugf("check whether the user exist")
+
 	if len(v) != 0 {
+		txn.Discard()
 		return fmt.Errorf("user:%s exist info:%s", user, string(v))
 	}
 
 	buf, err := json.Marshal(account{Name: user, Password: passwd, ID: id})
 	if err != nil {
+		txn.Discard()
 		return err
 	}
 
 	if err = txn.Put([]byte(user), buf, nil); err != nil {
+		txn.Discard()
 		return err
 	}
 
 	if err = txn.Commit(); err != nil {
+		txn.Discard()
 		return err
 	}
 

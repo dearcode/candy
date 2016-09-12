@@ -10,13 +10,13 @@ func TestCandy(t *testing.T) {
 		t.Fatalf("start client error:%s", err.Error())
 	}
 
-	id, err := c.Register("abcd", "123")
+	id, err := c.Register("adlkje", "123")
 	if err != nil {
 		t.Fatalf("Register error:%v", err)
 	}
 	t.Logf("register userID:%d", id)
 
-	id, err = c.Login("abcd", "123")
+	id, err = c.Login("adlkje", "123")
 	if err != nil {
 		t.Fatalf("Login error:%v", err)
 	}
