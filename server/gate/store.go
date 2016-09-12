@@ -2,13 +2,14 @@ package gate
 
 import (
 	"github.com/juju/errors"
-	"github.com/ngaut/log"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
 	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/server/util/log"
 )
+
 
 type store struct {
 	host string
