@@ -19,25 +19,25 @@ type session struct {
 }
 
 func newSession(addr string) *session {
-	log.Debugf("new session from:%s", addr)
+	log.Debugf("addr:%s", addr)
 	return &session{addr: addr}
 }
 
 func (s *session) online(id int64) {
-	log.Debugf("session online id:%v", id)
+	log.Debugf("id:%v", id)
 	s.state = stateOnline
 	s.id = id
 	s.last = time.Now().Unix()
 }
 
 func (s *session) offline() {
-	log.Debugf("session offline id:%v", s.id)
+	log.Debugf("id:%v", s.id)
 	s.state = stateOffline
 }
 
 func (s *session) update() {
-	log.Debugf("session update")
 	s.last = time.Now().Unix()
+	log.Debugf("last:%v", s.last)
 }
 
 func (s *session) getAddr() string {
