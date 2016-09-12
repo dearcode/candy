@@ -60,6 +60,39 @@ func (s *store) auth(user, passwd string) (int64, error) {
 	return resp.ID, nil
 }
 
+func (s *store) updateUserInfo(user, nickName string, avatar []byte) (int64, error) {
+	log.Debugf("updateUserInfo user:%v nickName:%v", user, nickName)
+	req := &meta.UpdateInfoRequest{User: user, NickName: nickName, Avatar: avatar}
+	resp, err := s.api.UpdateInfo(s.ctx, req)
+	if err != nil {
+		return 0, errors.Trace(err)
+	}
+
+	log.Debugf("updateUserInfo success")
+	if resp.Header != nil {
+		return 0, errors.New(resp.Header.Msg)
+	}
+	log.Debugf("success")
+
+	return resp.ID, nil
+}
+
+func (s *store) userInfo(user string) (int64, string, string, []byte, error) {
+	log.Debugf("get userInfo user:%v", user)
+	req := &meta.GetUserInfoRequest{User: user}
+	resp, err := s.api.GetUserInfo(s.ctx, req)
+	if err != nil {
+		return -1, "", "", nil, errors.Trace(err)
+	}
+
+	if resp.Header != nil {
+		return -1, "", "", nil, errors.New(resp.Header.Msg)
+	}
+	log.Debugf("success")
+
+	return resp.ID, resp.User, resp.NickName, resp.Avatar, nil
+}
+
 func (s *store) findUser(user string) (int64, error) {
 	log.Debugf("store findUser, user:%v", user)
 	req := &meta.FindUserRequest{User: user}

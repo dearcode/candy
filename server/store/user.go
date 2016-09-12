@@ -169,57 +169,86 @@ func (u *userDB) updateUserPassword(user, passwd string) error {
 	return nil
 }
 
-func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) error {
+func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) (int64, error) {
 	txn, err := u.db.OpenTransaction()
 	if err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
 	log.Debugf("open transaction finished")
 	v, err := txn.Get([]byte(user), nil)
 	if err != nil && err != leveldb.ErrNotFound {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
 	log.Debugf("check whether the user exist")
 	if len(v) == 0 {
 		txn.Discard()
-		return errors.Errorf("user:%s not exist info:%s", user, string(v))
+		return -1, errors.Errorf("user:%s not exist info:%s", user, string(v))
 	}
 
 	var a account
+	var update bool
+	var id int64
 	if err = json.Unmarshal(v, &a); err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
+	id = a.ID
+	log.Debugf("compare nickName, old:%v new:%v", a.NickName, nickName)
 	if nickName != "" && a.NickName != nickName {
 		a.NickName = nickName
+		update = true
 	}
 
+	log.Debugf("compare avatar")
 	if avatar != nil && bytes.Compare(a.Avatar, avatar) != 0 {
 		a.Avatar = avatar
+		update = true
+	}
+
+	//no change
+	if !update {
+		txn.Discard()
+		return id, nil
 	}
 
 	buf, err := json.Marshal(a)
 	if err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
 	if err = txn.Put([]byte(user), buf, nil); err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
 	if err = txn.Commit(); err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
-	return nil
+	log.Debugf("success")
+
+	return id, nil
+}
+
+func (u *userDB) getUserInfo(user string) (*account, error) {
+	v, err := u.db.Get([]byte(user), nil)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	var a account
+	if err = json.Unmarshal(v, &a); err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	return &a, nil
 }
 
 func (u *userDB) addMessage(userID int64, msgID int64) error {

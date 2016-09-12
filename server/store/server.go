@@ -73,11 +73,12 @@ func (s *Store) Register(_ context.Context, req *meta.RegisterRequest) (*meta.Re
 // UpdateInfo update user base info, ex: nickname, picurl and so on
 func (s *Store) UpdateInfo(_ context.Context, req *meta.UpdateInfoRequest) (*meta.UpdateInfoResponse, error) {
 	log.Debugf("Store UpdateInfo, user:%v niceName:%v", req.User, req.NickName)
-	if err := s.user.updateUserInfo(req.User, req.NickName, req.Avatar); err != nil {
+	id, err := s.user.updateUserInfo(req.User, req.NickName, req.Avatar)
+	if err != nil {
 		return &meta.UpdateInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.UpdateInfoResponse{}, nil
+	return &meta.UpdateInfoResponse{ID: id}, nil
 }
 
 // UpdatePassword update user password
@@ -88,6 +89,17 @@ func (s *Store) UpdatePassword(_ context.Context, req *meta.UpdatePasswordReques
 	}
 
 	return &meta.UpdatePasswordResponse{}, nil
+}
+
+// GetUserInfo get user base info
+func (s *Store) GetUserInfo(_ context.Context, req *meta.GetUserInfoRequest) (*meta.GetUserInfoResponse, error) {
+	log.Debugf("GetUserInfo, user:%v", req.User)
+	a, err := s.user.getUserInfo(req.User)
+	if err != nil {
+		return &meta.GetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GetUserInfoResponse{ID: a.ID, User: a.Name, NickName: a.NickName, Avatar: a.Avatar}, nil
 }
 
 // Auth check password.

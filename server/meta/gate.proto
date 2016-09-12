@@ -10,6 +10,7 @@ service Gate {
     rpc Register (UserRegisterRequest) returns (UserRegisterResponse);
     rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
     rpc UpdateUserPassword (UpdateUserPasswordRequest) returns (UpdateUserPasswordResponse);
+    rpc UserInfo (UserInfoRequest) returns (UserInfoResponse);
 
     rpc Login (UserLoginRequest) returns (UserLoginResponse);
     rpc Logout (UserLogoutRequest) returns (UserLoginResponse);
@@ -76,7 +77,7 @@ message UserRegisterResponse {
 message UpdateUserInfoRequest {
     string User = 1;
     string NickName = 2;
-    bytes Avastar = 3;
+    bytes Avatar = 3;
 }
 
 message UpdateUserInfoResponse {
@@ -93,6 +94,19 @@ message UpdateUserPasswordResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
+
+message UserInfoRequest {
+    string User = 1;
+}
+
+message UserInfoResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+    string User = 3;
+    string NickName = 4;
+    bytes Avatar = 5;
+}
+
 
 message HeartbeatRequest { }
 

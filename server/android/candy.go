@@ -52,8 +52,8 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
-func (c *CandyClient) UpdateUserInfo(user, nickName string, avastar []byte) (int64, error) {
-	req := &meta.UpdateUserInfoRequest{User: user, NickName: nickName, Avastar: avastar}
+func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int64, error) {
+	req := &meta.UpdateUserInfoRequest{User: user, NickName: nickName, Avatar: avatar}
 	resp, err := c.api.UpdateUserInfo(context.Background(), req)
 	if err != nil {
 		return -1, err
@@ -70,4 +70,14 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
 	}
 
 	return resp.ID, resp.Header.Error()
+}
+
+func (c *CandyClient) UserInfo(user string) (int64, string, string, []byte, error) {
+	req := &meta.UserInfoRequest{User: user}
+	resp, err := c.api.UserInfo(context.Background(), req)
+	if err != nil {
+		return -1, "", "", nil, err
+	}
+
+	return resp.ID, resp.User, resp.NickName, resp.Avatar, nil
 }

@@ -9,6 +9,7 @@ service Store {
     rpc Register(RegisterRequest) returns (RegisterResponse);
     rpc UpdateInfo(UpdateInfoRequest) returns (UpdateInfoResponse);
     rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
+    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
 
     rpc Auth(AuthRequest) returns (AuthResponse);
 
@@ -54,24 +55,36 @@ message RegisterResponse {
 }
 
 message UpdateInfoRequest {
-    int64 ID = 1;
-    string User = 2;
-    string NickName = 3;
-    bytes Avatar = 4;
+    string User = 1;
+    string NickName = 2;
+    bytes Avatar = 3;
 }
 
 message UpdateInfoResponse {
     ResponseHeader header = 1;
+    int64 ID = 2;
 }
 
 message UpdatePasswordRequest {
-    int64 ID = 1;
-    string User = 2;
-    string Password = 3;
+    string User = 1;
+    string Password = 2;
 }
 
 message UpdatePasswordResponse {
     ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+message GetUserInfoRequest {
+    string User = 1;
+}
+
+message GetUserInfoResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+    string User = 3;
+    string NickName = 4;
+    bytes Avatar = 5;
 }
 
 message AuthRequest {

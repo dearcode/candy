@@ -129,13 +129,53 @@ func (g *Gate) Register(ctx context.Context, req *meta.UserRegisterRequest) (*me
 // UpdateUserInfo nickname.
 func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.UpdateUserInfoRequest) (*meta.UpdateUserInfoResponse, error) {
 	log.Debug("Gate UpdateUserInfo")
-	return nil, ErrUndefineMethod
+	s, err := g.getSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	if !s.isOnline() {
+		err := errors.Errorf("current user is offline")
+		return nil, err
+	}
+
+	log.Debugf("updateUserInfo user:%v niceName:%v", req.User, req.NickName)
+	id, err := g.store.updateUserInfo(req.User, req.NickName, req.Avatar)
+	if err != nil {
+		return &meta.UpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}, ID: id}, nil
+	}
+
+	return &meta.UpdateUserInfoResponse{ID: id}, nil
 }
 
 // UpdateUserPassword update user password
 func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.UpdateUserPasswordRequest) (*meta.UpdateUserPasswordResponse, error) {
 	log.Debug("Gate UpdateUserPassword")
 	return nil, ErrUndefineMethod
+}
+
+// UserInfo get user base info
+func (g *Gate) UserInfo(ctx context.Context, req *meta.UserInfoRequest) (*meta.UserInfoResponse, error) {
+	log.Debugf("Gate UserInfo")
+	s, err := g.getSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	if !s.isOnline() {
+		err := errors.Errorf("current user is offline")
+		return nil, err
+	}
+
+	log.Debugf("get UserInfo user:%v", req.User)
+	id, name, nickName, avatar, err := g.store.userInfo(req.User)
+	if err != nil {
+		return &meta.UserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.UserInfoResponse{ID: id, User: name, NickName: nickName, Avatar: avatar}, nil
 }
 
 // Login user,passwd.
