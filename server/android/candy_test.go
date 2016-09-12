@@ -55,7 +55,7 @@ func TestMultiRegister(t *testing.T) {
 	}
 
 	for i := 0; i < count; i++ {
-		userName := fmt.Sprintf("testuser%v", time.Now().Unix())
+		userName := fmt.Sprintf("testuser%v", time.Now().UnixNano())
 		userPasswd := "testpwd"
 
 		id, err := c.Register(userName, userPasswd)
