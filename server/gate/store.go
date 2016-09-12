@@ -10,7 +10,6 @@ import (
 	"github.com/dearcode/candy/server/util/log"
 )
 
-
 type store struct {
 	host string
 	ctx  context.Context

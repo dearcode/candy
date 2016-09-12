@@ -1,5 +1,8 @@
 all: lint gate master notice store 
 
+LDFLAGS += -X "github.com/dearcode/candy/server/util.BUILD_TIME=$(shell date)"
+LDFLAGS += -X "github.com/dearcode/candy/server/util.BUILD_VERSION=$(shell git rev-parse HEAD)"
+
 golint:
 	go get github.com/golang/lint/golint  
 
@@ -7,6 +10,8 @@ godep:
 	go get github.com/tools/godep
 
 .PHONY: gate master notice store
+
+
 
 
 meta:
@@ -29,13 +34,13 @@ vet:
 
 
 gate: godep
-	godep go build -o bin/gate ./cmd/gate/main.go
+	godep go build -ldflags '$(LDFLAGS)' -o bin/gate ./cmd/gate/main.go
 
 master: godep
-	godep go build -o bin/master ./cmd/master/main.go
+	godep go build -ldflags '$(LDFLAGS)' -o bin/master ./cmd/master/main.go
 
 notice: godep
-	godep go build -o bin/notice ./cmd/notice/main.go
+	godep go build -ldflags '$(LDFLAGS)' -o bin/notice ./cmd/notice/main.go
 
 store: godep
-	godep go build -o bin/store ./cmd/store/main.go
+	godep go build -ldflags '$(LDFLAGS)' -o bin/store ./cmd/store/main.go

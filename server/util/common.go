@@ -1,7 +1,13 @@
 package util
 
 import (
+	"fmt"
 	"time"
+)
+
+var (
+	BUILD_TIME    = ""
+	BUILD_VERSION = ""
 )
 
 const (
@@ -17,6 +23,12 @@ const (
 
 	NetworkTimeout = time.Second * 3
 )
+
+func PrintVersion() {
+	fmt.Printf("Candy\n")
+	fmt.Printf("Build Time: %s\n", BUILD_TIME)
+	fmt.Printf("Git Version: %s\n", BUILD_VERSION)
+}
 
 func EncodeInt64(v int64) []byte {
 	return []byte{byte(v >> 56), byte(v >> 48), byte(v >> 40), byte(v >> 32), byte(v >> 24), byte(v >> 16), byte(v >> 8), byte(v)}
