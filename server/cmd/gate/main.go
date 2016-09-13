@@ -8,9 +8,9 @@ import (
 )
 
 func main() {
-	host := flag.String("p", "127.0.0.1:9000", "listen host")
-	master := flag.String("m", "127.0.0.1:9001", "master host")
-	store := flag.String("s", "127.0.0.1:9004", "store host")
+	host := flag.String("p", "0.0.0.0:9000", "listen host")
+	master := flag.String("m", "0.0.0.0:9001", "master host")
+	store := flag.String("s", "0.0.0.0:9004", "store host")
 	version := flag.Bool("v", false, "print version")
 	flag.Parse()
 
