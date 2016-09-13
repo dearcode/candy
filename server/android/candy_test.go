@@ -88,16 +88,16 @@ func TestUpdateUserInfo(t *testing.T) {
 
 	t.Logf("UpdateUserInfo success, userID:%d userName:%v nickName:%v", id, userName, nickName)
 
-	id, name, nick, avatar, err := c.GetUserInfo(userName)
+	userInfo, err := c.GetUserInfo(userName)
 	if err != nil {
 		t.Fatalf("get userInfo error:%v", err)
 	}
 
-	if nickName != nick {
+	if userInfo.NickName != nickName {
 		t.Fatalf("nick name not match")
 	}
 
-	t.Logf("GetUserInfo success, id:%v user:%v nickName:%v avatar:%v", id, name, nick, avatar)
+	t.Logf("GetUserInfo success, id:%v user:%v nickName:%v avatar:%v", userInfo.ID, userInfo.Name, userInfo.NickName, userInfo.Avatar)
 }
 
 func TestUpdateUserPassword(t *testing.T) {

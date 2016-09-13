@@ -82,12 +82,14 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
-func (c *CandyClient) GetUserInfo(user string) (int64, string, string, []byte, error) {
+func (c *CandyClient) GetUserInfo(user string) (*UserInfo, error) {
 	req := &meta.GateGetUserInfoRequest{User: user}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
-		return -1, "", "", nil, err
+		return nil, err
 	}
 
-	return resp.ID, resp.User, resp.NickName, resp.Avatar, nil
+	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
+
+	return userInfo, nil
 }
