@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	host := flag.String("p", "127.0.0.1:9001", "listen host")
+	host := flag.String("p", "0.0.0.0:9001", "listen host")
 	version := flag.Bool("v", false, "print version")
 	flag.Parse()
 

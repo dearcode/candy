@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	host := flag.String("p", "127.0.0.1:9004", "listen host")
-	notice := flag.String("n", "127.0.0.1:9003", "notice host")
+	host := flag.String("p", "0.0.0.0:9004", "listen host")
+	notice := flag.String("n", "0.0.0.0:9003", "notice host")
 	path := flag.String("d", "/tmp/candy.db", "db path")
 	version := flag.Bool("v", false, "print version")
 	flag.Parse()
