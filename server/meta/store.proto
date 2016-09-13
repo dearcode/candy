@@ -16,7 +16,7 @@ service Store {
     // AddFriend 添加好友，两人都添加过对方后才可以聊天.
     rpc AddFriend(StoreAddFriendRequest) returns (StoreAddFriendResponse);
 
-    // FindUser 根据字符串的用户名查的用户信息.
+    // FindUser 根据字符串的用户名模糊查用户列表
     rpc FindUser(StoreFindUserRequest) returns (StoreFindUserResponse);
 
     rpc CreateGroup(StoreCreateGroupRequest) returns (StoreCreateGroupResponse);
@@ -30,7 +30,7 @@ message StoreFindUserRequest {
 
 message StoreFindUserResponse {
     ResponseHeader header = 1;
-    int64 ID = 2;
+    repeated string users = 2;
 }
 
 message StoreAddFriendRequest {

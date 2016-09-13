@@ -111,19 +111,19 @@ func (s *store) getUserInfo(user string) (int64, string, string, []byte, error) 
 	return resp.ID, resp.User, resp.NickName, resp.Avatar, nil
 }
 
-func (s *store) findUser(user string) (int64, error) {
+func (s *store) findUser(user string) ([]string, error) {
 	log.Debugf("store findUser, user:%v", user)
 	req := &meta.StoreFindUserRequest{User: user}
 	resp, err := s.api.FindUser(s.ctx, req)
 	if err != nil {
-		return 0, errors.Trace(err)
+		return nil, errors.Trace(err)
 	}
 
 	if resp.Header != nil {
-		return 0, errors.New(resp.Header.Msg)
+		return nil, errors.New(resp.Header.Msg)
 	}
 
-	return resp.ID, nil
+	return resp.Users, nil
 }
 
 func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {

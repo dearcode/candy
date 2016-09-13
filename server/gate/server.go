@@ -229,8 +229,8 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 	return &meta.GateUserLogoutResponse{}, nil
 }
 
-// UserMessage recv user message.
-func (g *Gate) UserMessage(stream meta.Gate_UserMessageServer) error {
+// NewMessage recv user message.
+func (g *Gate) NewMessage(meta.Gate_NewMessageServer) error {
 	log.Debugf("Gate UserMessage")
 	for {
 		break
@@ -276,18 +276,18 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 	return &meta.GateAddFriendResponse{Confirm: ok}, nil
 }
 
-// FindUser 添加好友前先查找.
+// FindUser 添加好友前先查找,模糊查找
 func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*meta.GateFindUserResponse, error) {
 	_, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
 		return nil, err
 	}
-	id, err := g.store.findUser(req.User)
+	users, err := g.store.findUser(req.User)
 	if err != nil {
 		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	return &meta.GateFindUserResponse{ID: id}, nil
+	return &meta.GateFindUserResponse{Users: users}, nil
 }
 
 // CreateGroup 用户创建一个聊天组.

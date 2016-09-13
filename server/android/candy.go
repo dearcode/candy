@@ -93,3 +93,33 @@ func (c *CandyClient) GetUserInfo(user string) (*UserInfo, error) {
 
 	return userInfo, nil
 }
+
+func (c *CandyClient) AddFriend(userID int64, confirm bool) error {
+	req := &meta.GateAddFriendRequest{UserID: userID, Confirm: confirm}
+	_, err := c.api.AddFriend(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// 支持模糊查询，返回对应用户的列表
+func (c *CandyClient) FindUser(user string) ([]*UserInfo, error) {
+	req := &meta.GateFindUserRequest{User: user}
+	resp, err := c.api.FindUser(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]*UserInfo, 0)
+	for _, matchUser := range resp.Users {
+		userInfo, err := c.GetUserInfo(matchUser)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, userInfo)
+	}
+
+	return users, nil
+}

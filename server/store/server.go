@@ -113,14 +113,14 @@ func (s *Store) Auth(_ context.Context, req *meta.StoreAuthRequest) (*meta.Store
 	return &meta.StoreAuthResponse{ID: id}, nil
 }
 
-// FindUser 根据字符串的用户名查的用户信息.
+// FindUser 根据字符串的用户名模糊查询用户信息.
 func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*meta.StoreFindUserResponse, error) {
 	log.Debugf("Store FindUser, user:%v", req.User)
-	id, err := s.user.findUser(req.User)
+	users, err := s.user.findUser(req.User)
 	if err != nil {
 		return &meta.StoreFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	return &meta.StoreFindUserResponse{ID: id}, nil
+	return &meta.StoreFindUserResponse{Users: users}, nil
 }
 
 // AddFriend 添加好友，两人都添加过对方后才可以聊天.

@@ -134,6 +134,56 @@ func TestUpdateUserPassword(t *testing.T) {
 		t.Fatalf("use new password login err:%v", err)
 	}
 	t.Logf("test logout success")
+	userPasswd = newPasswd
 
 	t.Logf("UpdateUserPassword success, userID:%d userName:%v", id, userName)
+}
+
+func TestFindUser(t *testing.T) {
+	c := NewCandyClient("127.0.0.1:9000")
+	if err := c.Start(); err != nil {
+		t.Fatalf("start client error:%s", err.Error())
+	}
+
+	//first need login
+	id, err := c.Login(userName, userPasswd)
+	if err != nil {
+		t.Fatalf("Login error:%v", err)
+	}
+
+	t.Logf("Login success id:%v", id)
+
+	//find user
+	users, err := c.FindUser(userName)
+	if err != nil {
+		t.Fatalf("Find user error:%v", err)
+	}
+
+	if len(users) <= 0 {
+		t.Fatalf("Find user error, want large than 0")
+	}
+
+	t.Logf("Find user success")
+}
+
+func TestAddFriend(t *testing.T) {
+	c := NewCandyClient("127.0.0.1:9000")
+	if err := c.Start(); err != nil {
+		t.Fatalf("start client error:%s", err.Error())
+	}
+
+	//first need login
+	id, err := c.Login(userName, userPasswd)
+	if err != nil {
+		t.Fatalf("Login error:%v", err)
+	}
+
+	t.Logf("Login success id:%v", id)
+
+	//add friend
+	err = c.AddFriend(6329388176200695808, false)
+	if err != nil {
+		t.Fatalf("AddFriend error:%v", err)
+	}
+
 }
