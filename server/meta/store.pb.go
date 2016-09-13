@@ -18,152 +18,152 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-type FindUserRequest struct {
+type StoreFindUserRequest struct {
 	User string `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
 }
 
-func (m *FindUserRequest) Reset()                    { *m = FindUserRequest{} }
-func (m *FindUserRequest) String() string            { return proto.CompactTextString(m) }
-func (*FindUserRequest) ProtoMessage()               {}
-func (*FindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (m *StoreFindUserRequest) Reset()                    { *m = StoreFindUserRequest{} }
+func (m *StoreFindUserRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreFindUserRequest) ProtoMessage()               {}
+func (*StoreFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
 
-type FindUserResponse struct {
+type StoreFindUserResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *FindUserResponse) Reset()                    { *m = FindUserResponse{} }
-func (m *FindUserResponse) String() string            { return proto.CompactTextString(m) }
-func (*FindUserResponse) ProtoMessage()               {}
-func (*FindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (m *StoreFindUserResponse) Reset()                    { *m = StoreFindUserResponse{} }
+func (m *StoreFindUserResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreFindUserResponse) ProtoMessage()               {}
+func (*StoreFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
 
-func (m *FindUserResponse) GetHeader() *ResponseHeader {
+func (m *StoreFindUserResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type AddFriendRequest struct {
+type StoreAddFriendRequest struct {
 	From    int64 `protobuf:"varint,1,opt,name=From" json:"From,omitempty"`
 	To      int64 `protobuf:"varint,2,opt,name=To" json:"To,omitempty"`
 	Confirm bool  `protobuf:"varint,3,opt,name=Confirm" json:"Confirm,omitempty"`
 }
 
-func (m *AddFriendRequest) Reset()                    { *m = AddFriendRequest{} }
-func (m *AddFriendRequest) String() string            { return proto.CompactTextString(m) }
-func (*AddFriendRequest) ProtoMessage()               {}
-func (*AddFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+func (m *StoreAddFriendRequest) Reset()                    { *m = StoreAddFriendRequest{} }
+func (m *StoreAddFriendRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreAddFriendRequest) ProtoMessage()               {}
+func (*StoreAddFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
 
-type AddFriendResponse struct {
+type StoreAddFriendResponse struct {
 	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Confirm bool            `protobuf:"varint,2,opt,name=Confirm" json:"Confirm,omitempty"`
 }
 
-func (m *AddFriendResponse) Reset()                    { *m = AddFriendResponse{} }
-func (m *AddFriendResponse) String() string            { return proto.CompactTextString(m) }
-func (*AddFriendResponse) ProtoMessage()               {}
-func (*AddFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+func (m *StoreAddFriendResponse) Reset()                    { *m = StoreAddFriendResponse{} }
+func (m *StoreAddFriendResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreAddFriendResponse) ProtoMessage()               {}
+func (*StoreAddFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
 
-func (m *AddFriendResponse) GetHeader() *ResponseHeader {
+func (m *StoreAddFriendResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type RegisterRequest struct {
+type StoreRegisterRequest struct {
 	ID       int64  `protobuf:"varint,1,opt,name=ID" json:"ID,omitempty"`
 	User     string `protobuf:"bytes,2,opt,name=User" json:"User,omitempty"`
 	Password string `protobuf:"bytes,3,opt,name=Password" json:"Password,omitempty"`
 }
 
-func (m *RegisterRequest) Reset()                    { *m = RegisterRequest{} }
-func (m *RegisterRequest) String() string            { return proto.CompactTextString(m) }
-func (*RegisterRequest) ProtoMessage()               {}
-func (*RegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
+func (m *StoreRegisterRequest) Reset()                    { *m = StoreRegisterRequest{} }
+func (m *StoreRegisterRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreRegisterRequest) ProtoMessage()               {}
+func (*StoreRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
 
-type RegisterResponse struct {
+type StoreRegisterResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *RegisterResponse) Reset()                    { *m = RegisterResponse{} }
-func (m *RegisterResponse) String() string            { return proto.CompactTextString(m) }
-func (*RegisterResponse) ProtoMessage()               {}
-func (*RegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
+func (m *StoreRegisterResponse) Reset()                    { *m = StoreRegisterResponse{} }
+func (m *StoreRegisterResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreRegisterResponse) ProtoMessage()               {}
+func (*StoreRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
 
-func (m *RegisterResponse) GetHeader() *ResponseHeader {
+func (m *StoreRegisterResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UpdateInfoRequest struct {
+type StoreUpdateUserInfoRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 	NickName string `protobuf:"bytes,2,opt,name=NickName" json:"NickName,omitempty"`
 	Avatar   []byte `protobuf:"bytes,3,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
 }
 
-func (m *UpdateInfoRequest) Reset()                    { *m = UpdateInfoRequest{} }
-func (m *UpdateInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*UpdateInfoRequest) ProtoMessage()               {}
-func (*UpdateInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
+func (m *StoreUpdateUserInfoRequest) Reset()                    { *m = StoreUpdateUserInfoRequest{} }
+func (m *StoreUpdateUserInfoRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreUpdateUserInfoRequest) ProtoMessage()               {}
+func (*StoreUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
 
-type UpdateInfoResponse struct {
+type StoreUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UpdateInfoResponse) Reset()                    { *m = UpdateInfoResponse{} }
-func (m *UpdateInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*UpdateInfoResponse) ProtoMessage()               {}
-func (*UpdateInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
+func (m *StoreUpdateUserInfoResponse) Reset()                    { *m = StoreUpdateUserInfoResponse{} }
+func (m *StoreUpdateUserInfoResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreUpdateUserInfoResponse) ProtoMessage()               {}
+func (*StoreUpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
 
-func (m *UpdateInfoResponse) GetHeader() *ResponseHeader {
+func (m *StoreUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UpdatePasswordRequest struct {
+type StoreUpdateUserPasswordRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
 }
 
-func (m *UpdatePasswordRequest) Reset()                    { *m = UpdatePasswordRequest{} }
-func (m *UpdatePasswordRequest) String() string            { return proto.CompactTextString(m) }
-func (*UpdatePasswordRequest) ProtoMessage()               {}
-func (*UpdatePasswordRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
+func (m *StoreUpdateUserPasswordRequest) Reset()                    { *m = StoreUpdateUserPasswordRequest{} }
+func (m *StoreUpdateUserPasswordRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreUpdateUserPasswordRequest) ProtoMessage()               {}
+func (*StoreUpdateUserPasswordRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
 
-type UpdatePasswordResponse struct {
+type StoreUpdateUserPasswordResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UpdatePasswordResponse) Reset()                    { *m = UpdatePasswordResponse{} }
-func (m *UpdatePasswordResponse) String() string            { return proto.CompactTextString(m) }
-func (*UpdatePasswordResponse) ProtoMessage()               {}
-func (*UpdatePasswordResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
+func (m *StoreUpdateUserPasswordResponse) Reset()                    { *m = StoreUpdateUserPasswordResponse{} }
+func (m *StoreUpdateUserPasswordResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreUpdateUserPasswordResponse) ProtoMessage()               {}
+func (*StoreUpdateUserPasswordResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
 
-func (m *UpdatePasswordResponse) GetHeader() *ResponseHeader {
+func (m *StoreUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type GetUserInfoRequest struct {
+type StoreGetUserInfoRequest struct {
 	User string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 }
 
-func (m *GetUserInfoRequest) Reset()                    { *m = GetUserInfoRequest{} }
-func (m *GetUserInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetUserInfoRequest) ProtoMessage()               {}
-func (*GetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
+func (m *StoreGetUserInfoRequest) Reset()                    { *m = StoreGetUserInfoRequest{} }
+func (m *StoreGetUserInfoRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreGetUserInfoRequest) ProtoMessage()               {}
+func (*StoreGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
 
-type GetUserInfoResponse struct {
+type StoreGetUserInfoResponse struct {
 	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID       int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 	User     string          `protobuf:"bytes,3,opt,name=User" json:"User,omitempty"`
@@ -171,97 +171,97 @@ type GetUserInfoResponse struct {
 	Avatar   []byte          `protobuf:"bytes,5,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
 }
 
-func (m *GetUserInfoResponse) Reset()                    { *m = GetUserInfoResponse{} }
-func (m *GetUserInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetUserInfoResponse) ProtoMessage()               {}
-func (*GetUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{11} }
+func (m *StoreGetUserInfoResponse) Reset()                    { *m = StoreGetUserInfoResponse{} }
+func (m *StoreGetUserInfoResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreGetUserInfoResponse) ProtoMessage()               {}
+func (*StoreGetUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{11} }
 
-func (m *GetUserInfoResponse) GetHeader() *ResponseHeader {
+func (m *StoreGetUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type AuthRequest struct {
+type StoreAuthRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
 }
 
-func (m *AuthRequest) Reset()                    { *m = AuthRequest{} }
-func (m *AuthRequest) String() string            { return proto.CompactTextString(m) }
-func (*AuthRequest) ProtoMessage()               {}
-func (*AuthRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{12} }
+func (m *StoreAuthRequest) Reset()                    { *m = StoreAuthRequest{} }
+func (m *StoreAuthRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreAuthRequest) ProtoMessage()               {}
+func (*StoreAuthRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{12} }
 
-type AuthResponse struct {
+type StoreAuthResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *AuthResponse) Reset()                    { *m = AuthResponse{} }
-func (m *AuthResponse) String() string            { return proto.CompactTextString(m) }
-func (*AuthResponse) ProtoMessage()               {}
-func (*AuthResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{13} }
+func (m *StoreAuthResponse) Reset()                    { *m = StoreAuthResponse{} }
+func (m *StoreAuthResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreAuthResponse) ProtoMessage()               {}
+func (*StoreAuthResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{13} }
 
-func (m *AuthResponse) GetHeader() *ResponseHeader {
+func (m *StoreAuthResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type CreateGroupRequest struct {
+type StoreCreateGroupRequest struct {
 	UserID  int64 `protobuf:"varint,1,opt,name=UserID" json:"UserID,omitempty"`
 	GroupID int64 `protobuf:"varint,2,opt,name=GroupID" json:"GroupID,omitempty"`
 }
 
-func (m *CreateGroupRequest) Reset()                    { *m = CreateGroupRequest{} }
-func (m *CreateGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateGroupRequest) ProtoMessage()               {}
-func (*CreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{14} }
+func (m *StoreCreateGroupRequest) Reset()                    { *m = StoreCreateGroupRequest{} }
+func (m *StoreCreateGroupRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreCreateGroupRequest) ProtoMessage()               {}
+func (*StoreCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{14} }
 
-type CreateGroupResponse struct {
+type StoreCreateGroupResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *CreateGroupResponse) Reset()                    { *m = CreateGroupResponse{} }
-func (m *CreateGroupResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateGroupResponse) ProtoMessage()               {}
-func (*CreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{15} }
+func (m *StoreCreateGroupResponse) Reset()                    { *m = StoreCreateGroupResponse{} }
+func (m *StoreCreateGroupResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreCreateGroupResponse) ProtoMessage()               {}
+func (*StoreCreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{15} }
 
-func (m *CreateGroupResponse) GetHeader() *ResponseHeader {
+func (m *StoreCreateGroupResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type NewMessageRequest struct {
+type StoreNewMessageRequest struct {
 	Msg *Message `protobuf:"bytes,1,opt,name=Msg" json:"Msg,omitempty"`
 }
 
-func (m *NewMessageRequest) Reset()                    { *m = NewMessageRequest{} }
-func (m *NewMessageRequest) String() string            { return proto.CompactTextString(m) }
-func (*NewMessageRequest) ProtoMessage()               {}
-func (*NewMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{16} }
+func (m *StoreNewMessageRequest) Reset()                    { *m = StoreNewMessageRequest{} }
+func (m *StoreNewMessageRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreNewMessageRequest) ProtoMessage()               {}
+func (*StoreNewMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{16} }
 
-func (m *NewMessageRequest) GetMsg() *Message {
+func (m *StoreNewMessageRequest) GetMsg() *Message {
 	if m != nil {
 		return m.Msg
 	}
 	return nil
 }
 
-type NewMessageResponse struct {
+type StoreNewMessageResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *NewMessageResponse) Reset()                    { *m = NewMessageResponse{} }
-func (m *NewMessageResponse) String() string            { return proto.CompactTextString(m) }
-func (*NewMessageResponse) ProtoMessage()               {}
-func (*NewMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{17} }
+func (m *StoreNewMessageResponse) Reset()                    { *m = StoreNewMessageResponse{} }
+func (m *StoreNewMessageResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreNewMessageResponse) ProtoMessage()               {}
+func (*StoreNewMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{17} }
 
-func (m *NewMessageResponse) GetHeader() *ResponseHeader {
+func (m *StoreNewMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
@@ -269,24 +269,24 @@ func (m *NewMessageResponse) GetHeader() *ResponseHeader {
 }
 
 func init() {
-	proto.RegisterType((*FindUserRequest)(nil), "candy.meta.FindUserRequest")
-	proto.RegisterType((*FindUserResponse)(nil), "candy.meta.FindUserResponse")
-	proto.RegisterType((*AddFriendRequest)(nil), "candy.meta.AddFriendRequest")
-	proto.RegisterType((*AddFriendResponse)(nil), "candy.meta.AddFriendResponse")
-	proto.RegisterType((*RegisterRequest)(nil), "candy.meta.RegisterRequest")
-	proto.RegisterType((*RegisterResponse)(nil), "candy.meta.RegisterResponse")
-	proto.RegisterType((*UpdateInfoRequest)(nil), "candy.meta.UpdateInfoRequest")
-	proto.RegisterType((*UpdateInfoResponse)(nil), "candy.meta.UpdateInfoResponse")
-	proto.RegisterType((*UpdatePasswordRequest)(nil), "candy.meta.UpdatePasswordRequest")
-	proto.RegisterType((*UpdatePasswordResponse)(nil), "candy.meta.UpdatePasswordResponse")
-	proto.RegisterType((*GetUserInfoRequest)(nil), "candy.meta.GetUserInfoRequest")
-	proto.RegisterType((*GetUserInfoResponse)(nil), "candy.meta.GetUserInfoResponse")
-	proto.RegisterType((*AuthRequest)(nil), "candy.meta.AuthRequest")
-	proto.RegisterType((*AuthResponse)(nil), "candy.meta.AuthResponse")
-	proto.RegisterType((*CreateGroupRequest)(nil), "candy.meta.CreateGroupRequest")
-	proto.RegisterType((*CreateGroupResponse)(nil), "candy.meta.CreateGroupResponse")
-	proto.RegisterType((*NewMessageRequest)(nil), "candy.meta.NewMessageRequest")
-	proto.RegisterType((*NewMessageResponse)(nil), "candy.meta.NewMessageResponse")
+	proto.RegisterType((*StoreFindUserRequest)(nil), "candy.meta.StoreFindUserRequest")
+	proto.RegisterType((*StoreFindUserResponse)(nil), "candy.meta.StoreFindUserResponse")
+	proto.RegisterType((*StoreAddFriendRequest)(nil), "candy.meta.StoreAddFriendRequest")
+	proto.RegisterType((*StoreAddFriendResponse)(nil), "candy.meta.StoreAddFriendResponse")
+	proto.RegisterType((*StoreRegisterRequest)(nil), "candy.meta.StoreRegisterRequest")
+	proto.RegisterType((*StoreRegisterResponse)(nil), "candy.meta.StoreRegisterResponse")
+	proto.RegisterType((*StoreUpdateUserInfoRequest)(nil), "candy.meta.StoreUpdateUserInfoRequest")
+	proto.RegisterType((*StoreUpdateUserInfoResponse)(nil), "candy.meta.StoreUpdateUserInfoResponse")
+	proto.RegisterType((*StoreUpdateUserPasswordRequest)(nil), "candy.meta.StoreUpdateUserPasswordRequest")
+	proto.RegisterType((*StoreUpdateUserPasswordResponse)(nil), "candy.meta.StoreUpdateUserPasswordResponse")
+	proto.RegisterType((*StoreGetUserInfoRequest)(nil), "candy.meta.StoreGetUserInfoRequest")
+	proto.RegisterType((*StoreGetUserInfoResponse)(nil), "candy.meta.StoreGetUserInfoResponse")
+	proto.RegisterType((*StoreAuthRequest)(nil), "candy.meta.StoreAuthRequest")
+	proto.RegisterType((*StoreAuthResponse)(nil), "candy.meta.StoreAuthResponse")
+	proto.RegisterType((*StoreCreateGroupRequest)(nil), "candy.meta.StoreCreateGroupRequest")
+	proto.RegisterType((*StoreCreateGroupResponse)(nil), "candy.meta.StoreCreateGroupResponse")
+	proto.RegisterType((*StoreNewMessageRequest)(nil), "candy.meta.StoreNewMessageRequest")
+	proto.RegisterType((*StoreNewMessageResponse)(nil), "candy.meta.StoreNewMessageResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -300,17 +300,17 @@ const _ = grpc.SupportPackageIsVersion3
 // Client API for Store service
 
 type StoreClient interface {
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
-	UpdateInfo(ctx context.Context, in *UpdateInfoRequest, opts ...grpc.CallOption) (*UpdateInfoResponse, error)
-	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordResponse, error)
-	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
-	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
+	Register(ctx context.Context, in *StoreRegisterRequest, opts ...grpc.CallOption) (*StoreRegisterResponse, error)
+	UpdateUserInfo(ctx context.Context, in *StoreUpdateUserInfoRequest, opts ...grpc.CallOption) (*StoreUpdateUserInfoResponse, error)
+	UpdateUserPassword(ctx context.Context, in *StoreUpdateUserPasswordRequest, opts ...grpc.CallOption) (*StoreUpdateUserPasswordResponse, error)
+	GetUserInfo(ctx context.Context, in *StoreGetUserInfoRequest, opts ...grpc.CallOption) (*StoreGetUserInfoResponse, error)
+	Auth(ctx context.Context, in *StoreAuthRequest, opts ...grpc.CallOption) (*StoreAuthResponse, error)
 	// AddFriend 添加好友，两人都添加过对方后才可以聊天.
-	AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*AddFriendResponse, error)
+	AddFriend(ctx context.Context, in *StoreAddFriendRequest, opts ...grpc.CallOption) (*StoreAddFriendResponse, error)
 	// FindUser 根据字符串的用户名查的用户信息.
-	FindUser(ctx context.Context, in *FindUserRequest, opts ...grpc.CallOption) (*FindUserResponse, error)
-	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
-	NewMessage(ctx context.Context, in *NewMessageRequest, opts ...grpc.CallOption) (*NewMessageResponse, error)
+	FindUser(ctx context.Context, in *StoreFindUserRequest, opts ...grpc.CallOption) (*StoreFindUserResponse, error)
+	CreateGroup(ctx context.Context, in *StoreCreateGroupRequest, opts ...grpc.CallOption) (*StoreCreateGroupResponse, error)
+	NewMessage(ctx context.Context, in *StoreNewMessageRequest, opts ...grpc.CallOption) (*StoreNewMessageResponse, error)
 }
 
 type storeClient struct {
@@ -321,8 +321,8 @@ func NewStoreClient(cc *grpc.ClientConn) StoreClient {
 	return &storeClient{cc}
 }
 
-func (c *storeClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
-	out := new(RegisterResponse)
+func (c *storeClient) Register(ctx context.Context, in *StoreRegisterRequest, opts ...grpc.CallOption) (*StoreRegisterResponse, error) {
+	out := new(StoreRegisterResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Store/Register", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -330,26 +330,26 @@ func (c *storeClient) Register(ctx context.Context, in *RegisterRequest, opts ..
 	return out, nil
 }
 
-func (c *storeClient) UpdateInfo(ctx context.Context, in *UpdateInfoRequest, opts ...grpc.CallOption) (*UpdateInfoResponse, error) {
-	out := new(UpdateInfoResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/UpdateInfo", in, out, c.cc, opts...)
+func (c *storeClient) UpdateUserInfo(ctx context.Context, in *StoreUpdateUserInfoRequest, opts ...grpc.CallOption) (*StoreUpdateUserInfoResponse, error) {
+	out := new(StoreUpdateUserInfoResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/UpdateUserInfo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *storeClient) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordResponse, error) {
-	out := new(UpdatePasswordResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/UpdatePassword", in, out, c.cc, opts...)
+func (c *storeClient) UpdateUserPassword(ctx context.Context, in *StoreUpdateUserPasswordRequest, opts ...grpc.CallOption) (*StoreUpdateUserPasswordResponse, error) {
+	out := new(StoreUpdateUserPasswordResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/UpdateUserPassword", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *storeClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
-	out := new(GetUserInfoResponse)
+func (c *storeClient) GetUserInfo(ctx context.Context, in *StoreGetUserInfoRequest, opts ...grpc.CallOption) (*StoreGetUserInfoResponse, error) {
+	out := new(StoreGetUserInfoResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Store/GetUserInfo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -357,8 +357,8 @@ func (c *storeClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, o
 	return out, nil
 }
 
-func (c *storeClient) Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error) {
-	out := new(AuthResponse)
+func (c *storeClient) Auth(ctx context.Context, in *StoreAuthRequest, opts ...grpc.CallOption) (*StoreAuthResponse, error) {
+	out := new(StoreAuthResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Store/Auth", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -366,8 +366,8 @@ func (c *storeClient) Auth(ctx context.Context, in *AuthRequest, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *storeClient) AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*AddFriendResponse, error) {
-	out := new(AddFriendResponse)
+func (c *storeClient) AddFriend(ctx context.Context, in *StoreAddFriendRequest, opts ...grpc.CallOption) (*StoreAddFriendResponse, error) {
+	out := new(StoreAddFriendResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Store/AddFriend", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -375,8 +375,8 @@ func (c *storeClient) AddFriend(ctx context.Context, in *AddFriendRequest, opts 
 	return out, nil
 }
 
-func (c *storeClient) FindUser(ctx context.Context, in *FindUserRequest, opts ...grpc.CallOption) (*FindUserResponse, error) {
-	out := new(FindUserResponse)
+func (c *storeClient) FindUser(ctx context.Context, in *StoreFindUserRequest, opts ...grpc.CallOption) (*StoreFindUserResponse, error) {
+	out := new(StoreFindUserResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Store/FindUser", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -384,8 +384,8 @@ func (c *storeClient) FindUser(ctx context.Context, in *FindUserRequest, opts ..
 	return out, nil
 }
 
-func (c *storeClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error) {
-	out := new(CreateGroupResponse)
+func (c *storeClient) CreateGroup(ctx context.Context, in *StoreCreateGroupRequest, opts ...grpc.CallOption) (*StoreCreateGroupResponse, error) {
+	out := new(StoreCreateGroupResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Store/CreateGroup", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -393,8 +393,8 @@ func (c *storeClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, o
 	return out, nil
 }
 
-func (c *storeClient) NewMessage(ctx context.Context, in *NewMessageRequest, opts ...grpc.CallOption) (*NewMessageResponse, error) {
-	out := new(NewMessageResponse)
+func (c *storeClient) NewMessage(ctx context.Context, in *StoreNewMessageRequest, opts ...grpc.CallOption) (*StoreNewMessageResponse, error) {
+	out := new(StoreNewMessageResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Store/NewMessage", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -405,17 +405,17 @@ func (c *storeClient) NewMessage(ctx context.Context, in *NewMessageRequest, opt
 // Server API for Store service
 
 type StoreServer interface {
-	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
-	UpdateInfo(context.Context, *UpdateInfoRequest) (*UpdateInfoResponse, error)
-	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error)
-	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error)
-	Auth(context.Context, *AuthRequest) (*AuthResponse, error)
+	Register(context.Context, *StoreRegisterRequest) (*StoreRegisterResponse, error)
+	UpdateUserInfo(context.Context, *StoreUpdateUserInfoRequest) (*StoreUpdateUserInfoResponse, error)
+	UpdateUserPassword(context.Context, *StoreUpdateUserPasswordRequest) (*StoreUpdateUserPasswordResponse, error)
+	GetUserInfo(context.Context, *StoreGetUserInfoRequest) (*StoreGetUserInfoResponse, error)
+	Auth(context.Context, *StoreAuthRequest) (*StoreAuthResponse, error)
 	// AddFriend 添加好友，两人都添加过对方后才可以聊天.
-	AddFriend(context.Context, *AddFriendRequest) (*AddFriendResponse, error)
+	AddFriend(context.Context, *StoreAddFriendRequest) (*StoreAddFriendResponse, error)
 	// FindUser 根据字符串的用户名查的用户信息.
-	FindUser(context.Context, *FindUserRequest) (*FindUserResponse, error)
-	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
-	NewMessage(context.Context, *NewMessageRequest) (*NewMessageResponse, error)
+	FindUser(context.Context, *StoreFindUserRequest) (*StoreFindUserResponse, error)
+	CreateGroup(context.Context, *StoreCreateGroupRequest) (*StoreCreateGroupResponse, error)
+	NewMessage(context.Context, *StoreNewMessageRequest) (*StoreNewMessageResponse, error)
 }
 
 func RegisterStoreServer(s *grpc.Server, srv StoreServer) {
@@ -423,7 +423,7 @@ func RegisterStoreServer(s *grpc.Server, srv StoreServer) {
 }
 
 func _Store_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterRequest)
+	in := new(StoreRegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -435,49 +435,49 @@ func _Store_Register_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/candy.meta.Store/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).Register(ctx, req.(*RegisterRequest))
+		return srv.(StoreServer).Register(ctx, req.(*StoreRegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Store_UpdateInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateInfoRequest)
+func _Store_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreUpdateUserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StoreServer).UpdateInfo(ctx, in)
+		return srv.(StoreServer).UpdateUserInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/candy.meta.Store/UpdateInfo",
+		FullMethod: "/candy.meta.Store/UpdateUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).UpdateInfo(ctx, req.(*UpdateInfoRequest))
+		return srv.(StoreServer).UpdateUserInfo(ctx, req.(*StoreUpdateUserInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Store_UpdatePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdatePasswordRequest)
+func _Store_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreUpdateUserPasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StoreServer).UpdatePassword(ctx, in)
+		return srv.(StoreServer).UpdateUserPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/candy.meta.Store/UpdatePassword",
+		FullMethod: "/candy.meta.Store/UpdateUserPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).UpdatePassword(ctx, req.(*UpdatePasswordRequest))
+		return srv.(StoreServer).UpdateUserPassword(ctx, req.(*StoreUpdateUserPasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Store_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserInfoRequest)
+	in := new(StoreGetUserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -489,13 +489,13 @@ func _Store_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/candy.meta.Store/GetUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).GetUserInfo(ctx, req.(*GetUserInfoRequest))
+		return srv.(StoreServer).GetUserInfo(ctx, req.(*StoreGetUserInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Store_Auth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthRequest)
+	in := new(StoreAuthRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -507,13 +507,13 @@ func _Store_Auth_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/candy.meta.Store/Auth",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).Auth(ctx, req.(*AuthRequest))
+		return srv.(StoreServer).Auth(ctx, req.(*StoreAuthRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Store_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddFriendRequest)
+	in := new(StoreAddFriendRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -525,13 +525,13 @@ func _Store_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/candy.meta.Store/AddFriend",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).AddFriend(ctx, req.(*AddFriendRequest))
+		return srv.(StoreServer).AddFriend(ctx, req.(*StoreAddFriendRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Store_FindUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FindUserRequest)
+	in := new(StoreFindUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -543,13 +543,13 @@ func _Store_FindUser_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/candy.meta.Store/FindUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).FindUser(ctx, req.(*FindUserRequest))
+		return srv.(StoreServer).FindUser(ctx, req.(*StoreFindUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Store_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateGroupRequest)
+	in := new(StoreCreateGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -561,13 +561,13 @@ func _Store_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/candy.meta.Store/CreateGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).CreateGroup(ctx, req.(*CreateGroupRequest))
+		return srv.(StoreServer).CreateGroup(ctx, req.(*StoreCreateGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Store_NewMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewMessageRequest)
+	in := new(StoreNewMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -579,7 +579,7 @@ func _Store_NewMessage_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/candy.meta.Store/NewMessage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServer).NewMessage(ctx, req.(*NewMessageRequest))
+		return srv.(StoreServer).NewMessage(ctx, req.(*StoreNewMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -593,12 +593,12 @@ var _Store_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Store_Register_Handler,
 		},
 		{
-			MethodName: "UpdateInfo",
-			Handler:    _Store_UpdateInfo_Handler,
+			MethodName: "UpdateUserInfo",
+			Handler:    _Store_UpdateUserInfo_Handler,
 		},
 		{
-			MethodName: "UpdatePassword",
-			Handler:    _Store_UpdatePassword_Handler,
+			MethodName: "UpdateUserPassword",
+			Handler:    _Store_UpdateUserPassword_Handler,
 		},
 		{
 			MethodName: "GetUserInfo",
@@ -632,42 +632,43 @@ var _Store_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("store.proto", fileDescriptor4) }
 
 var fileDescriptor4 = []byte{
-	// 579 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x55, 0x5d, 0x6f, 0xd3, 0x30,
-	0x14, 0xd5, 0xfa, 0x45, 0x7b, 0x5b, 0xad, 0xad, 0x2b, 0xa0, 0x0a, 0x8c, 0x0d, 0x3f, 0x21, 0x24,
-	0xfa, 0x30, 0x34, 0x21, 0x1e, 0x86, 0x28, 0x85, 0x6e, 0x03, 0x56, 0x4d, 0x83, 0x0a, 0x89, 0xb7,
-	0xd0, 0x78, 0x5d, 0x84, 0x12, 0x17, 0x3b, 0x65, 0xe2, 0x81, 0x9f, 0xc4, 0x7f, 0xc4, 0x71, 0x9c,
-	0xc4, 0x8e, 0x17, 0xc4, 0xd6, 0xc7, 0xf6, 0x9e, 0x7b, 0xee, 0xc9, 0xf1, 0xb9, 0x36, 0xb4, 0x79,
-	0x44, 0x19, 0x19, 0xad, 0x18, 0x8d, 0x28, 0x82, 0x85, 0x1b, 0x7a, 0xbf, 0x46, 0x01, 0x89, 0x5c,
-	0xa7, 0xb3, 0xa0, 0x41, 0x40, 0xc3, 0xa4, 0x82, 0x77, 0xa1, 0x3b, 0xf5, 0x43, 0x6f, 0xce, 0x09,
-	0x3b, 0x27, 0x3f, 0xd6, 0x84, 0x47, 0xa8, 0x03, 0xb5, 0xb5, 0xf8, 0x39, 0xdc, 0xda, 0xdb, 0x7a,
-	0xd2, 0xc2, 0xef, 0xa1, 0x97, 0x03, 0xf8, 0x8a, 0x86, 0x9c, 0xa0, 0xa7, 0xd0, 0xb8, 0x24, 0xae,
-	0xa7, 0x30, 0xed, 0x7d, 0x67, 0x94, 0xf3, 0x8f, 0x52, 0xd4, 0xb1, 0x44, 0x20, 0x80, 0xca, 0xc9,
-	0xdb, 0x61, 0x45, 0xe0, 0xaa, 0xf8, 0x10, 0x7a, 0x63, 0xcf, 0x9b, 0x32, 0x9f, 0x84, 0x9e, 0x36,
-	0x6d, 0xca, 0x68, 0x20, 0x99, 0xaa, 0x31, 0xfa, 0x33, 0x4d, 0xd0, 0xa8, 0x0b, 0x77, 0x26, 0x34,
-	0xbc, 0xf0, 0x59, 0x30, 0xac, 0x8a, 0x3f, 0x9a, 0xf8, 0x0c, 0xfa, 0x5a, 0xfb, 0x2d, 0xb4, 0x68,
-	0x8c, 0x15, 0xc9, 0x78, 0x08, 0xdd, 0x73, 0xb2, 0xf4, 0x79, 0x94, 0x7f, 0x7d, 0xa2, 0x37, 0x51,
-	0x23, 0xb4, 0xc5, 0xdf, 0x2d, 0xc1, 0x2d, 0xd4, 0x83, 0xe6, 0x99, 0xcb, 0xf9, 0x15, 0x65, 0x9e,
-	0x14, 0xd4, 0xc2, 0xaf, 0xa0, 0x97, 0xb7, 0xdf, 0x5c, 0x0f, 0x9e, 0x40, 0x7f, 0xbe, 0xf2, 0xdc,
-	0x88, 0x9c, 0x84, 0x17, 0x54, 0x33, 0x64, 0x9e, 0xd9, 0x1f, 0x0f, 0x9d, 0xf9, 0x8b, 0xef, 0x33,
-	0x37, 0x20, 0x4a, 0xc6, 0x36, 0x34, 0xc6, 0x3f, 0xdd, 0xc8, 0x65, 0x52, 0x44, 0x07, 0x7f, 0x04,
-	0xa4, 0x93, 0x6c, 0x78, 0x44, 0x2f, 0xe0, 0x6e, 0xc2, 0x96, 0x7e, 0x6a, 0xa9, 0xac, 0xcc, 0x0b,
-	0x29, 0x4b, 0x1c, 0xce, 0xbd, 0x62, 0xe3, 0x86, 0x52, 0x30, 0xa0, 0x23, 0x12, 0xc5, 0x43, 0x4b,
-	0xed, 0xc1, 0xbf, 0x61, 0x60, 0x60, 0x36, 0x1b, 0x99, 0x91, 0x57, 0x2d, 0xef, 0x6b, 0x05, 0xef,
-	0xeb, 0xd2, 0xfb, 0x67, 0xd0, 0x1e, 0xaf, 0xa3, 0xcb, 0xff, 0xf5, 0x68, 0x0a, 0x9d, 0x04, 0xbe,
-	0xa1, 0x33, 0x07, 0x80, 0x26, 0x8c, 0x08, 0xaf, 0x8f, 0x18, 0x5d, 0xaf, 0xd2, 0xe9, 0x42, 0x9c,
-	0x34, 0x22, 0x4d, 0xaf, 0x48, 0xbb, 0xac, 0x67, 0x6d, 0x63, 0x18, 0x18, 0x6d, 0xb7, 0x48, 0xec,
-	0x01, 0xf4, 0x67, 0xe4, 0xea, 0x94, 0x70, 0xee, 0x2e, 0x49, 0x3a, 0x78, 0x0f, 0xaa, 0xa7, 0x7c,
-	0xa9, 0xba, 0x07, 0x7a, 0xb7, 0x02, 0xe2, 0xd7, 0x80, 0xf4, 0xb6, 0x9b, 0x0f, 0xde, 0xff, 0x53,
-	0x87, 0xfa, 0xa7, 0xf8, 0x46, 0x43, 0xef, 0xa0, 0x99, 0x2e, 0x1d, 0x7a, 0x60, 0x76, 0x18, 0x9b,
-	0xec, 0x3c, 0xbc, 0xbe, 0xa8, 0x86, 0x7f, 0x00, 0xc8, 0xd7, 0x06, 0xed, 0xe8, 0x58, 0x6b, 0x27,
-	0x9d, 0x47, 0x65, 0x65, 0x45, 0xf6, 0x05, 0xb6, 0xcd, 0xf0, 0xa3, 0xc7, 0x76, 0x47, 0x61, 0xa3,
-	0x1c, 0xfc, 0x2f, 0x88, 0x22, 0x9e, 0x41, 0x5b, 0xcb, 0x37, 0x32, 0x74, 0xd8, 0xcb, 0xe1, 0xec,
-	0x96, 0xd6, 0x15, 0xdf, 0x4b, 0xa8, 0xc5, 0x09, 0x44, 0xf7, 0x75, 0xa0, 0x16, 0x61, 0x67, 0x68,
-	0x17, 0x54, 0xeb, 0x31, 0xb4, 0xb2, 0xdb, 0x17, 0x19, 0xde, 0x16, 0xef, 0x74, 0x67, 0xa7, 0xa4,
-	0xaa, 0x98, 0xc4, 0x09, 0xa6, 0x4f, 0x8a, 0x79, 0x82, 0x85, 0x97, 0xc8, 0x3c, 0x41, 0xeb, 0x15,
-	0x12, 0xde, 0x68, 0x71, 0x36, 0xbd, 0xb1, 0xd7, 0xc3, 0xf4, 0xe6, 0xba, 0x3d, 0x10, 0x89, 0xc8,
-	0x43, 0x6a, 0x26, 0xc2, 0xca, 0xbc, 0x99, 0x08, 0x3b, 0xdb, 0x6f, 0x1a, 0x5f, 0x6b, 0x71, 0xe9,
-	0x5b, 0x43, 0x3e, 0xb3, 0xcf, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0xbd, 0xcc, 0x91, 0xaa, 0x8f,
-	0x07, 0x00, 0x00,
+	// 599 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x56, 0x5d, 0x6f, 0xda, 0x3c,
+	0x18, 0x15, 0x1f, 0x4d, 0xe1, 0x01, 0xd1, 0xbe, 0x7e, 0xf7, 0x81, 0xb2, 0x2f, 0xe6, 0x56, 0x2b,
+	0xea, 0x24, 0x2e, 0xd8, 0x5d, 0xaf, 0x56, 0xd8, 0xe8, 0xaa, 0xad, 0x30, 0xb1, 0x45, 0xea, 0x76,
+	0xe7, 0x11, 0x97, 0xa2, 0x29, 0x31, 0xb3, 0xcd, 0xaa, 0xdd, 0xee, 0x8f, 0xec, 0xaf, 0x4e, 0x71,
+	0x1c, 0x70, 0xe3, 0x90, 0xb5, 0xe5, 0xda, 0xe7, 0x9c, 0xe7, 0xe4, 0x3c, 0x3e, 0x18, 0xa8, 0x09,
+	0xc9, 0x38, 0xed, 0xcc, 0x39, 0x93, 0x0c, 0xc1, 0x84, 0x84, 0xfe, 0xaf, 0x4e, 0x40, 0x25, 0x71,
+	0xeb, 0x13, 0x16, 0x04, 0x2c, 0x8c, 0x4f, 0xf0, 0x3e, 0xdc, 0xfb, 0x14, 0x01, 0x07, 0xb3, 0xd0,
+	0xf7, 0x04, 0xe5, 0x63, 0xfa, 0x63, 0x41, 0x85, 0x44, 0x75, 0x28, 0x2f, 0x04, 0xe5, 0xcd, 0x42,
+	0xab, 0xd0, 0xae, 0xe2, 0x11, 0xdc, 0x4f, 0xa1, 0xc4, 0x9c, 0x85, 0x82, 0xa2, 0x43, 0x70, 0x2e,
+	0x29, 0xf1, 0x35, 0xb0, 0xd6, 0x75, 0x3b, 0xab, 0x49, 0x9d, 0x04, 0xf5, 0x4e, 0x21, 0x10, 0x40,
+	0xf1, 0xf4, 0x4d, 0xb3, 0xd8, 0x2a, 0xb4, 0x4b, 0xb8, 0xa7, 0x05, 0x8f, 0x7d, 0x7f, 0xc0, 0x67,
+	0x34, 0xf4, 0x8d, 0xb9, 0x03, 0xce, 0x02, 0x25, 0x57, 0x8a, 0x28, 0x9f, 0x59, 0x4c, 0x41, 0x3b,
+	0xb0, 0xdd, 0x67, 0xe1, 0xc5, 0x8c, 0x07, 0xcd, 0x52, 0xab, 0xd0, 0xae, 0x60, 0x0f, 0x1e, 0xa4,
+	0x35, 0xee, 0xe0, 0xca, 0x90, 0x2d, 0x2a, 0xd9, 0x9e, 0x4e, 0x64, 0x4c, 0xa7, 0x33, 0x21, 0x57,
+	0x89, 0xc4, 0xf6, 0x63, 0x5f, 0x75, 0x28, 0x47, 0x31, 0x28, 0x46, 0x15, 0xed, 0x42, 0xe5, 0x23,
+	0x11, 0xe2, 0x8a, 0x71, 0x5f, 0x59, 0xab, 0xe2, 0xbe, 0xfe, 0xbc, 0x95, 0xc6, 0xed, 0x9d, 0xe1,
+	0x0f, 0xe0, 0x2a, 0x11, 0x6f, 0xee, 0x13, 0x49, 0xa3, 0x79, 0xa7, 0xe1, 0x05, 0x33, 0x82, 0xf2,
+	0x96, 0x0b, 0x8a, 0x2c, 0x0c, 0x67, 0x93, 0xef, 0x43, 0x12, 0x50, 0x6d, 0xaa, 0x01, 0xce, 0xf1,
+	0x4f, 0x22, 0x09, 0x57, 0x96, 0xea, 0xd8, 0x83, 0x47, 0x99, 0x6a, 0x1b, 0x2e, 0xf2, 0x35, 0x3c,
+	0x4d, 0xc9, 0x26, 0x51, 0xac, 0x35, 0xba, 0xcc, 0x4a, 0x19, 0xc5, 0x5f, 0xe0, 0xd9, 0x5a, 0x85,
+	0x0d, 0xcd, 0x1d, 0xc0, 0x43, 0x25, 0x7d, 0x42, 0x65, 0x6e, 0x7c, 0xf8, 0x77, 0x01, 0x9a, 0x36,
+	0x72, 0xb3, 0xe9, 0xcb, 0x11, 0x25, 0x6b, 0x43, 0xe5, 0xd4, 0x86, 0xb6, 0xd4, 0x86, 0xba, 0xb0,
+	0x1b, 0xdf, 0xe7, 0x85, 0xbc, 0xbc, 0x69, 0x78, 0xef, 0xe1, 0x3f, 0x83, 0xb3, 0x61, 0x5c, 0x47,
+	0x3a, 0xae, 0x3e, 0xa7, 0x44, 0xd2, 0x13, 0xce, 0x16, 0xf3, 0xc4, 0x47, 0x03, 0x1c, 0x95, 0x4b,
+	0x52, 0x80, 0x1d, 0xd8, 0x56, 0xe7, 0x4b, 0xee, 0x40, 0x07, 0x78, 0x8d, 0x7b, 0x87, 0x4b, 0x7f,
+	0xa4, 0x4b, 0x3d, 0xa4, 0x57, 0x67, 0x54, 0x08, 0x32, 0xa5, 0x89, 0x85, 0x16, 0x94, 0xce, 0xc4,
+	0x54, 0x4b, 0xfc, 0x6f, 0x4a, 0x68, 0x20, 0x7e, 0xab, 0xfd, 0x9b, 0xdc, 0xdb, 0x5b, 0xe8, 0xfe,
+	0x71, 0x60, 0x4b, 0xe9, 0xa0, 0x11, 0x54, 0x92, 0x06, 0xa3, 0x96, 0xc9, 0xc8, 0xfa, 0x81, 0x70,
+	0x9f, 0xe7, 0x20, 0xb4, 0x0d, 0x02, 0x8d, 0xeb, 0xfd, 0x43, 0x2f, 0x2c, 0x52, 0x66, 0xdd, 0xdd,
+	0x83, 0x7f, 0xe2, 0xf4, 0x88, 0x00, 0x90, 0xdd, 0x24, 0x74, 0x98, 0x43, 0x4f, 0x15, 0xd6, 0x7d,
+	0x79, 0x23, 0xac, 0x1e, 0x77, 0x0e, 0x35, 0xa3, 0x33, 0x68, 0xcf, 0xe2, 0xda, 0xdd, 0x73, 0xf7,
+	0xf3, 0x41, 0x5a, 0xb9, 0x0f, 0xe5, 0xe8, 0x56, 0xa3, 0xc7, 0x16, 0xda, 0x28, 0x88, 0xfb, 0x64,
+	0xcd, 0xa9, 0x16, 0x19, 0x43, 0x75, 0xf9, 0x3c, 0x20, 0x7b, 0x41, 0xe9, 0xe7, 0xc7, 0xc5, 0x79,
+	0x10, 0xad, 0x39, 0x82, 0x4a, 0xf2, 0x0e, 0x66, 0xdc, 0x8a, 0xd4, 0x43, 0x9a, 0x71, 0x2b, 0xac,
+	0x47, 0xf4, 0x1c, 0x6a, 0x46, 0x6d, 0x32, 0x32, 0xb4, 0x0b, 0x99, 0x91, 0x61, 0x56, 0xf3, 0x3c,
+	0x80, 0x55, 0x19, 0x90, 0xfd, 0x71, 0x56, 0xcb, 0xdc, 0xbd, 0x5c, 0x4c, 0x2c, 0xdb, 0x73, 0xbe,
+	0x96, 0xa3, 0xf3, 0x6f, 0x8e, 0xfa, 0x0f, 0xf1, 0xea, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xe0,
+	0x82, 0xa2, 0xe5, 0x6c, 0x08, 0x00, 0x00,
 }

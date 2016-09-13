@@ -18,176 +18,176 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-type UserFindUserRequest struct {
+type GateFindUserRequest struct {
 	User string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 }
 
-func (m *UserFindUserRequest) Reset()                    { *m = UserFindUserRequest{} }
-func (m *UserFindUserRequest) String() string            { return proto.CompactTextString(m) }
-func (*UserFindUserRequest) ProtoMessage()               {}
-func (*UserFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (m *GateFindUserRequest) Reset()                    { *m = GateFindUserRequest{} }
+func (m *GateFindUserRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateFindUserRequest) ProtoMessage()               {}
+func (*GateFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
 
-type UserFindUserResponse struct {
+type GateFindUserResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UserFindUserResponse) Reset()                    { *m = UserFindUserResponse{} }
-func (m *UserFindUserResponse) String() string            { return proto.CompactTextString(m) }
-func (*UserFindUserResponse) ProtoMessage()               {}
-func (*UserFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (m *GateFindUserResponse) Reset()                    { *m = GateFindUserResponse{} }
+func (m *GateFindUserResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateFindUserResponse) ProtoMessage()               {}
+func (*GateFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
 
-func (m *UserFindUserResponse) GetHeader() *ResponseHeader {
+func (m *GateFindUserResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UserAddFriendRequest struct {
+type GateAddFriendRequest struct {
 	UserID  int64 `protobuf:"varint,1,opt,name=UserID" json:"UserID,omitempty"`
 	Confirm bool  `protobuf:"varint,2,opt,name=Confirm" json:"Confirm,omitempty"`
 }
 
-func (m *UserAddFriendRequest) Reset()                    { *m = UserAddFriendRequest{} }
-func (m *UserAddFriendRequest) String() string            { return proto.CompactTextString(m) }
-func (*UserAddFriendRequest) ProtoMessage()               {}
-func (*UserAddFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (m *GateAddFriendRequest) Reset()                    { *m = GateAddFriendRequest{} }
+func (m *GateAddFriendRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateAddFriendRequest) ProtoMessage()               {}
+func (*GateAddFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
 
-type UserAddFriendResponse struct {
+type GateAddFriendResponse struct {
 	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Confirm bool            `protobuf:"varint,2,opt,name=Confirm" json:"Confirm,omitempty"`
 }
 
-func (m *UserAddFriendResponse) Reset()                    { *m = UserAddFriendResponse{} }
-func (m *UserAddFriendResponse) String() string            { return proto.CompactTextString(m) }
-func (*UserAddFriendResponse) ProtoMessage()               {}
-func (*UserAddFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+func (m *GateAddFriendResponse) Reset()                    { *m = GateAddFriendResponse{} }
+func (m *GateAddFriendResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateAddFriendResponse) ProtoMessage()               {}
+func (*GateAddFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
 
-func (m *UserAddFriendResponse) GetHeader() *ResponseHeader {
+func (m *GateAddFriendResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UserCreateGroupRequest struct {
+type GateCreateGroupRequest struct {
 }
 
-func (m *UserCreateGroupRequest) Reset()                    { *m = UserCreateGroupRequest{} }
-func (m *UserCreateGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*UserCreateGroupRequest) ProtoMessage()               {}
-func (*UserCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+func (m *GateCreateGroupRequest) Reset()                    { *m = GateCreateGroupRequest{} }
+func (m *GateCreateGroupRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateCreateGroupRequest) ProtoMessage()               {}
+func (*GateCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
 
-type UserCreateGroupResponse struct {
+type GateCreateGroupResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UserCreateGroupResponse) Reset()                    { *m = UserCreateGroupResponse{} }
-func (m *UserCreateGroupResponse) String() string            { return proto.CompactTextString(m) }
-func (*UserCreateGroupResponse) ProtoMessage()               {}
-func (*UserCreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+func (m *GateCreateGroupResponse) Reset()                    { *m = GateCreateGroupResponse{} }
+func (m *GateCreateGroupResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateCreateGroupResponse) ProtoMessage()               {}
+func (*GateCreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
 
-func (m *UserCreateGroupResponse) GetHeader() *ResponseHeader {
+func (m *GateCreateGroupResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UserRegisterRequest struct {
+type GateRegisterRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
 }
 
-func (m *UserRegisterRequest) Reset()                    { *m = UserRegisterRequest{} }
-func (m *UserRegisterRequest) String() string            { return proto.CompactTextString(m) }
-func (*UserRegisterRequest) ProtoMessage()               {}
-func (*UserRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
+func (m *GateRegisterRequest) Reset()                    { *m = GateRegisterRequest{} }
+func (m *GateRegisterRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateRegisterRequest) ProtoMessage()               {}
+func (*GateRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
 
-type UserRegisterResponse struct {
+type GateRegisterResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UserRegisterResponse) Reset()                    { *m = UserRegisterResponse{} }
-func (m *UserRegisterResponse) String() string            { return proto.CompactTextString(m) }
-func (*UserRegisterResponse) ProtoMessage()               {}
-func (*UserRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
+func (m *GateRegisterResponse) Reset()                    { *m = GateRegisterResponse{} }
+func (m *GateRegisterResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateRegisterResponse) ProtoMessage()               {}
+func (*GateRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
 
-func (m *UserRegisterResponse) GetHeader() *ResponseHeader {
+func (m *GateRegisterResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UpdateUserInfoRequest struct {
+type GateUpdateUserInfoRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 	NickName string `protobuf:"bytes,2,opt,name=NickName" json:"NickName,omitempty"`
 	Avatar   []byte `protobuf:"bytes,3,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
 }
 
-func (m *UpdateUserInfoRequest) Reset()                    { *m = UpdateUserInfoRequest{} }
-func (m *UpdateUserInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*UpdateUserInfoRequest) ProtoMessage()               {}
-func (*UpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
+func (m *GateUpdateUserInfoRequest) Reset()                    { *m = GateUpdateUserInfoRequest{} }
+func (m *GateUpdateUserInfoRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateUpdateUserInfoRequest) ProtoMessage()               {}
+func (*GateUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
 
-type UpdateUserInfoResponse struct {
+type GateUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UpdateUserInfoResponse) Reset()                    { *m = UpdateUserInfoResponse{} }
-func (m *UpdateUserInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*UpdateUserInfoResponse) ProtoMessage()               {}
-func (*UpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
+func (m *GateUpdateUserInfoResponse) Reset()                    { *m = GateUpdateUserInfoResponse{} }
+func (m *GateUpdateUserInfoResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateUpdateUserInfoResponse) ProtoMessage()               {}
+func (*GateUpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
 
-func (m *UpdateUserInfoResponse) GetHeader() *ResponseHeader {
+func (m *GateUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UpdateUserPasswordRequest struct {
+type GateUpdateUserPasswordRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
 }
 
-func (m *UpdateUserPasswordRequest) Reset()                    { *m = UpdateUserPasswordRequest{} }
-func (m *UpdateUserPasswordRequest) String() string            { return proto.CompactTextString(m) }
-func (*UpdateUserPasswordRequest) ProtoMessage()               {}
-func (*UpdateUserPasswordRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
+func (m *GateUpdateUserPasswordRequest) Reset()                    { *m = GateUpdateUserPasswordRequest{} }
+func (m *GateUpdateUserPasswordRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateUpdateUserPasswordRequest) ProtoMessage()               {}
+func (*GateUpdateUserPasswordRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
 
-type UpdateUserPasswordResponse struct {
+type GateUpdateUserPasswordResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UpdateUserPasswordResponse) Reset()                    { *m = UpdateUserPasswordResponse{} }
-func (m *UpdateUserPasswordResponse) String() string            { return proto.CompactTextString(m) }
-func (*UpdateUserPasswordResponse) ProtoMessage()               {}
-func (*UpdateUserPasswordResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
+func (m *GateUpdateUserPasswordResponse) Reset()                    { *m = GateUpdateUserPasswordResponse{} }
+func (m *GateUpdateUserPasswordResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateUpdateUserPasswordResponse) ProtoMessage()               {}
+func (*GateUpdateUserPasswordResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
 
-func (m *UpdateUserPasswordResponse) GetHeader() *ResponseHeader {
+func (m *GateUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UserInfoRequest struct {
+type GateGetUserInfoRequest struct {
 	User string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 }
 
-func (m *UserInfoRequest) Reset()                    { *m = UserInfoRequest{} }
-func (m *UserInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*UserInfoRequest) ProtoMessage()               {}
-func (*UserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{12} }
+func (m *GateGetUserInfoRequest) Reset()                    { *m = GateGetUserInfoRequest{} }
+func (m *GateGetUserInfoRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateGetUserInfoRequest) ProtoMessage()               {}
+func (*GateGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{12} }
 
-type UserInfoResponse struct {
+type GateGetUserInfoResponse struct {
 	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID       int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 	User     string          `protobuf:"bytes,3,opt,name=User" json:"User,omitempty"`
@@ -195,164 +195,164 @@ type UserInfoResponse struct {
 	Avatar   []byte          `protobuf:"bytes,5,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
 }
 
-func (m *UserInfoResponse) Reset()                    { *m = UserInfoResponse{} }
-func (m *UserInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*UserInfoResponse) ProtoMessage()               {}
-func (*UserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{13} }
+func (m *GateGetUserInfoResponse) Reset()                    { *m = GateGetUserInfoResponse{} }
+func (m *GateGetUserInfoResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateGetUserInfoResponse) ProtoMessage()               {}
+func (*GateGetUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{13} }
 
-func (m *UserInfoResponse) GetHeader() *ResponseHeader {
+func (m *GateGetUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type HeartbeatRequest struct {
+type GateHeartbeatRequest struct {
 }
 
-func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
-func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
-func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{14} }
+func (m *GateHeartbeatRequest) Reset()                    { *m = GateHeartbeatRequest{} }
+func (m *GateHeartbeatRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateHeartbeatRequest) ProtoMessage()               {}
+func (*GateHeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{14} }
 
-type HeartbeatResponse struct {
+type GateHeartbeatResponse struct {
 }
 
-func (m *HeartbeatResponse) Reset()                    { *m = HeartbeatResponse{} }
-func (m *HeartbeatResponse) String() string            { return proto.CompactTextString(m) }
-func (*HeartbeatResponse) ProtoMessage()               {}
-func (*HeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{15} }
+func (m *GateHeartbeatResponse) Reset()                    { *m = GateHeartbeatResponse{} }
+func (m *GateHeartbeatResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateHeartbeatResponse) ProtoMessage()               {}
+func (*GateHeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{15} }
 
-type UserLoginRequest struct {
+type GateUserLoginRequest struct {
 	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
 }
 
-func (m *UserLoginRequest) Reset()                    { *m = UserLoginRequest{} }
-func (m *UserLoginRequest) String() string            { return proto.CompactTextString(m) }
-func (*UserLoginRequest) ProtoMessage()               {}
-func (*UserLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{16} }
+func (m *GateUserLoginRequest) Reset()                    { *m = GateUserLoginRequest{} }
+func (m *GateUserLoginRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateUserLoginRequest) ProtoMessage()               {}
+func (*GateUserLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{16} }
 
-type UserLoginResponse struct {
+type GateUserLoginResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
 }
 
-func (m *UserLoginResponse) Reset()                    { *m = UserLoginResponse{} }
-func (m *UserLoginResponse) String() string            { return proto.CompactTextString(m) }
-func (*UserLoginResponse) ProtoMessage()               {}
-func (*UserLoginResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{17} }
+func (m *GateUserLoginResponse) Reset()                    { *m = GateUserLoginResponse{} }
+func (m *GateUserLoginResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateUserLoginResponse) ProtoMessage()               {}
+func (*GateUserLoginResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{17} }
 
-func (m *UserLoginResponse) GetHeader() *ResponseHeader {
+func (m *GateUserLoginResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UserLogoutRequest struct {
+type GateUserLogoutRequest struct {
 }
 
-func (m *UserLogoutRequest) Reset()                    { *m = UserLogoutRequest{} }
-func (m *UserLogoutRequest) String() string            { return proto.CompactTextString(m) }
-func (*UserLogoutRequest) ProtoMessage()               {}
-func (*UserLogoutRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{18} }
+func (m *GateUserLogoutRequest) Reset()                    { *m = GateUserLogoutRequest{} }
+func (m *GateUserLogoutRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateUserLogoutRequest) ProtoMessage()               {}
+func (*GateUserLogoutRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{18} }
 
-type UserLogoutResponse struct {
+type GateUserLogoutResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *UserLogoutResponse) Reset()                    { *m = UserLogoutResponse{} }
-func (m *UserLogoutResponse) String() string            { return proto.CompactTextString(m) }
-func (*UserLogoutResponse) ProtoMessage()               {}
-func (*UserLogoutResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{19} }
+func (m *GateUserLogoutResponse) Reset()                    { *m = GateUserLogoutResponse{} }
+func (m *GateUserLogoutResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateUserLogoutResponse) ProtoMessage()               {}
+func (*GateUserLogoutResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{19} }
 
-func (m *UserLogoutResponse) GetHeader() *ResponseHeader {
+func (m *GateUserLogoutResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type UploadImageRequest struct {
+type GateUploadImageRequest struct {
 	Image []byte `protobuf:"bytes,1,opt,name=Image,proto3" json:"Image,omitempty"`
 }
 
-func (m *UploadImageRequest) Reset()                    { *m = UploadImageRequest{} }
-func (m *UploadImageRequest) String() string            { return proto.CompactTextString(m) }
-func (*UploadImageRequest) ProtoMessage()               {}
-func (*UploadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
+func (m *GateUploadImageRequest) Reset()                    { *m = GateUploadImageRequest{} }
+func (m *GateUploadImageRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateUploadImageRequest) ProtoMessage()               {}
+func (*GateUploadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
 
-type UploadImageResponse struct {
+type GateUploadImageResponse struct {
 	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ImageID int64           `protobuf:"varint,2,opt,name=ImageID" json:"ImageID,omitempty"`
 }
 
-func (m *UploadImageResponse) Reset()                    { *m = UploadImageResponse{} }
-func (m *UploadImageResponse) String() string            { return proto.CompactTextString(m) }
-func (*UploadImageResponse) ProtoMessage()               {}
-func (*UploadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{21} }
+func (m *GateUploadImageResponse) Reset()                    { *m = GateUploadImageResponse{} }
+func (m *GateUploadImageResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateUploadImageResponse) ProtoMessage()               {}
+func (*GateUploadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{21} }
 
-func (m *UploadImageResponse) GetHeader() *ResponseHeader {
+func (m *GateUploadImageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type DownloadImageRequest struct {
+type GateDownloadImageRequest struct {
 	ImageID []int64 `protobuf:"varint,1,rep,packed,name=ImageID" json:"ImageID,omitempty"`
 }
 
-func (m *DownloadImageRequest) Reset()                    { *m = DownloadImageRequest{} }
-func (m *DownloadImageRequest) String() string            { return proto.CompactTextString(m) }
-func (*DownloadImageRequest) ProtoMessage()               {}
-func (*DownloadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{22} }
+func (m *GateDownloadImageRequest) Reset()                    { *m = GateDownloadImageRequest{} }
+func (m *GateDownloadImageRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateDownloadImageRequest) ProtoMessage()               {}
+func (*GateDownloadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{22} }
 
-type DownloadImageResponse struct {
+type GateDownloadImageResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Image  [][]byte        `protobuf:"bytes,2,rep,name=Image,proto3" json:"Image,omitempty"`
 }
 
-func (m *DownloadImageResponse) Reset()                    { *m = DownloadImageResponse{} }
-func (m *DownloadImageResponse) String() string            { return proto.CompactTextString(m) }
-func (*DownloadImageResponse) ProtoMessage()               {}
-func (*DownloadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{23} }
+func (m *GateDownloadImageResponse) Reset()                    { *m = GateDownloadImageResponse{} }
+func (m *GateDownloadImageResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateDownloadImageResponse) ProtoMessage()               {}
+func (*GateDownloadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{23} }
 
-func (m *DownloadImageResponse) GetHeader() *ResponseHeader {
+func (m *GateDownloadImageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type NoticeRequest struct {
+type GateNoticeRequest struct {
 	ChannelID int64    `protobuf:"varint,1,opt,name=ChannelID" json:"ChannelID,omitempty"`
 	Msg       *Message `protobuf:"bytes,2,opt,name=Msg" json:"Msg,omitempty"`
 }
 
-func (m *NoticeRequest) Reset()                    { *m = NoticeRequest{} }
-func (m *NoticeRequest) String() string            { return proto.CompactTextString(m) }
-func (*NoticeRequest) ProtoMessage()               {}
-func (*NoticeRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{24} }
+func (m *GateNoticeRequest) Reset()                    { *m = GateNoticeRequest{} }
+func (m *GateNoticeRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateNoticeRequest) ProtoMessage()               {}
+func (*GateNoticeRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{24} }
 
-func (m *NoticeRequest) GetMsg() *Message {
+func (m *GateNoticeRequest) GetMsg() *Message {
 	if m != nil {
 		return m.Msg
 	}
 	return nil
 }
 
-type NoticeResponse struct {
+type GateNoticeResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *NoticeResponse) Reset()                    { *m = NoticeResponse{} }
-func (m *NoticeResponse) String() string            { return proto.CompactTextString(m) }
-func (*NoticeResponse) ProtoMessage()               {}
-func (*NoticeResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{25} }
+func (m *GateNoticeResponse) Reset()                    { *m = GateNoticeResponse{} }
+func (m *GateNoticeResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateNoticeResponse) ProtoMessage()               {}
+func (*GateNoticeResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{25} }
 
-func (m *NoticeResponse) GetHeader() *ResponseHeader {
+func (m *GateNoticeResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
@@ -360,32 +360,32 @@ func (m *NoticeResponse) GetHeader() *ResponseHeader {
 }
 
 func init() {
-	proto.RegisterType((*UserFindUserRequest)(nil), "candy.meta.UserFindUserRequest")
-	proto.RegisterType((*UserFindUserResponse)(nil), "candy.meta.UserFindUserResponse")
-	proto.RegisterType((*UserAddFriendRequest)(nil), "candy.meta.UserAddFriendRequest")
-	proto.RegisterType((*UserAddFriendResponse)(nil), "candy.meta.UserAddFriendResponse")
-	proto.RegisterType((*UserCreateGroupRequest)(nil), "candy.meta.UserCreateGroupRequest")
-	proto.RegisterType((*UserCreateGroupResponse)(nil), "candy.meta.UserCreateGroupResponse")
-	proto.RegisterType((*UserRegisterRequest)(nil), "candy.meta.UserRegisterRequest")
-	proto.RegisterType((*UserRegisterResponse)(nil), "candy.meta.UserRegisterResponse")
-	proto.RegisterType((*UpdateUserInfoRequest)(nil), "candy.meta.UpdateUserInfoRequest")
-	proto.RegisterType((*UpdateUserInfoResponse)(nil), "candy.meta.UpdateUserInfoResponse")
-	proto.RegisterType((*UpdateUserPasswordRequest)(nil), "candy.meta.UpdateUserPasswordRequest")
-	proto.RegisterType((*UpdateUserPasswordResponse)(nil), "candy.meta.UpdateUserPasswordResponse")
-	proto.RegisterType((*UserInfoRequest)(nil), "candy.meta.UserInfoRequest")
-	proto.RegisterType((*UserInfoResponse)(nil), "candy.meta.UserInfoResponse")
-	proto.RegisterType((*HeartbeatRequest)(nil), "candy.meta.HeartbeatRequest")
-	proto.RegisterType((*HeartbeatResponse)(nil), "candy.meta.HeartbeatResponse")
-	proto.RegisterType((*UserLoginRequest)(nil), "candy.meta.UserLoginRequest")
-	proto.RegisterType((*UserLoginResponse)(nil), "candy.meta.UserLoginResponse")
-	proto.RegisterType((*UserLogoutRequest)(nil), "candy.meta.UserLogoutRequest")
-	proto.RegisterType((*UserLogoutResponse)(nil), "candy.meta.UserLogoutResponse")
-	proto.RegisterType((*UploadImageRequest)(nil), "candy.meta.UploadImageRequest")
-	proto.RegisterType((*UploadImageResponse)(nil), "candy.meta.UploadImageResponse")
-	proto.RegisterType((*DownloadImageRequest)(nil), "candy.meta.DownloadImageRequest")
-	proto.RegisterType((*DownloadImageResponse)(nil), "candy.meta.DownloadImageResponse")
-	proto.RegisterType((*NoticeRequest)(nil), "candy.meta.NoticeRequest")
-	proto.RegisterType((*NoticeResponse)(nil), "candy.meta.NoticeResponse")
+	proto.RegisterType((*GateFindUserRequest)(nil), "candy.meta.GateFindUserRequest")
+	proto.RegisterType((*GateFindUserResponse)(nil), "candy.meta.GateFindUserResponse")
+	proto.RegisterType((*GateAddFriendRequest)(nil), "candy.meta.GateAddFriendRequest")
+	proto.RegisterType((*GateAddFriendResponse)(nil), "candy.meta.GateAddFriendResponse")
+	proto.RegisterType((*GateCreateGroupRequest)(nil), "candy.meta.GateCreateGroupRequest")
+	proto.RegisterType((*GateCreateGroupResponse)(nil), "candy.meta.GateCreateGroupResponse")
+	proto.RegisterType((*GateRegisterRequest)(nil), "candy.meta.GateRegisterRequest")
+	proto.RegisterType((*GateRegisterResponse)(nil), "candy.meta.GateRegisterResponse")
+	proto.RegisterType((*GateUpdateUserInfoRequest)(nil), "candy.meta.GateUpdateUserInfoRequest")
+	proto.RegisterType((*GateUpdateUserInfoResponse)(nil), "candy.meta.GateUpdateUserInfoResponse")
+	proto.RegisterType((*GateUpdateUserPasswordRequest)(nil), "candy.meta.GateUpdateUserPasswordRequest")
+	proto.RegisterType((*GateUpdateUserPasswordResponse)(nil), "candy.meta.GateUpdateUserPasswordResponse")
+	proto.RegisterType((*GateGetUserInfoRequest)(nil), "candy.meta.GateGetUserInfoRequest")
+	proto.RegisterType((*GateGetUserInfoResponse)(nil), "candy.meta.GateGetUserInfoResponse")
+	proto.RegisterType((*GateHeartbeatRequest)(nil), "candy.meta.GateHeartbeatRequest")
+	proto.RegisterType((*GateHeartbeatResponse)(nil), "candy.meta.GateHeartbeatResponse")
+	proto.RegisterType((*GateUserLoginRequest)(nil), "candy.meta.GateUserLoginRequest")
+	proto.RegisterType((*GateUserLoginResponse)(nil), "candy.meta.GateUserLoginResponse")
+	proto.RegisterType((*GateUserLogoutRequest)(nil), "candy.meta.GateUserLogoutRequest")
+	proto.RegisterType((*GateUserLogoutResponse)(nil), "candy.meta.GateUserLogoutResponse")
+	proto.RegisterType((*GateUploadImageRequest)(nil), "candy.meta.GateUploadImageRequest")
+	proto.RegisterType((*GateUploadImageResponse)(nil), "candy.meta.GateUploadImageResponse")
+	proto.RegisterType((*GateDownloadImageRequest)(nil), "candy.meta.GateDownloadImageRequest")
+	proto.RegisterType((*GateDownloadImageResponse)(nil), "candy.meta.GateDownloadImageResponse")
+	proto.RegisterType((*GateNoticeRequest)(nil), "candy.meta.GateNoticeRequest")
+	proto.RegisterType((*GateNoticeResponse)(nil), "candy.meta.GateNoticeResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -399,23 +399,23 @@ const _ = grpc.SupportPackageIsVersion3
 // Client API for Gate service
 
 type GateClient interface {
-	Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
-	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoResponse, error)
-	UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordRequest, opts ...grpc.CallOption) (*UpdateUserPasswordResponse, error)
-	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
-	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
-	Logout(ctx context.Context, in *UserLogoutRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+	Register(ctx context.Context, in *GateRegisterRequest, opts ...grpc.CallOption) (*GateRegisterResponse, error)
+	UpdateUserInfo(ctx context.Context, in *GateUpdateUserInfoRequest, opts ...grpc.CallOption) (*GateUpdateUserInfoResponse, error)
+	UpdateUserPassword(ctx context.Context, in *GateUpdateUserPasswordRequest, opts ...grpc.CallOption) (*GateUpdateUserPasswordResponse, error)
+	GetUserInfo(ctx context.Context, in *GateGetUserInfoRequest, opts ...grpc.CallOption) (*GateGetUserInfoResponse, error)
+	Login(ctx context.Context, in *GateUserLoginRequest, opts ...grpc.CallOption) (*GateUserLoginResponse, error)
+	Logout(ctx context.Context, in *GateUserLogoutRequest, opts ...grpc.CallOption) (*GateUserLogoutResponse, error)
 	UserMessage(ctx context.Context, opts ...grpc.CallOption) (Gate_UserMessageClient, error)
 	// AddFriend 添加好友或确认接受添加.
-	AddFriend(ctx context.Context, in *UserAddFriendRequest, opts ...grpc.CallOption) (*UserAddFriendResponse, error)
+	AddFriend(ctx context.Context, in *GateAddFriendRequest, opts ...grpc.CallOption) (*GateAddFriendResponse, error)
 	// FindUser 添加好友前先查找出来对应的ID.
-	FindUser(ctx context.Context, in *UserFindUserRequest, opts ...grpc.CallOption) (*UserFindUserResponse, error)
-	CreateGroup(ctx context.Context, in *UserCreateGroupRequest, opts ...grpc.CallOption) (*UserCreateGroupResponse, error)
-	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error)
-	UploadImage(ctx context.Context, in *UploadImageRequest, opts ...grpc.CallOption) (*UploadImageResponse, error)
-	DownloadImage(ctx context.Context, in *DownloadImageRequest, opts ...grpc.CallOption) (*DownloadImageResponse, error)
+	FindUser(ctx context.Context, in *GateFindUserRequest, opts ...grpc.CallOption) (*GateFindUserResponse, error)
+	CreateGroup(ctx context.Context, in *GateCreateGroupRequest, opts ...grpc.CallOption) (*GateCreateGroupResponse, error)
+	Heartbeat(ctx context.Context, in *GateHeartbeatRequest, opts ...grpc.CallOption) (*GateHeartbeatResponse, error)
+	UploadImage(ctx context.Context, in *GateUploadImageRequest, opts ...grpc.CallOption) (*GateUploadImageResponse, error)
+	DownloadImage(ctx context.Context, in *GateDownloadImageRequest, opts ...grpc.CallOption) (*GateDownloadImageResponse, error)
 	// server interface.
-	Notice(ctx context.Context, in *NoticeRequest, opts ...grpc.CallOption) (*NoticeResponse, error)
+	Notice(ctx context.Context, in *GateNoticeRequest, opts ...grpc.CallOption) (*GateNoticeResponse, error)
 }
 
 type gateClient struct {
@@ -426,8 +426,8 @@ func NewGateClient(cc *grpc.ClientConn) GateClient {
 	return &gateClient{cc}
 }
 
-func (c *gateClient) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error) {
-	out := new(UserRegisterResponse)
+func (c *gateClient) Register(ctx context.Context, in *GateRegisterRequest, opts ...grpc.CallOption) (*GateRegisterResponse, error) {
+	out := new(GateRegisterResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/Register", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -435,8 +435,8 @@ func (c *gateClient) Register(ctx context.Context, in *UserRegisterRequest, opts
 	return out, nil
 }
 
-func (c *gateClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoResponse, error) {
-	out := new(UpdateUserInfoResponse)
+func (c *gateClient) UpdateUserInfo(ctx context.Context, in *GateUpdateUserInfoRequest, opts ...grpc.CallOption) (*GateUpdateUserInfoResponse, error) {
+	out := new(GateUpdateUserInfoResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/UpdateUserInfo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -444,8 +444,8 @@ func (c *gateClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReque
 	return out, nil
 }
 
-func (c *gateClient) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordRequest, opts ...grpc.CallOption) (*UpdateUserPasswordResponse, error) {
-	out := new(UpdateUserPasswordResponse)
+func (c *gateClient) UpdateUserPassword(ctx context.Context, in *GateUpdateUserPasswordRequest, opts ...grpc.CallOption) (*GateUpdateUserPasswordResponse, error) {
+	out := new(GateUpdateUserPasswordResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/UpdateUserPassword", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -453,17 +453,17 @@ func (c *gateClient) UpdateUserPassword(ctx context.Context, in *UpdateUserPassw
 	return out, nil
 }
 
-func (c *gateClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error) {
-	out := new(UserInfoResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/UserInfo", in, out, c.cc, opts...)
+func (c *gateClient) GetUserInfo(ctx context.Context, in *GateGetUserInfoRequest, opts ...grpc.CallOption) (*GateGetUserInfoResponse, error) {
+	out := new(GateGetUserInfoResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/GetUserInfo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gateClient) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
-	out := new(UserLoginResponse)
+func (c *gateClient) Login(ctx context.Context, in *GateUserLoginRequest, opts ...grpc.CallOption) (*GateUserLoginResponse, error) {
+	out := new(GateUserLoginResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/Login", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -471,8 +471,8 @@ func (c *gateClient) Login(ctx context.Context, in *UserLoginRequest, opts ...gr
 	return out, nil
 }
 
-func (c *gateClient) Logout(ctx context.Context, in *UserLogoutRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
-	out := new(UserLoginResponse)
+func (c *gateClient) Logout(ctx context.Context, in *GateUserLogoutRequest, opts ...grpc.CallOption) (*GateUserLogoutResponse, error) {
+	out := new(GateUserLogoutResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/Logout", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -511,8 +511,8 @@ func (x *gateUserMessageClient) Recv() (*Message, error) {
 	return m, nil
 }
 
-func (c *gateClient) AddFriend(ctx context.Context, in *UserAddFriendRequest, opts ...grpc.CallOption) (*UserAddFriendResponse, error) {
-	out := new(UserAddFriendResponse)
+func (c *gateClient) AddFriend(ctx context.Context, in *GateAddFriendRequest, opts ...grpc.CallOption) (*GateAddFriendResponse, error) {
+	out := new(GateAddFriendResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/AddFriend", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -520,8 +520,8 @@ func (c *gateClient) AddFriend(ctx context.Context, in *UserAddFriendRequest, op
 	return out, nil
 }
 
-func (c *gateClient) FindUser(ctx context.Context, in *UserFindUserRequest, opts ...grpc.CallOption) (*UserFindUserResponse, error) {
-	out := new(UserFindUserResponse)
+func (c *gateClient) FindUser(ctx context.Context, in *GateFindUserRequest, opts ...grpc.CallOption) (*GateFindUserResponse, error) {
+	out := new(GateFindUserResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/FindUser", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -529,8 +529,8 @@ func (c *gateClient) FindUser(ctx context.Context, in *UserFindUserRequest, opts
 	return out, nil
 }
 
-func (c *gateClient) CreateGroup(ctx context.Context, in *UserCreateGroupRequest, opts ...grpc.CallOption) (*UserCreateGroupResponse, error) {
-	out := new(UserCreateGroupResponse)
+func (c *gateClient) CreateGroup(ctx context.Context, in *GateCreateGroupRequest, opts ...grpc.CallOption) (*GateCreateGroupResponse, error) {
+	out := new(GateCreateGroupResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/CreateGroup", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -538,8 +538,8 @@ func (c *gateClient) CreateGroup(ctx context.Context, in *UserCreateGroupRequest
 	return out, nil
 }
 
-func (c *gateClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error) {
-	out := new(HeartbeatResponse)
+func (c *gateClient) Heartbeat(ctx context.Context, in *GateHeartbeatRequest, opts ...grpc.CallOption) (*GateHeartbeatResponse, error) {
+	out := new(GateHeartbeatResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/Heartbeat", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -547,8 +547,8 @@ func (c *gateClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts .
 	return out, nil
 }
 
-func (c *gateClient) UploadImage(ctx context.Context, in *UploadImageRequest, opts ...grpc.CallOption) (*UploadImageResponse, error) {
-	out := new(UploadImageResponse)
+func (c *gateClient) UploadImage(ctx context.Context, in *GateUploadImageRequest, opts ...grpc.CallOption) (*GateUploadImageResponse, error) {
+	out := new(GateUploadImageResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/UploadImage", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -556,8 +556,8 @@ func (c *gateClient) UploadImage(ctx context.Context, in *UploadImageRequest, op
 	return out, nil
 }
 
-func (c *gateClient) DownloadImage(ctx context.Context, in *DownloadImageRequest, opts ...grpc.CallOption) (*DownloadImageResponse, error) {
-	out := new(DownloadImageResponse)
+func (c *gateClient) DownloadImage(ctx context.Context, in *GateDownloadImageRequest, opts ...grpc.CallOption) (*GateDownloadImageResponse, error) {
+	out := new(GateDownloadImageResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/DownloadImage", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -565,8 +565,8 @@ func (c *gateClient) DownloadImage(ctx context.Context, in *DownloadImageRequest
 	return out, nil
 }
 
-func (c *gateClient) Notice(ctx context.Context, in *NoticeRequest, opts ...grpc.CallOption) (*NoticeResponse, error) {
-	out := new(NoticeResponse)
+func (c *gateClient) Notice(ctx context.Context, in *GateNoticeRequest, opts ...grpc.CallOption) (*GateNoticeResponse, error) {
+	out := new(GateNoticeResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/Notice", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -577,23 +577,23 @@ func (c *gateClient) Notice(ctx context.Context, in *NoticeRequest, opts ...grpc
 // Server API for Gate service
 
 type GateServer interface {
-	Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error)
-	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error)
-	UpdateUserPassword(context.Context, *UpdateUserPasswordRequest) (*UpdateUserPasswordResponse, error)
-	UserInfo(context.Context, *UserInfoRequest) (*UserInfoResponse, error)
-	Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
-	Logout(context.Context, *UserLogoutRequest) (*UserLoginResponse, error)
+	Register(context.Context, *GateRegisterRequest) (*GateRegisterResponse, error)
+	UpdateUserInfo(context.Context, *GateUpdateUserInfoRequest) (*GateUpdateUserInfoResponse, error)
+	UpdateUserPassword(context.Context, *GateUpdateUserPasswordRequest) (*GateUpdateUserPasswordResponse, error)
+	GetUserInfo(context.Context, *GateGetUserInfoRequest) (*GateGetUserInfoResponse, error)
+	Login(context.Context, *GateUserLoginRequest) (*GateUserLoginResponse, error)
+	Logout(context.Context, *GateUserLogoutRequest) (*GateUserLogoutResponse, error)
 	UserMessage(Gate_UserMessageServer) error
 	// AddFriend 添加好友或确认接受添加.
-	AddFriend(context.Context, *UserAddFriendRequest) (*UserAddFriendResponse, error)
+	AddFriend(context.Context, *GateAddFriendRequest) (*GateAddFriendResponse, error)
 	// FindUser 添加好友前先查找出来对应的ID.
-	FindUser(context.Context, *UserFindUserRequest) (*UserFindUserResponse, error)
-	CreateGroup(context.Context, *UserCreateGroupRequest) (*UserCreateGroupResponse, error)
-	Heartbeat(context.Context, *HeartbeatRequest) (*HeartbeatResponse, error)
-	UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error)
-	DownloadImage(context.Context, *DownloadImageRequest) (*DownloadImageResponse, error)
+	FindUser(context.Context, *GateFindUserRequest) (*GateFindUserResponse, error)
+	CreateGroup(context.Context, *GateCreateGroupRequest) (*GateCreateGroupResponse, error)
+	Heartbeat(context.Context, *GateHeartbeatRequest) (*GateHeartbeatResponse, error)
+	UploadImage(context.Context, *GateUploadImageRequest) (*GateUploadImageResponse, error)
+	DownloadImage(context.Context, *GateDownloadImageRequest) (*GateDownloadImageResponse, error)
 	// server interface.
-	Notice(context.Context, *NoticeRequest) (*NoticeResponse, error)
+	Notice(context.Context, *GateNoticeRequest) (*GateNoticeResponse, error)
 }
 
 func RegisterGateServer(s *grpc.Server, srv GateServer) {
@@ -601,7 +601,7 @@ func RegisterGateServer(s *grpc.Server, srv GateServer) {
 }
 
 func _Gate_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserRegisterRequest)
+	in := new(GateRegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -613,13 +613,13 @@ func _Gate_Register_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: "/candy.meta.Gate/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).Register(ctx, req.(*UserRegisterRequest))
+		return srv.(GateServer).Register(ctx, req.(*GateRegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserInfoRequest)
+	in := new(GateUpdateUserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -631,13 +631,13 @@ func _Gate_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/candy.meta.Gate/UpdateUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).UpdateUserInfo(ctx, req.(*UpdateUserInfoRequest))
+		return srv.(GateServer).UpdateUserInfo(ctx, req.(*GateUpdateUserInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserPasswordRequest)
+	in := new(GateUpdateUserPasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -649,31 +649,31 @@ func _Gate_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/candy.meta.Gate/UpdateUserPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).UpdateUserPassword(ctx, req.(*UpdateUserPasswordRequest))
+		return srv.(GateServer).UpdateUserPassword(ctx, req.(*GateUpdateUserPasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Gate_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfoRequest)
+func _Gate_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GateGetUserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GateServer).UserInfo(ctx, in)
+		return srv.(GateServer).GetUserInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/candy.meta.Gate/UserInfo",
+		FullMethod: "/candy.meta.Gate/GetUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).UserInfo(ctx, req.(*UserInfoRequest))
+		return srv.(GateServer).GetUserInfo(ctx, req.(*GateGetUserInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserLoginRequest)
+	in := new(GateUserLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -685,13 +685,13 @@ func _Gate_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/candy.meta.Gate/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).Login(ctx, req.(*UserLoginRequest))
+		return srv.(GateServer).Login(ctx, req.(*GateUserLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserLogoutRequest)
+	in := new(GateUserLogoutRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -703,7 +703,7 @@ func _Gate_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: "/candy.meta.Gate/Logout",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).Logout(ctx, req.(*UserLogoutRequest))
+		return srv.(GateServer).Logout(ctx, req.(*GateUserLogoutRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -735,7 +735,7 @@ func (x *gateUserMessageServer) Recv() (*Message, error) {
 }
 
 func _Gate_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserAddFriendRequest)
+	in := new(GateAddFriendRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -747,13 +747,13 @@ func _Gate_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/candy.meta.Gate/AddFriend",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).AddFriend(ctx, req.(*UserAddFriendRequest))
+		return srv.(GateServer).AddFriend(ctx, req.(*GateAddFriendRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_FindUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserFindUserRequest)
+	in := new(GateFindUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -765,13 +765,13 @@ func _Gate_FindUser_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: "/candy.meta.Gate/FindUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).FindUser(ctx, req.(*UserFindUserRequest))
+		return srv.(GateServer).FindUser(ctx, req.(*GateFindUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserCreateGroupRequest)
+	in := new(GateCreateGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -783,13 +783,13 @@ func _Gate_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/candy.meta.Gate/CreateGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).CreateGroup(ctx, req.(*UserCreateGroupRequest))
+		return srv.(GateServer).CreateGroup(ctx, req.(*GateCreateGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HeartbeatRequest)
+	in := new(GateHeartbeatRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -801,13 +801,13 @@ func _Gate_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/candy.meta.Gate/Heartbeat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).Heartbeat(ctx, req.(*HeartbeatRequest))
+		return srv.(GateServer).Heartbeat(ctx, req.(*GateHeartbeatRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_UploadImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadImageRequest)
+	in := new(GateUploadImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -819,13 +819,13 @@ func _Gate_UploadImage_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/candy.meta.Gate/UploadImage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).UploadImage(ctx, req.(*UploadImageRequest))
+		return srv.(GateServer).UploadImage(ctx, req.(*GateUploadImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_DownloadImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadImageRequest)
+	in := new(GateDownloadImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -837,13 +837,13 @@ func _Gate_DownloadImage_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/candy.meta.Gate/DownloadImage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).DownloadImage(ctx, req.(*DownloadImageRequest))
+		return srv.(GateServer).DownloadImage(ctx, req.(*GateDownloadImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Gate_Notice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NoticeRequest)
+	in := new(GateNoticeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -855,7 +855,7 @@ func _Gate_Notice_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: "/candy.meta.Gate/Notice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).Notice(ctx, req.(*NoticeRequest))
+		return srv.(GateServer).Notice(ctx, req.(*GateNoticeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -877,8 +877,8 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Gate_UpdateUserPassword_Handler,
 		},
 		{
-			MethodName: "UserInfo",
-			Handler:    _Gate_UserInfo_Handler,
+			MethodName: "GetUserInfo",
+			Handler:    _Gate_GetUserInfo_Handler,
 		},
 		{
 			MethodName: "Login",
@@ -931,51 +931,53 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("gate.proto", fileDescriptor1) }
 
 var fileDescriptor1 = []byte{
-	// 731 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x56, 0x5d, 0x6f, 0x12, 0x41,
-	0x14, 0x0d, 0x5d, 0xba, 0xc2, 0x85, 0x7e, 0x30, 0xb4, 0x4a, 0xc7, 0x0f, 0xe8, 0x34, 0x6a, 0xe3,
-	0x03, 0x31, 0x18, 0xe3, 0x43, 0x4d, 0xb4, 0x82, 0xd0, 0x46, 0x21, 0x48, 0xa8, 0x26, 0xbe, 0x6d,
-	0xd9, 0x29, 0xdd, 0xd8, 0xdd, 0xc1, 0xdd, 0xc5, 0x46, 0xff, 0xa4, 0x7f, 0xc9, 0xd9, 0x4f, 0x76,
-	0x67, 0x17, 0xda, 0x82, 0x4f, 0x64, 0x67, 0xce, 0x3d, 0xf7, 0xcc, 0xbd, 0x77, 0x0e, 0x03, 0x30,
-	0x56, 0x6c, 0x5a, 0x9f, 0x98, 0xcc, 0x66, 0x08, 0x46, 0x8a, 0xa1, 0xfe, 0xae, 0xeb, 0xd4, 0x56,
-	0x70, 0x71, 0xc4, 0x74, 0x9d, 0x19, 0xde, 0x0e, 0x39, 0x80, 0xf2, 0x99, 0x45, 0xcd, 0xb6, 0x66,
-	0xa8, 0xce, 0xef, 0x80, 0xfe, 0x9c, 0x52, 0xcb, 0x46, 0x45, 0xc8, 0x3a, 0x9f, 0x95, 0x4c, 0x2d,
-	0x73, 0x98, 0x27, 0x3d, 0xd8, 0x89, 0x83, 0xac, 0x09, 0x33, 0x2c, 0x8a, 0x5e, 0x80, 0x7c, 0x49,
-	0x15, 0xd5, 0xc7, 0x15, 0x1a, 0xb8, 0x3e, 0xcb, 0x53, 0x0f, 0x50, 0x27, 0x2e, 0x02, 0x01, 0xac,
-	0x9d, 0xb6, 0x2a, 0x6b, 0x1c, 0x27, 0x91, 0x37, 0x1e, 0xdf, 0xb1, 0xaa, 0xb6, 0x4d, 0x8d, 0x1a,
-	0x6a, 0x90, 0x75, 0x13, 0x64, 0x67, 0x9d, 0xe3, 0x1c, 0x3e, 0x09, 0x6d, 0xc1, 0xbd, 0x26, 0x33,
-	0x2e, 0x34, 0x53, 0x77, 0x03, 0x73, 0x64, 0x08, 0xbb, 0x42, 0xe0, 0x12, 0x4a, 0x12, 0xac, 0x15,
-	0xb8, 0xef, 0xb0, 0x36, 0x4d, 0xca, 0x2b, 0xd6, 0x31, 0xd9, 0x74, 0xe2, 0x0b, 0x22, 0x5f, 0xe0,
-	0x41, 0x62, 0x67, 0xc5, 0xb3, 0xbf, 0xf6, 0x0a, 0x3e, 0xa0, 0x63, 0xcd, 0xb2, 0xe7, 0x14, 0x1c,
-	0x6d, 0x43, 0xae, 0xaf, 0x58, 0xd6, 0x35, 0x33, 0x55, 0x37, 0x2c, 0x6c, 0xc1, 0x2c, 0x6c, 0x45,
-	0x19, 0x1d, 0x5e, 0xc9, 0x89, 0xca, 0x4f, 0xe5, 0x16, 0xdc, 0xb8, 0x60, 0x73, 0x85, 0xf4, 0xb4,
-	0xd1, 0x8f, 0x9e, 0xa2, 0x53, 0x4f, 0x88, 0xd3, 0xa3, 0xe3, 0x5f, 0x8a, 0xad, 0x98, 0x15, 0x89,
-	0x7f, 0x17, 0x49, 0x9f, 0x17, 0x4f, 0x20, 0x5a, 0x51, 0xda, 0x11, 0xec, 0xcd, 0x18, 0x83, 0x32,
-	0xdc, 0xb6, 0x4e, 0x43, 0xc0, 0x69, 0xc1, 0x2b, 0x4a, 0xaa, 0xc2, 0xd6, 0xc2, 0x3a, 0x91, 0x3f,
-	0xb0, 0xfd, 0xbf, 0xce, 0x1f, 0x32, 0x4b, 0x89, 0x0e, 0x64, 0x85, 0x0e, 0xac, 0xbb, 0x1d, 0x40,
-	0xb0, 0xcd, 0x59, 0x4c, 0xfb, 0x9c, 0x0f, 0x69, 0x30, 0xb8, 0x65, 0x28, 0x45, 0xd6, 0xbc, 0x54,
-	0xa4, 0xe1, 0x89, 0xfc, 0xcc, 0xc6, 0x9a, 0x71, 0xdb, 0x7a, 0x7e, 0x82, 0x52, 0x24, 0x66, 0xc5,
-	0x32, 0x96, 0x43, 0x32, 0x36, 0x0d, 0xa5, 0xbe, 0x07, 0x14, 0x5d, 0xbc, 0x7b, 0x0a, 0xee, 0x61,
-	0xe8, 0x6c, 0x72, 0xc5, 0x14, 0xf5, 0x54, 0x57, 0xc6, 0x34, 0x38, 0xd9, 0x06, 0xac, 0xbb, 0xdf,
-	0x2e, 0x41, 0x91, 0x0c, 0xf8, 0xbd, 0x8b, 0x82, 0x96, 0x33, 0x0e, 0x37, 0x38, 0x3c, 0xcf, 0x73,
-	0xd8, 0x69, 0xb1, 0x6b, 0x23, 0x91, 0x3a, 0x02, 0xcc, 0xd4, 0x24, 0x0e, 0x1c, 0xc0, 0xae, 0x00,
-	0x5c, 0x22, 0x7d, 0x78, 0xa0, 0x35, 0xce, 0x59, 0x24, 0x2d, 0xd8, 0xe8, 0x31, 0x5b, 0x1b, 0x85,
-	0x59, 0x4b, 0x90, 0x6f, 0x5e, 0x2a, 0x86, 0x41, 0xaf, 0x42, 0x03, 0xad, 0x81, 0xd4, 0xb5, 0xc6,
-	0xae, 0xda, 0x42, 0xa3, 0x1c, 0xe5, 0xee, 0x52, 0xcb, 0xe2, 0x5c, 0xe4, 0x2d, 0x6c, 0x06, 0x2c,
-	0x77, 0x97, 0xd4, 0xf8, 0x9b, 0x83, 0x6c, 0x87, 0x5f, 0x36, 0xd4, 0x85, 0x5c, 0x60, 0x4d, 0xa8,
-	0x1a, 0x0d, 0x48, 0xf1, 0x3a, 0x5c, 0x9b, 0x0f, 0xf0, 0x35, 0x7c, 0x83, 0xcd, 0xb8, 0xa9, 0xa0,
-	0xfd, 0x58, 0x4c, 0x9a, 0x73, 0x61, 0xb2, 0x08, 0xe2, 0x13, 0x8f, 0x9c, 0x51, 0x11, 0xed, 0x01,
-	0x3d, 0x4d, 0x8f, 0x14, 0xbc, 0x07, 0x3f, 0xbb, 0x09, 0xe6, 0x27, 0xf9, 0x08, 0xb9, 0x50, 0xf7,
-	0x43, 0xf1, 0xac, 0x51, 0xc5, 0x8f, 0xd2, 0x37, 0x7d, 0x9a, 0x16, 0xac, 0xbb, 0xd7, 0x0e, 0x25,
-	0x60, 0xd1, 0x1b, 0x8c, 0x1f, 0xcf, 0xd9, 0xf5, 0x59, 0xda, 0x20, 0x7b, 0x57, 0x0b, 0xa5, 0x01,
-	0x67, 0xf7, 0xf0, 0x26, 0x9e, 0x23, 0x28, 0x38, 0x8b, 0xfe, 0xdc, 0xa0, 0xb4, 0x61, 0xc2, 0x69,
-	0x8b, 0x87, 0x99, 0x97, 0x19, 0xd4, 0x87, 0x7c, 0xf8, 0x9f, 0x8d, 0x12, 0xed, 0x17, 0xdf, 0x01,
-	0x78, 0x7f, 0x01, 0xc2, 0x97, 0xc3, 0x07, 0x2e, 0x78, 0x8e, 0x24, 0x07, 0x4e, 0x78, 0xcd, 0x24,
-	0x07, 0x2e, 0xf1, 0x92, 0xf9, 0x0a, 0x85, 0xc8, 0x9f, 0x3c, 0x22, 0x62, 0x40, 0xf2, 0x6d, 0x80,
-	0x0f, 0x16, 0x62, 0x7c, 0xde, 0x13, 0xc8, 0x87, 0x3e, 0x1c, 0xef, 0xa3, 0x68, 0xd9, 0xf1, 0xfa,
-	0x27, 0xcc, 0x1b, 0xf5, 0x78, 0xfd, 0x67, 0xfe, 0x85, 0x9e, 0xc4, 0x67, 0x51, 0xb4, 0x20, 0x5c,
-	0x9d, 0xbb, 0xef, 0xf3, 0x0d, 0x61, 0x23, 0x66, 0x49, 0xf1, 0xb6, 0xa4, 0xd9, 0x5a, 0xbc, 0x2d,
-	0xe9, 0x7e, 0xf6, 0x0e, 0x64, 0xcf, 0x4e, 0xd0, 0x5e, 0x14, 0x1c, 0x33, 0x2a, 0x8c, 0xd3, 0xb6,
-	0x3c, 0x82, 0x0f, 0xf2, 0xf7, 0xac, 0xb3, 0x7c, 0x2e, 0xbb, 0xcf, 0xd3, 0x57, 0xff, 0x02, 0x00,
-	0x00, 0xff, 0xff, 0x8a, 0x5f, 0x35, 0x75, 0xc6, 0x0a, 0x00, 0x00,
+	// 753 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x56, 0x5f, 0x4f, 0xdb, 0x3e,
+	0x14, 0x55, 0x48, 0xe9, 0xaf, 0xbd, 0x2d, 0xfc, 0x86, 0xd9, 0xa0, 0x8b, 0x04, 0xcb, 0xcc, 0x60,
+	0x1d, 0x93, 0xaa, 0x89, 0x69, 0xdb, 0xc3, 0x1e, 0x36, 0x46, 0x45, 0x41, 0xa3, 0x85, 0x21, 0xa8,
+	0xa6, 0x69, 0xd2, 0x64, 0x1a, 0x53, 0x22, 0x68, 0xdc, 0x25, 0x61, 0x68, 0x8f, 0xfb, 0x28, 0xfb,
+	0xa6, 0x93, 0xe3, 0x24, 0x24, 0x76, 0x52, 0xfe, 0xe4, 0x05, 0x89, 0xf8, 0xdc, 0x73, 0x8f, 0xef,
+	0xbd, 0x3e, 0xbd, 0x00, 0x43, 0xe2, 0xd3, 0xd6, 0xd8, 0x65, 0x3e, 0x43, 0x30, 0x20, 0x8e, 0xf5,
+	0xbb, 0x35, 0xa2, 0x3e, 0x31, 0xea, 0x03, 0x36, 0x1a, 0x31, 0x47, 0x9c, 0xe0, 0x15, 0x98, 0xef,
+	0x10, 0x9f, 0x6e, 0xdb, 0x8e, 0x75, 0xec, 0x51, 0xf7, 0x90, 0xfe, 0xbc, 0xa4, 0x9e, 0x8f, 0xea,
+	0x50, 0xe2, 0xff, 0x36, 0x34, 0x53, 0x6b, 0x56, 0x71, 0x0f, 0x1e, 0xa6, 0x41, 0xde, 0x98, 0x39,
+	0x1e, 0x45, 0xeb, 0x50, 0x3e, 0xa3, 0xc4, 0x0a, 0x71, 0xb5, 0x0d, 0xa3, 0x75, 0x9d, 0xa7, 0x15,
+	0xa1, 0x76, 0x02, 0x04, 0x02, 0x98, 0xda, 0x6d, 0x37, 0xa6, 0x4c, 0xad, 0xa9, 0xe3, 0x77, 0x82,
+	0x6f, 0xd3, 0xb2, 0xb6, 0x5d, 0x9b, 0x3a, 0x56, 0x94, 0x75, 0x16, 0xca, 0x9c, 0x7f, 0xb7, 0x1d,
+	0xf0, 0xe9, 0xe8, 0x7f, 0xf8, 0x6f, 0x8b, 0x39, 0xa7, 0xb6, 0x3b, 0x0a, 0x02, 0x2b, 0xf8, 0x08,
+	0x1e, 0x49, 0x81, 0xf7, 0x50, 0xa2, 0xb0, 0x36, 0x60, 0x81, 0xb3, 0x6e, 0xb9, 0x94, 0xf8, 0xb4,
+	0xe3, 0xb2, 0xcb, 0x71, 0x28, 0x08, 0x7f, 0x81, 0x45, 0xe5, 0xa4, 0xe0, 0xdd, 0xdf, 0x88, 0x82,
+	0x1f, 0xd2, 0xa1, 0xed, 0xf9, 0x39, 0x05, 0x47, 0x0f, 0xa0, 0x72, 0x40, 0x3c, 0xef, 0x8a, 0xb9,
+	0x56, 0x10, 0x16, 0xb7, 0xe0, 0x3a, 0xac, 0xa0, 0x8c, 0xcf, 0xf0, 0x98, 0xf3, 0x1d, 0x8f, 0x2d,
+	0xfe, 0x97, 0x17, 0xdd, 0x39, 0x65, 0xb9, 0x62, 0x7a, 0xf6, 0xe0, 0xbc, 0x47, 0x46, 0x54, 0x88,
+	0xe1, 0x7d, 0xda, 0xfc, 0x45, 0x7c, 0xe2, 0x36, 0x74, 0x53, 0x6b, 0xd6, 0xf1, 0x11, 0x18, 0x59,
+	0x64, 0x05, 0x25, 0x7e, 0x80, 0xa5, 0x34, 0x6b, 0x54, 0x92, 0xdb, 0xd6, 0xec, 0x2b, 0x2c, 0xe7,
+	0x11, 0x14, 0x94, 0xb6, 0x26, 0x26, 0xa6, 0x43, 0xfd, 0x89, 0xa5, 0xc3, 0x7f, 0x34, 0x31, 0x40,
+	0x29, 0x60, 0xb1, 0xdc, 0x71, 0x06, 0x5d, 0x69, 0x4e, 0x49, 0x6a, 0xce, 0x74, 0xd0, 0x9c, 0x05,
+	0x31, 0x39, 0x3b, 0x94, 0xb8, 0xfe, 0x09, 0x25, 0x7e, 0x34, 0xdb, 0x8b, 0xe2, 0x2d, 0x25, 0xbe,
+	0x8b, 0x94, 0xf8, 0xad, 0x08, 0xe0, 0x49, 0xf6, 0xd8, 0xd0, 0x76, 0x6e, 0x5b, 0xee, 0x7d, 0x41,
+	0x98, 0x88, 0x2b, 0x58, 0xe5, 0xc5, 0x14, 0x21, 0xbb, 0x8c, 0xa5, 0xb7, 0x45, 0xf9, 0x93, 0x07,
+	0x77, 0x4f, 0x85, 0x9f, 0x87, 0x2c, 0xe3, 0x0b, 0x46, 0xac, 0xdd, 0x11, 0x19, 0xd2, 0xe8, 0xa6,
+	0x33, 0x30, 0x1d, 0xfc, 0x1f, 0x90, 0xd4, 0x71, 0x5f, 0x34, 0x31, 0x05, 0xbc, 0x9f, 0xef, 0x04,
+	0xc1, 0xf1, 0xfd, 0x5e, 0x42, 0x83, 0xf3, 0xb6, 0xd9, 0x95, 0xa3, 0x48, 0x48, 0x80, 0x35, 0x53,
+	0x6f, 0xea, 0xb8, 0x2f, 0x1e, 0xac, 0x04, 0xbe, 0x87, 0x8c, 0xf8, 0x72, 0x53, 0xa6, 0xde, 0xac,
+	0xe3, 0x1d, 0x98, 0xe3, 0xbc, 0x3d, 0xe6, 0xdb, 0x83, 0x38, 0xfb, 0x1c, 0x54, 0xb7, 0xce, 0x88,
+	0xe3, 0xd0, 0x8b, 0xd8, 0x8b, 0x4d, 0xd0, 0xbb, 0xde, 0x30, 0x50, 0x5e, 0xdb, 0x98, 0x4f, 0xf2,
+	0x77, 0xa9, 0xe7, 0x91, 0x21, 0xc5, 0x1f, 0x01, 0x25, 0x99, 0xee, 0x2e, 0x6d, 0xe3, 0x6f, 0x15,
+	0x4a, 0x9c, 0x02, 0x75, 0xa1, 0x12, 0x39, 0x1d, 0x7a, 0x92, 0x0c, 0xc8, 0xb0, 0x4e, 0xc3, 0xcc,
+	0x07, 0x84, 0x1a, 0x7e, 0xc0, 0x6c, 0xda, 0x9b, 0xd0, 0xaa, 0x1c, 0x93, 0x69, 0x84, 0xc6, 0xda,
+	0x4d, 0xb0, 0x30, 0xc1, 0x39, 0x20, 0xd5, 0x65, 0xd0, 0x8b, 0xfc, 0x68, 0xc9, 0xca, 0x8c, 0xf5,
+	0xdb, 0x40, 0xc3, 0x64, 0x7d, 0xa8, 0x25, 0xfc, 0x04, 0x61, 0x39, 0x54, 0x75, 0x25, 0x63, 0x65,
+	0x22, 0x26, 0xe4, 0xdd, 0x83, 0xe9, 0xe0, 0xdd, 0x22, 0xa5, 0xa0, 0xb2, 0x15, 0x18, 0x4f, 0x27,
+	0x20, 0x42, 0xb6, 0x7d, 0x28, 0x8b, 0xb7, 0x89, 0xf2, 0xc0, 0xd7, 0x0f, 0xda, 0xc0, 0x93, 0x20,
+	0x21, 0xe1, 0x7b, 0xa8, 0xf1, 0xaf, 0xe1, 0xb4, 0xa1, 0xac, 0x11, 0x34, 0xb2, 0x3e, 0x36, 0xb5,
+	0x57, 0x1a, 0x3a, 0x80, 0x6a, 0xbc, 0x34, 0xa8, 0xf7, 0x93, 0x17, 0x11, 0xf5, 0x7e, 0xea, 0xc6,
+	0xd1, 0x85, 0x4a, 0xb4, 0x0f, 0xa9, 0x23, 0x2a, 0xad, 0x53, 0xea, 0x88, 0x2a, 0xab, 0x54, 0x1f,
+	0x6a, 0x89, 0x2d, 0x43, 0x6d, 0xaa, 0xba, 0x9c, 0xa8, 0x4d, 0xcd, 0x5a, 0x53, 0x0e, 0xa0, 0x1a,
+	0x3b, 0xbc, 0x7a, 0x71, 0xf9, 0x47, 0x41, 0xbd, 0xb8, 0xf2, 0xf3, 0xc0, 0x95, 0x26, 0x9c, 0x50,
+	0x55, 0xaa, 0xfa, 0xa9, 0xaa, 0x34, 0xcb, 0x4a, 0xbf, 0xc3, 0x4c, 0xca, 0xdc, 0xd0, 0x33, 0x39,
+	0x2a, 0xcb, 0x28, 0x8d, 0xd5, 0x1b, 0x50, 0x21, 0x7b, 0x07, 0xca, 0xc2, 0x98, 0xd0, 0x92, 0x1c,
+	0x90, 0xb2, 0x3e, 0x63, 0x39, 0xef, 0x58, 0x10, 0x7d, 0x2a, 0x7f, 0x2b, 0xf1, 0xa3, 0x93, 0x72,
+	0xb0, 0x3f, 0xbf, 0xfe, 0x17, 0x00, 0x00, 0xff, 0xff, 0xa1, 0x93, 0xcf, 0xd2, 0x67, 0x0b, 0x00,
+	0x00,
 }

@@ -104,7 +104,7 @@ func (g *Gate) getOnlineSession(ctx context.Context) (*session, error) {
 }
 
 // Register user, passwd.
-func (g *Gate) Register(ctx context.Context, req *meta.UserRegisterRequest) (*meta.UserRegisterResponse, error) {
+func (g *Gate) Register(ctx context.Context, req *meta.GateRegisterRequest) (*meta.GateRegisterResponse, error) {
 	log.Debug("Gate Register")
 	_, err := g.getSession(ctx)
 	if err != nil {
@@ -114,20 +114,20 @@ func (g *Gate) Register(ctx context.Context, req *meta.UserRegisterRequest) (*me
 
 	id, err := g.master.newID()
 	if err != nil {
-		return &meta.UserRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("Register user:%v password:%v", req.User, req.Password)
 
 	if err = g.store.register(req.User, req.Password, id); err != nil {
-		return &meta.UserRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.UserRegisterResponse{ID: id}, nil
+	return &meta.GateRegisterResponse{ID: id}, nil
 }
 
 // UpdateUserInfo nickname.
-func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.UpdateUserInfoRequest) (*meta.UpdateUserInfoResponse, error) {
+func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.GateUpdateUserInfoRequest) (*meta.GateUpdateUserInfoResponse, error) {
 	log.Debug("Gate UpdateUserInfo")
 	s, err := g.getSession(ctx)
 	if err != nil {
@@ -143,20 +143,20 @@ func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.UpdateUserInfoReque
 	log.Debugf("updateUserInfo user:%v niceName:%v", req.User, req.NickName)
 	id, err := g.store.updateUserInfo(req.User, req.NickName, req.Avatar)
 	if err != nil {
-		return &meta.UpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}, ID: id}, nil
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}, ID: id}, nil
 	}
 
-	return &meta.UpdateUserInfoResponse{ID: id}, nil
+	return &meta.GateUpdateUserInfoResponse{ID: id}, nil
 }
 
 // UpdateUserPassword update user password
-func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.UpdateUserPasswordRequest) (*meta.UpdateUserPasswordResponse, error) {
+func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserPasswordRequest) (*meta.GateUpdateUserPasswordResponse, error) {
 	log.Debug("Gate UpdateUserPassword")
 	return nil, ErrUndefineMethod
 }
 
-// UserInfo get user base info
-func (g *Gate) UserInfo(ctx context.Context, req *meta.UserInfoRequest) (*meta.UserInfoResponse, error) {
+// GetUserInfo get user base info
+func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest) (*meta.GateGetUserInfoResponse, error) {
 	log.Debugf("Gate UserInfo")
 	s, err := g.getSession(ctx)
 	if err != nil {
@@ -170,16 +170,16 @@ func (g *Gate) UserInfo(ctx context.Context, req *meta.UserInfoRequest) (*meta.U
 	}
 
 	log.Debugf("get UserInfo user:%v", req.User)
-	id, name, nickName, avatar, err := g.store.userInfo(req.User)
+	id, name, nickName, avatar, err := g.store.getUserInfo(req.User)
 	if err != nil {
-		return &meta.UserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.UserInfoResponse{ID: id, User: name, NickName: nickName, Avatar: avatar}, nil
+	return &meta.GateGetUserInfoResponse{ID: id, User: name, NickName: nickName, Avatar: avatar}, nil
 }
 
 // Login user,passwd.
-func (g *Gate) Login(ctx context.Context, req *meta.UserLoginRequest) (*meta.UserLoginResponse, error) {
+func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta.GateUserLoginResponse, error) {
 	log.Debug("Gate Login")
 	s, err := g.getSession(ctx)
 	if err != nil {
@@ -190,16 +190,16 @@ func (g *Gate) Login(ctx context.Context, req *meta.UserLoginRequest) (*meta.Use
 	log.Debugf("Login user:%v password:%v", req.User, req.Password)
 	id, err := g.store.auth(req.User, req.Password)
 	if err != nil {
-		return &meta.UserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
 	s.online(id)
 
-	return &meta.UserLoginResponse{ID: id}, nil
+	return &meta.GateUserLoginResponse{ID: id}, nil
 }
 
 // Logout nil.
-func (g *Gate) Logout(ctx context.Context, req *meta.UserLogoutRequest) (*meta.UserLoginResponse, error) {
+func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*meta.GateUserLogoutResponse, error) {
 	log.Debug("Gate Logout")
 	return nil, ErrUndefineMethod
 }
@@ -215,27 +215,27 @@ func (g *Gate) UserMessage(stream meta.Gate_UserMessageServer) error {
 }
 
 // Heartbeat nil.
-func (g *Gate) Heartbeat(ctx context.Context, req *meta.HeartbeatRequest) (*meta.HeartbeatResponse, error) {
+func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*meta.GateHeartbeatResponse, error) {
 	return nil, ErrUndefineMethod
 }
 
 // UploadImage image.
-func (g *Gate) UploadImage(ctx context.Context, req *meta.UploadImageRequest) (*meta.UploadImageResponse, error) {
+func (g *Gate) UploadImage(ctx context.Context, req *meta.GateUploadImageRequest) (*meta.GateUploadImageResponse, error) {
 	return nil, ErrUndefineMethod
 }
 
 // DownloadImage ids.
-func (g *Gate) DownloadImage(ctx context.Context, req *meta.DownloadImageRequest) (*meta.DownloadImageResponse, error) {
+func (g *Gate) DownloadImage(ctx context.Context, req *meta.GateDownloadImageRequest) (*meta.GateDownloadImageResponse, error) {
 	return nil, ErrUndefineMethod
 }
 
 // Notice recv Notice server Message, and send Message to client.
-func (g *Gate) Notice(ctx context.Context, req *meta.NoticeRequest) (*meta.NoticeResponse, error) {
+func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.GateNoticeResponse, error) {
 	return nil, ErrUndefineMethod
 }
 
 // AddFriend 添加好友或确认接受添加.
-func (g *Gate) AddFriend(ctx context.Context, req *meta.UserAddFriendRequest) (*meta.UserAddFriendResponse, error) {
+func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*meta.GateAddFriendResponse, error) {
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
@@ -244,15 +244,15 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.UserAddFriendRequest) (*
 
 	ok, err := g.store.addFriend(s.getID(), req.UserID, req.Confirm)
 	if err != nil {
-		return &meta.UserAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
 	// 如果返回true，则可以直接聊天了，说明这是一个确认过的添加请求.
-	return &meta.UserAddFriendResponse{Confirm: ok}, nil
+	return &meta.GateAddFriendResponse{Confirm: ok}, nil
 }
 
 // FindUser 添加好友前先查找.
-func (g *Gate) FindUser(ctx context.Context, req *meta.UserFindUserRequest) (*meta.UserFindUserResponse, error) {
+func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*meta.GateFindUserResponse, error) {
 	_, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
@@ -260,13 +260,13 @@ func (g *Gate) FindUser(ctx context.Context, req *meta.UserFindUserRequest) (*me
 	}
 	id, err := g.store.findUser(req.User)
 	if err != nil {
-		return &meta.UserFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	return &meta.UserFindUserResponse{ID: id}, nil
+	return &meta.GateFindUserResponse{ID: id}, nil
 }
 
 // CreateGroup 用户创建一个聊天组.
-func (g *Gate) CreateGroup(ctx context.Context, req *meta.UserCreateGroupRequest) (*meta.UserCreateGroupResponse, error) {
+func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest) (*meta.GateCreateGroupResponse, error) {
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
@@ -274,13 +274,13 @@ func (g *Gate) CreateGroup(ctx context.Context, req *meta.UserCreateGroupRequest
 	}
 	gid, err := g.master.newID()
 	if err != nil {
-		return &meta.UserCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
 	if err = g.store.createGroup(s.getID(), gid); err != nil {
-		return &meta.UserCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("user:%d, create group:%d", s.getID(), gid)
-	return &meta.UserCreateGroupResponse{ID: gid}, nil
+	return &meta.GateCreateGroupResponse{ID: gid}, nil
 }

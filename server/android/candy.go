@@ -33,7 +33,7 @@ func (c *CandyClient) Start() (err error) {
 }
 
 func (c *CandyClient) Register(user, passwd string) (int64, error) {
-	req := &meta.UserRegisterRequest{User: user, Password: passwd}
+	req := &meta.GateRegisterRequest{User: user, Password: passwd}
 	resp, err := c.api.Register(context.Background(), req)
 	if err != nil {
 		return -1, err
@@ -43,7 +43,7 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 }
 
 func (c *CandyClient) Login(user, passwd string) (int64, error) {
-	req := &meta.UserLoginRequest{User: user, Password: passwd}
+	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
 	resp, err := c.api.Login(context.Background(), req)
 	if err != nil {
 		return -1, err
@@ -53,7 +53,7 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 }
 
 func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int64, error) {
-	req := &meta.UpdateUserInfoRequest{User: user, NickName: nickName, Avatar: avatar}
+	req := &meta.GateUpdateUserInfoRequest{User: user, NickName: nickName, Avatar: avatar}
 	resp, err := c.api.UpdateUserInfo(context.Background(), req)
 	if err != nil {
 		return -1, err
@@ -63,7 +63,7 @@ func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int6
 }
 
 func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
-	req := &meta.UpdateUserPasswordRequest{User: user, Password: passwd}
+	req := &meta.GateUpdateUserPasswordRequest{User: user, Password: passwd}
 	resp, err := c.api.UpdateUserPassword(context.Background(), req)
 	if err != nil {
 		return -1, err
@@ -72,9 +72,9 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
-func (c *CandyClient) UserInfo(user string) (int64, string, string, []byte, error) {
-	req := &meta.UserInfoRequest{User: user}
-	resp, err := c.api.UserInfo(context.Background(), req)
+func (c *CandyClient) GetUserInfo(user string) (int64, string, string, []byte, error) {
+	req := &meta.GateGetUserInfoRequest{User: user}
+	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return -1, "", "", nil, err
 	}

@@ -88,7 +88,7 @@ func TestUpdateUserInfo(t *testing.T) {
 
 	t.Logf("UpdateUserInfo success, userID:%d userName:%v nickName:%v", id, userName, nickName)
 
-	id, name, nick, avatar, err := c.UserInfo(userName)
+	id, name, nick, avatar, err := c.GetUserInfo(userName)
 	if err != nil {
 		t.Fatalf("get userInfo error:%v", err)
 	}

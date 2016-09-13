@@ -6,80 +6,80 @@ option go_package = "meta";
 import "common.proto";
 
 service Store {
-    rpc Register(RegisterRequest) returns (RegisterResponse);
-    rpc UpdateInfo(UpdateInfoRequest) returns (UpdateInfoResponse);
-    rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
-    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+    rpc Register(StoreRegisterRequest) returns (StoreRegisterResponse);
+    rpc UpdateUserInfo(StoreUpdateUserInfoRequest) returns (StoreUpdateUserInfoResponse);
+    rpc UpdateUserPassword(StoreUpdateUserPasswordRequest) returns (StoreUpdateUserPasswordResponse);
+    rpc GetUserInfo(StoreGetUserInfoRequest) returns (StoreGetUserInfoResponse);
 
-    rpc Auth(AuthRequest) returns (AuthResponse);
+    rpc Auth(StoreAuthRequest) returns (StoreAuthResponse);
 
     // AddFriend 添加好友，两人都添加过对方后才可以聊天.
-    rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
+    rpc AddFriend(StoreAddFriendRequest) returns (StoreAddFriendResponse);
 
     // FindUser 根据字符串的用户名查的用户信息.
-    rpc FindUser(FindUserRequest) returns (FindUserResponse);
+    rpc FindUser(StoreFindUserRequest) returns (StoreFindUserResponse);
 
-    rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
-    rpc NewMessage(NewMessageRequest) returns (NewMessageResponse);
+    rpc CreateGroup(StoreCreateGroupRequest) returns (StoreCreateGroupResponse);
+    rpc NewMessage(StoreNewMessageRequest) returns (StoreNewMessageResponse);
 }
 
 
-message FindUserRequest {
+message StoreFindUserRequest {
     string user = 1;
 }
 
-message FindUserResponse {
+message StoreFindUserResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
-message AddFriendRequest {
+message StoreAddFriendRequest {
     int64 From = 1;
     int64 To = 2;
     bool Confirm = 3;
 }
 
-message AddFriendResponse {
+message StoreAddFriendResponse {
     ResponseHeader header = 1;
     bool Confirm = 2;
 }
 
-message RegisterRequest {
+message StoreRegisterRequest {
     int64 ID = 1;
     string User = 2;
     string Password = 3;
 }
 
-message RegisterResponse {
+message StoreRegisterResponse {
     ResponseHeader header = 1;
 }
 
-message UpdateInfoRequest {
+message StoreUpdateUserInfoRequest {
     string User = 1;
     string NickName = 2;
     bytes Avatar = 3;
 }
 
-message UpdateInfoResponse {
+message StoreUpdateUserInfoResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
-message UpdatePasswordRequest {
+message StoreUpdateUserPasswordRequest {
     string User = 1;
     string Password = 2;
 }
 
-message UpdatePasswordResponse {
+message StoreUpdateUserPasswordResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
-message GetUserInfoRequest {
+message StoreGetUserInfoRequest {
     string User = 1;
 }
 
-message GetUserInfoResponse {
+message StoreGetUserInfoResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
     string User = 3;
@@ -87,29 +87,29 @@ message GetUserInfoResponse {
     bytes Avatar = 5;
 }
 
-message AuthRequest {
+message StoreAuthRequest {
     string User = 1;
     string Password = 2;
 }
 
-message AuthResponse {
+message StoreAuthResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
-message CreateGroupRequest {
+message StoreCreateGroupRequest {
     int64 UserID = 1;
     int64 GroupID = 2;
 }
 
-message CreateGroupResponse {
+message StoreCreateGroupResponse {
     ResponseHeader header = 1;
 }
 
-message NewMessageRequest {
+message StoreNewMessageRequest {
     Message Msg = 1;
 }
 
-message NewMessageResponse {
+message StoreNewMessageResponse {
     ResponseHeader header = 1;
 }

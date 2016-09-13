@@ -55,7 +55,7 @@ func (b *broker) sendMessage(m message) error {
 		log.Errorf("connect to %s error:%s", m.addr, err.Error())
 		return errors.Trace(err)
 	}
-	req := &meta.NoticeRequest{ChannelID: m.id, Msg: &m.Message}
+	req := &meta.GateNoticeRequest{ChannelID: m.id, Msg: &m.Message}
 	_, err = g.Notice(nil, req)
 
 	return errors.Trace(err)

@@ -7,99 +7,99 @@ import "common.proto";
 
 
 service Gate {
-    rpc Register (UserRegisterRequest) returns (UserRegisterResponse);
-    rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
-    rpc UpdateUserPassword (UpdateUserPasswordRequest) returns (UpdateUserPasswordResponse);
-    rpc UserInfo (UserInfoRequest) returns (UserInfoResponse);
+    rpc Register (GateRegisterRequest) returns (GateRegisterResponse);
+    rpc UpdateUserInfo (GateUpdateUserInfoRequest) returns (GateUpdateUserInfoResponse);
+    rpc UpdateUserPassword (GateUpdateUserPasswordRequest) returns (GateUpdateUserPasswordResponse);
+    rpc GetUserInfo (GateGetUserInfoRequest) returns (GateGetUserInfoResponse);
 
-    rpc Login (UserLoginRequest) returns (UserLoginResponse);
-    rpc Logout (UserLogoutRequest) returns (UserLoginResponse);
+    rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
+    rpc Logout (GateUserLogoutRequest) returns (GateUserLogoutResponse);
 
     rpc UserMessage (stream Message) returns (stream Message);
 
     // AddFriend 添加好友或确认接受添加.
-    rpc AddFriend (UserAddFriendRequest) returns (UserAddFriendResponse);
+    rpc AddFriend (GateAddFriendRequest) returns (GateAddFriendResponse);
     // FindUser 添加好友前先查找出来对应的ID.
-    rpc FindUser (UserFindUserRequest) returns (UserFindUserResponse);
+    rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
 
-    rpc CreateGroup (UserCreateGroupRequest) returns (UserCreateGroupResponse);
+    rpc CreateGroup (GateCreateGroupRequest) returns (GateCreateGroupResponse);
 
-    rpc Heartbeat (HeartbeatRequest) returns (HeartbeatResponse);
+    rpc Heartbeat (GateHeartbeatRequest) returns (GateHeartbeatResponse);
 
-    rpc UploadImage (UploadImageRequest) returns (UploadImageResponse);
-    rpc DownloadImage (DownloadImageRequest) returns (DownloadImageResponse);
+    rpc UploadImage (GateUploadImageRequest) returns (GateUploadImageResponse);
+    rpc DownloadImage (GateDownloadImageRequest) returns (GateDownloadImageResponse);
 
 
     // server interface.
-    rpc Notice (NoticeRequest) returns (NoticeResponse);
+    rpc Notice (GateNoticeRequest) returns (GateNoticeResponse);
 
 }
 
-message UserFindUserRequest {
+message GateFindUserRequest {
     string User = 1;
 }
 
-message UserFindUserResponse {
+message GateFindUserResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 
 }
 
-message UserAddFriendRequest {
+message GateAddFriendRequest {
     int64 UserID = 1;
     bool Confirm = 2;
 }
 
-message UserAddFriendResponse {
+message GateAddFriendResponse {
     ResponseHeader header = 1;
     bool Confirm = 2;
 }
 
-message UserCreateGroupRequest {
+message GateCreateGroupRequest {
 }
 
-message UserCreateGroupResponse {
+message GateCreateGroupResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
 
-message UserRegisterRequest {
+message GateRegisterRequest {
     string User = 1;
     string Password = 2;
 }
 
-message UserRegisterResponse {
+message GateRegisterResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
-message UpdateUserInfoRequest {
+message GateUpdateUserInfoRequest {
     string User = 1;
     string NickName = 2;
     bytes Avatar = 3;
 }
 
-message UpdateUserInfoResponse {
+message GateUpdateUserInfoResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
-message UpdateUserPasswordRequest {
+message GateUpdateUserPasswordRequest {
     string User = 1;
     string Password = 2;
 }
 
-message UpdateUserPasswordResponse {
+message GateUpdateUserPasswordResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
-message UserInfoRequest {
+message GateGetUserInfoRequest {
     string User = 1;
 }
 
-message UserInfoResponse {
+message GateGetUserInfoResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
     string User = 3;
@@ -108,53 +108,53 @@ message UserInfoResponse {
 }
 
 
-message HeartbeatRequest { }
+message GateHeartbeatRequest { }
 
-message HeartbeatResponse {}
+message GateHeartbeatResponse {}
 
-message UserLoginRequest {
+message GateUserLoginRequest {
     string User = 1;
     string Password = 2;
 }
 
-message UserLoginResponse {
+message GateUserLoginResponse {
     ResponseHeader header = 1;
     int64 ID = 2;
 }
 
 
-message UserLogoutRequest {}
+message GateUserLogoutRequest {}
 
-message UserLogoutResponse {
+message GateUserLogoutResponse {
     ResponseHeader header = 1;
 }
 
 
-message UploadImageRequest {
+message GateUploadImageRequest {
     bytes Image = 1;
 }
 
-message UploadImageResponse {
+message GateUploadImageResponse {
     ResponseHeader header = 1;
     int64 ImageID = 2;
 }
 
-message DownloadImageRequest {
+message GateDownloadImageRequest {
     repeated int64 ImageID = 1;
 }
-message DownloadImageResponse {
+message GateDownloadImageResponse {
     ResponseHeader header = 1;
     repeated bytes Image = 2;
 }
 
 
-message NoticeRequest {
+message GateNoticeRequest {
     int64 ChannelID = 1;
     Message Msg = 2;
 }
 
 
-message NoticeResponse {
+message GateNoticeResponse {
     ResponseHeader header = 1;
 }
 
