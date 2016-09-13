@@ -99,3 +99,41 @@ func TestUpdateUserInfo(t *testing.T) {
 
 	t.Logf("GetUserInfo success, id:%v user:%v nickName:%v avatar:%v", id, name, nick, avatar)
 }
+
+func TestUpdateUserPassword(t *testing.T) {
+	c := NewCandyClient("127.0.0.1:9000")
+	if err := c.Start(); err != nil {
+		t.Fatalf("start client error:%s", err.Error())
+	}
+
+	//first need login
+	id, err := c.Login(userName, userPasswd)
+	if err != nil {
+		t.Fatalf("Login error:%v", err)
+	}
+
+	//random passwd
+	newPasswd := fmt.Sprintf("newpwd%v", time.Now().Unix())
+
+	id, err = c.UpdateUserPassword(userName, newPasswd)
+	if err != nil {
+		t.Fatalf("UpdateUserPassword error:%v", err)
+	}
+
+	t.Logf("UpdateUserPassword success, userID:%d userName:%v", id, userName)
+
+	//Logout
+	err = c.Logout(userName)
+	if err != nil {
+		t.Fatalf("user Logout error:%v", err)
+	}
+
+	//Login
+	id, err = c.Login(userName, newPasswd)
+	if err != nil {
+		t.Fatalf("use new password login err:%v", err)
+	}
+	t.Logf("test logout success")
+
+	t.Logf("UpdateUserPassword success, userID:%d userName:%v", id, userName)
+}

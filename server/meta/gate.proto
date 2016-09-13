@@ -123,7 +123,9 @@ message GateUserLoginResponse {
 }
 
 
-message GateUserLogoutRequest {}
+message GateUserLogoutRequest {
+    string User = 1;
+}
 
 message GateUserLogoutResponse {
     ResponseHeader header = 1;

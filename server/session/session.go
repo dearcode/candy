@@ -3,8 +3,6 @@ package session
 import (
 	"net"
 
-	"github.com/juju/errors"
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"

@@ -52,6 +52,16 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
+func (c *CandyClient) Logout(user string) error {
+	req := &meta.GateUserLogoutRequest{User: user}
+	resp, err := c.api.Logout(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	return resp.Header.Error()
+}
+
 func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int64, error) {
 	req := &meta.GateUpdateUserInfoRequest{User: user, NickName: nickName, Avatar: avatar}
 	resp, err := c.api.UpdateUserInfo(context.Background(), req)

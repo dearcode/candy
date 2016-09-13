@@ -120,53 +120,63 @@ func (u *userDB) auth(user, passwd string) (int64, error) {
 	return a.ID, nil
 }
 
-func (u *userDB) updateUserPassword(user, passwd string) error {
+func (u *userDB) updateUserPassword(user, passwd string) (int64, error) {
 	txn, err := u.db.OpenTransaction()
 	if err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
 	log.Debugf("open transaction finished")
 	v, err := txn.Get([]byte(user), nil)
 	if err != nil && err != leveldb.ErrNotFound {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
 	log.Debugf("check whether the user exist")
 	if len(v) == 0 {
 		txn.Discard()
-		return errors.Errorf("user:%s not exist info:%s", user, string(v))
+		return -1, errors.Errorf("user:%s not exist info:%s", user, string(v))
 	}
 
 	var a account
+	var update bool
 	if err = json.Unmarshal(v, &a); err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
+	log.Infof("compare passwod")
 	if passwd != "" && a.Password != passwd {
 		a.Password = passwd
+		update = true
+	}
+
+	//no update
+	if !update {
+		txn.Discard()
+		return a.ID, nil
 	}
 
 	buf, err := json.Marshal(a)
 	if err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
 	if err = txn.Put([]byte(user), buf, nil); err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
+	log.Infof("prepare commit change")
 	if err = txn.Commit(); err != nil {
 		txn.Discard()
-		return errors.Trace(err)
+		return -1, errors.Trace(err)
 	}
 
-	return nil
+	return a.ID, nil
 }
 
 func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) (int64, error) {
@@ -191,13 +201,11 @@ func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) (int64, er
 
 	var a account
 	var update bool
-	var id int64
 	if err = json.Unmarshal(v, &a); err != nil {
 		txn.Discard()
 		return -1, errors.Trace(err)
 	}
 
-	id = a.ID
 	log.Debugf("compare nickName, old:%v new:%v", a.NickName, nickName)
 	if nickName != "" && a.NickName != nickName {
 		a.NickName = nickName
@@ -213,7 +221,7 @@ func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) (int64, er
 	//no change
 	if !update {
 		txn.Discard()
-		return id, nil
+		return a.ID, nil
 	}
 
 	buf, err := json.Marshal(a)
@@ -234,7 +242,7 @@ func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) (int64, er
 
 	log.Debugf("success")
 
-	return id, nil
+	return a.ID, nil
 }
 
 func (u *userDB) getUserInfo(user string) (*account, error) {

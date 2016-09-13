@@ -77,6 +77,24 @@ func (s *store) updateUserInfo(user, nickName string, avatar []byte) (int64, err
 	return resp.ID, nil
 }
 
+func (s *store) updateUserPassword(user, passwd string) (int64, error) {
+	log.Debugf("updateUserPassword user:%v passwd:%v", user, passwd)
+	req := &meta.StoreUpdateUserPasswordRequest{User: user, Password: passwd}
+	resp, err := s.api.UpdateUserPassword(s.ctx, req)
+	if err != nil {
+		return 0, errors.Trace(err)
+	}
+
+	log.Debugf("updateUserPassword finished")
+	if resp.Header != nil {
+		return 0, errors.New(resp.Header.Msg)
+	}
+
+	log.Debugf("success")
+
+	return resp.ID, nil
+}
+
 func (s *store) getUserInfo(user string) (int64, string, string, []byte, error) {
 	log.Debugf("get userInfo user:%v", user)
 	req := &meta.StoreGetUserInfoRequest{User: user}

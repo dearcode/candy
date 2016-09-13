@@ -84,11 +84,12 @@ func (s *Store) UpdateUserInfo(_ context.Context, req *meta.StoreUpdateUserInfoR
 // UpdateUserPassword update user password
 func (s *Store) UpdateUserPassword(_ context.Context, req *meta.StoreUpdateUserPasswordRequest) (*meta.StoreUpdateUserPasswordResponse, error) {
 	log.Debugf("Store UpdatePassword, user:")
-	if err := s.user.updateUserPassword(req.User, req.Password); err != nil {
+	id, err := s.user.updateUserPassword(req.User, req.Password)
+	if err != nil {
 		return &meta.StoreUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreUpdateUserPasswordResponse{}, nil
+	return &meta.StoreUpdateUserPasswordResponse{ID: id}, nil
 }
 
 // GetUserInfo get user base info
