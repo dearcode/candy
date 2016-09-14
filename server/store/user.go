@@ -125,7 +125,7 @@ func (u *userDB) auth(user, passwd string) (int64, error) {
 	}
 
 	if a.Password != passwd {
-		return 0, errors.Errorf("invalid passwd:%s expect:%s", string(v))
+		return 0, errors.Errorf("invalid passwd:%s", string(v))
 	}
 
 	return a.ID, nil
