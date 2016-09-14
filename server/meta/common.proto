@@ -3,6 +3,11 @@ package candy.meta;
 
 option go_package = "meta";
 
+// RequestHeader Gate向后端发请求时，带上这个头，方便记录具体操作信息.
+message RequestHeader {
+    int64 User = 1;
+}
+
 message ResponseHeader {
     int32 Code = 1;
     string Msg = 2;

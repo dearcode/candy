@@ -26,8 +26,12 @@ service Gate {
 
     rpc Heartbeat (GateHeartbeatRequest) returns (GateHeartbeatResponse);
 
-    rpc UploadImage (GateUploadImageRequest) returns (GateUploadImageResponse);
-    rpc DownloadImage (GateDownloadImageRequest) returns (GateDownloadImageResponse);
+    // UploadFile 客户端上传文件接口，一次一个图片.
+    rpc UploadFile (GateUploadFileRequest) returns (GateUploadFileResponse);
+    // CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
+    rpc CheckFile (GateCheckFileRequest) returns (GateCheckFileResponse);
+    // DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
+    rpc DownloadFile (GateDownloadFileRequest) returns (GateDownloadFileResponse);
 
 
     // server interface.
@@ -132,21 +136,31 @@ message GateUserLogoutResponse {
 }
 
 
-message GateUploadImageRequest {
-    bytes Image = 1;
+message GateUploadFileRequest {
+    bytes File = 1;
 }
 
-message GateUploadImageResponse {
+message GateUploadFileResponse {
     ResponseHeader header = 1;
-    int64 ImageID = 2;
 }
 
-message GateDownloadImageRequest {
-    repeated int64 ImageID = 1;
+message GateCheckFileRequest {
+    repeated int64 Files = 1;
 }
-message GateDownloadImageResponse {
+
+message GateCheckFileResponse {
     ResponseHeader header = 1;
-    repeated bytes Image = 2;
+    repeated int64 Files = 2;
+}
+
+
+message GateDownloadFileRequest {
+    repeated int64 Files = 1;
+}
+
+message GateDownloadFileResponse {
+    ResponseHeader header = 1;
+    map <int64, bytes> Files = 2;
 }
 
 

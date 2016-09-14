@@ -52,7 +52,7 @@ func (p *postman) check(msg meta.Message) error {
 // 2.再添加到发件人的消息列表中
 // 3.调用notice发通知
 // 如果是群发，需要依次添加到每个人的消息列表中
-func (p *postman) forward(msg meta.Message) error {
+func (p *postman) send(msg meta.Message) error {
 	if err := p.check(msg); err != nil {
 		return errors.Trace(err)
 	}

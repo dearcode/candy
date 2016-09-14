@@ -244,16 +244,6 @@ func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*
 	return nil, ErrUndefineMethod
 }
 
-// UploadImage image.
-func (g *Gate) UploadImage(ctx context.Context, req *meta.GateUploadImageRequest) (*meta.GateUploadImageResponse, error) {
-	return nil, ErrUndefineMethod
-}
-
-// DownloadImage ids.
-func (g *Gate) DownloadImage(ctx context.Context, req *meta.GateDownloadImageRequest) (*meta.GateDownloadImageResponse, error) {
-	return nil, ErrUndefineMethod
-}
-
 // Notice recv Notice server Message, and send Message to client.
 func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.GateNoticeResponse, error) {
 	return nil, ErrUndefineMethod
@@ -308,4 +298,51 @@ func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest
 
 	log.Debugf("user:%d, create group:%d", s.getID(), gid)
 	return &meta.GateCreateGroupResponse{ID: gid}, nil
+}
+
+// UploadFile 客户端上传文件接口，一次一个文件.
+func (g *Gate) UploadFile(ctx context.Context, req *meta.GateUploadFileRequest) (*meta.GateUploadFileResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	if err = g.store.uploadFile(s.id, req.File); err != nil {
+		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateUploadFileResponse{}, nil
+}
+
+// CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
+func (g *Gate) CheckFile(ctx context.Context, req *meta.GateCheckFileRequest) (*meta.GateCheckFileResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	files, err := g.store.checkFile(s.id, req.Files)
+	if err != nil {
+		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateCheckFileResponse{Files: files}, nil
+}
+
+// DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
+func (g *Gate) DownloadFile(ctx context.Context, req *meta.GateDownloadFileRequest) (*meta.GateDownloadFileResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	files, err := g.store.downloadFile(s.id, req.Files)
+	if err != nil {
+		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateDownloadFileResponse{Files: files}, nil
 }

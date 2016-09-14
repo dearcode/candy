@@ -1,6 +1,7 @@
 package util
 
 import (
+	"crypto/md5"
 	"fmt"
 	"time"
 )
@@ -11,9 +12,15 @@ var (
 )
 
 const (
-	UserDBPath       = "user"
-	MessageDBPath    = "message"
-	GroupDBPath      = "group"
+	UserDBPath    = "user"
+	MessageDBPath = "message"
+	GroupDBPath   = "group"
+
+	// FileBlockPath 块文件存储位置
+	FileBlockPath = "file_block"
+	// FileDBPath 文件索引存储位置
+	FileDBPath = "file"
+
 	MessageLogDBPath = "message_log"
 
 	UserMessagePrefix     = int64(0)
@@ -48,4 +55,10 @@ func EncodeKey(args ...int64) []byte {
 		key = append(key, EncodeInt64(v)...)
 	}
 	return key
+}
+
+func MD5(data []byte) []byte {
+	hash := md5.New()
+	hash.Write(data)
+	return hash.Sum(nil)
 }

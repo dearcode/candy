@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util"
 	"github.com/dearcode/candy/server/util/log"
 )
 
@@ -20,6 +21,7 @@ type Store struct {
 	message *messageDB
 	postman *postman
 	friend  *friendDB
+	file    *fileDB
 }
 
 // NewStore new Store server.
@@ -30,6 +32,7 @@ func NewStore(host, notice, dbPath string) *Store {
 		user:    newUserDB(dbPath),
 		message: newMessageDB(dbPath),
 		group:   newGroupDB(dbPath),
+		file:    newFileDB(dbPath),
 	}
 
 	s.friend = newFriendDB(s.user)
@@ -54,6 +57,10 @@ func (s *Store) Start() error {
 	}
 
 	if err = s.message.start(s.postman); err != nil {
+		return err
+	}
+
+	if err = s.file.start(); err != nil {
 		return err
 	}
 
@@ -159,4 +166,44 @@ func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) 
 	}
 	// 再调用推送
 	return nil, nil
+}
+
+// UploadFile 上传文件接口，一次一个文件.
+func (s *Store) UploadFile(_ context.Context, req *meta.StoreUploadFileRequest) (*meta.StoreUploadFileResponse, error) {
+	key := util.MD5(req.File)
+	if err := s.file.add(key, req.File); err != nil {
+		return &meta.StoreUploadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	return &meta.StoreUploadFileResponse{}, nil
+}
+
+// CheckFile 检测文件是否存在，文件的MD5, 服务器返回不存在的文件MD5.
+func (s *Store) CheckFile(_ context.Context, req *meta.StoreCheckFileRequest) (*meta.StoreCheckFileResponse, error) {
+	var files []int64
+	for _, id := range req.Files {
+		key := util.EncodeInt64(id)
+		ok, err := s.file.exist(key)
+		if err != nil {
+			return &meta.StoreCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		if !ok {
+			files = append(files, id)
+		}
+	}
+	return &meta.StoreCheckFileResponse{Files: files}, nil
+}
+
+// DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
+func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileRequest) (*meta.StoreDownloadFileResponse, error) {
+	files := make(map[int64][]byte)
+	for _, id := range req.Files {
+		key := util.EncodeInt64(id)
+		data, err := s.file.get(key)
+		if err != nil {
+			return &meta.StoreDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		files[id] = data
+	}
+
+	return &meta.StoreDownloadFileResponse{Files: files}, nil
 }
