@@ -3,6 +3,7 @@ package util
 import (
 	"crypto/md5"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -33,7 +34,8 @@ const (
 
 func PrintVersion() {
 	fmt.Printf("Candy\n")
-	fmt.Printf("Build Time: %s\n", BUILD_TIME)
+	sec, _ := strconv.ParseInt(BUILD_TIME, 10, 32)
+	fmt.Printf("Build Time: %s\n", time.Unix(sec, 0).Format("2006-01-02 15:04:05"))
 	fmt.Printf("Git Version: %s\n", BUILD_VERSION)
 }
 

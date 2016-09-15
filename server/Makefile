@@ -1,6 +1,6 @@
 all: lint gate master notice store 
 
-LDFLAGS += -X "github.com/dearcode/candy/server/util.BUILD_TIME=$(shell date)"
+LDFLAGS += -X "github.com/dearcode/candy/server/util.BUILD_TIME=$(shell date +%s)"
 LDFLAGS += -X "github.com/dearcode/candy/server/util.BUILD_VERSION=$(shell git rev-parse HEAD)"
 
 golint:
