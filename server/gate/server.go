@@ -323,12 +323,12 @@ func (g *Gate) CheckFile(ctx context.Context, req *meta.GateCheckFileRequest) (*
 		return nil, err
 	}
 
-	files, err := g.store.checkFile(s.id, req.Files)
+	names, err := g.store.checkFile(s.id, req.Names)
 	if err != nil {
 		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.GateCheckFileResponse{Files: files}, nil
+    return &meta.GateCheckFileResponse{Names: names}, nil
 }
 
 // DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
@@ -339,7 +339,7 @@ func (g *Gate) DownloadFile(ctx context.Context, req *meta.GateDownloadFileReque
 		return nil, err
 	}
 
-	files, err := g.store.downloadFile(s.id, req.Files)
+	files, err := g.store.downloadFile(s.id, req.Names)
 	if err != nil {
 		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}

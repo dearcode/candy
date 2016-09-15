@@ -132,21 +132,21 @@ message StoreUploadFileResponse {
 
 message StoreCheckFileRequest {
     RequestHeader header = 1;
-    repeated int64 Files = 2;
+    repeated string Names = 2;
 }
 
 message StoreCheckFileResponse {
     ResponseHeader header = 1;
-    repeated int64 Files = 2;
+    repeated string Names = 2;
 }
 
 
 message StoreDownloadFileRequest {
     RequestHeader header = 1;
-    repeated int64 Files = 2;
+    repeated string Names = 2;
 }
 
 message StoreDownloadFileResponse {
     ResponseHeader header = 1;
-    map<int64, bytes> Files = 2;
+    map<string, bytes> Files = 2;
 }

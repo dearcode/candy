@@ -145,22 +145,22 @@ message GateUploadFileResponse {
 }
 
 message GateCheckFileRequest {
-    repeated int64 Files = 1;
+    repeated string Names = 1;
 }
 
 message GateCheckFileResponse {
-    ResponseHeader header = 1;
-    repeated int64 Files = 2;
+    ResponseHeader Header = 1;
+    repeated string Names = 2;
 }
 
 
 message GateDownloadFileRequest {
-    repeated int64 Files = 1;
+    repeated string Names = 1;
 }
 
 message GateDownloadFileResponse {
     ResponseHeader header = 1;
-    map <int64, bytes> Files = 2;
+    map <string, bytes> Files = 2;
 }
 
 

@@ -140,11 +140,11 @@ func (s *store) uploadFile(userID int64, data []byte) error {
 	return errors.Trace(resp.Header.Error())
 }
 
-func (s *store) checkFile(userID int64, files []int64) ([]int64, error) {
+func (s *store) checkFile(userID int64, names []string) ([]string, error) {
 	log.Debugf("store checkFile, userID:%v", userID)
 	req := &meta.StoreCheckFileRequest{
 		Header: &meta.RequestHeader{User: userID},
-		Files:  files,
+		Names:  names,
 	}
 
 	resp, err := s.api.CheckFile(s.ctx, req)
@@ -153,14 +153,14 @@ func (s *store) checkFile(userID int64, files []int64) ([]int64, error) {
 	}
 	log.Debugf("store checkFile finished, userID:%v, err:%v", userID, resp.Header.Error())
 
-	return resp.Files, errors.Trace(resp.Header.Error())
+	return resp.Names, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) downloadFile(userID int64, files []int64) (map[int64][]byte, error) {
+func (s *store) downloadFile(userID int64, names []string) (map[string][]byte, error) {
 	log.Debugf("store downloadFile, userID:%v", userID)
 	req := &meta.StoreDownloadFileRequest{
 		Header: &meta.RequestHeader{User: userID},
-		Files:  files,
+		Names:  names,
 	}
 
 	resp, err := s.api.DownloadFile(s.ctx, req)

@@ -179,30 +179,28 @@ func (s *Store) UploadFile(_ context.Context, req *meta.StoreUploadFileRequest) 
 
 // CheckFile 检测文件是否存在，文件的MD5, 服务器返回不存在的文件MD5.
 func (s *Store) CheckFile(_ context.Context, req *meta.StoreCheckFileRequest) (*meta.StoreCheckFileResponse, error) {
-	var files []int64
-	for _, id := range req.Files {
-		key := util.EncodeInt64(id)
-		ok, err := s.file.exist(key)
+	var names []string
+	for _, name := range req.Names {
+		ok, err := s.file.exist([]byte(name))
 		if err != nil {
 			return &meta.StoreCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 		}
 		if !ok {
-			files = append(files, id)
+			names = append(names, name)
 		}
 	}
-	return &meta.StoreCheckFileResponse{Files: files}, nil
+	return &meta.StoreCheckFileResponse{Names: names}, nil
 }
 
 // DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
 func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileRequest) (*meta.StoreDownloadFileResponse, error) {
-	files := make(map[int64][]byte)
-	for _, id := range req.Files {
-		key := util.EncodeInt64(id)
-		data, err := s.file.get(key)
+	files := make(map[string][]byte)
+	for _, name := range req.Names {
+		data, err := s.file.get([]byte(name))
 		if err != nil {
 			return &meta.StoreDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 		}
-		files[id] = data
+		files[name] = data
 	}
 
 	return &meta.StoreDownloadFileResponse{Files: files}, nil
