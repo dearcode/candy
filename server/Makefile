@@ -44,3 +44,7 @@ notice: godep
 
 store: godep
 	godep go build -ldflags '$(LDFLAGS)' -o bin/store ./cmd/store/main.go
+
+test:
+	@cd android; go test; cd ..; 
+

@@ -64,7 +64,3 @@ func MD5(data []byte) []byte {
 	hash.Write(data)
 	return hash.Sum(nil)
 }
-
-func MD5I64(data []byte) int64 {
-	return DecodeInt64(MD5(data))
-}

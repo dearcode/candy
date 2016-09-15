@@ -129,8 +129,8 @@ func (c *CandyClient) FindUser(user string) (*UserList, error) {
 	return &UserList{Users: users}, resp.Header.Error()
 }
 
-func (c *CandyClient) FileExist(key int64) (bool, error) {
-	req := &meta.GateCheckFileRequest{Files: []int64{key}}
+func (c *CandyClient) FileExist(key string) (bool, error) {
+	req := &meta.GateCheckFileRequest{Names: []string{key}}
 	resp, err := c.api.CheckFile(context.Background(), req)
 	if err != nil {
 		return false, err
@@ -140,18 +140,18 @@ func (c *CandyClient) FileExist(key int64) (bool, error) {
 		return false, err
 	}
 
-	if len(resp.Files) == 0 {
+	if len(resp.Names) == 0 {
 		return true, nil
 	}
 
 	return false, nil
 }
 
-func (c *CandyClient) FileUpload(data []byte) (int64, error) {
-	md5 := util.MD5I64(data)
+func (c *CandyClient) FileUpload(data []byte) (string, error) {
+	md5 := string(util.MD5(data))
 	exist, err := c.FileExist(md5)
 	if err != nil {
-		return 0, err
+		return md5, err
 	}
 	//已有别人上传过了
 	if exist {
@@ -167,12 +167,12 @@ func (c *CandyClient) FileUpload(data []byte) (int64, error) {
 	return md5, resp.Header.Error()
 }
 
-func (c *CandyClient) FileDownload(id int64) ([]byte, error) {
-	req := &meta.GateDownloadFileRequest{Files: []int64{id}}
+func (c *CandyClient) FileDownload(key string) ([]byte, error) {
+	req := &meta.GateDownloadFileRequest{Names: []string{key}}
 	resp, err := c.api.DownloadFile(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Files[id], resp.Header.Error()
+	return resp.Files[key], resp.Header.Error()
 }

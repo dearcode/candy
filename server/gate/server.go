@@ -328,7 +328,7 @@ func (g *Gate) CheckFile(ctx context.Context, req *meta.GateCheckFileRequest) (*
 		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-    return &meta.GateCheckFileResponse{Names: names}, nil
+	return &meta.GateCheckFileResponse{Names: names}, nil
 }
 
 // DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
