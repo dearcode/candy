@@ -1,6 +1,7 @@
 package candy
 
 import (
+	"fmt"
 	"time"
 
 	"golang.org/x/net/context"
@@ -175,4 +176,31 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 	}
 
 	return resp.Files[key], resp.Header.Error()
+}
+
+func (c *CandyClient) NewMessage(from, group, user int64, body string) error {
+	gateClient, err := c.api.NewMessage(context.Background())
+	if err != nil {
+		return err
+	}
+
+	newMsg := &meta.Message{From: from, Group: group, User: user, Body: body}
+	err = gateClient.Send(newMsg)
+	if err != nil {
+		return err
+	}
+
+	go c.recvMsg(gateClient)
+
+	return nil
+}
+
+func (c *CandyClient) recvMsg(client meta.Gate_NewMessageClient) {
+	msg, err := client.Recv()
+	if err != nil {
+		fmt.Println("接收消息失败， err:", err)
+	}
+
+	fmt.Println("接收消息成功, msg:", msg)
+
 }

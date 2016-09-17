@@ -19,6 +19,7 @@ func notice() {
 	fmt.Println("5. 获取用户信息")
 	fmt.Println("6. 查找用户")
 	fmt.Println("7. 添加好友")
+	fmt.Println("8. 发送消息")
 	fmt.Println("0. 退出")
 	fmt.Println("---------------------------------")
 }
@@ -120,14 +121,14 @@ func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ := reader.ReadLine()
 	userName := string(data)
 
-	users, err := c.FindUser(userName)
+	userList, err := c.FindUser(userName)
 	if err != nil {
 		log.Errorf("findUser error:%v", err)
 		return
 	}
 
 	log.Debugf("findUser success, userName:%v*", userName)
-	for index, user := range users {
+	for index, user := range userList.Users {
 		log.Debugf("user:%d detail, ID:%v Name:%v NickName:%v Avatar:%v", index, user.ID, user.Name, user.NickName, user.Avatar)
 	}
 
@@ -136,6 +137,7 @@ func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 
 func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================添加好友==================")
+	defer fmt.Println("==============================================")
 	fmt.Println("请输入用户ID:")
 	data, _, _ := reader.ReadLine()
 	userID := string(data)
@@ -146,13 +148,54 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	err = c.AddFriend(id, true)
+	success, err := c.AddFriend(id, true)
 	if err != nil {
 		log.Errorf("addFriend error:%v", err)
 		return
 	}
 
+	if !success {
+		log.Debugf("addFriend failure, userID:%v", userID)
+		return
+	}
+
 	log.Debugf("addFriend success, userID:%v", userID)
+	fmt.Println("==============================================")
+}
+
+func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
+	fmt.Println("================发送消息==================")
+	fmt.Println("请输入发送用户ID:")
+	data, _, _ := reader.ReadLine()
+	userID := string(data)
+
+	from, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		log.Errorf("Parse int error:%v", err)
+		return
+	}
+
+	fmt.Println("请输入接收用户ID:")
+	data, _, _ = reader.ReadLine()
+	userID = string(data)
+
+	user, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		log.Errorf("Parse int error:%v", err)
+		return
+	}
+
+	fmt.Println("请输入消息内容:")
+	data, _, _ = reader.ReadLine()
+	msg := string(data)
+
+	err = c.NewMessage(from, 0, user, msg)
+	if err != nil {
+		log.Errorf("send message error:%v", err)
+		return
+	}
+
+	log.Debugf("send msg success, userID:%v", userID)
 	fmt.Println("==============================================")
 }
 
@@ -190,6 +233,8 @@ func main() {
 			findUser(c, reader)
 		} else if command == "7" {
 			addFriend(c, reader)
+		} else if command == "8" {
+			newMessage(c, reader)
 		} else {
 			log.Errorf("未知命令")
 		}

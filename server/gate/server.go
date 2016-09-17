@@ -230,9 +230,19 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 }
 
 // NewMessage recv user message.
-func (g *Gate) NewMessage(meta.Gate_NewMessageServer) error {
+func (g *Gate) NewMessage(server meta.Gate_NewMessageServer) error {
 	log.Debugf("Gate UserMessage")
 	for {
+		msg, err := server.Recv()
+		if err != nil {
+			continue
+		}
+
+		_, _, err = g.store.newMessage(msg)
+		if err != nil {
+			return nil
+		}
+
 		break
 	}
 
