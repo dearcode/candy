@@ -229,8 +229,8 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 	return &meta.GateUserLogoutResponse{}, nil
 }
 
-// UserMessage recv user message.
-func (g *Gate) UserMessage(stream meta.Gate_UserMessageServer) error {
+// NewMessage recv user message.
+func (g *Gate) NewMessage(meta.Gate_NewMessageServer) error {
 	log.Debugf("Gate UserMessage")
 	for {
 		break
@@ -241,16 +241,6 @@ func (g *Gate) UserMessage(stream meta.Gate_UserMessageServer) error {
 
 // Heartbeat nil.
 func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*meta.GateHeartbeatResponse, error) {
-	return nil, ErrUndefineMethod
-}
-
-// UploadImage image.
-func (g *Gate) UploadImage(ctx context.Context, req *meta.GateUploadImageRequest) (*meta.GateUploadImageResponse, error) {
-	return nil, ErrUndefineMethod
-}
-
-// DownloadImage ids.
-func (g *Gate) DownloadImage(ctx context.Context, req *meta.GateDownloadImageRequest) (*meta.GateDownloadImageResponse, error) {
 	return nil, ErrUndefineMethod
 }
 
@@ -276,18 +266,18 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 	return &meta.GateAddFriendResponse{Confirm: ok}, nil
 }
 
-// FindUser 添加好友前先查找.
+// FindUser 添加好友前先查找,模糊查找
 func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*meta.GateFindUserResponse, error) {
 	_, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
 		return nil, err
 	}
-	id, err := g.store.findUser(req.User)
+	users, err := g.store.findUser(req.User)
 	if err != nil {
 		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	return &meta.GateFindUserResponse{ID: id}, nil
+	return &meta.GateFindUserResponse{Users: users}, nil
 }
 
 // CreateGroup 用户创建一个聊天组.
@@ -308,4 +298,51 @@ func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest
 
 	log.Debugf("user:%d, create group:%d", s.getID(), gid)
 	return &meta.GateCreateGroupResponse{ID: gid}, nil
+}
+
+// UploadFile 客户端上传文件接口，一次一个文件.
+func (g *Gate) UploadFile(ctx context.Context, req *meta.GateUploadFileRequest) (*meta.GateUploadFileResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	if err = g.store.uploadFile(s.id, req.File); err != nil {
+		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateUploadFileResponse{}, nil
+}
+
+// CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
+func (g *Gate) CheckFile(ctx context.Context, req *meta.GateCheckFileRequest) (*meta.GateCheckFileResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	names, err := g.store.checkFile(s.id, req.Names)
+	if err != nil {
+		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateCheckFileResponse{Names: names}, nil
+}
+
+// DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
+func (g *Gate) DownloadFile(ctx context.Context, req *meta.GateDownloadFileRequest) (*meta.GateDownloadFileResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return nil, err
+	}
+
+	files, err := g.store.downloadFile(s.id, req.Names)
+	if err != nil {
+		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateDownloadFileResponse{Files: files}, nil
 }

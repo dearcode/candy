@@ -38,11 +38,8 @@ func (s *store) register(user, passwd string, id int64) error {
 		return errors.Trace(err)
 	}
 
-	if resp.Header != nil {
-		return errors.New(resp.Header.Msg)
-	}
-
-	return nil
+	log.Debugf("register finished, user:%s, id:%d, err:%v", user, id, resp.Header.Error())
+	return errors.Trace(resp.Header.Error())
 }
 
 func (s *store) auth(user, passwd string) (int64, error) {
@@ -53,11 +50,8 @@ func (s *store) auth(user, passwd string) (int64, error) {
 		return 0, errors.Trace(err)
 	}
 
-	if resp.Header != nil {
-		return 0, errors.New(resp.Header.Msg)
-	}
-
-	return resp.ID, nil
+	log.Debugf("auth finished, user:%s, id:%d, err:%v", user, resp.ID, resp.Header.Error())
+	return resp.ID, errors.Trace(resp.Header.Error())
 }
 
 func (s *store) updateUserInfo(user, nickName string, avatar []byte) (int64, error) {
@@ -68,13 +62,8 @@ func (s *store) updateUserInfo(user, nickName string, avatar []byte) (int64, err
 		return 0, errors.Trace(err)
 	}
 
-	log.Debugf("updateUserInfo success")
-	if resp.Header != nil {
-		return 0, errors.New(resp.Header.Msg)
-	}
-	log.Debugf("success")
-
-	return resp.ID, nil
+	log.Debugf("updateUserInfo finished, id:%d, err:%v", resp.ID, resp.Header.Error())
+	return resp.ID, errors.Trace(resp.Header.Error())
 }
 
 func (s *store) updateUserPassword(user, passwd string) (int64, error) {
@@ -85,14 +74,8 @@ func (s *store) updateUserPassword(user, passwd string) (int64, error) {
 		return 0, errors.Trace(err)
 	}
 
-	log.Debugf("updateUserPassword finished")
-	if resp.Header != nil {
-		return 0, errors.New(resp.Header.Msg)
-	}
-
-	log.Debugf("success")
-
-	return resp.ID, nil
+	log.Debugf("updateUserPassword finished, id:%d, err:%v", resp.ID, resp.Header.Error())
+	return resp.ID, errors.Trace(resp.Header.Error())
 }
 
 func (s *store) getUserInfo(user string) (int64, string, string, []byte, error) {
@@ -103,27 +86,20 @@ func (s *store) getUserInfo(user string) (int64, string, string, []byte, error) 
 		return -1, "", "", nil, errors.Trace(err)
 	}
 
-	if resp.Header != nil {
-		return -1, "", "", nil, errors.New(resp.Header.Msg)
-	}
-	log.Debugf("success")
+	log.Debugf("get userInfo finished, user:%s, err:%v", user, resp.Header.Error())
 
-	return resp.ID, resp.User, resp.NickName, resp.Avatar, nil
+	return resp.ID, resp.User, resp.NickName, resp.Avatar, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) findUser(user string) (int64, error) {
+func (s *store) findUser(user string) ([]string, error) {
 	log.Debugf("store findUser, user:%v", user)
 	req := &meta.StoreFindUserRequest{User: user}
 	resp, err := s.api.FindUser(s.ctx, req)
 	if err != nil {
-		return 0, errors.Trace(err)
+		return nil, errors.Trace(err)
 	}
 
-	if resp.Header != nil {
-		return 0, errors.New(resp.Header.Msg)
-	}
-
-	return resp.ID, nil
+	return resp.Users, errors.Trace(resp.Header.Error())
 }
 
 func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
@@ -134,11 +110,7 @@ func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
 		return false, errors.Trace(err)
 	}
 
-	if resp.Header != nil {
-		return false, errors.New(resp.Header.Msg)
-	}
-
-	return resp.Confirm, nil
+	return resp.Confirm, errors.Trace(resp.Header.Error())
 }
 
 func (s *store) createGroup(userID, groupID int64) error {
@@ -149,9 +121,53 @@ func (s *store) createGroup(userID, groupID int64) error {
 		return errors.Trace(err)
 	}
 
-	if resp.Header != nil {
-		return errors.New(resp.Header.Msg)
+	return errors.Trace(resp.Header.Error())
+}
+
+func (s *store) uploadFile(userID int64, data []byte) error {
+	log.Debugf("store UploadFile, userID:%v", userID)
+	req := &meta.StoreUploadFileRequest{
+		Header: &meta.RequestHeader{User: userID},
+		File:   data,
+	}
+	resp, err := s.api.UploadFile(s.ctx, req)
+	if err != nil {
+		return errors.Trace(err)
 	}
 
-	return nil
+	log.Debugf("store UploadFile finished, userID:%v, err:%v", userID, resp.Header.Error())
+
+	return errors.Trace(resp.Header.Error())
+}
+
+func (s *store) checkFile(userID int64, names []string) ([]string, error) {
+	log.Debugf("store checkFile, userID:%v", userID)
+	req := &meta.StoreCheckFileRequest{
+		Header: &meta.RequestHeader{User: userID},
+		Names:  names,
+	}
+
+	resp, err := s.api.CheckFile(s.ctx, req)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	log.Debugf("store checkFile finished, userID:%v, err:%v", userID, resp.Header.Error())
+
+	return resp.Names, errors.Trace(resp.Header.Error())
+}
+
+func (s *store) downloadFile(userID int64, names []string) (map[string][]byte, error) {
+	log.Debugf("store downloadFile, userID:%v", userID)
+	req := &meta.StoreDownloadFileRequest{
+		Header: &meta.RequestHeader{User: userID},
+		Names:  names,
+	}
+
+	resp, err := s.api.DownloadFile(s.ctx, req)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	log.Debugf("store downloadFile finished, userID:%v, err:%v", userID, resp.Header.Error())
+
+	return resp.Files, errors.Trace(resp.Header.Error())
 }

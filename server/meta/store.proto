@@ -16,11 +16,18 @@ service Store {
     // AddFriend 添加好友，两人都添加过对方后才可以聊天.
     rpc AddFriend(StoreAddFriendRequest) returns (StoreAddFriendResponse);
 
-    // FindUser 根据字符串的用户名查的用户信息.
+    // FindUser 根据字符串的用户名模糊查用户列表
     rpc FindUser(StoreFindUserRequest) returns (StoreFindUserResponse);
 
     rpc CreateGroup(StoreCreateGroupRequest) returns (StoreCreateGroupResponse);
     rpc NewMessage(StoreNewMessageRequest) returns (StoreNewMessageResponse);
+
+    // UploadFile 上传文件接口，一次一个文件.
+    rpc UploadFile (StoreUploadFileRequest) returns (StoreUploadFileResponse);
+    // CheckFile 检测文件是否存在，文件的MD5, 服务器返回不存在的文件MD5.
+    rpc CheckFile (StoreCheckFileRequest) returns (StoreCheckFileResponse);
+    // DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
+    rpc DownloadFile (StoreDownloadFileRequest) returns (StoreDownloadFileResponse);
 }
 
 
@@ -30,7 +37,7 @@ message StoreFindUserRequest {
 
 message StoreFindUserResponse {
     ResponseHeader header = 1;
-    int64 ID = 2;
+    repeated string users = 2;
 }
 
 message StoreAddFriendRequest {
@@ -112,4 +119,34 @@ message StoreNewMessageRequest {
 
 message StoreNewMessageResponse {
     ResponseHeader header = 1;
+}
+
+message StoreUploadFileRequest {
+    RequestHeader header = 1;
+    bytes File = 2;
+}
+
+message StoreUploadFileResponse {
+    ResponseHeader header = 1;
+}
+
+message StoreCheckFileRequest {
+    RequestHeader header = 1;
+    repeated string Names = 2;
+}
+
+message StoreCheckFileResponse {
+    ResponseHeader header = 1;
+    repeated string Names = 2;
+}
+
+
+message StoreDownloadFileRequest {
+    RequestHeader header = 1;
+    repeated string Names = 2;
+}
+
+message StoreDownloadFileResponse {
+    ResponseHeader header = 1;
+    map<string, bytes> Files = 2;
 }

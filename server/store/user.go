@@ -14,6 +14,11 @@ import (
 	"github.com/dearcode/candy/server/util/log"
 )
 
+const (
+	//模糊查询用户最大数量
+	maxFindUserCount = 20
+)
+
 type account struct {
 	ID       int64
 	Name     string
@@ -86,19 +91,25 @@ func (u *userDB) register(user, passwd string, id int64) error {
 	return nil
 }
 
-func (u *userDB) findUser(user string) (int64, error) {
-	v, err := u.db.Get([]byte(user), nil)
-	if err != nil {
-		return 0, errors.Trace(err)
+func (u *userDB) findUser(user string) ([]string, error) {
+	var users []string
+	count := 0
+
+	it := u.db.NewIterator(&lu.Range{Start: []byte(user)}, nil)
+	for it.Next(); it.Valid(); it.Next() {
+		var a account
+		if err := json.Unmarshal(it.Value(), &a); err != nil {
+			return nil, errors.Trace(err)
+		}
+
+		users = append(users, a.Name)
+		count = count + 1
+		if count >= maxFindUserCount {
+			break
+		}
 	}
 
-	var a account
-
-	if err = json.Unmarshal(v, &a); err != nil {
-		return 0, errors.Trace(err)
-	}
-
-	return a.ID, nil
+	return users, nil
 }
 
 func (u *userDB) auth(user, passwd string) (int64, error) {
@@ -114,7 +125,7 @@ func (u *userDB) auth(user, passwd string) (int64, error) {
 	}
 
 	if a.Password != passwd {
-		return 0, errors.Errorf("invalid passwd:%s expect:%s", string(v))
+		return 0, errors.Errorf("invalid passwd:%s", string(v))
 	}
 
 	return a.ID, nil

@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util"
 	"github.com/dearcode/candy/server/util/log"
 )
 
@@ -20,6 +21,7 @@ type Store struct {
 	message *messageDB
 	postman *postman
 	friend  *friendDB
+	file    *fileDB
 }
 
 // NewStore new Store server.
@@ -30,6 +32,7 @@ func NewStore(host, notice, dbPath string) *Store {
 		user:    newUserDB(dbPath),
 		message: newMessageDB(dbPath),
 		group:   newGroupDB(dbPath),
+		file:    newFileDB(dbPath),
 	}
 
 	s.friend = newFriendDB(s.user)
@@ -54,6 +57,10 @@ func (s *Store) Start() error {
 	}
 
 	if err = s.message.start(s.postman); err != nil {
+		return err
+	}
+
+	if err = s.file.start(); err != nil {
 		return err
 	}
 
@@ -113,14 +120,14 @@ func (s *Store) Auth(_ context.Context, req *meta.StoreAuthRequest) (*meta.Store
 	return &meta.StoreAuthResponse{ID: id}, nil
 }
 
-// FindUser 根据字符串的用户名查的用户信息.
+// FindUser 根据字符串的用户名模糊查询用户信息.
 func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*meta.StoreFindUserResponse, error) {
 	log.Debugf("Store FindUser, user:%v", req.User)
-	id, err := s.user.findUser(req.User)
+	users, err := s.user.findUser(req.User)
 	if err != nil {
 		return &meta.StoreFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	return &meta.StoreFindUserResponse{ID: id}, nil
+	return &meta.StoreFindUserResponse{Users: users}, nil
 }
 
 // AddFriend 添加好友，两人都添加过对方后才可以聊天.
@@ -159,4 +166,42 @@ func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) 
 	}
 	// 再调用推送
 	return nil, nil
+}
+
+// UploadFile 上传文件接口，一次一个文件.
+func (s *Store) UploadFile(_ context.Context, req *meta.StoreUploadFileRequest) (*meta.StoreUploadFileResponse, error) {
+	key := util.MD5(req.File)
+	if err := s.file.add(key, req.File); err != nil {
+		return &meta.StoreUploadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	return &meta.StoreUploadFileResponse{}, nil
+}
+
+// CheckFile 检测文件是否存在，文件的MD5, 服务器返回不存在的文件MD5.
+func (s *Store) CheckFile(_ context.Context, req *meta.StoreCheckFileRequest) (*meta.StoreCheckFileResponse, error) {
+	var names []string
+	for _, name := range req.Names {
+		ok, err := s.file.exist([]byte(name))
+		if err != nil {
+			return &meta.StoreCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		if !ok {
+			names = append(names, name)
+		}
+	}
+	return &meta.StoreCheckFileResponse{Names: names}, nil
+}
+
+// DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
+func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileRequest) (*meta.StoreDownloadFileResponse, error) {
+	files := make(map[string][]byte)
+	for _, name := range req.Names {
+		data, err := s.file.get([]byte(name))
+		if err != nil {
+			return &meta.StoreDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		files[name] = data
+	}
+
+	return &meta.StoreDownloadFileResponse{Files: files}, nil
 }

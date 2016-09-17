@@ -20,17 +20,21 @@ var (
 	pushTimeout = time.Second * 10
 )
 
+type sender interface {
+	send(meta.Message) error
+}
+
 // 消息处理流程
 // 1.先插入到stable中，然后插入到queue中，之后返回给gate.
 // 2.异步启动推送，在消息推送到所有用户之后，把消息ID从queue中删除
 // 3.每次启动要检测queue中是否有未推送的消息.
 // 4.定时检测是否有之前推送失败的消息，重新推送.
 type messageDB struct {
-	root    string
-	queue   *leveldb.DB // 存储新到的消息
-	stable  *leveldb.DB // 所有消息都存在这里
-	postman *postman
-	retry   map[int64]time.Time // 对应queue的内存映射
+	root   string
+	queue  *leveldb.DB // 存储新到的消息
+	stable *leveldb.DB // 所有消息都存在这里
+	sender sender
+	retry  map[int64]time.Time // 对应queue的内存映射
 	sync.Mutex
 }
 
@@ -38,7 +42,7 @@ func newMessageDB(dir string) *messageDB {
 	return &messageDB{root: dir, retry: make(map[int64]time.Time)}
 }
 
-func (m *messageDB) start(postman *postman) error {
+func (m *messageDB) start(s sender) error {
 	var err error
 	if m.stable, err = leveldb.OpenFile(fmt.Sprintf("%s/%s", m.root, util.MessageDBPath), nil); err != nil {
 		return errors.Trace(err)
@@ -55,7 +59,7 @@ func (m *messageDB) start(postman *postman) error {
 		m.addRetry(util.DecodeInt64(it.Key()))
 	}
 
-	m.postman = postman
+	m.sender = s
 
 	go m.repush()
 
@@ -83,7 +87,7 @@ func (m *messageDB) repush() {
 				m.addRetry(id)
 				continue
 			}
-			if err = m.postman.forward(msgs[0]); err != nil {
+			if err = m.sender.send(msgs[0]); err != nil {
 				log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
 				m.addRetry(id)
 				continue

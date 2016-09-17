@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util"
 )
 
 const (
@@ -91,5 +92,87 @@ func (c *CandyClient) GetUserInfo(user string) (*UserInfo, error) {
 
 	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
 
-	return userInfo, nil
+	return userInfo, resp.Header.Error()
+}
+
+func (c *CandyClient) AddFriend(userID int64, confirm bool) (bool, error) {
+	req := &meta.GateAddFriendRequest{UserID: userID, Confirm: confirm}
+	resp, err := c.api.AddFriend(context.Background(), req)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Confirm, resp.Header.Error()
+}
+
+type UserList struct {
+	Users []*UserInfo
+}
+
+// 支持模糊查询，返回对应用户的列表
+func (c *CandyClient) FindUser(user string) (*UserList, error) {
+	req := &meta.GateFindUserRequest{User: user}
+	resp, err := c.api.FindUser(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]*UserInfo, 0)
+	for _, matchUser := range resp.Users {
+		userInfo, err := c.GetUserInfo(matchUser)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, userInfo)
+	}
+
+	return &UserList{Users: users}, resp.Header.Error()
+}
+
+func (c *CandyClient) FileExist(key string) (bool, error) {
+	req := &meta.GateCheckFileRequest{Names: []string{key}}
+	resp, err := c.api.CheckFile(context.Background(), req)
+	if err != nil {
+		return false, err
+	}
+
+	if err = resp.Header.Error(); err != nil {
+		return false, err
+	}
+
+	if len(resp.Names) == 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (c *CandyClient) FileUpload(data []byte) (string, error) {
+	md5 := string(util.MD5(data))
+	exist, err := c.FileExist(md5)
+	if err != nil {
+		return md5, err
+	}
+	//已有别人上传过了
+	if exist {
+		return md5, nil
+	}
+
+	req := &meta.GateUploadFileRequest{File: data}
+	resp, err := c.api.UploadFile(context.Background(), req)
+	if err != nil {
+		return md5, err
+	}
+
+	return md5, resp.Header.Error()
+}
+
+func (c *CandyClient) FileDownload(key string) ([]byte, error) {
+	req := &meta.GateDownloadFileRequest{Names: []string{key}}
+	resp, err := c.api.DownloadFile(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Files[key], resp.Header.Error()
 }

@@ -19,7 +19,7 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type GateFindUserRequest struct {
-	User string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
+	User string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
 }
 
 func (m *GateFindUserRequest) Reset()                    { *m = GateFindUserRequest{} }
@@ -29,7 +29,7 @@ func (*GateFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor
 
 type GateFindUserResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	Users  []string        `protobuf:"bytes,2,rep,name=users" json:"users,omitempty"`
 }
 
 func (m *GateFindUserResponse) Reset()                    { *m = GateFindUserResponse{} }
@@ -45,8 +45,8 @@ func (m *GateFindUserResponse) GetHeader() *ResponseHeader {
 }
 
 type GateAddFriendRequest struct {
-	UserID  int64 `protobuf:"varint,1,opt,name=UserID" json:"UserID,omitempty"`
-	Confirm bool  `protobuf:"varint,2,opt,name=Confirm" json:"Confirm,omitempty"`
+	UserID  int64 `protobuf:"varint,1,opt,name=UserID,json=userID" json:"UserID,omitempty"`
+	Confirm bool  `protobuf:"varint,2,opt,name=Confirm,json=confirm" json:"Confirm,omitempty"`
 }
 
 func (m *GateAddFriendRequest) Reset()                    { *m = GateAddFriendRequest{} }
@@ -56,7 +56,7 @@ func (*GateAddFriendRequest) Descriptor() ([]byte, []int) { return fileDescripto
 
 type GateAddFriendResponse struct {
 	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	Confirm bool            `protobuf:"varint,2,opt,name=Confirm" json:"Confirm,omitempty"`
+	Confirm bool            `protobuf:"varint,2,opt,name=Confirm,json=confirm" json:"Confirm,omitempty"`
 }
 
 func (m *GateAddFriendResponse) Reset()                    { *m = GateAddFriendResponse{} }
@@ -81,7 +81,7 @@ func (*GateCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescrip
 
 type GateCreateGroupResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *GateCreateGroupResponse) Reset()                    { *m = GateCreateGroupResponse{} }
@@ -97,8 +97,8 @@ func (m *GateCreateGroupResponse) GetHeader() *ResponseHeader {
 }
 
 type GateRegisterRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
+	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=Password,json=password" json:"Password,omitempty"`
 }
 
 func (m *GateRegisterRequest) Reset()                    { *m = GateRegisterRequest{} }
@@ -108,7 +108,7 @@ func (*GateRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor
 
 type GateRegisterResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *GateRegisterResponse) Reset()                    { *m = GateRegisterResponse{} }
@@ -124,9 +124,9 @@ func (m *GateRegisterResponse) GetHeader() *ResponseHeader {
 }
 
 type GateUpdateUserInfoRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
-	NickName string `protobuf:"bytes,2,opt,name=NickName" json:"NickName,omitempty"`
-	Avatar   []byte `protobuf:"bytes,3,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
+	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+	NickName string `protobuf:"bytes,2,opt,name=NickName,json=nickName" json:"NickName,omitempty"`
+	Avatar   []byte `protobuf:"bytes,3,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
 }
 
 func (m *GateUpdateUserInfoRequest) Reset()                    { *m = GateUpdateUserInfoRequest{} }
@@ -136,7 +136,7 @@ func (*GateUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDesc
 
 type GateUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *GateUpdateUserInfoResponse) Reset()                    { *m = GateUpdateUserInfoResponse{} }
@@ -152,8 +152,8 @@ func (m *GateUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 }
 
 type GateUpdateUserPasswordRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
+	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=Password,json=password" json:"Password,omitempty"`
 }
 
 func (m *GateUpdateUserPasswordRequest) Reset()                    { *m = GateUpdateUserPasswordRequest{} }
@@ -163,7 +163,7 @@ func (*GateUpdateUserPasswordRequest) Descriptor() ([]byte, []int) { return file
 
 type GateUpdateUserPasswordResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *GateUpdateUserPasswordResponse) Reset()                    { *m = GateUpdateUserPasswordResponse{} }
@@ -179,7 +179,7 @@ func (m *GateUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
 }
 
 type GateGetUserInfoRequest struct {
-	User string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
+	User string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
 }
 
 func (m *GateGetUserInfoRequest) Reset()                    { *m = GateGetUserInfoRequest{} }
@@ -189,10 +189,10 @@ func (*GateGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescrip
 
 type GateGetUserInfoResponse struct {
 	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID       int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
-	User     string          `protobuf:"bytes,3,opt,name=User" json:"User,omitempty"`
-	NickName string          `protobuf:"bytes,4,opt,name=NickName" json:"NickName,omitempty"`
-	Avatar   []byte          `protobuf:"bytes,5,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
+	ID       int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
+	User     string          `protobuf:"bytes,3,opt,name=User,json=user" json:"User,omitempty"`
+	NickName string          `protobuf:"bytes,4,opt,name=NickName,json=nickName" json:"NickName,omitempty"`
+	Avatar   []byte          `protobuf:"bytes,5,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
 }
 
 func (m *GateGetUserInfoResponse) Reset()                    { *m = GateGetUserInfoResponse{} }
@@ -224,8 +224,8 @@ func (*GateHeartbeatResponse) ProtoMessage()               {}
 func (*GateHeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{15} }
 
 type GateUserLoginRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
+	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=Password,json=password" json:"Password,omitempty"`
 }
 
 func (m *GateUserLoginRequest) Reset()                    { *m = GateUserLoginRequest{} }
@@ -235,7 +235,7 @@ func (*GateUserLoginRequest) Descriptor() ([]byte, []int) { return fileDescripto
 
 type GateUserLoginResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *GateUserLoginResponse) Reset()                    { *m = GateUserLoginResponse{} }
@@ -251,7 +251,7 @@ func (m *GateUserLoginResponse) GetHeader() *ResponseHeader {
 }
 
 type GateUserLogoutRequest struct {
-	User string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
+	User string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
 }
 
 func (m *GateUserLogoutRequest) Reset()                    { *m = GateUserLogoutRequest{} }
@@ -275,67 +275,99 @@ func (m *GateUserLogoutResponse) GetHeader() *ResponseHeader {
 	return nil
 }
 
-type GateUploadImageRequest struct {
-	Image []byte `protobuf:"bytes,1,opt,name=Image,proto3" json:"Image,omitempty"`
+type GateUploadFileRequest struct {
+	File []byte `protobuf:"bytes,1,opt,name=File,json=file,proto3" json:"File,omitempty"`
 }
 
-func (m *GateUploadImageRequest) Reset()                    { *m = GateUploadImageRequest{} }
-func (m *GateUploadImageRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateUploadImageRequest) ProtoMessage()               {}
-func (*GateUploadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
+func (m *GateUploadFileRequest) Reset()                    { *m = GateUploadFileRequest{} }
+func (m *GateUploadFileRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateUploadFileRequest) ProtoMessage()               {}
+func (*GateUploadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
 
-type GateUploadImageResponse struct {
-	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ImageID int64           `protobuf:"varint,2,opt,name=ImageID" json:"ImageID,omitempty"`
+type GateUploadFileResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateUploadImageResponse) Reset()                    { *m = GateUploadImageResponse{} }
-func (m *GateUploadImageResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateUploadImageResponse) ProtoMessage()               {}
-func (*GateUploadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{21} }
+func (m *GateUploadFileResponse) Reset()                    { *m = GateUploadFileResponse{} }
+func (m *GateUploadFileResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateUploadFileResponse) ProtoMessage()               {}
+func (*GateUploadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{21} }
 
-func (m *GateUploadImageResponse) GetHeader() *ResponseHeader {
+func (m *GateUploadFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
 	return nil
 }
 
-type GateDownloadImageRequest struct {
-	ImageID []int64 `protobuf:"varint,1,rep,packed,name=ImageID" json:"ImageID,omitempty"`
+type GateCheckFileRequest struct {
+	Names []string `protobuf:"bytes,1,rep,name=Names,json=names" json:"Names,omitempty"`
 }
 
-func (m *GateDownloadImageRequest) Reset()                    { *m = GateDownloadImageRequest{} }
-func (m *GateDownloadImageRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateDownloadImageRequest) ProtoMessage()               {}
-func (*GateDownloadImageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{22} }
+func (m *GateCheckFileRequest) Reset()                    { *m = GateCheckFileRequest{} }
+func (m *GateCheckFileRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateCheckFileRequest) ProtoMessage()               {}
+func (*GateCheckFileRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{22} }
 
-type GateDownloadImageResponse struct {
-	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	Image  [][]byte        `protobuf:"bytes,2,rep,name=Image,proto3" json:"Image,omitempty"`
+type GateCheckFileResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=Header,json=header" json:"Header,omitempty"`
+	Names  []string        `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
 }
 
-func (m *GateDownloadImageResponse) Reset()                    { *m = GateDownloadImageResponse{} }
-func (m *GateDownloadImageResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateDownloadImageResponse) ProtoMessage()               {}
-func (*GateDownloadImageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{23} }
+func (m *GateCheckFileResponse) Reset()                    { *m = GateCheckFileResponse{} }
+func (m *GateCheckFileResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateCheckFileResponse) ProtoMessage()               {}
+func (*GateCheckFileResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{23} }
 
-func (m *GateDownloadImageResponse) GetHeader() *ResponseHeader {
+func (m *GateCheckFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
+	}
+	return nil
+}
+
+type GateDownloadFileRequest struct {
+	Names []string `protobuf:"bytes,1,rep,name=Names,json=names" json:"Names,omitempty"`
+}
+
+func (m *GateDownloadFileRequest) Reset()                    { *m = GateDownloadFileRequest{} }
+func (m *GateDownloadFileRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateDownloadFileRequest) ProtoMessage()               {}
+func (*GateDownloadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{24} }
+
+type GateDownloadFileResponse struct {
+	Header *ResponseHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Files  map[string][]byte `protobuf:"bytes,2,rep,name=Files,json=files" json:"Files,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (m *GateDownloadFileResponse) Reset()                    { *m = GateDownloadFileResponse{} }
+func (m *GateDownloadFileResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateDownloadFileResponse) ProtoMessage()               {}
+func (*GateDownloadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{25} }
+
+func (m *GateDownloadFileResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+func (m *GateDownloadFileResponse) GetFiles() map[string][]byte {
+	if m != nil {
+		return m.Files
 	}
 	return nil
 }
 
 type GateNoticeRequest struct {
-	ChannelID int64    `protobuf:"varint,1,opt,name=ChannelID" json:"ChannelID,omitempty"`
-	Msg       *Message `protobuf:"bytes,2,opt,name=Msg" json:"Msg,omitempty"`
+	ChannelID int64    `protobuf:"varint,1,opt,name=ChannelID,json=channelID" json:"ChannelID,omitempty"`
+	Msg       *Message `protobuf:"bytes,2,opt,name=Msg,json=msg" json:"Msg,omitempty"`
 }
 
 func (m *GateNoticeRequest) Reset()                    { *m = GateNoticeRequest{} }
 func (m *GateNoticeRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateNoticeRequest) ProtoMessage()               {}
-func (*GateNoticeRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{24} }
+func (*GateNoticeRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{26} }
 
 func (m *GateNoticeRequest) GetMsg() *Message {
 	if m != nil {
@@ -351,7 +383,7 @@ type GateNoticeResponse struct {
 func (m *GateNoticeResponse) Reset()                    { *m = GateNoticeResponse{} }
 func (m *GateNoticeResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateNoticeResponse) ProtoMessage()               {}
-func (*GateNoticeResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{25} }
+func (*GateNoticeResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{27} }
 
 func (m *GateNoticeResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -381,10 +413,12 @@ func init() {
 	proto.RegisterType((*GateUserLoginResponse)(nil), "candy.meta.GateUserLoginResponse")
 	proto.RegisterType((*GateUserLogoutRequest)(nil), "candy.meta.GateUserLogoutRequest")
 	proto.RegisterType((*GateUserLogoutResponse)(nil), "candy.meta.GateUserLogoutResponse")
-	proto.RegisterType((*GateUploadImageRequest)(nil), "candy.meta.GateUploadImageRequest")
-	proto.RegisterType((*GateUploadImageResponse)(nil), "candy.meta.GateUploadImageResponse")
-	proto.RegisterType((*GateDownloadImageRequest)(nil), "candy.meta.GateDownloadImageRequest")
-	proto.RegisterType((*GateDownloadImageResponse)(nil), "candy.meta.GateDownloadImageResponse")
+	proto.RegisterType((*GateUploadFileRequest)(nil), "candy.meta.GateUploadFileRequest")
+	proto.RegisterType((*GateUploadFileResponse)(nil), "candy.meta.GateUploadFileResponse")
+	proto.RegisterType((*GateCheckFileRequest)(nil), "candy.meta.GateCheckFileRequest")
+	proto.RegisterType((*GateCheckFileResponse)(nil), "candy.meta.GateCheckFileResponse")
+	proto.RegisterType((*GateDownloadFileRequest)(nil), "candy.meta.GateDownloadFileRequest")
+	proto.RegisterType((*GateDownloadFileResponse)(nil), "candy.meta.GateDownloadFileResponse")
 	proto.RegisterType((*GateNoticeRequest)(nil), "candy.meta.GateNoticeRequest")
 	proto.RegisterType((*GateNoticeResponse)(nil), "candy.meta.GateNoticeResponse")
 }
@@ -406,15 +440,19 @@ type GateClient interface {
 	GetUserInfo(ctx context.Context, in *GateGetUserInfoRequest, opts ...grpc.CallOption) (*GateGetUserInfoResponse, error)
 	Login(ctx context.Context, in *GateUserLoginRequest, opts ...grpc.CallOption) (*GateUserLoginResponse, error)
 	Logout(ctx context.Context, in *GateUserLogoutRequest, opts ...grpc.CallOption) (*GateUserLogoutResponse, error)
-	UserMessage(ctx context.Context, opts ...grpc.CallOption) (Gate_UserMessageClient, error)
+	NewMessage(ctx context.Context, opts ...grpc.CallOption) (Gate_NewMessageClient, error)
 	// AddFriend 添加好友或确认接受添加.
 	AddFriend(ctx context.Context, in *GateAddFriendRequest, opts ...grpc.CallOption) (*GateAddFriendResponse, error)
 	// FindUser 添加好友前先查找出来对应的ID.
 	FindUser(ctx context.Context, in *GateFindUserRequest, opts ...grpc.CallOption) (*GateFindUserResponse, error)
 	CreateGroup(ctx context.Context, in *GateCreateGroupRequest, opts ...grpc.CallOption) (*GateCreateGroupResponse, error)
 	Heartbeat(ctx context.Context, in *GateHeartbeatRequest, opts ...grpc.CallOption) (*GateHeartbeatResponse, error)
-	UploadImage(ctx context.Context, in *GateUploadImageRequest, opts ...grpc.CallOption) (*GateUploadImageResponse, error)
-	DownloadImage(ctx context.Context, in *GateDownloadImageRequest, opts ...grpc.CallOption) (*GateDownloadImageResponse, error)
+	// UploadFile 客户端上传文件接口，一次一个图片.
+	UploadFile(ctx context.Context, in *GateUploadFileRequest, opts ...grpc.CallOption) (*GateUploadFileResponse, error)
+	// CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
+	CheckFile(ctx context.Context, in *GateCheckFileRequest, opts ...grpc.CallOption) (*GateCheckFileResponse, error)
+	// DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
+	DownloadFile(ctx context.Context, in *GateDownloadFileRequest, opts ...grpc.CallOption) (*GateDownloadFileResponse, error)
 	// server interface.
 	Notice(ctx context.Context, in *GateNoticeRequest, opts ...grpc.CallOption) (*GateNoticeResponse, error)
 }
@@ -481,30 +519,30 @@ func (c *gateClient) Logout(ctx context.Context, in *GateUserLogoutRequest, opts
 	return out, nil
 }
 
-func (c *gateClient) UserMessage(ctx context.Context, opts ...grpc.CallOption) (Gate_UserMessageClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_Gate_serviceDesc.Streams[0], c.cc, "/candy.meta.Gate/UserMessage", opts...)
+func (c *gateClient) NewMessage(ctx context.Context, opts ...grpc.CallOption) (Gate_NewMessageClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_Gate_serviceDesc.Streams[0], c.cc, "/candy.meta.Gate/NewMessage", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &gateUserMessageClient{stream}
+	x := &gateNewMessageClient{stream}
 	return x, nil
 }
 
-type Gate_UserMessageClient interface {
+type Gate_NewMessageClient interface {
 	Send(*Message) error
 	Recv() (*Message, error)
 	grpc.ClientStream
 }
 
-type gateUserMessageClient struct {
+type gateNewMessageClient struct {
 	grpc.ClientStream
 }
 
-func (x *gateUserMessageClient) Send(m *Message) error {
+func (x *gateNewMessageClient) Send(m *Message) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *gateUserMessageClient) Recv() (*Message, error) {
+func (x *gateNewMessageClient) Recv() (*Message, error) {
 	m := new(Message)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -548,18 +586,27 @@ func (c *gateClient) Heartbeat(ctx context.Context, in *GateHeartbeatRequest, op
 	return out, nil
 }
 
-func (c *gateClient) UploadImage(ctx context.Context, in *GateUploadImageRequest, opts ...grpc.CallOption) (*GateUploadImageResponse, error) {
-	out := new(GateUploadImageResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/UploadImage", in, out, c.cc, opts...)
+func (c *gateClient) UploadFile(ctx context.Context, in *GateUploadFileRequest, opts ...grpc.CallOption) (*GateUploadFileResponse, error) {
+	out := new(GateUploadFileResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/UploadFile", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gateClient) DownloadImage(ctx context.Context, in *GateDownloadImageRequest, opts ...grpc.CallOption) (*GateDownloadImageResponse, error) {
-	out := new(GateDownloadImageResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/DownloadImage", in, out, c.cc, opts...)
+func (c *gateClient) CheckFile(ctx context.Context, in *GateCheckFileRequest, opts ...grpc.CallOption) (*GateCheckFileResponse, error) {
+	out := new(GateCheckFileResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/CheckFile", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gateClient) DownloadFile(ctx context.Context, in *GateDownloadFileRequest, opts ...grpc.CallOption) (*GateDownloadFileResponse, error) {
+	out := new(GateDownloadFileResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/DownloadFile", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -584,15 +631,19 @@ type GateServer interface {
 	GetUserInfo(context.Context, *GateGetUserInfoRequest) (*GateGetUserInfoResponse, error)
 	Login(context.Context, *GateUserLoginRequest) (*GateUserLoginResponse, error)
 	Logout(context.Context, *GateUserLogoutRequest) (*GateUserLogoutResponse, error)
-	UserMessage(Gate_UserMessageServer) error
+	NewMessage(Gate_NewMessageServer) error
 	// AddFriend 添加好友或确认接受添加.
 	AddFriend(context.Context, *GateAddFriendRequest) (*GateAddFriendResponse, error)
 	// FindUser 添加好友前先查找出来对应的ID.
 	FindUser(context.Context, *GateFindUserRequest) (*GateFindUserResponse, error)
 	CreateGroup(context.Context, *GateCreateGroupRequest) (*GateCreateGroupResponse, error)
 	Heartbeat(context.Context, *GateHeartbeatRequest) (*GateHeartbeatResponse, error)
-	UploadImage(context.Context, *GateUploadImageRequest) (*GateUploadImageResponse, error)
-	DownloadImage(context.Context, *GateDownloadImageRequest) (*GateDownloadImageResponse, error)
+	// UploadFile 客户端上传文件接口，一次一个图片.
+	UploadFile(context.Context, *GateUploadFileRequest) (*GateUploadFileResponse, error)
+	// CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
+	CheckFile(context.Context, *GateCheckFileRequest) (*GateCheckFileResponse, error)
+	// DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
+	DownloadFile(context.Context, *GateDownloadFileRequest) (*GateDownloadFileResponse, error)
 	// server interface.
 	Notice(context.Context, *GateNoticeRequest) (*GateNoticeResponse, error)
 }
@@ -709,25 +760,25 @@ func _Gate_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Gate_UserMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(GateServer).UserMessage(&gateUserMessageServer{stream})
+func _Gate_NewMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GateServer).NewMessage(&gateNewMessageServer{stream})
 }
 
-type Gate_UserMessageServer interface {
+type Gate_NewMessageServer interface {
 	Send(*Message) error
 	Recv() (*Message, error)
 	grpc.ServerStream
 }
 
-type gateUserMessageServer struct {
+type gateNewMessageServer struct {
 	grpc.ServerStream
 }
 
-func (x *gateUserMessageServer) Send(m *Message) error {
+func (x *gateNewMessageServer) Send(m *Message) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *gateUserMessageServer) Recv() (*Message, error) {
+func (x *gateNewMessageServer) Recv() (*Message, error) {
 	m := new(Message)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -807,38 +858,56 @@ func _Gate_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Gate_UploadImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GateUploadImageRequest)
+func _Gate_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GateUploadFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GateServer).UploadImage(ctx, in)
+		return srv.(GateServer).UploadFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/candy.meta.Gate/UploadImage",
+		FullMethod: "/candy.meta.Gate/UploadFile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).UploadImage(ctx, req.(*GateUploadImageRequest))
+		return srv.(GateServer).UploadFile(ctx, req.(*GateUploadFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Gate_DownloadImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GateDownloadImageRequest)
+func _Gate_CheckFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GateCheckFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GateServer).DownloadImage(ctx, in)
+		return srv.(GateServer).CheckFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/candy.meta.Gate/DownloadImage",
+		FullMethod: "/candy.meta.Gate/CheckFile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GateServer).DownloadImage(ctx, req.(*GateDownloadImageRequest))
+		return srv.(GateServer).CheckFile(ctx, req.(*GateCheckFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gate_DownloadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GateDownloadFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GateServer).DownloadFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Gate/DownloadFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GateServer).DownloadFile(ctx, req.(*GateDownloadFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -906,12 +975,16 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Gate_Heartbeat_Handler,
 		},
 		{
-			MethodName: "UploadImage",
-			Handler:    _Gate_UploadImage_Handler,
+			MethodName: "UploadFile",
+			Handler:    _Gate_UploadFile_Handler,
 		},
 		{
-			MethodName: "DownloadImage",
-			Handler:    _Gate_DownloadImage_Handler,
+			MethodName: "CheckFile",
+			Handler:    _Gate_CheckFile_Handler,
+		},
+		{
+			MethodName: "DownloadFile",
+			Handler:    _Gate_DownloadFile_Handler,
 		},
 		{
 			MethodName: "Notice",
@@ -920,8 +993,8 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "UserMessage",
-			Handler:       _Gate_UserMessage_Handler,
+			StreamName:    "NewMessage",
+			Handler:       _Gate_NewMessage_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
@@ -932,53 +1005,62 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("gate.proto", fileDescriptor1) }
 
 var fileDescriptor1 = []byte{
-	// 754 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x56, 0x6f, 0x4f, 0xd3, 0x5e,
-	0x14, 0x4e, 0xe9, 0xd8, 0x6f, 0x3b, 0x1b, 0xfc, 0xe4, 0xa2, 0x30, 0x9b, 0x80, 0xf5, 0x22, 0x38,
-	0x31, 0x59, 0x0c, 0x46, 0x7d, 0xe1, 0x0b, 0x45, 0x16, 0x06, 0x91, 0x0d, 0x24, 0xb0, 0x18, 0x63,
-	0x62, 0x2e, 0xeb, 0x65, 0x34, 0xb0, 0xde, 0xd9, 0x5e, 0x24, 0xbe, 0xf4, 0xa3, 0xf8, 0x4d, 0xcd,
-	0xed, 0x6d, 0x4b, 0xdb, 0xdb, 0x8e, 0x3f, 0x7d, 0xb3, 0x64, 0xed, 0x73, 0x9e, 0xf3, 0xdc, 0x73,
-	0xce, 0x7d, 0x7a, 0x00, 0x86, 0x84, 0xd3, 0xd6, 0xd8, 0x65, 0x9c, 0x21, 0x18, 0x10, 0xc7, 0xfa,
-	0xdd, 0x1a, 0x51, 0x4e, 0x8c, 0xfa, 0x80, 0x8d, 0x46, 0xcc, 0x91, 0x6f, 0xf0, 0x0a, 0xcc, 0x77,
-	0x08, 0xa7, 0xdb, 0xb6, 0x63, 0x1d, 0x7b, 0xd4, 0x3d, 0xa4, 0x3f, 0x2f, 0xa9, 0xc7, 0x51, 0x1d,
-	0x4a, 0xe2, 0x6f, 0x43, 0x33, 0xb5, 0x66, 0x15, 0xf7, 0xe0, 0x61, 0x12, 0xe4, 0x8d, 0x99, 0xe3,
-	0x51, 0xb4, 0x0e, 0xe5, 0x33, 0x4a, 0xac, 0x00, 0x57, 0xdb, 0x30, 0x5a, 0xd7, 0x79, 0x5a, 0x21,
-	0x6a, 0xc7, 0x47, 0x20, 0x80, 0xa9, 0xdd, 0x76, 0x63, 0xca, 0xd4, 0x9a, 0x3a, 0x7e, 0x27, 0xf9,
-	0x36, 0x2d, 0x6b, 0xdb, 0xb5, 0xa9, 0x63, 0x85, 0x59, 0x67, 0xa1, 0x2c, 0xf8, 0x77, 0xdb, 0x3e,
-	0x9f, 0x8e, 0xfe, 0x87, 0xff, 0xb6, 0x98, 0x73, 0x6a, 0xbb, 0x23, 0x3f, 0xb0, 0x82, 0x8f, 0xe0,
-	0x51, 0x2a, 0xf0, 0x1e, 0x4a, 0x14, 0xd6, 0x06, 0x2c, 0x08, 0xd6, 0x2d, 0x97, 0x12, 0x4e, 0x3b,
-	0x2e, 0xbb, 0x1c, 0x07, 0x82, 0xf0, 0x17, 0x58, 0x54, 0xde, 0x14, 0x3c, 0xfb, 0x1b, 0x59, 0xf0,
-	0x43, 0x3a, 0xb4, 0x3d, 0x9e, 0x53, 0x70, 0xf4, 0x00, 0x2a, 0x07, 0xc4, 0xf3, 0xae, 0x98, 0x6b,
-	0xf9, 0x61, 0x51, 0x0b, 0xae, 0xc3, 0x0a, 0xca, 0xf8, 0x0c, 0x8f, 0x05, 0xdf, 0xf1, 0xd8, 0x12,
-	0xbf, 0xa2, 0xe8, 0xce, 0x29, 0xcb, 0x15, 0xd3, 0xb3, 0x07, 0xe7, 0x3d, 0x32, 0xa2, 0x52, 0x8c,
-	0xe8, 0xd3, 0xe6, 0x2f, 0xc2, 0x89, 0xdb, 0xd0, 0x4d, 0xad, 0x59, 0xc7, 0x47, 0x60, 0x64, 0x91,
-	0x15, 0x94, 0xf8, 0x01, 0x96, 0x92, 0xac, 0x61, 0x49, 0x6e, 0x5b, 0xb3, 0xaf, 0xb0, 0x9c, 0x47,
-	0x50, 0x50, 0xda, 0x9a, 0x9c, 0x98, 0x0e, 0xe5, 0x13, 0x4b, 0x87, 0xff, 0x68, 0x72, 0x80, 0x12,
-	0xc0, 0x62, 0xb9, 0xa3, 0x0c, 0xba, 0xd2, 0x9c, 0x52, 0xaa, 0x39, 0xd3, 0x7e, 0x73, 0x16, 0xe4,
-	0xe4, 0xec, 0x50, 0xe2, 0xf2, 0x13, 0x4a, 0x78, 0x38, 0xdb, 0x8b, 0xf2, 0x2e, 0xc5, 0x9e, 0xcb,
-	0x94, 0xf8, 0xad, 0x0c, 0x10, 0x49, 0xf6, 0xd8, 0xd0, 0x76, 0x6e, 0x5b, 0xee, 0x7d, 0x49, 0x18,
-	0x8b, 0x2b, 0x58, 0xe5, 0xd5, 0x04, 0x21, 0xbb, 0xe4, 0xd9, 0x45, 0x6e, 0xcb, 0x66, 0xc4, 0x61,
-	0x77, 0x4f, 0x8c, 0x9f, 0x07, 0x2c, 0xe3, 0x0b, 0x46, 0xac, 0xdd, 0x11, 0x19, 0xd2, 0x30, 0xdb,
-	0x0c, 0x4c, 0xfb, 0xff, 0x7d, 0x92, 0x3a, 0xee, 0xcb, 0x96, 0x26, 0x80, 0xf7, 0x73, 0x21, 0x3f,
-	0x38, 0x3a, 0xed, 0x4b, 0x68, 0x08, 0xde, 0x36, 0xbb, 0x72, 0x14, 0x09, 0x31, 0xb0, 0x66, 0xea,
-	0x4d, 0x1d, 0xf7, 0xe5, 0xf5, 0x4d, 0x81, 0xef, 0x21, 0x23, 0x3a, 0xdc, 0x94, 0xa9, 0x37, 0xeb,
-	0x78, 0x07, 0xe6, 0x04, 0x6f, 0x8f, 0x71, 0x7b, 0x10, 0x65, 0x9f, 0x83, 0xea, 0xd6, 0x19, 0x71,
-	0x1c, 0x7a, 0x11, 0x39, 0xb3, 0x09, 0x7a, 0xd7, 0x1b, 0xfa, 0xca, 0x6b, 0x1b, 0xf3, 0x71, 0xfe,
-	0x2e, 0xf5, 0x3c, 0x32, 0xa4, 0xf8, 0x23, 0xa0, 0x38, 0xd3, 0xdd, 0xa5, 0x6d, 0xfc, 0xad, 0x42,
-	0x49, 0x50, 0xa0, 0x2e, 0x54, 0x42, 0xdf, 0x43, 0x4f, 0xe2, 0x01, 0x19, 0x46, 0x6a, 0x98, 0xf9,
-	0x80, 0x40, 0xc3, 0x0f, 0x98, 0x4d, 0x3a, 0x15, 0x5a, 0x4d, 0xc7, 0x64, 0xda, 0xa2, 0xb1, 0x76,
-	0x13, 0x2c, 0x48, 0x70, 0x0e, 0x48, 0xf5, 0x1c, 0xf4, 0x22, 0x3f, 0x3a, 0x65, 0x6c, 0xc6, 0xfa,
-	0x6d, 0xa0, 0x41, 0xb2, 0x3e, 0xd4, 0x62, 0xee, 0x82, 0x70, 0x3a, 0x54, 0xf5, 0x28, 0x63, 0x65,
-	0x22, 0x26, 0xe0, 0xdd, 0x83, 0x69, 0xff, 0x16, 0x23, 0xa5, 0xa0, 0x69, 0x63, 0x30, 0x9e, 0x4e,
-	0x40, 0x04, 0x6c, 0xfb, 0x50, 0x96, 0x77, 0x13, 0xe5, 0x81, 0xaf, 0xaf, 0xb7, 0x81, 0x27, 0x41,
-	0x02, 0xc2, 0xf7, 0x50, 0x13, 0x4f, 0x83, 0x69, 0x43, 0x59, 0x23, 0x68, 0x64, 0x3d, 0x6c, 0x6a,
-	0xaf, 0x34, 0x74, 0x00, 0xd5, 0x68, 0x85, 0x50, 0xcf, 0x97, 0x5e, 0x4b, 0xd4, 0xf3, 0xa9, 0xfb,
-	0x47, 0x17, 0x2a, 0xe1, 0x76, 0xa4, 0x8e, 0x68, 0x6a, 0xb9, 0x52, 0x47, 0x54, 0x59, 0xac, 0xfa,
-	0x50, 0x8b, 0xed, 0x1c, 0x6a, 0x53, 0xd5, 0x55, 0x45, 0x6d, 0x6a, 0xd6, 0xd2, 0x72, 0x00, 0xd5,
-	0xc8, 0xef, 0xd5, 0x83, 0xa7, 0x3f, 0x11, 0xea, 0xc1, 0x95, 0x8f, 0x85, 0x50, 0x1a, 0x73, 0x42,
-	0x55, 0xa9, 0xea, 0xa7, 0xaa, 0xd2, 0x2c, 0x2b, 0xfd, 0x0e, 0x33, 0x09, 0x73, 0x43, 0xcf, 0xd2,
-	0x51, 0x59, 0x46, 0x69, 0xac, 0xde, 0x80, 0x0a, 0xd8, 0x3b, 0x50, 0x96, 0xc6, 0x84, 0x96, 0xd2,
-	0x01, 0x09, 0xeb, 0x33, 0x96, 0xf3, 0x5e, 0x4b, 0xa2, 0x4f, 0xe5, 0x6f, 0x25, 0xf1, 0xea, 0xa4,
-	0xec, 0x6f, 0xd3, 0xaf, 0xff, 0x05, 0x00, 0x00, 0xff, 0xff, 0xc3, 0xe7, 0x12, 0xd7, 0x75, 0x0b,
-	0x00, 0x00,
+	// 900 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x57, 0x61, 0x4f, 0xf2, 0x56,
+	0x14, 0x4e, 0x29, 0xf4, 0xa5, 0x07, 0x62, 0xb6, 0xab, 0xd3, 0xae, 0x99, 0x8e, 0xd5, 0xb9, 0xe0,
+	0x66, 0x70, 0x61, 0x5f, 0x8c, 0xdf, 0x1c, 0x08, 0x98, 0x08, 0x92, 0x2e, 0x9a, 0xcd, 0x65, 0x99,
+	0xd7, 0xf6, 0x8a, 0x0d, 0xd0, 0xb2, 0xb6, 0x68, 0xfc, 0x41, 0xfb, 0x3d, 0xfb, 0x23, 0xfb, 0x11,
+	0x6f, 0x6e, 0x6f, 0x0b, 0xa5, 0xb7, 0x45, 0x03, 0x7c, 0x31, 0x9e, 0xf6, 0xdc, 0xe7, 0x79, 0xee,
+	0x3d, 0xa7, 0xe7, 0xb9, 0x00, 0x0c, 0xb0, 0x4f, 0x6a, 0x13, 0xd7, 0xf1, 0x1d, 0x04, 0x06, 0xb6,
+	0xcd, 0xb7, 0xda, 0x98, 0xf8, 0x58, 0x2d, 0x1b, 0xce, 0x78, 0xec, 0xd8, 0xec, 0x8d, 0x76, 0x0c,
+	0xdb, 0x6d, 0xec, 0x93, 0x96, 0x65, 0x9b, 0xb7, 0x1e, 0x71, 0x75, 0xf2, 0xcf, 0x94, 0x78, 0x3e,
+	0x42, 0x90, 0xa7, 0xa1, 0x22, 0x54, 0x84, 0xaa, 0xac, 0xe7, 0xa7, 0x1e, 0x71, 0xb5, 0x07, 0xd8,
+	0x59, 0x4c, 0xf5, 0x26, 0x8e, 0xed, 0x11, 0x54, 0x07, 0xe9, 0x99, 0x60, 0x33, 0xcc, 0x2e, 0xd5,
+	0xd5, 0xda, 0x9c, 0xad, 0x16, 0x65, 0x75, 0x82, 0x0c, 0x3d, 0xcc, 0x44, 0x3b, 0x50, 0xa0, 0x98,
+	0x9e, 0x92, 0xab, 0x88, 0x55, 0x59, 0x67, 0x81, 0xd6, 0x61, 0x0c, 0x17, 0xa6, 0xd9, 0x72, 0x2d,
+	0x62, 0x9b, 0x91, 0x9a, 0x5d, 0x90, 0x28, 0xe3, 0x55, 0x33, 0x60, 0x10, 0x75, 0x69, 0x1a, 0x44,
+	0x48, 0x81, 0x4f, 0x0d, 0xc7, 0x7e, 0xb2, 0xdc, 0xb1, 0x92, 0xab, 0x08, 0xd5, 0xa2, 0xfe, 0xc9,
+	0x60, 0xa1, 0x46, 0xe0, 0xab, 0x04, 0xd2, 0x1a, 0x62, 0xb3, 0x69, 0x14, 0xd8, 0xa5, 0x34, 0x0d,
+	0x97, 0x60, 0x9f, 0xb4, 0x5d, 0x67, 0x3a, 0x09, 0x25, 0x6b, 0x7f, 0xc1, 0x1e, 0xf7, 0x66, 0x0d,
+	0x09, 0x5b, 0x90, 0xbb, 0x6a, 0x06, 0xec, 0xa2, 0x9e, 0xb3, 0x9a, 0xda, 0x25, 0x2b, 0x9b, 0x4e,
+	0x06, 0x96, 0xe7, 0x2f, 0x2d, 0x1b, 0x52, 0xa1, 0xd8, 0xc7, 0x9e, 0xf7, 0xea, 0xb8, 0x66, 0x00,
+	0x20, 0xeb, 0xc5, 0x49, 0x18, 0x6b, 0xf7, 0xec, 0xc0, 0xe7, 0x30, 0x1b, 0x94, 0x68, 0xc0, 0xd7,
+	0x14, 0xfb, 0x76, 0x62, 0xd2, 0xbf, 0xb4, 0x60, 0xf6, 0x93, 0xf3, 0x8e, 0xd0, 0x9e, 0x65, 0x0c,
+	0x7b, 0x78, 0x4c, 0x22, 0xa1, 0x76, 0x18, 0xd3, 0x0e, 0xb8, 0x78, 0xc1, 0x3e, 0x76, 0x15, 0xb1,
+	0x22, 0x54, 0xcb, 0xba, 0x84, 0x83, 0x48, 0x7b, 0x00, 0x35, 0x8d, 0x64, 0x83, 0xdb, 0xb8, 0x81,
+	0xfd, 0x45, 0x86, 0xe8, 0x30, 0x57, 0x3d, 0x73, 0x13, 0x0e, 0xb2, 0x00, 0x37, 0x28, 0xfb, 0x84,
+	0x75, 0x66, 0x9b, 0xf8, 0x1f, 0x38, 0x7a, 0xed, 0x5f, 0x81, 0xb5, 0xeb, 0x42, 0xfa, 0xe6, 0xd4,
+	0xcc, 0x38, 0xc5, 0x8c, 0x72, 0xe7, 0x33, 0xcb, 0x5d, 0x58, 0x28, 0xf7, 0x2e, 0xeb, 0xd7, 0x0e,
+	0xc1, 0xae, 0xff, 0x48, 0xb0, 0x1f, 0x7d, 0x6d, 0x7b, 0xec, 0x73, 0x8f, 0x3d, 0x67, 0xb2, 0xb4,
+	0x16, 0x5b, 0x40, 0xc9, 0xaf, 0x9d, 0x81, 0x65, 0xaf, 0x5a, 0xb4, 0x3f, 0x19, 0x41, 0x0c, 0x67,
+	0x83, 0xb5, 0xfa, 0x69, 0x01, 0xdc, 0x99, 0xfa, 0xcb, 0x4a, 0x75, 0xcd, 0x0a, 0x1b, 0x4f, 0x5e,
+	0x5d, 0xca, 0x8c, 0x7a, 0x32, 0x72, 0xb0, 0xd9, 0xb2, 0x46, 0x24, 0x46, 0x4d, 0xc3, 0x00, 0xaa,
+	0xac, 0xe7, 0x9f, 0xac, 0x11, 0x99, 0x51, 0xc7, 0x92, 0xd7, 0xa0, 0x3e, 0x61, 0xa5, 0x69, 0x3c,
+	0x13, 0x63, 0x18, 0x67, 0xde, 0x81, 0x02, 0xed, 0x01, 0x4f, 0x11, 0x98, 0x35, 0xd8, 0x34, 0xd0,
+	0x30, 0x13, 0x1a, 0xcb, 0x9e, 0x53, 0x77, 0x56, 0x70, 0x1f, 0x46, 0x91, 0x8b, 0x53, 0x9c, 0xb2,
+	0x6f, 0xa0, 0xe9, 0xbc, 0xda, 0xc9, 0xd3, 0x48, 0xd7, 0xf4, 0x9f, 0x00, 0x0a, 0xbf, 0x62, 0x8d,
+	0xc6, 0xb8, 0x84, 0x02, 0xc5, 0x60, 0xba, 0x4a, 0xf5, 0xd3, 0xf8, 0x92, 0x2c, 0xa2, 0x5a, 0xb0,
+	0xe2, 0xd2, 0xf6, 0xdd, 0x37, 0xbd, 0x40, 0xcb, 0xe4, 0xa9, 0x67, 0x00, 0xf3, 0x87, 0xe8, 0x0b,
+	0x10, 0x87, 0xe4, 0x2d, 0xec, 0x21, 0xfa, 0x2f, 0xdd, 0xcd, 0x0b, 0x1e, 0x4d, 0xd9, 0x94, 0x2d,
+	0xeb, 0x2c, 0x38, 0xcf, 0x9d, 0x09, 0xda, 0xef, 0xf0, 0x25, 0xe5, 0xe9, 0x39, 0xbe, 0x65, 0xcc,
+	0x36, 0xff, 0x0d, 0xc8, 0x8d, 0x67, 0x6c, 0xdb, 0x64, 0x34, 0x33, 0x60, 0xd9, 0x88, 0x1e, 0xa0,
+	0x23, 0x10, 0xbb, 0xde, 0x20, 0x80, 0x2a, 0xd5, 0xb7, 0xe3, 0x8a, 0xbb, 0xc4, 0xf3, 0xf0, 0x80,
+	0xe8, 0xe2, 0xd8, 0x1b, 0x68, 0x1d, 0x40, 0x71, 0xe4, 0xd5, 0x0f, 0xa9, 0xfe, 0xbf, 0x0c, 0x79,
+	0x0a, 0x85, 0xba, 0x50, 0x8c, 0x8c, 0x0b, 0x7d, 0x9b, 0x3c, 0xaa, 0x84, 0x33, 0xaa, 0x95, 0xec,
+	0x84, 0x50, 0xcb, 0xdf, 0xb0, 0xb5, 0x68, 0x23, 0xe8, 0x28, 0xb9, 0x26, 0xd5, 0xcb, 0xd4, 0x1f,
+	0xde, 0x4b, 0x0b, 0x09, 0x86, 0x80, 0xf8, 0xa1, 0x8f, 0x8e, 0xb3, 0x57, 0x27, 0x9c, 0x46, 0xfd,
+	0xf1, 0x23, 0xa9, 0x21, 0xd9, 0x1d, 0x94, 0x62, 0xc3, 0x1c, 0x69, 0xc9, 0xa5, 0xbc, 0x31, 0xa8,
+	0x87, 0x4b, 0x73, 0x42, 0xdc, 0x6b, 0x28, 0x04, 0x03, 0x10, 0x71, 0x07, 0x9a, 0x9c, 0xb1, 0xea,
+	0x77, 0x4b, 0x32, 0x42, 0xb4, 0x1b, 0x90, 0xd8, 0x10, 0x43, 0x59, 0xc9, 0xf3, 0x69, 0xa8, 0x6a,
+	0xcb, 0x52, 0x42, 0xc0, 0x73, 0x80, 0x1e, 0x79, 0x0d, 0x3b, 0x0f, 0xa5, 0xb5, 0xa3, 0x9a, 0xf6,
+	0xb0, 0x2a, 0xfc, 0x2c, 0xa0, 0x3e, 0xc8, 0xb3, 0xfb, 0x22, 0xbf, 0xbd, 0xe4, 0xa5, 0x94, 0xdf,
+	0x1e, 0x7f, 0xd9, 0xec, 0x42, 0x31, 0xba, 0x2d, 0xf3, 0x1d, 0x9a, 0xb8, 0x72, 0xf3, 0x1d, 0xca,
+	0x5d, 0xb4, 0xef, 0xa0, 0x14, 0xbb, 0x4f, 0xf2, 0x35, 0xe5, 0xaf, 0xa1, 0x7c, 0x4d, 0xd3, 0x2e,
+	0xa4, 0x7d, 0x90, 0x67, 0xce, 0xc9, 0x6f, 0x3c, 0x69, 0xb6, 0xfc, 0xc6, 0x39, 0xdb, 0x45, 0xbf,
+	0x01, 0xcc, 0x5d, 0x22, 0xa5, 0xb6, 0x49, 0xbb, 0x49, 0xa9, 0x2d, 0x6f, 0x32, 0x7d, 0x3a, 0x87,
+	0xc2, 0xf1, 0xcf, 0xcb, 0x4c, 0xfa, 0x08, 0x2f, 0x93, 0xf7, 0x8e, 0x3f, 0xa0, 0x1c, 0x1f, 0xa9,
+	0xe8, 0x70, 0xf9, 0xc0, 0x65, 0xb8, 0xdf, 0x7f, 0x64, 0x2a, 0xa3, 0x36, 0x48, 0x6c, 0xd6, 0xa1,
+	0xfd, 0x64, 0xfe, 0xc2, 0x74, 0x55, 0x0f, 0xb2, 0x5e, 0x33, 0xa0, 0x5f, 0xa5, 0xfb, 0x3c, 0x7d,
+	0xf5, 0x28, 0x05, 0xbf, 0xd7, 0x7e, 0xf9, 0x1c, 0x00, 0x00, 0xff, 0xff, 0x9b, 0x60, 0x28, 0xc4,
+	0xd7, 0x0d, 0x00, 0x00,
 }

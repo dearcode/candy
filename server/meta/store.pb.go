@@ -29,7 +29,7 @@ func (*StoreFindUserRequest) Descriptor() ([]byte, []int) { return fileDescripto
 
 type StoreFindUserResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	Users  []string        `protobuf:"bytes,2,rep,name=users" json:"users,omitempty"`
 }
 
 func (m *StoreFindUserResponse) Reset()                    { *m = StoreFindUserResponse{} }
@@ -45,9 +45,9 @@ func (m *StoreFindUserResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreAddFriendRequest struct {
-	From    int64 `protobuf:"varint,1,opt,name=From" json:"From,omitempty"`
-	To      int64 `protobuf:"varint,2,opt,name=To" json:"To,omitempty"`
-	Confirm bool  `protobuf:"varint,3,opt,name=Confirm" json:"Confirm,omitempty"`
+	From    int64 `protobuf:"varint,1,opt,name=From,json=from" json:"From,omitempty"`
+	To      int64 `protobuf:"varint,2,opt,name=To,json=to" json:"To,omitempty"`
+	Confirm bool  `protobuf:"varint,3,opt,name=Confirm,json=confirm" json:"Confirm,omitempty"`
 }
 
 func (m *StoreAddFriendRequest) Reset()                    { *m = StoreAddFriendRequest{} }
@@ -57,7 +57,7 @@ func (*StoreAddFriendRequest) Descriptor() ([]byte, []int) { return fileDescript
 
 type StoreAddFriendResponse struct {
 	Header  *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	Confirm bool            `protobuf:"varint,2,opt,name=Confirm" json:"Confirm,omitempty"`
+	Confirm bool            `protobuf:"varint,2,opt,name=Confirm,json=confirm" json:"Confirm,omitempty"`
 }
 
 func (m *StoreAddFriendResponse) Reset()                    { *m = StoreAddFriendResponse{} }
@@ -73,9 +73,9 @@ func (m *StoreAddFriendResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreRegisterRequest struct {
-	ID       int64  `protobuf:"varint,1,opt,name=ID" json:"ID,omitempty"`
-	User     string `protobuf:"bytes,2,opt,name=User" json:"User,omitempty"`
-	Password string `protobuf:"bytes,3,opt,name=Password" json:"Password,omitempty"`
+	ID       int64  `protobuf:"varint,1,opt,name=ID,json=iD" json:"ID,omitempty"`
+	User     string `protobuf:"bytes,2,opt,name=User,json=user" json:"User,omitempty"`
+	Password string `protobuf:"bytes,3,opt,name=Password,json=password" json:"Password,omitempty"`
 }
 
 func (m *StoreRegisterRequest) Reset()                    { *m = StoreRegisterRequest{} }
@@ -100,9 +100,9 @@ func (m *StoreRegisterResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreUpdateUserInfoRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
-	NickName string `protobuf:"bytes,2,opt,name=NickName" json:"NickName,omitempty"`
-	Avatar   []byte `protobuf:"bytes,3,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
+	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+	NickName string `protobuf:"bytes,2,opt,name=NickName,json=nickName" json:"NickName,omitempty"`
+	Avatar   []byte `protobuf:"bytes,3,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
 }
 
 func (m *StoreUpdateUserInfoRequest) Reset()                    { *m = StoreUpdateUserInfoRequest{} }
@@ -112,7 +112,7 @@ func (*StoreUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDes
 
 type StoreUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *StoreUpdateUserInfoResponse) Reset()                    { *m = StoreUpdateUserInfoResponse{} }
@@ -128,8 +128,8 @@ func (m *StoreUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreUpdateUserPasswordRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
+	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=Password,json=password" json:"Password,omitempty"`
 }
 
 func (m *StoreUpdateUserPasswordRequest) Reset()                    { *m = StoreUpdateUserPasswordRequest{} }
@@ -139,7 +139,7 @@ func (*StoreUpdateUserPasswordRequest) Descriptor() ([]byte, []int) { return fil
 
 type StoreUpdateUserPasswordResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *StoreUpdateUserPasswordResponse) Reset()                    { *m = StoreUpdateUserPasswordResponse{} }
@@ -155,7 +155,7 @@ func (m *StoreUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreGetUserInfoRequest struct {
-	User string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
+	User string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
 }
 
 func (m *StoreGetUserInfoRequest) Reset()                    { *m = StoreGetUserInfoRequest{} }
@@ -165,10 +165,10 @@ func (*StoreGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescri
 
 type StoreGetUserInfoResponse struct {
 	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID       int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
-	User     string          `protobuf:"bytes,3,opt,name=User" json:"User,omitempty"`
-	NickName string          `protobuf:"bytes,4,opt,name=NickName" json:"NickName,omitempty"`
-	Avatar   []byte          `protobuf:"bytes,5,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
+	ID       int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
+	User     string          `protobuf:"bytes,3,opt,name=User,json=user" json:"User,omitempty"`
+	NickName string          `protobuf:"bytes,4,opt,name=NickName,json=nickName" json:"NickName,omitempty"`
+	Avatar   []byte          `protobuf:"bytes,5,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
 }
 
 func (m *StoreGetUserInfoResponse) Reset()                    { *m = StoreGetUserInfoResponse{} }
@@ -184,8 +184,8 @@ func (m *StoreGetUserInfoResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreAuthRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User" json:"User,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password" json:"Password,omitempty"`
+	User     string `protobuf:"bytes,1,opt,name=User,json=user" json:"User,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=Password,json=password" json:"Password,omitempty"`
 }
 
 func (m *StoreAuthRequest) Reset()                    { *m = StoreAuthRequest{} }
@@ -195,7 +195,7 @@ func (*StoreAuthRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, 
 
 type StoreAuthResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID" json:"ID,omitempty"`
+	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD" json:"ID,omitempty"`
 }
 
 func (m *StoreAuthResponse) Reset()                    { *m = StoreAuthResponse{} }
@@ -211,8 +211,8 @@ func (m *StoreAuthResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreCreateGroupRequest struct {
-	UserID  int64 `protobuf:"varint,1,opt,name=UserID" json:"UserID,omitempty"`
-	GroupID int64 `protobuf:"varint,2,opt,name=GroupID" json:"GroupID,omitempty"`
+	UserID  int64 `protobuf:"varint,1,opt,name=UserID,json=userID" json:"UserID,omitempty"`
+	GroupID int64 `protobuf:"varint,2,opt,name=GroupID,json=groupID" json:"GroupID,omitempty"`
 }
 
 func (m *StoreCreateGroupRequest) Reset()                    { *m = StoreCreateGroupRequest{} }
@@ -237,7 +237,7 @@ func (m *StoreCreateGroupResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreNewMessageRequest struct {
-	Msg *Message `protobuf:"bytes,1,opt,name=Msg" json:"Msg,omitempty"`
+	Msg *Message `protobuf:"bytes,1,opt,name=Msg,json=msg" json:"Msg,omitempty"`
 }
 
 func (m *StoreNewMessageRequest) Reset()                    { *m = StoreNewMessageRequest{} }
@@ -268,6 +268,114 @@ func (m *StoreNewMessageResponse) GetHeader() *ResponseHeader {
 	return nil
 }
 
+type StoreUploadFileRequest struct {
+	Header *RequestHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	File   []byte         `protobuf:"bytes,2,opt,name=File,json=file,proto3" json:"File,omitempty"`
+}
+
+func (m *StoreUploadFileRequest) Reset()                    { *m = StoreUploadFileRequest{} }
+func (m *StoreUploadFileRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreUploadFileRequest) ProtoMessage()               {}
+func (*StoreUploadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{18} }
+
+func (m *StoreUploadFileRequest) GetHeader() *RequestHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type StoreUploadFileResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+}
+
+func (m *StoreUploadFileResponse) Reset()                    { *m = StoreUploadFileResponse{} }
+func (m *StoreUploadFileResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreUploadFileResponse) ProtoMessage()               {}
+func (*StoreUploadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{19} }
+
+func (m *StoreUploadFileResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type StoreCheckFileRequest struct {
+	Header *RequestHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Names  []string       `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
+}
+
+func (m *StoreCheckFileRequest) Reset()                    { *m = StoreCheckFileRequest{} }
+func (m *StoreCheckFileRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreCheckFileRequest) ProtoMessage()               {}
+func (*StoreCheckFileRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{20} }
+
+func (m *StoreCheckFileRequest) GetHeader() *RequestHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type StoreCheckFileResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Names  []string        `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
+}
+
+func (m *StoreCheckFileResponse) Reset()                    { *m = StoreCheckFileResponse{} }
+func (m *StoreCheckFileResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreCheckFileResponse) ProtoMessage()               {}
+func (*StoreCheckFileResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{21} }
+
+func (m *StoreCheckFileResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type StoreDownloadFileRequest struct {
+	Header *RequestHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Names  []string       `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
+}
+
+func (m *StoreDownloadFileRequest) Reset()                    { *m = StoreDownloadFileRequest{} }
+func (m *StoreDownloadFileRequest) String() string            { return proto.CompactTextString(m) }
+func (*StoreDownloadFileRequest) ProtoMessage()               {}
+func (*StoreDownloadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{22} }
+
+func (m *StoreDownloadFileRequest) GetHeader() *RequestHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+type StoreDownloadFileResponse struct {
+	Header *ResponseHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Files  map[string][]byte `protobuf:"bytes,2,rep,name=Files,json=files" json:"Files,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (m *StoreDownloadFileResponse) Reset()                    { *m = StoreDownloadFileResponse{} }
+func (m *StoreDownloadFileResponse) String() string            { return proto.CompactTextString(m) }
+func (*StoreDownloadFileResponse) ProtoMessage()               {}
+func (*StoreDownloadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{23} }
+
+func (m *StoreDownloadFileResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+func (m *StoreDownloadFileResponse) GetFiles() map[string][]byte {
+	if m != nil {
+		return m.Files
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*StoreFindUserRequest)(nil), "candy.meta.StoreFindUserRequest")
 	proto.RegisterType((*StoreFindUserResponse)(nil), "candy.meta.StoreFindUserResponse")
@@ -287,6 +395,12 @@ func init() {
 	proto.RegisterType((*StoreCreateGroupResponse)(nil), "candy.meta.StoreCreateGroupResponse")
 	proto.RegisterType((*StoreNewMessageRequest)(nil), "candy.meta.StoreNewMessageRequest")
 	proto.RegisterType((*StoreNewMessageResponse)(nil), "candy.meta.StoreNewMessageResponse")
+	proto.RegisterType((*StoreUploadFileRequest)(nil), "candy.meta.StoreUploadFileRequest")
+	proto.RegisterType((*StoreUploadFileResponse)(nil), "candy.meta.StoreUploadFileResponse")
+	proto.RegisterType((*StoreCheckFileRequest)(nil), "candy.meta.StoreCheckFileRequest")
+	proto.RegisterType((*StoreCheckFileResponse)(nil), "candy.meta.StoreCheckFileResponse")
+	proto.RegisterType((*StoreDownloadFileRequest)(nil), "candy.meta.StoreDownloadFileRequest")
+	proto.RegisterType((*StoreDownloadFileResponse)(nil), "candy.meta.StoreDownloadFileResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -307,10 +421,16 @@ type StoreClient interface {
 	Auth(ctx context.Context, in *StoreAuthRequest, opts ...grpc.CallOption) (*StoreAuthResponse, error)
 	// AddFriend 添加好友，两人都添加过对方后才可以聊天.
 	AddFriend(ctx context.Context, in *StoreAddFriendRequest, opts ...grpc.CallOption) (*StoreAddFriendResponse, error)
-	// FindUser 根据字符串的用户名查的用户信息.
+	// FindUser 根据字符串的用户名模糊查用户列表
 	FindUser(ctx context.Context, in *StoreFindUserRequest, opts ...grpc.CallOption) (*StoreFindUserResponse, error)
 	CreateGroup(ctx context.Context, in *StoreCreateGroupRequest, opts ...grpc.CallOption) (*StoreCreateGroupResponse, error)
 	NewMessage(ctx context.Context, in *StoreNewMessageRequest, opts ...grpc.CallOption) (*StoreNewMessageResponse, error)
+	// UploadFile 上传文件接口，一次一个文件.
+	UploadFile(ctx context.Context, in *StoreUploadFileRequest, opts ...grpc.CallOption) (*StoreUploadFileResponse, error)
+	// CheckFile 检测文件是否存在，文件的MD5, 服务器返回不存在的文件MD5.
+	CheckFile(ctx context.Context, in *StoreCheckFileRequest, opts ...grpc.CallOption) (*StoreCheckFileResponse, error)
+	// DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
+	DownloadFile(ctx context.Context, in *StoreDownloadFileRequest, opts ...grpc.CallOption) (*StoreDownloadFileResponse, error)
 }
 
 type storeClient struct {
@@ -402,6 +522,33 @@ func (c *storeClient) NewMessage(ctx context.Context, in *StoreNewMessageRequest
 	return out, nil
 }
 
+func (c *storeClient) UploadFile(ctx context.Context, in *StoreUploadFileRequest, opts ...grpc.CallOption) (*StoreUploadFileResponse, error) {
+	out := new(StoreUploadFileResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/UploadFile", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeClient) CheckFile(ctx context.Context, in *StoreCheckFileRequest, opts ...grpc.CallOption) (*StoreCheckFileResponse, error) {
+	out := new(StoreCheckFileResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/CheckFile", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeClient) DownloadFile(ctx context.Context, in *StoreDownloadFileRequest, opts ...grpc.CallOption) (*StoreDownloadFileResponse, error) {
+	out := new(StoreDownloadFileResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Store/DownloadFile", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Store service
 
 type StoreServer interface {
@@ -412,10 +559,16 @@ type StoreServer interface {
 	Auth(context.Context, *StoreAuthRequest) (*StoreAuthResponse, error)
 	// AddFriend 添加好友，两人都添加过对方后才可以聊天.
 	AddFriend(context.Context, *StoreAddFriendRequest) (*StoreAddFriendResponse, error)
-	// FindUser 根据字符串的用户名查的用户信息.
+	// FindUser 根据字符串的用户名模糊查用户列表
 	FindUser(context.Context, *StoreFindUserRequest) (*StoreFindUserResponse, error)
 	CreateGroup(context.Context, *StoreCreateGroupRequest) (*StoreCreateGroupResponse, error)
 	NewMessage(context.Context, *StoreNewMessageRequest) (*StoreNewMessageResponse, error)
+	// UploadFile 上传文件接口，一次一个文件.
+	UploadFile(context.Context, *StoreUploadFileRequest) (*StoreUploadFileResponse, error)
+	// CheckFile 检测文件是否存在，文件的MD5, 服务器返回不存在的文件MD5.
+	CheckFile(context.Context, *StoreCheckFileRequest) (*StoreCheckFileResponse, error)
+	// DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
+	DownloadFile(context.Context, *StoreDownloadFileRequest) (*StoreDownloadFileResponse, error)
 }
 
 func RegisterStoreServer(s *grpc.Server, srv StoreServer) {
@@ -584,6 +737,60 @@ func _Store_NewMessage_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Store_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreUploadFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServer).UploadFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Store/UploadFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServer).UploadFile(ctx, req.(*StoreUploadFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Store_CheckFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreCheckFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServer).CheckFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Store/CheckFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServer).CheckFile(ctx, req.(*StoreCheckFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Store_DownloadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreDownloadFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServer).DownloadFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Store/DownloadFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServer).DownloadFile(ctx, req.(*StoreDownloadFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Store_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "candy.meta.Store",
 	HandlerType: (*StoreServer)(nil),
@@ -624,6 +831,18 @@ var _Store_serviceDesc = grpc.ServiceDesc{
 			MethodName: "NewMessage",
 			Handler:    _Store_NewMessage_Handler,
 		},
+		{
+			MethodName: "UploadFile",
+			Handler:    _Store_UploadFile_Handler,
+		},
+		{
+			MethodName: "CheckFile",
+			Handler:    _Store_CheckFile_Handler,
+		},
+		{
+			MethodName: "DownloadFile",
+			Handler:    _Store_DownloadFile_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: fileDescriptor4,
@@ -632,43 +851,59 @@ var _Store_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("store.proto", fileDescriptor4) }
 
 var fileDescriptor4 = []byte{
-	// 599 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x56, 0x5d, 0x6f, 0xda, 0x3c,
-	0x18, 0x15, 0x1f, 0x4d, 0xe1, 0x01, 0xd1, 0xbe, 0x7e, 0xf7, 0x81, 0xb2, 0x2f, 0xe6, 0x56, 0x2b,
-	0xea, 0x24, 0x2e, 0xd8, 0x5d, 0xaf, 0x56, 0xd8, 0xe8, 0xaa, 0xad, 0x30, 0xb1, 0x45, 0xea, 0x76,
-	0xe7, 0x11, 0x97, 0xa2, 0x29, 0x31, 0xb3, 0xcd, 0xaa, 0xdd, 0xee, 0x8f, 0xec, 0xaf, 0x4e, 0x71,
-	0x1c, 0x70, 0xe3, 0x90, 0xb5, 0xe5, 0xda, 0xe7, 0x9c, 0xe7, 0xe4, 0x3c, 0x3e, 0x18, 0xa8, 0x09,
-	0xc9, 0x38, 0xed, 0xcc, 0x39, 0x93, 0x0c, 0xc1, 0x84, 0x84, 0xfe, 0xaf, 0x4e, 0x40, 0x25, 0x71,
-	0xeb, 0x13, 0x16, 0x04, 0x2c, 0x8c, 0x4f, 0xf0, 0x3e, 0xdc, 0xfb, 0x14, 0x01, 0x07, 0xb3, 0xd0,
-	0xf7, 0x04, 0xe5, 0x63, 0xfa, 0x63, 0x41, 0x85, 0x44, 0x75, 0x28, 0x2f, 0x04, 0xe5, 0xcd, 0x42,
-	0xab, 0xd0, 0xae, 0xe2, 0x11, 0xdc, 0x4f, 0xa1, 0xc4, 0x9c, 0x85, 0x82, 0xa2, 0x43, 0x70, 0x2e,
-	0x29, 0xf1, 0x35, 0xb0, 0xd6, 0x75, 0x3b, 0xab, 0x49, 0x9d, 0x04, 0xf5, 0x4e, 0x21, 0x10, 0x40,
-	0xf1, 0xf4, 0x4d, 0xb3, 0xd8, 0x2a, 0xb4, 0x4b, 0xb8, 0xa7, 0x05, 0x8f, 0x7d, 0x7f, 0xc0, 0x67,
-	0x34, 0xf4, 0x8d, 0xb9, 0x03, 0xce, 0x02, 0x25, 0x57, 0x8a, 0x28, 0x9f, 0x59, 0x4c, 0x41, 0x3b,
-	0xb0, 0xdd, 0x67, 0xe1, 0xc5, 0x8c, 0x07, 0xcd, 0x52, 0xab, 0xd0, 0xae, 0x60, 0x0f, 0x1e, 0xa4,
-	0x35, 0xee, 0xe0, 0xca, 0x90, 0x2d, 0x2a, 0xd9, 0x9e, 0x4e, 0x64, 0x4c, 0xa7, 0x33, 0x21, 0x57,
-	0x89, 0xc4, 0xf6, 0x63, 0x5f, 0x75, 0x28, 0x47, 0x31, 0x28, 0x46, 0x15, 0xed, 0x42, 0xe5, 0x23,
-	0x11, 0xe2, 0x8a, 0x71, 0x5f, 0x59, 0xab, 0xe2, 0xbe, 0xfe, 0xbc, 0x95, 0xc6, 0xed, 0x9d, 0xe1,
-	0x0f, 0xe0, 0x2a, 0x11, 0x6f, 0xee, 0x13, 0x49, 0xa3, 0x79, 0xa7, 0xe1, 0x05, 0x33, 0x82, 0xf2,
-	0x96, 0x0b, 0x8a, 0x2c, 0x0c, 0x67, 0x93, 0xef, 0x43, 0x12, 0x50, 0x6d, 0xaa, 0x01, 0xce, 0xf1,
-	0x4f, 0x22, 0x09, 0x57, 0x96, 0xea, 0xd8, 0x83, 0x47, 0x99, 0x6a, 0x1b, 0x2e, 0xf2, 0x35, 0x3c,
-	0x4d, 0xc9, 0x26, 0x51, 0xac, 0x35, 0xba, 0xcc, 0x4a, 0x19, 0xc5, 0x5f, 0xe0, 0xd9, 0x5a, 0x85,
-	0x0d, 0xcd, 0x1d, 0xc0, 0x43, 0x25, 0x7d, 0x42, 0x65, 0x6e, 0x7c, 0xf8, 0x77, 0x01, 0x9a, 0x36,
-	0x72, 0xb3, 0xe9, 0xcb, 0x11, 0x25, 0x6b, 0x43, 0xe5, 0xd4, 0x86, 0xb6, 0xd4, 0x86, 0xba, 0xb0,
-	0x1b, 0xdf, 0xe7, 0x85, 0xbc, 0xbc, 0x69, 0x78, 0xef, 0xe1, 0x3f, 0x83, 0xb3, 0x61, 0x5c, 0x47,
-	0x3a, 0xae, 0x3e, 0xa7, 0x44, 0xd2, 0x13, 0xce, 0x16, 0xf3, 0xc4, 0x47, 0x03, 0x1c, 0x95, 0x4b,
-	0x52, 0x80, 0x1d, 0xd8, 0x56, 0xe7, 0x4b, 0xee, 0x40, 0x07, 0x78, 0x8d, 0x7b, 0x87, 0x4b, 0x7f,
-	0xa4, 0x4b, 0x3d, 0xa4, 0x57, 0x67, 0x54, 0x08, 0x32, 0xa5, 0x89, 0x85, 0x16, 0x94, 0xce, 0xc4,
-	0x54, 0x4b, 0xfc, 0x6f, 0x4a, 0x68, 0x20, 0x7e, 0xab, 0xfd, 0x9b, 0xdc, 0xdb, 0x5b, 0xe8, 0xfe,
-	0x71, 0x60, 0x4b, 0xe9, 0xa0, 0x11, 0x54, 0x92, 0x06, 0xa3, 0x96, 0xc9, 0xc8, 0xfa, 0x81, 0x70,
-	0x9f, 0xe7, 0x20, 0xb4, 0x0d, 0x02, 0x8d, 0xeb, 0xfd, 0x43, 0x2f, 0x2c, 0x52, 0x66, 0xdd, 0xdd,
-	0x83, 0x7f, 0xe2, 0xf4, 0x88, 0x00, 0x90, 0xdd, 0x24, 0x74, 0x98, 0x43, 0x4f, 0x15, 0xd6, 0x7d,
-	0x79, 0x23, 0xac, 0x1e, 0x77, 0x0e, 0x35, 0xa3, 0x33, 0x68, 0xcf, 0xe2, 0xda, 0xdd, 0x73, 0xf7,
-	0xf3, 0x41, 0x5a, 0xb9, 0x0f, 0xe5, 0xe8, 0x56, 0xa3, 0xc7, 0x16, 0xda, 0x28, 0x88, 0xfb, 0x64,
-	0xcd, 0xa9, 0x16, 0x19, 0x43, 0x75, 0xf9, 0x3c, 0x20, 0x7b, 0x41, 0xe9, 0xe7, 0xc7, 0xc5, 0x79,
-	0x10, 0xad, 0x39, 0x82, 0x4a, 0xf2, 0x0e, 0x66, 0xdc, 0x8a, 0xd4, 0x43, 0x9a, 0x71, 0x2b, 0xac,
-	0x47, 0xf4, 0x1c, 0x6a, 0x46, 0x6d, 0x32, 0x32, 0xb4, 0x0b, 0x99, 0x91, 0x61, 0x56, 0xf3, 0x3c,
-	0x80, 0x55, 0x19, 0x90, 0xfd, 0x71, 0x56, 0xcb, 0xdc, 0xbd, 0x5c, 0x4c, 0x2c, 0xdb, 0x73, 0xbe,
-	0x96, 0xa3, 0xf3, 0x6f, 0x8e, 0xfa, 0x0f, 0xf1, 0xea, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xe0,
-	0x82, 0xa2, 0xe5, 0x6c, 0x08, 0x00, 0x00,
+	// 851 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x57, 0x5d, 0x53, 0xd3, 0x40,
+	0x14, 0x9d, 0xa6, 0x1f, 0xb4, 0xb7, 0x1d, 0x06, 0x57, 0xc4, 0x12, 0xbf, 0x6a, 0x00, 0x65, 0x70,
+	0xec, 0x68, 0x7d, 0x61, 0x7c, 0x71, 0xa0, 0x58, 0x64, 0x18, 0x0a, 0x13, 0xad, 0x32, 0xfa, 0xa0,
+	0x4b, 0xb3, 0x2d, 0x19, 0x9a, 0x6c, 0x4d, 0x52, 0x18, 0xfe, 0x90, 0xfe, 0x1e, 0xff, 0x91, 0xb3,
+	0x9b, 0x4d, 0x9a, 0x26, 0xdb, 0xc2, 0x90, 0xbe, 0x75, 0xdb, 0xb3, 0xe7, 0x9c, 0x3d, 0x77, 0x73,
+	0x6f, 0x0a, 0x65, 0xd7, 0xa3, 0x0e, 0xa9, 0x0f, 0x1d, 0xea, 0x51, 0x04, 0x5d, 0x6c, 0x1b, 0xd7,
+	0x75, 0x8b, 0x78, 0x58, 0xad, 0x74, 0xa9, 0x65, 0x51, 0xdb, 0xff, 0x45, 0xdb, 0x82, 0xe5, 0xcf,
+	0x0c, 0xd8, 0x32, 0x6d, 0xa3, 0xe3, 0x12, 0x47, 0x27, 0xbf, 0x47, 0xc4, 0xf5, 0x10, 0x82, 0xdc,
+	0xc8, 0x25, 0x4e, 0x35, 0x53, 0xcb, 0x6c, 0x96, 0x74, 0xfe, 0x59, 0xc3, 0xf0, 0x20, 0x86, 0x75,
+	0x87, 0xd4, 0x76, 0x09, 0x6a, 0x40, 0xe1, 0x9c, 0x60, 0x43, 0xc0, 0xcb, 0x0d, 0xb5, 0x3e, 0xd6,
+	0xab, 0x07, 0xa8, 0x4f, 0x1c, 0xa1, 0x0b, 0x24, 0x5a, 0x86, 0x3c, 0x23, 0x75, 0xab, 0x4a, 0x2d,
+	0xbb, 0x59, 0xd2, 0xfd, 0x85, 0xd6, 0x11, 0x12, 0x3b, 0x86, 0xd1, 0x72, 0x4c, 0x62, 0x1b, 0x11,
+	0x3f, 0x2d, 0x87, 0x5a, 0x5c, 0x20, 0xab, 0xe7, 0x7a, 0x0e, 0xb5, 0xd0, 0x22, 0x28, 0x5f, 0x68,
+	0x55, 0xe1, 0xdf, 0x28, 0x1e, 0x45, 0x55, 0x58, 0x68, 0x52, 0xbb, 0x67, 0x3a, 0x56, 0x35, 0x5b,
+	0xcb, 0x6c, 0x16, 0xf5, 0x85, 0xae, 0xbf, 0xd4, 0x7a, 0xb0, 0x12, 0xa7, 0x4d, 0x61, 0x3d, 0xa2,
+	0xa3, 0x4c, 0xea, 0x7c, 0x15, 0x69, 0xea, 0xa4, 0x6f, 0xba, 0xde, 0x38, 0xcd, 0x45, 0x50, 0x0e,
+	0xf6, 0x84, 0x77, 0xc5, 0xdc, 0x63, 0xa7, 0x61, 0x01, 0xf2, 0xed, 0x22, 0x5d, 0xa4, 0x42, 0xf1,
+	0x04, 0xbb, 0xee, 0x15, 0x75, 0x0c, 0x6e, 0xbf, 0xa4, 0x17, 0x87, 0x62, 0xad, 0x1d, 0x8a, 0x58,
+	0xc6, 0xbc, 0x77, 0xb7, 0xaf, 0x19, 0xa0, 0x72, 0xb2, 0xce, 0xd0, 0xc0, 0x1e, 0x61, 0x3e, 0x0e,
+	0xec, 0x1e, 0x8d, 0x04, 0xdd, 0x89, 0x15, 0x9e, 0x59, 0x6b, 0x9b, 0xdd, 0x8b, 0x36, 0xb6, 0x88,
+	0xb0, 0x5c, 0xb4, 0xc5, 0x1a, 0xad, 0x40, 0x61, 0xe7, 0x12, 0x7b, 0xd8, 0xe1, 0xa6, 0x2b, 0x7a,
+	0x01, 0xf3, 0x95, 0x86, 0xe1, 0x91, 0x54, 0x25, 0x45, 0xee, 0x7e, 0x8a, 0x4a, 0x90, 0xa2, 0x76,
+	0x02, 0x4f, 0x63, 0x12, 0x41, 0x80, 0x37, 0x1c, 0x26, 0xcc, 0x59, 0x89, 0xe5, 0x4c, 0xe0, 0xd9,
+	0x54, 0xc6, 0x39, 0x1a, 0x7f, 0x0d, 0x0f, 0xb9, 0xcc, 0x3e, 0xf1, 0x6e, 0x11, 0xbf, 0xf6, 0x27,
+	0x03, 0xd5, 0x24, 0x7e, 0x7e, 0x7e, 0x42, 0xd1, 0xec, 0x94, 0x9a, 0xe7, 0xa6, 0xd6, 0x3c, 0x3f,
+	0x51, 0xf3, 0x5d, 0x58, 0xf2, 0x1f, 0xb3, 0x91, 0x77, 0x7e, 0xd7, 0x12, 0x7c, 0x83, 0x7b, 0x11,
+	0x8e, 0x39, 0x86, 0x7e, 0x28, 0x42, 0x6f, 0x3a, 0x04, 0x7b, 0x64, 0xdf, 0xa1, 0xa3, 0x61, 0xe0,
+	0x71, 0x05, 0x0a, 0x3c, 0xd7, 0xe0, 0x11, 0x2d, 0x8c, 0xf8, 0x8a, 0x3d, 0xe8, 0x1c, 0x17, 0xf2,
+	0x2c, 0xf4, 0xfd, 0xa5, 0xd6, 0x16, 0x15, 0x99, 0x20, 0x4b, 0xf1, 0x4c, 0x7e, 0x10, 0x0d, 0xaa,
+	0x4d, 0xae, 0x8e, 0x88, 0xeb, 0xe2, 0x3e, 0x09, 0xbc, 0x6d, 0x40, 0xf6, 0xc8, 0xed, 0x0b, 0xaa,
+	0xfb, 0x51, 0xaa, 0x00, 0x98, 0xb5, 0xdc, 0xbe, 0x76, 0x24, 0x4e, 0x17, 0x25, 0x48, 0xe1, 0xe7,
+	0xa7, 0xf0, 0xd3, 0x19, 0x0e, 0x28, 0x36, 0x5a, 0xe6, 0x20, 0xf4, 0xf3, 0x36, 0xc6, 0xb6, 0x3a,
+	0xc9, 0xc6, 0x41, 0xb1, 0x4a, 0xb0, 0xde, 0x6d, 0x0e, 0xfc, 0xd6, 0x51, 0xd1, 0x73, 0x3d, 0x73,
+	0x40, 0x42, 0xbf, 0x51, 0x81, 0x14, 0x7e, 0x7f, 0x89, 0x06, 0xd9, 0x3c, 0x27, 0xdd, 0x8b, 0x94,
+	0x76, 0x97, 0x21, 0xcf, 0x6e, 0x79, 0x38, 0x99, 0x6c, 0xb6, 0xd0, 0xce, 0x44, 0x22, 0x11, 0x85,
+	0x74, 0xd3, 0x4f, 0xa2, 0xd1, 0x15, 0xb7, 0x6a, 0x8f, 0x5e, 0xd9, 0x73, 0xc8, 0x5d, 0x2e, 0xf2,
+	0x2f, 0x03, 0xab, 0x12, 0x95, 0x14, 0x87, 0x69, 0x41, 0x9e, 0x71, 0xf8, 0x3a, 0xe5, 0xc6, 0x9b,
+	0xe8, 0x96, 0xa9, 0x4a, 0x75, 0xbe, 0xe5, 0xa3, 0xed, 0x39, 0xd7, 0x7a, 0x9e, 0x5d, 0x09, 0x57,
+	0xdd, 0x06, 0x18, 0x7f, 0x89, 0x96, 0x20, 0x7b, 0x41, 0xae, 0x45, 0xdf, 0x60, 0x1f, 0xd9, 0x79,
+	0x2e, 0xf1, 0x60, 0x14, 0x5c, 0x24, 0x7f, 0xf1, 0x5e, 0xd9, 0xce, 0x34, 0xfe, 0x16, 0x21, 0xcf,
+	0x95, 0xd0, 0x31, 0x14, 0x83, 0x21, 0x89, 0x6a, 0x09, 0x23, 0xb1, 0xb9, 0xac, 0x3e, 0x9f, 0x81,
+	0x10, 0x81, 0x60, 0x58, 0x9c, 0x1c, 0x61, 0xe8, 0x45, 0x62, 0x93, 0x74, 0x92, 0xaa, 0x2f, 0x6f,
+	0xc4, 0x09, 0x09, 0x0b, 0x50, 0x72, 0xe0, 0xa0, 0xad, 0x19, 0xdb, 0x63, 0x73, 0x4e, 0x7d, 0x75,
+	0x2b, 0xac, 0x90, 0x3b, 0x85, 0x72, 0x64, 0x90, 0xa0, 0xb5, 0xc4, 0xde, 0xe4, 0x58, 0x52, 0xd7,
+	0x67, 0x83, 0x04, 0x73, 0x13, 0x72, 0xac, 0x6d, 0xa3, 0xc7, 0x09, 0x74, 0x64, 0x22, 0xa8, 0x4f,
+	0xa6, 0xfc, 0x2a, 0x48, 0x74, 0x28, 0x85, 0xaf, 0x69, 0x28, 0x59, 0xa0, 0xf8, 0x9b, 0xa1, 0xaa,
+	0xcd, 0x82, 0x08, 0xce, 0x63, 0x28, 0x06, 0x2f, 0xad, 0x92, 0x5b, 0x11, 0x7b, 0xf7, 0x95, 0xdc,
+	0x8a, 0xc4, 0x1b, 0xef, 0x29, 0x94, 0x23, 0xad, 0x5f, 0x92, 0x61, 0x72, 0xca, 0x48, 0x32, 0x94,
+	0x4d, 0x8f, 0x0e, 0xc0, 0xb8, 0x87, 0xa3, 0xe4, 0xe1, 0x12, 0x13, 0x42, 0x5d, 0x9b, 0x89, 0x19,
+	0xd3, 0x8e, 0x5b, 0xad, 0x84, 0x36, 0xd1, 0xe8, 0x25, 0xb4, 0x92, 0x5e, 0xad, 0x43, 0x29, 0x6c,
+	0x88, 0x92, 0x62, 0xc5, 0xdb, 0xb1, 0xa4, 0x58, 0xc9, 0x7e, 0xfa, 0x03, 0x2a, 0xd1, 0x86, 0x81,
+	0xd6, 0x6f, 0xe8, 0x27, 0x3e, 0xf3, 0xc6, 0xad, 0xba, 0xce, 0x6e, 0xe1, 0x7b, 0x8e, 0x21, 0xce,
+	0x0a, 0xfc, 0xef, 0xcf, 0xbb, 0xff, 0x01, 0x00, 0x00, 0xff, 0xff, 0x97, 0x7b, 0xc3, 0xd9, 0x27,
+	0x0d, 0x00, 0x00,
 }
