@@ -1,0 +1,36 @@
+Android基本流程
+
+所有操作，都需要注意Exception，包括密码错误，网络连接错误等，都会Exception返回的。
+
+1.初始化
+public static native CandyClient NewCandyClient(String host, MessageHandler handler); 
+
+MessageHandler是接收服务端推送消息的接口, 实现OnRecv, OnError，需要注意，这些函数理论上会是多线程调用!!!!
+public interface MessageHandler {
+    public void OnError(String msg);
+    public void OnRecv(long id, long method, long group, long from, long to, String body);
+}
+
+默认绑定地址：candy.dearcode.net:9000"
+
+2.连接服务器
+public native void Start() throws Exception;
+
+3.断开服务器连接, 先退出，再调用这个.
+public native void Stop() throws Exception;
+
+4.注册
+public native long Register(String user, String passwd) throws Exception;
+
+5.登录
+public native long Login(String user, String passwd) throws Exception;
+
+6.退出
+public native void Logout(String user) throws Exception;
+
+7.消息发送
+public native void SendMessage(long from, long group, long user, String body) throws Exception;
+
+5.其它操作
+其它操作都是基于用户登录成功之后的，就是必须有login之后返回的UserID才行
+
