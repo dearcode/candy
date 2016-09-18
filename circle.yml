@@ -12,7 +12,8 @@ test:
 
 deployment:
     release:
-        commands:
-            - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make
+      branch: master
+      commands:
+          - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make
 
 
