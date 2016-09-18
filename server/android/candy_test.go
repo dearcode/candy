@@ -70,6 +70,9 @@ func TestMain(main *testing.M) {
 		pass := fmt.Sprintf("testpass_%v_%d", time.Now().Unix(), i)
 		id, err := client.Register(name, pass)
 		if err != nil {
+			for _, cmd := range cmds {
+				cmd.Process.Kill()
+			}
 			panic("Register error:" + err.Error())
 		}
 		userNames[name] = id
@@ -203,8 +206,16 @@ func TestAddFriend(t *testing.T) {
 		t.Logf("Login success id:%v", id)
 
 		for _, uid := range userNames {
+			if uid == id {
+				//自己不能添加自己
+				continue
+			}
 			//add friend
-			ok, err := client.AddFriend(uid, true)
+			confirm := false
+			if _, ok := relation[uid]; ok {
+				confirm = true
+			}
+			ok, err := client.AddFriend(uid, confirm)
 			if err != nil {
 				t.Fatalf("AddFriend error:%v", err)
 			}

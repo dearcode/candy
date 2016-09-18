@@ -3,6 +3,7 @@ package store
 import (
 	"net"
 
+	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -134,12 +135,12 @@ func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*me
 func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*meta.StoreAddFriendResponse, error) {
 	log.Debugf("Store AddFriend, from:%v to:%v Confirm:%v", req.From, req.To, req.Confirm)
 	if err := s.user.friend.add(req.From, req.To, req.Confirm); err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
 	if req.Confirm {
 		if err := s.user.friend.add(req.To, req.From, req.Confirm); err != nil {
-			return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+			return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 		}
 		return &meta.StoreAddFriendResponse{Confirm: true}, nil
 	}

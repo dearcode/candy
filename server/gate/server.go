@@ -267,6 +267,11 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 		return nil, err
 	}
 
+	//自己要把自己添加成好友
+	if req.UserID == s.id {
+		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "Friend ID must not be Self ID"}}, nil
+	}
+
 	ok, err := g.store.addFriend(s.getID(), req.UserID, req.Confirm)
 	if err != nil {
 		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil

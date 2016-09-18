@@ -29,7 +29,7 @@ func (f *friendDB) add(uid, fid int64, confirm bool) error {
 	if err != nil {
 		if confirm {
 			//发确认消息，必须先有未验证的关系
-			return errors.Trace(err)
+			return errors.Annotatef(err, "uid:%d, fid:%d", uid, fid)
 		}
 
 		if err != leveldb.ErrNotFound {
