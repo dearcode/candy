@@ -34,17 +34,22 @@ vet:
 
 
 gate: godep
-	godep go build -ldflags '$(LDFLAGS)' -o bin/gate ./cmd/gate/main.go
+	@echo "make gate"
+	@godep go build -ldflags '$(LDFLAGS)' -o bin/gate ./cmd/gate/main.go
 
 master: godep
-	godep go build -ldflags '$(LDFLAGS)' -o bin/master ./cmd/master/main.go
+	@echo "make master"
+	@godep go build -ldflags '$(LDFLAGS)' -o bin/master ./cmd/master/main.go
 
 notice: godep
-	godep go build -ldflags '$(LDFLAGS)' -o bin/notice ./cmd/notice/main.go
+	@echo "make notice"
+	@godep go build -ldflags '$(LDFLAGS)' -o bin/notice ./cmd/notice/main.go
 
 store: godep
-	godep go build -ldflags '$(LDFLAGS)' -o bin/store ./cmd/store/main.go
+	@echo "make store"
+	@godep go build -ldflags '$(LDFLAGS)' -o bin/store ./cmd/store/main.go
 
 test:
-	@cd android; go test; cd ..; 
+	go test ./android/
+	go test ./store/
 

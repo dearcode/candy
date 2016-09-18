@@ -2,11 +2,14 @@ package candy
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"testing"
 	"time"
+
+	"github.com/dearcode/candy/server/util/log"
 )
 
 var (
@@ -19,28 +22,33 @@ func TestMain(main *testing.M) {
 	userNames = make(map[string]int64)
 	passwd = make(map[string]string)
 
-	m := exec.Command("../bin/master")
-	if err := m.Start(); err != nil {
-		panic(err.Error())
-	}
-	n := exec.Command("../bin/notice")
-	if err := n.Start(); err != nil {
-		panic(err.Error())
-	}
-	s := exec.Command("../bin/store")
-	if err := s.Start(); err != nil {
-		panic(err.Error())
-	}
-	g := exec.Command("../bin/gate")
-	if err := g.Start(); err != nil {
-		panic(err.Error())
+	debug := flag.Bool("v", true, "Verbose output: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.")
+	if *debug {
+		log.SetLevel(log.LOG_DEBUG)
+	} else {
+		log.SetLevel(log.LOG_ERROR)
 	}
 
-	time.Sleep(time.Second)
+	exes := []string{
+		"../bin/master",
+		"../bin/notice",
+		"../bin/store",
+		"../bin/gate",
+	}
 
-	client = NewCandyClient("127.0.0.1:9000")
+	cmds := []*exec.Cmd{}
+
+	for _, exe := range exes {
+		cmd := exec.Command(exe)
+		if err := cmd.Start(); err != nil {
+			panic(err.Error())
+		}
+		cmds = append(cmds, cmd)
+	}
+
+	client = NewCandyClient("0.0.0.0:9000")
 	if err := client.Start(); err != nil {
-		panic("start client error:" + err.Error())
+		panic(err.Error())
 	}
 
 	for i := 0; i < 10; i++ {
@@ -56,10 +64,9 @@ func TestMain(main *testing.M) {
 
 	ret := main.Run()
 
-	m.Process.Kill()
-	n.Process.Kill()
-	s.Process.Kill()
-	g.Process.Kill()
+	for _, cmd := range cmds {
+		cmd.Process.Kill()
+	}
 
 	os.Exit(ret)
 }

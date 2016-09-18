@@ -1,9 +1,12 @@
 package store
 
 import (
+	"flag"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/dearcode/candy/server/util/log"
 )
 
 var (
@@ -13,6 +16,15 @@ var (
 func init() {
 	if err := os.RemoveAll(testUserDBPath); err != nil {
 		println(err.Error())
+	}
+}
+
+func TestMain(main *testing.M) {
+	debug := flag.Bool("v", true, "Verbose output: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.")
+	if *debug {
+		log.SetLevel(log.LOG_DEBUG)
+	} else {
+		log.SetLevel(log.LOG_ERROR)
 	}
 }
 
