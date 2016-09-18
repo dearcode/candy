@@ -184,3 +184,27 @@ func (s *store) newMessage(msg *meta.Message) error {
 	log.Debugf("send message success, resp:%v", resp)
 	return nil
 }
+
+func (s *store) subscribe(id int64, host string) error {
+	log.Debugf("id:%v host:%v", id, host)
+	req := &meta.StoreSubscribeRequest{ID: id, Host: host}
+	resp, err := s.api.Subscribe(s.ctx, req)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	log.Debugf("success, resp:%v", resp)
+	return nil
+}
+
+func (s *store) unSubscribe(id int64, host string) error {
+	log.Debugf("id:%v host:%v", id, host)
+	req := &meta.StoreUnSubscribeRequest{ID: id, Host: host}
+	resp, err := s.api.UnSubscribe(s.ctx, req)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	log.Debugf("success, resp:%v", resp)
+	return nil
+}

@@ -216,10 +216,18 @@ func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileReque
 
 // Subscribe 订阅消息
 func (s *Store) Subscribe(_ context.Context, req *meta.StoreSubscribeRequest) (*meta.StoreSubscribeResponse, error) {
-	return nil, nil
+	if err := s.message.subscribe(req.ID, req.Host); err != nil {
+		return &meta.StoreSubscribeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreSubscribeResponse{}, nil
 }
 
 // UnSubscribe 取消消息订阅
 func (s *Store) UnSubscribe(_ context.Context, req *meta.StoreUnSubscribeRequest) (*meta.StoreUnSubscribeResponse, error) {
-	return nil, nil
+	if err := s.message.unSubscribe(req.ID, req.Host); err != nil {
+		return &meta.StoreUnSubscribeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreUnSubscribeResponse{}, nil
 }

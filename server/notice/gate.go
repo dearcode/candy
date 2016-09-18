@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util/log"
 )
 
 type gate struct {
@@ -21,6 +22,7 @@ func newGate() *gate {
 func (g *gate) client(addr string) (meta.GateClient, error) {
 	g.RLock()
 	c, ok := g.clients[addr]
+	log.Debugf("clients:%v", g.clients)
 	g.RUnlock()
 	if ok {
 		return c, nil

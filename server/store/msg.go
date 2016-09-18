@@ -23,6 +23,8 @@ var (
 
 type sender interface {
 	send(meta.Message) error
+	subscribe(id int64, host string) error
+	unSubscribe(id int64, host string) error
 }
 
 // 消息处理流程
@@ -164,4 +166,12 @@ func (m *messageDB) get(ids ...int64) ([]meta.Message, error) {
 	}
 
 	return mss, nil
+}
+
+func (m *messageDB) subscribe(id int64, host string) error {
+	return m.sender.subscribe(id, host)
+}
+
+func (m *messageDB) unSubscribe(id int64, host string) error {
+	return m.sender.unSubscribe(id, host)
 }

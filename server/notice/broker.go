@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/juju/errors"
+	"golang.org/x/net/context"
 
 	"github.com/dearcode/candy/server/meta"
 	"github.com/dearcode/candy/server/util/log"
@@ -43,10 +44,14 @@ func newBroker() *broker {
 
 // Start start service.
 func (b *broker) Start() error {
-	for {
-		m := <-b.pusher
-		b.sendMessage(m)
-	}
+	go func() {
+		for {
+			m := <-b.pusher
+			log.Debugf("sendMessage msg:%v", m)
+			b.sendMessage(m)
+		}
+	}()
+	return nil
 }
 
 func (b *broker) sendMessage(m message) error {
@@ -57,7 +62,7 @@ func (b *broker) sendMessage(m message) error {
 		return errors.Trace(err)
 	}
 	req := &meta.GateNoticeRequest{ChannelID: m.id, Msg: &m.Message}
-	_, err = g.Notice(nil, req)
+	_, err = g.Notice(context.Background(), req)
 
 	return errors.Trace(err)
 }

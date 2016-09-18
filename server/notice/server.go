@@ -38,6 +38,11 @@ func (n *Notifer) Start() error {
 		return err
 	}
 
+	err = n.broker.Start()
+	if err != nil {
+		return err
+	}
+
 	return serv.Serve(lis)
 }
 

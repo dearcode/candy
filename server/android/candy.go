@@ -1,6 +1,7 @@
 package candy
 
 import (
+	"strings"
 	"time"
 
 	"golang.org/x/net/context"
@@ -216,7 +217,9 @@ func (c *CandyClient) loopRecvMessage() {
 	for !c.stop {
 		msg, err := c.stream.Recv()
 		if err != nil {
-			c.handler.OnError(err.Error())
+			if strings.Compare(err.Error(), "EOF") != 0 {
+				c.handler.OnError(err.Error())
+			}
 			continue
 		}
 
