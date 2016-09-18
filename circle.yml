@@ -11,7 +11,8 @@ test:
       - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make test
 
 deployment:
-  override:
-      - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make
+    release:
+        commands:
+            - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make
 
 
