@@ -39,6 +39,7 @@ func newUserDB(root string) *userDB {
 
 func (u *userDB) start() error {
 	path := fmt.Sprintf("%s/%s", u.root, util.UserDBPath)
+	log.Debugf("path:%v", path)
 	db, err := leveldb.OpenFile(path, nil)
 	if err != nil {
 		return errors.Trace(err)

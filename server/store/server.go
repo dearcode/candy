@@ -57,11 +57,19 @@ func (s *Store) Start() error {
 		return err
 	}
 
-	if err = s.message.start(s.postman); err != nil {
+	if err = s.group.start(); err != nil {
+		return err
+	}
+
+	if err = s.postman.start(); err != nil {
 		return err
 	}
 
 	if err = s.file.start(); err != nil {
+		return err
+	}
+
+	if err = s.message.start(s.postman); err != nil {
 		return err
 	}
 
@@ -118,6 +126,7 @@ func (s *Store) Auth(_ context.Context, req *meta.StoreAuthRequest) (*meta.Store
 	if err != nil {
 		return &meta.StoreAuthResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
+
 	return &meta.StoreAuthResponse{ID: id}, nil
 }
 
@@ -155,12 +164,16 @@ func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) 
 	if err := s.message.add(*req.Msg); err != nil {
 		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
+
+	log.Debugf("add message to db success")
 	// 再添加未推送消息队列
 	if err := s.message.addQueue(req.Msg.ID); err != nil {
 		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
+
+	log.Debugf("add messate to queue success")
 	// 再调用推送
-	return nil, nil
+	return &meta.StoreNewMessageResponse{}, nil
 }
 
 // UploadFile 上传文件接口，一次一个文件.
@@ -199,4 +212,14 @@ func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileReque
 	}
 
 	return &meta.StoreDownloadFileResponse{Files: files}, nil
+}
+
+// Subscribe 订阅消息
+func (s *Store) Subscribe(_ context.Context, req *meta.StoreSubscribeRequest) (*meta.StoreSubscribeResponse, error) {
+	return nil, nil
+}
+
+// UnSubscribe 取消消息订阅
+func (s *Store) UnSubscribe(_ context.Context, req *meta.StoreUnSubscribeRequest) (*meta.StoreUnSubscribeResponse, error) {
+	return nil, nil
 }

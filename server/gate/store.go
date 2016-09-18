@@ -172,14 +172,15 @@ func (s *store) downloadFile(userID int64, names []string) (map[string][]byte, e
 	return resp.Files, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) newMessage(msg *meta.Message) (int32, string, error) {
+func (s *store) newMessage(msg *meta.Message) error {
 	log.Debugf("store newMessage")
 
 	req := &meta.StoreNewMessageRequest{Msg: msg}
 	resp, err := s.api.NewMessage(s.ctx, req)
 	if err != nil {
-		return -1, "", errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	return resp.Header.Code, resp.Header.Msg, nil
+	log.Debugf("send message success, resp:%v", resp)
+	return nil
 }

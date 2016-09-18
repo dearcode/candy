@@ -238,7 +238,7 @@ func (g *Gate) NewMessage(server meta.Gate_NewMessageServer) error {
 			continue
 		}
 
-		_, _, err = g.store.newMessage(msg)
+		err = g.store.newMessage(msg)
 		if err != nil {
 			return nil
 		}

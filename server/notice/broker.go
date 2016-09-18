@@ -50,6 +50,7 @@ func (b *broker) Start() error {
 }
 
 func (b *broker) sendMessage(m message) error {
+	log.Debugf("broker message:%v", m)
 	g, err := b.gate.client(m.addr)
 	if err != nil {
 		log.Errorf("connect to %s error:%s", m.addr, err.Error())
@@ -85,7 +86,7 @@ func (b *broker) Subscribe(id int64, addr string) {
 	c.Unlock()
 }
 
-func (b *broker) Unsubscribe(id int64, addr string) {
+func (b *broker) UnSubscribe(id int64, addr string) {
 	b.Lock()
 	if c, cok := b.channels[id]; cok {
 		if _, gok := c.gates[addr]; gok {
@@ -99,21 +100,25 @@ func (b *broker) Unsubscribe(id int64, addr string) {
 }
 
 func (b *broker) PushOne(msg meta.Message, id int64) {
+	log.Debugf("broker msg:%v id:%v", msg, id)
 	b.RLock()
 	c, cok := b.channels[id]
 	b.RUnlock()
 	if !cok {
+		log.Errorf("user not subscribe, c:%v cok:%v", c, cok)
 		return
 	}
 
 	c.RLock()
 	for _, g := range c.gates {
 		b.pusher <- message{id: id, addr: g.addr, Message: msg}
+		log.Debugf("pusher msg, id:%v addr:%v msg:%v", id, g.addr, msg)
 	}
 	c.RUnlock()
 }
 
 func (b *broker) Push(msg meta.Message, ids ...int64) {
+	log.Debugf("broker msg:%v ids:%v", msg, ids)
 	for _, id := range ids {
 		b.PushOne(msg, id)
 	}

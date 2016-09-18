@@ -48,13 +48,16 @@ func (n *Notifer) Subscribe(c context.Context, req *meta.SubscribeRequest) (*met
 }
 
 // Unsubscribe unsubscribe a Notifer.
-func (n *Notifer) Unsubscribe(_ context.Context, req *meta.UnsubscribeRequest) (*meta.UnsubscribeResponse, error) {
-	n.broker.Unsubscribe(req.ID, req.Host)
-	return &meta.UnsubscribeResponse{}, nil
+func (n *Notifer) UnSubscribe(_ context.Context, req *meta.UnSubscribeRequest) (*meta.UnSubscribeResponse, error) {
+	n.broker.UnSubscribe(req.ID, req.Host)
+	return &meta.UnSubscribeResponse{}, nil
 }
 
 // Push push a message to gate.
 func (n *Notifer) Push(_ context.Context, req *meta.PushRequest) (*meta.PushResponse, error) {
 	n.broker.Push(*req.Msg, req.ID...)
+
+	log.Debugf(" new message, msg:%v", req.Msg)
+
 	return &meta.PushResponse{}, nil
 }

@@ -7,7 +7,7 @@ import "common.proto";
 
 service Notice {
     rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
-    rpc Unsubscribe(UnsubscribeRequest) returns (UnsubscribeResponse);
+    rpc UnSubscribe(UnSubscribeRequest) returns (UnSubscribeResponse);
 
     rpc Push(PushRequest) returns (PushResponse);
 
@@ -23,12 +23,12 @@ message SubscribeResponse {
     ResponseHeader header = 1;
 }
 
-message UnsubscribeRequest {
+message UnSubscribeRequest {
     int64 ID = 1;
     string host = 2;
 }
 
-message UnsubscribeResponse {
+message UnSubscribeResponse {
     ResponseHeader header = 1;
 }
 

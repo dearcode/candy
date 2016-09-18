@@ -11,6 +11,7 @@ import (
 
 	"github.com/dearcode/candy/server/meta"
 	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/server/util/log"
 )
 
 type groupDB struct {
@@ -23,7 +24,9 @@ func newGroupDB(dir string) *groupDB {
 }
 
 func (g *groupDB) start() error {
-	db, err := leveldb.OpenFile(fmt.Sprintf("%s/%s", g.root, util.GroupDBPath), nil)
+	path := fmt.Sprintf("%s/%s", g.root, util.GroupDBPath)
+	log.Debugf("path:%v", path)
+	db, err := leveldb.OpenFile(path, nil)
 	if err != nil {
 		return errors.Trace(err)
 	}

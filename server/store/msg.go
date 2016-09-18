@@ -18,10 +18,16 @@ import (
 
 var (
 	pushTimeout = time.Second * 10
+	repushTime  = time.Millisecond * 100
 )
 
 type sender interface {
 	send(meta.Message) error
+	//订阅消息
+	subscribe(int64, string) error
+
+	//取消订阅
+	unSubscribe(int64, string) error
 }
 
 // 消息处理流程
@@ -44,10 +50,14 @@ func newMessageDB(dir string) *messageDB {
 
 func (m *messageDB) start(s sender) error {
 	var err error
-	if m.stable, err = leveldb.OpenFile(fmt.Sprintf("%s/%s", m.root, util.MessageDBPath), nil); err != nil {
+	path := fmt.Sprintf("%s/%s", m.root, util.MessageDBPath)
+	log.Debugf("path:%v", path)
+	if m.stable, err = leveldb.OpenFile(path, nil); err != nil {
 		return errors.Trace(err)
 	}
-	if m.queue, err = leveldb.OpenFile(fmt.Sprintf("%s/%s", m.root, util.MessageLogDBPath), nil); err != nil {
+	path = fmt.Sprintf("%s/%s", m.root, util.MessageLogDBPath)
+	log.Debugf("path:%v", path)
+	if m.queue, err = leveldb.OpenFile(path, nil); err != nil {
 		return errors.Trace(err)
 	}
 
@@ -68,7 +78,7 @@ func (m *messageDB) start(s sender) error {
 
 // 定时推送之前失败过的消息
 func (m *messageDB) repush() {
-	for ; ; time.Sleep(time.Second) {
+	for ; ; time.Sleep(repushTime) {
 		var ids []int64
 		now := time.Now()
 
@@ -87,6 +97,8 @@ func (m *messageDB) repush() {
 				m.addRetry(id)
 				continue
 			}
+
+			log.Debugf("sender send msg:%v", msgs[0])
 			if err = m.sender.send(msgs[0]); err != nil {
 				log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
 				m.addRetry(id)
@@ -99,12 +111,14 @@ func (m *messageDB) repush() {
 }
 
 func (m *messageDB) addRetry(id int64) {
+	log.Debugf("id:%v", id)
 	m.Lock()
 	m.retry[id] = time.Now().Add(pushTimeout)
 	m.Unlock()
 }
 
 func (m *messageDB) delRetry(id int64) {
+	log.Debugf("id:%v", id)
 	m.Lock()
 	delete(m.retry, id)
 	m.Unlock()
@@ -113,6 +127,7 @@ func (m *messageDB) delRetry(id int64) {
 // 向数据库中插入新的消息.
 func (m *messageDB) add(msg meta.Message) error {
 	buf, err := json.Marshal(msg)
+	log.Debugf("buf:%v", string(buf))
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -122,16 +137,21 @@ func (m *messageDB) add(msg meta.Message) error {
 
 // 向未发送队列中添加记录
 func (m *messageDB) addQueue(id int64) error {
+	log.Debugf("id:%v", id)
 	key := util.EncodeInt64(id)
+
+	m.addRetry(id)
 	return m.queue.Put(key, []byte(""), nil)
 }
 
 func (m *messageDB) delQueue(id int64) {
+	log.Debugf("id:%v", id)
 	key := util.EncodeInt64(id)
 	m.queue.Delete(key, nil)
 }
 
 func (m *messageDB) get(ids ...int64) ([]meta.Message, error) {
+	log.Debugf("ids:%v", ids)
 	var mss []meta.Message
 	var msg meta.Message
 

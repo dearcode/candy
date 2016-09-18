@@ -112,7 +112,9 @@ func (f *fileDB) closeFile() {
 func (f *fileDB) start() error {
 	var err error
 
-	if f.db, err = leveldb.OpenFile(fmt.Sprintf("%s/%s", f.root, util.FileDBPath), nil); err != nil {
+	path := fmt.Sprintf("%s/%s", f.root, util.FileDBPath)
+	log.Debugf("path:%v", path)
+	if f.db, err = leveldb.OpenFile(path, nil); err != nil {
 		return errors.Trace(err)
 	}
 
