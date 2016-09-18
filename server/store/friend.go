@@ -6,11 +6,13 @@ import (
 	"github.com/juju/errors"
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
+
+	"github.com/dearcode/candy/server/meta"
 )
 
 type friendRelation struct {
-	ID      int64
-	Confirm bool
+	ID    int64
+	State meta.FriendRelation
 }
 
 type friendDB struct {
@@ -21,37 +23,40 @@ func newFriendDB(db *userDB) *friendDB {
 	return &friendDB{userDB: db}
 }
 
-func (f *friendDB) add(uid, fid int64, confirm bool) error {
-	var r friendRelation
+// 添加好友，返回当前状态，state 0:没关系, 1:我要添加对方为好友, 2:对方请求添加我为好友, 3:当前我们都已确认成为好友了
+func (f *friendDB) add(uid, fid int64, state meta.FriendRelation) (meta.FriendRelation, error) {
+	r := friendRelation{ID: fid, State: state}
 
 	key := UserFriendKey(uid, fid)
 	v, err := f.db.Get(key, nil)
-	if err != nil {
-		if confirm {
-			//发确认消息，必须先有未验证的关系
-			return errors.Annotatef(err, "uid:%d, fid:%d", uid, fid)
-		}
-
-		if err != leveldb.ErrNotFound {
-			return errors.Trace(err)
-		}
-	} else {
-		if err = json.Unmarshal(v, &r); err != nil {
-			return errors.Trace(err)
-		}
-		if r.Confirm == confirm {
-			return nil
-		}
-
+	if err != nil && err != leveldb.ErrNotFound {
+		return meta.FriendRelation_None, errors.Trace(err)
 	}
-	r = friendRelation{ID: fid, Confirm: confirm}
+
+	if len(v) > 0 {
+		if err = json.Unmarshal(v, &r); err != nil {
+			return meta.FriendRelation_None, errors.Trace(err)
+		}
+	}
+
+	r.State |= state
 
 	buf, err := json.Marshal(&r)
 	if err != nil {
-		return errors.Trace(err)
+		return meta.FriendRelation_None, errors.Trace(err)
 	}
 
-	return f.db.Put(key, buf, nil)
+	if err = f.db.Put(key, buf, nil); err != nil {
+		return meta.FriendRelation_None, errors.Trace(err)
+	}
+
+	return r.State, nil
+}
+
+// 删除好友关系
+func (f *friendDB) remove(uid, fid int64) error {
+	key := UserFriendKey(uid, fid)
+	return f.db.Delete(key, nil)
 }
 
 func (f *friendDB) get(uid int64) ([]int64, error) {
@@ -66,7 +71,7 @@ func (f *friendDB) get(uid int64) ([]int64, error) {
 			return nil, errors.Trace(err)
 		}
 
-		if r.Confirm {
+		if r.State == meta.FriendRelation_Confirm {
 			ids = append(ids, r.ID)
 		}
 	}
@@ -85,7 +90,7 @@ func (f *friendDB) exist(uid, fid int64) error {
 		return errors.Trace(err)
 	}
 
-	if !r.Confirm {
+	if r.State != 3 {
 		return leveldb.ErrNotFound
 	}
 

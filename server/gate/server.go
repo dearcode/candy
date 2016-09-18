@@ -269,16 +269,39 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 
 	//自己要把自己添加成好友
 	if req.UserID == s.id {
+		log.Infof("%d add friend id:%d", s.id, req.UserID)
 		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "Friend ID must not be Self ID"}}, nil
 	}
 
-	ok, err := g.store.addFriend(s.getID(), req.UserID, req.Confirm)
+	// 主动添加对方为好友，更新自己本地信息
+	state, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Active)
 	if err != nil {
+		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
+		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	// 如果本地返回 FriendRelation_Confirm 说明之前对方添加过自己
+	if state == meta.FriendRelation_Confirm {
+		return &meta.GateAddFriendResponse{Confirm: true}, nil
+	}
+
+	// 被动添加好友，更新对方好友信息
+	if state, err = g.store.addFriend(req.UserID, s.id, meta.FriendRelation_Passive); err != nil {
+		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
 		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	// 如果返回true，则可以直接聊天了，说明这是一个确认过的添加请求.
-	return &meta.GateAddFriendResponse{Confirm: ok}, nil
+	// 如果对方返回FriendRelation_Confirm，说明之前对方添加过自己, 只不过本地信息未更新，要先更新本地信息，再返回FriendRelation_Confirm
+	if state == meta.FriendRelation_Confirm {
+		// 正常流程走不到这里，除非是数据丢失了
+		_, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Confirm)
+		if err != nil {
+			log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
+			return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		return &meta.GateAddFriendResponse{Confirm: true}, nil
+	}
+
+	return &meta.GateAddFriendResponse{}, nil
 }
 
 // FindUser 添加好友前先查找,模糊查找

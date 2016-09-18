@@ -131,21 +131,15 @@ func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*me
 	return &meta.StoreFindUserResponse{Users: users}, nil
 }
 
-// AddFriend 添加好友，两人都添加过对方后才可以聊天.
+// AddFriend 添加好友添加完后会返回当前好友关系状态.
 func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*meta.StoreAddFriendResponse, error) {
-	log.Debugf("Store AddFriend, from:%v to:%v Confirm:%v", req.From, req.To, req.Confirm)
-	if err := s.user.friend.add(req.From, req.To, req.Confirm); err != nil {
+	log.Debugf("Store AddFriend, from:%v to:%v State:%v", req.From, req.To, req.State)
+	state, err := s.user.friend.add(req.From, req.To, req.State)
+	if err != nil {
 		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	if req.Confirm {
-		if err := s.user.friend.add(req.To, req.From, req.Confirm); err != nil {
-			return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
-		}
-		return &meta.StoreAddFriendResponse{Confirm: true}, nil
-	}
-
-	return &meta.StoreAddFriendResponse{}, nil
+	return &meta.StoreAddFriendResponse{State: state}, nil
 }
 
 // CreateGroup create group.

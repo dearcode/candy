@@ -116,6 +116,10 @@ func (f *fileDB) start() error {
 		return errors.Trace(err)
 	}
 
+	if err = os.MkdirAll(fmt.Sprintf("%s/%s", f.root, util.FileBlockPath), os.ModePerm); err != nil {
+		return errors.Trace(err)
+	}
+
 	go f.closeFile()
 
 	return nil

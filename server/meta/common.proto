@@ -14,6 +14,18 @@ message ResponseHeader {
 }
 
 
+// FriendRelation 好友关系
+enum FriendRelation {
+    // None 没关系
+    None    = 0;
+    // Active 我主动添加对方为好友
+    Active  = 1;
+    // Passive 对方请求添加我为好友
+    Passive = 2;
+    // Confirm 我们都已确认成为好友了
+    Confirm = 3;
+}
+
 enum Method {
     // 添加好友
     FRIEND_ADD  = 0;

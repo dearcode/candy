@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"net"
 	"os"
 	"os/exec"
 	"testing"
@@ -48,17 +47,7 @@ func TestMain(main *testing.M) {
 		cmds = append(cmds, cmd)
 	}
 
-	tcpAddr, _ := net.ResolveTCPAddr("tcp4", "0.0.0.0:9000")
-	for i := 0; i < 3; i++ {
-		conn, err := net.DialTCP("tcp", nil, tcpAddr)
-		if err != nil {
-			log.Debugf("dial error:%s", err.Error())
-			time.Sleep(time.Millisecond * 100)
-			continue
-		}
-		conn.Close()
-		break
-	}
+	time.Sleep(time.Second)
 
 	client = NewCandyClient("0.0.0.0:9000")
 	if err := client.Start(); err != nil {
@@ -203,8 +192,6 @@ func TestAddFriend(t *testing.T) {
 			t.Fatalf("Login error:%v", err)
 		}
 
-		t.Logf("Login success id:%v", id)
-
 		for _, uid := range userNames {
 			if uid == id {
 				//自己不能添加自己
@@ -237,12 +224,13 @@ func TestFileUploadAndDownload(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Login error:%v", err)
 		}
-		t.Fatalf("Login success, id:%d", id)
+		t.Logf("login user:%v, id:%d", name, id)
 		key, err := client.FileUpload([]byte(name))
 		if err != nil {
 			t.Fatalf("FileUpload error:%v", err)
 		}
 
+		t.Logf("upload user:%s, file:%s", name, key)
 		if _, ok := keys[key]; ok {
 			t.Fatalf("key:%s exist", key)
 		}

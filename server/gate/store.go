@@ -102,15 +102,15 @@ func (s *store) findUser(user string) ([]string, error) {
 	return resp.Users, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) addFriend(from, to int64, confirm bool) (bool, error) {
-	log.Debugf("store addFriend, from:%v to:%v confirm:%v", from, to, confirm)
-	req := &meta.StoreAddFriendRequest{From: from, To: to, Confirm: confirm}
+func (s *store) addFriend(from, to int64, state meta.FriendRelation) (meta.FriendRelation, error) {
+	log.Debugf("store addFriend, from:%v to:%v state:%v", from, to, state)
+	req := &meta.StoreAddFriendRequest{From: from, To: to, State: state}
 	resp, err := s.api.AddFriend(s.ctx, req)
 	if err != nil {
-		return false, errors.Trace(err)
+		return meta.FriendRelation_None, errors.Trace(err)
 	}
 
-	return resp.Confirm, errors.Trace(resp.Header.Error())
+	return resp.State, errors.Trace(resp.Header.Error())
 }
 
 func (s *store) createGroup(userID, groupID int64) error {

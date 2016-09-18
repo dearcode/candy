@@ -13,7 +13,7 @@ service Store {
 
     rpc Auth(StoreAuthRequest) returns (StoreAuthResponse);
 
-    // AddFriend 添加好友，两人都添加过对方后才可以聊天.
+    // AddFriend 添加好友
     rpc AddFriend(StoreAddFriendRequest) returns (StoreAddFriendResponse);
 
     // FindUser 根据字符串的用户名模糊查用户列表
@@ -43,12 +43,12 @@ message StoreFindUserResponse {
 message StoreAddFriendRequest {
     int64 From = 1;
     int64 To = 2;
-    bool Confirm = 3;
+    FriendRelation State = 3;
 }
 
 message StoreAddFriendResponse {
     ResponseHeader header = 1;
-    bool Confirm = 2;
+    FriendRelation State = 2;
 }
 
 message StoreRegisterRequest {
