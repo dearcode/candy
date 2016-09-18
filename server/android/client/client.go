@@ -189,7 +189,7 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
-	err = c.NewMessage(from, 0, user, msg)
+	err = c.SendMessage(from, 0, user, msg)
 	if err != nil {
 		log.Errorf("send message error:%v", err)
 		return
@@ -199,8 +199,21 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("==============================================")
 }
 
+type cmdClient struct {
+}
+
+// OnRecv 这函数理论上是多线程调用，客户端需要注意下
+func (c *cmdClient) OnRecv(id int64, method int, group int64, from int64, to int64, body string) {
+	fmt.Printf("recv msg id:%d method:%d, group:%d, from:%d, to:%d, body:%s\n", id, method, group, from, to, body)
+}
+
+// OnError 连接被服务器断开，或其它错误
+func (c *cmdClient) OnError(msg string) {
+	fmt.Printf("rpc error:%s\n", msg)
+}
+
 func main() {
-	c := candy.NewCandyClient("127.0.0.1:9000")
+	c := candy.NewCandyClient("127.0.0.1:9000", &cmdClient{})
 	if err := c.Start(); err != nil {
 		log.Errorf("start client error:%s", err.Error())
 		return

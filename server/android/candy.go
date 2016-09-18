@@ -1,7 +1,6 @@
 package candy
 
 import (
-	"fmt"
 	"time"
 
 	"golang.org/x/net/context"
@@ -15,23 +14,48 @@ const (
 	networkTimeout = time.Second * 3
 )
 
+// MessageHandler 接收服务器端推送来的消息
+type MessageHandler interface {
+	// OnRecv 这函数理论上是多线程调用，客户端需要注意下
+	OnRecv(id int64, method int, group int64, from int64, to int64, body string)
+
+	// OnError 连接被服务器断开，或其它错误
+	OnError(msg string)
+}
+
 type CandyClient struct {
-	host string
-	conn *grpc.ClientConn
-	api  meta.GateClient
+	host    string
+	stop    bool
+	conn    *grpc.ClientConn
+	api     meta.GateClient
+	handler MessageHandler
+	stream  meta.Gate_NewMessageClient
 }
 
-func NewCandyClient(host string) *CandyClient {
-	return &CandyClient{host: host}
+func NewCandyClient(host string, handler MessageHandler) *CandyClient {
+	return &CandyClient{host: host, handler: handler}
 }
 
+// Start 连接服务端.
 func (c *CandyClient) Start() (err error) {
 	if c.conn, err = grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout)); err != nil {
 		return
 	}
 
 	c.api = meta.NewGateClient(c.conn)
+	if c.stream, err = c.api.NewMessage(context.Background()); err != nil {
+		return
+	}
+
+	go c.loopRecvMessage()
 	return
+}
+
+// Stop 断开到服务器连接.
+func (c *CandyClient) Stop() error {
+	c.stop = true
+	c.stream.CloseSend()
+	return c.conn.Close()
 }
 
 func (c *CandyClient) Register(user, passwd string) (int64, error) {
@@ -178,29 +202,25 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 	return resp.Files[key], resp.Header.Error()
 }
 
-func (c *CandyClient) NewMessage(from, group, user int64, body string) error {
-	gateClient, err := c.api.NewMessage(context.Background())
-	if err != nil {
+// SendMessage 向服务器发送消息.
+func (c *CandyClient) SendMessage(from, group, user int64, body string) error {
+	msg := &meta.Message{From: from, Group: group, User: user, Body: body}
+	if err := c.stream.Send(msg); err != nil {
 		return err
 	}
-
-	newMsg := &meta.Message{From: from, Group: group, User: user, Body: body}
-	err = gateClient.Send(newMsg)
-	if err != nil {
-		return err
-	}
-
-	go c.recvMsg(gateClient)
-
 	return nil
 }
 
-func (c *CandyClient) recvMsg(client meta.Gate_NewMessageClient) {
-	msg, err := client.Recv()
-	if err != nil {
-		fmt.Println("接收消息失败， err:", err)
-	}
+// loopRecvMessage 一直接收服务器返回消息, 直到退出.
+func (c *CandyClient) loopRecvMessage() {
+	for !c.stop {
+		msg, err := c.stream.Recv()
+		if err != nil {
+			c.handler.OnError(err.Error())
+			continue
+		}
 
-	fmt.Println("接收消息成功, msg:", msg)
+		c.handler.OnRecv(msg.ID, int(msg.Method), msg.Group, msg.From, msg.User, msg.Body)
+	}
 
 }

@@ -18,6 +18,19 @@ var (
 	client    *CandyClient
 )
 
+type cmdClient struct {
+}
+
+// OnRecv 这函数理论上是多线程调用，客户端需要注意下
+func (c *cmdClient) OnRecv(id int64, method int, group int64, from int64, to int64, body string) {
+	fmt.Printf("recv msg id:%d method:%d, group:%d, from:%d, to:%d, body:%s\n", id, method, group, from, to, body)
+}
+
+// OnError 连接被服务器断开，或其它错误
+func (c *cmdClient) OnError(msg string) {
+	fmt.Printf("rpc error:%s\n", msg)
+}
+
 func TestMain(main *testing.M) {
 	userNames = make(map[string]int64)
 	passwd = make(map[string]string)
@@ -49,7 +62,7 @@ func TestMain(main *testing.M) {
 
 	time.Sleep(time.Second)
 
-	client = NewCandyClient("0.0.0.0:9000")
+	client = NewCandyClient("0.0.0.0:9000", &cmdClient{})
 	if err := client.Start(); err != nil {
 		panic(err.Error())
 	}
