@@ -20,12 +20,15 @@ func init() {
 }
 
 func TestMain(main *testing.M) {
-	debug := flag.Bool("v", true, "Verbose output: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.")
+	debug := flag.Bool("V", false, "set log level:debug")
+	flag.Parse()
 	if *debug {
 		log.SetLevel(log.LOG_DEBUG)
 	} else {
 		log.SetLevel(log.LOG_ERROR)
 	}
+
+	os.Exit(main.Run())
 }
 
 func TestUserDB(t *testing.T) {

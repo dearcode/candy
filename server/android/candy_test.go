@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"testing"
@@ -22,7 +23,8 @@ func TestMain(main *testing.M) {
 	userNames = make(map[string]int64)
 	passwd = make(map[string]string)
 
-	debug := flag.Bool("v", true, "Verbose output: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.")
+	debug := flag.Bool("V", false, "set log level:debug")
+	flag.Parse()
 	if *debug {
 		log.SetLevel(log.LOG_DEBUG)
 	} else {
@@ -44,6 +46,18 @@ func TestMain(main *testing.M) {
 			panic(err.Error())
 		}
 		cmds = append(cmds, cmd)
+	}
+
+	tcpAddr, _ := net.ResolveTCPAddr("tcp4", "0.0.0.0:9000")
+	for i := 0; i < 3; i++ {
+		conn, err := net.DialTCP("tcp", nil, tcpAddr)
+		if err != nil {
+			log.Debugf("dial error:%s", err.Error())
+			time.Sleep(time.Millisecond * 100)
+			continue
+		}
+		conn.Close()
+		break
 	}
 
 	client = NewCandyClient("0.0.0.0:9000")

@@ -115,7 +115,7 @@ func (l *logger) caller() (string, string) {
 }
 
 func (l *logger) Log(t int, info string) {
-	if l.level > l.level {
+	if t > l.level {
 		return
 	}
 
