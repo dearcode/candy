@@ -60,7 +60,7 @@ func TestMain(main *testing.M) {
 		cmds = append(cmds, cmd)
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 3)
 
 	client = NewCandyClient("0.0.0.0:9000", &cmdClient{})
 	if err := client.Start(); err != nil {

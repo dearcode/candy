@@ -23,11 +23,6 @@ var (
 
 type sender interface {
 	send(meta.Message) error
-	//订阅消息
-	subscribe(int64, string) error
-
-	//取消订阅
-	unSubscribe(int64, string) error
 }
 
 // 消息处理流程
