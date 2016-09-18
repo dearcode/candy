@@ -8,6 +8,10 @@ test:
   pre:
     - go version
   override:
+      - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make test
+
+deployment:
+  override:
       - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/server;make
 
 
