@@ -1,7 +1,6 @@
 package candy
 
 import (
-	"strings"
 	"time"
 
 	"golang.org/x/net/context"
