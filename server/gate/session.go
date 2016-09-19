@@ -3,6 +3,7 @@ package gate
 import (
 	"time"
 
+	"github.com/dearcode/candy/server/meta"
 	"github.com/dearcode/candy/server/util/log"
 )
 
@@ -12,15 +13,27 @@ const (
 )
 
 type session struct {
-	id    int64
-	state int
-	last  int64
-	addr  string
+	id     int64
+	state  int
+	last   int64
+	addr   string
+	stream meta.Gate_MessageStreamServer
 }
 
 func newSession(addr string) *session {
 	log.Debugf("addr:%s", addr)
 	return &session{addr: addr}
+}
+
+func (s *session) addStream(stream meta.Gate_MessageStreamServer) {
+	s.stream = stream
+}
+
+func (s *session) getStream() meta.Gate_MessageStreamServer {
+	if s.stream != nil {
+		return s.stream
+	}
+	return nil
 }
 
 func (s *session) online(id int64) {

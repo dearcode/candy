@@ -28,6 +28,7 @@ type Gate struct {
 	master   *master
 	store    *store
 	sessions map[string]*session
+	ids      map[int64]*session
 	sync.RWMutex
 }
 
@@ -38,6 +39,7 @@ func NewGate(host, master, store string) *Gate {
 		master:   newMaster(master),
 		store:    newStore(store),
 		sessions: make(map[string]*session),
+		ids:      make(map[int64]*session),
 	}
 }
 
@@ -87,6 +89,30 @@ func (g *Gate) getSession(ctx context.Context) (*session, error) {
 	}
 
 	return s, nil
+}
+
+func (g *Gate) addOnlineUser(s *session) {
+	g.Lock()
+	g.ids[s.id] = s
+	g.Unlock()
+}
+
+func (g *Gate) getOnlineUser(id int64) *session {
+	g.RLock()
+	s, ok := g.ids[id]
+	g.RUnlock()
+
+	if ok {
+		return s
+	}
+
+	return nil
+}
+
+func (g *Gate) delOnlineUser(s *session) {
+	g.Lock()
+	delete(g.ids, s.id)
+	g.Unlock()
 }
 
 func (g *Gate) getOnlineSession(ctx context.Context) (*session, error) {
@@ -212,6 +238,7 @@ func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta
 	}
 
 	s.online(id)
+	g.addOnlineUser(s)
 
 	return &meta.GateUserLoginResponse{ID: id}, nil
 }
@@ -232,15 +259,22 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
+	g.delOnlineUser(s)
 	s.offline()
 	return &meta.GateUserLogoutResponse{}, nil
 }
 
-// NewMessage recv user message.
-func (g *Gate) NewMessage(server meta.Gate_NewMessageServer) error {
+// MessageStream recv user message, send to client.
+func (g *Gate) MessageStream(stream meta.Gate_MessageStreamServer) error {
+	s, err := g.getSession(stream.Context())
+	if err != nil {
+		return err
+	}
+	s.addStream(stream)
+
 	log.Debugf("Gate UserMessage")
 	for {
-		msg, err := server.Recv()
+		msg, err := stream.Recv()
 		if err != nil {
 			log.Debugf("%v", err)
 			continue
@@ -264,6 +298,22 @@ func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*
 // Notice recv Notice server Message, and send Message to client.
 func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.GateNoticeResponse, error) {
 	log.Debugf("ChannelID:%v msg:%v", req.ChannelID, req.Msg)
+
+	s := g.getOnlineUser(req.ChannelID)
+	if s == nil {
+		log.Debugf("User:%d offline", req.ChannelID)
+		return &meta.GateNoticeResponse{}, nil
+	}
+
+	client := s.getStream()
+	if client == nil {
+		log.Errorf("User:%d client strem is nil", req.ChannelID)
+		return &meta.GateNoticeResponse{}, nil
+	}
+
+	if err := client.Send(req.Msg); err != nil {
+		return &meta.GateNoticeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	}
 
 	return &meta.GateNoticeResponse{}, nil
 }

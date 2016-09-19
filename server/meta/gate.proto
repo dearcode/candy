@@ -15,7 +15,7 @@ service Gate {
     rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
     rpc Logout (GateUserLogoutRequest) returns (GateUserLogoutResponse);
 
-    rpc NewMessage (stream Message) returns (stream Message);
+    rpc MessageStream (stream Message) returns (stream Message);
 
     // AddFriend 添加好友或确认接受添加.
     rpc AddFriend (GateAddFriendRequest) returns (GateAddFriendResponse);
