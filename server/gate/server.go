@@ -291,7 +291,20 @@ func (g *Gate) MessageStream(stream meta.Gate_MessageStreamServer) error {
 
 // Heartbeat nil.
 func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*meta.GateHeartbeatResponse, error) {
-	return nil, ErrUndefineMethod
+	s, err := g.getSession(ctx)
+	if err != nil {
+		return &meta.GateHeartbeatResponse{}, nil
+	}
+
+	//已经离线就不在处理
+	if !s.isOnline() {
+		return &meta.GateHeartbeatResponse{}, nil
+	}
+
+	//更新心跳信息
+	s.heartbeat()
+
+	return &meta.GateHeartbeatResponse{}, nil
 }
 
 // Notice recv Notice server Message, and send Message to client.

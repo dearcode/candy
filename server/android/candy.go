@@ -226,3 +226,14 @@ func (c *CandyClient) loopRecvMessage() {
 	}
 
 }
+
+// Heartbeat 向服务器发送心跳信息
+func (c *CandyClient) Heartbeat() error {
+	req := &meta.GateHeartbeatRequest{}
+	_, err := c.api.Heartbeat(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

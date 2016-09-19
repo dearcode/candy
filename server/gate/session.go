@@ -67,3 +67,7 @@ func (s *session) isOnline() bool {
 	log.Debugf("session isOnline flag:%v", s.state == stateOnline)
 	return s.state == stateOnline
 }
+
+func (s *session) heartbeat() {
+	s.last = time.Now().Unix()
+}
