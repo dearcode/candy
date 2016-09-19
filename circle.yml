@@ -3,7 +3,10 @@ checkout:
     - rm -rf         "${GOPATH%%:*}/src/github.com/dearcode/candy"
     - mkdir -p       "${GOPATH%%:*}/src/github.com/dearcode/"
     - mv ~/candy     "${GOPATH%%:*}/src/github.com/dearcode/"
-    
+
+notifications:
+  email: false    
+
 test:
   pre:
     - go version
