@@ -15,7 +15,6 @@ import (
 // Store save user, message.
 type Store struct {
 	host    string
-	notice  string
 	dbPath  string
 	user    *userDB
 	group   *groupDB
@@ -23,6 +22,7 @@ type Store struct {
 	postman *postman
 	friend  *friendDB
 	file    *fileDB
+	notice  *notice
 }
 
 // NewStore new Store server.
@@ -38,6 +38,7 @@ func NewStore(host, notice, dbPath string) *Store {
 
 	s.friend = newFriendDB(s.user)
 	s.postman = newPostman(notice, s.user, s.friend, s.group)
+	s.notice = newNotice(notice)
 
 	return s
 }
@@ -62,6 +63,10 @@ func (s *Store) Start() error {
 	}
 
 	if err = s.postman.start(); err != nil {
+		return err
+	}
+
+	if err = s.notice.start(); err != nil {
 		return err
 	}
 
@@ -216,7 +221,7 @@ func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileReque
 
 // Subscribe 订阅消息
 func (s *Store) Subscribe(_ context.Context, req *meta.StoreSubscribeRequest) (*meta.StoreSubscribeResponse, error) {
-	if err := s.message.subscribe(req.ID, req.Host); err != nil {
+	if err := s.notice.subscribe(req.ID, req.Host); err != nil {
 		return &meta.StoreSubscribeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
@@ -225,7 +230,7 @@ func (s *Store) Subscribe(_ context.Context, req *meta.StoreSubscribeRequest) (*
 
 // UnSubscribe 取消消息订阅
 func (s *Store) UnSubscribe(_ context.Context, req *meta.StoreUnSubscribeRequest) (*meta.StoreUnSubscribeResponse, error) {
-	if err := s.message.unSubscribe(req.ID, req.Host); err != nil {
+	if err := s.notice.unSubscribe(req.ID, req.Host); err != nil {
 		return &meta.StoreUnSubscribeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
