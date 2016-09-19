@@ -101,7 +101,6 @@ func TestLogin(t *testing.T) {
 		}
 		t.Logf("login success, userID:%d userName:%v userPasswd:%v", uid, name, name)
 	}
-
 }
 
 func TestUpdateUserInfo(t *testing.T) {
@@ -265,4 +264,13 @@ func TestFileUploadAndDownload(t *testing.T) {
 			t.Fatalf("FileDownload key:%s, val:%s, expect:%s", key, data, name)
 		}
 	}
+}
+
+func TestHeartbeat(t *testing.T) {
+	err := client.Heartbeat()
+	if err != nil {
+		t.Fatalf("Heartbeat error:%v", err)
+	}
+
+	t.Logf("Heartbeat success")
 }

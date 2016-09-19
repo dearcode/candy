@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/juju/errors"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -101,6 +102,12 @@ func (u *userDB) findUser(user string) ([]string, error) {
 		var a account
 		if err := json.Unmarshal(it.Value(), &a); err != nil {
 			return nil, errors.Trace(err)
+		}
+
+		//对比如果查找到的用户名称不包含所查找的串就跳过
+		log.Debugf("a.Name:%v user:%v", a.Name, user)
+		if !strings.Contains(a.Name, user) {
+			continue
 		}
 
 		users = append(users, a.Name)

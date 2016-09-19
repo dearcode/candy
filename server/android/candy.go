@@ -1,7 +1,6 @@
 package candy
 
 import (
-	"strings"
 	"time"
 
 	"golang.org/x/net/context"
@@ -225,4 +224,15 @@ func (c *CandyClient) loopRecvMessage() {
 		c.handler.OnRecv(msg.ID, int(msg.Method), msg.Group, msg.From, msg.User, msg.Body)
 	}
 
+}
+
+// Heartbeat 向服务器发送心跳信息
+func (c *CandyClient) Heartbeat() error {
+	req := &meta.GateHeartbeatRequest{}
+	_, err := c.api.Heartbeat(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
