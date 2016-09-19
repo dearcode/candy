@@ -18,7 +18,7 @@ import (
 
 var (
 	pushTimeout = time.Second * 10
-	repushTime  = time.Millisecond * 100
+	repushTime  = time.Millisecond * 10
 )
 
 type sender interface {
@@ -81,13 +81,16 @@ func (m *messageDB) repush() {
 
 		m.Lock()
 		for id, tm := range m.retry {
-			if now.After(tm) {
+			if now.Before(tm) {
 				ids = append(ids, id)
 			}
 		}
 		m.Unlock()
 
 		for _, id := range ids {
+			t := time.Now().Unix()
+			log.Debugf("debug 1, time:%v", t)
+
 			msgs, err := m.get(id)
 			if err != nil {
 				log.Errorf("get message:%d error:%s", id, errors.ErrorStack(err))
@@ -102,6 +105,7 @@ func (m *messageDB) repush() {
 				continue
 			}
 			delete(m.retry, id)
+			log.Debugf("debug 2, time:%v", time.Now().Unix()-t)
 			log.Debugf("remove retry message:%d", id)
 		}
 	}
