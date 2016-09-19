@@ -272,12 +272,11 @@ func (g *Gate) MessageStream(stream meta.Gate_MessageStreamServer) error {
 	}
 	s.addStream(stream)
 
-	log.Debugf("Gate UserMessage")
 	for {
 		msg, err := stream.Recv()
 		if err != nil {
-			log.Debugf("%v", err)
-			continue
+			log.Errorf("stream Recv error:%s", errors.ErrorStack(err))
+			break
 		}
 
 		err = g.store.newMessage(msg)

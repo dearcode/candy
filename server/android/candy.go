@@ -217,10 +217,9 @@ func (c *CandyClient) loopRecvMessage() {
 	for !c.stop {
 		msg, err := c.stream.Recv()
 		if err != nil {
-			if strings.Compare(err.Error(), "EOF") != 0 {
-				c.handler.OnError(err.Error())
-			}
-			continue
+			// 这里不退出会死循环
+			c.handler.OnError(err.Error())
+			break
 		}
 
 		c.handler.OnRecv(msg.ID, int(msg.Method), msg.Group, msg.From, msg.User, msg.Body)
