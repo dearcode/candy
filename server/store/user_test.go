@@ -82,7 +82,7 @@ func TestUserLastMessage(t *testing.T) {
 	}
 }
 
-func TestUserMessageDB(t *testing.T) {
+func TestUserMessage(t *testing.T) {
 	u := newUserDB(testUserDBPath)
 	if err := u.start(); err != nil {
 		t.Fatalf("start error:%s", err.Error())
@@ -98,13 +98,45 @@ func TestUserMessageDB(t *testing.T) {
 		}
 	}
 
-	ids, err := u.getMessageIDs(uid, int64(0))
+	ids, err := u.getMessage(uid, false, int64(0))
 	if err != nil {
 		t.Fatalf("getMessageIDs error:%s", err.Error())
 	}
 
+	log.Debugf("ids:%+v", ids)
+
 	for i := 0; i < 10; i++ {
 		if ids[i] != int64(i) {
+			t.Fatalf("ids %d expect:%d, find:%d, ids:%+v", i, i, ids[i], ids)
+		}
+	}
+}
+
+func TestUserMessageReverse(t *testing.T) {
+	u := newUserDB(testUserDBPath)
+	if err := u.start(); err != nil {
+		t.Fatalf("start error:%s", err.Error())
+	}
+	defer u.db.Close()
+
+	uid := int64(time.Now().UnixNano())
+
+	for i := 0; i < 10; i++ {
+		mid := int64(i)
+		if err := u.addMessage(uid, mid); err != nil {
+			t.Fatalf("add message error:%s", err.Error())
+		}
+	}
+
+	ids, err := u.getMessage(uid, true, 9)
+	if err != nil {
+		t.Fatalf("getMessageIDs error:%s", err.Error())
+	}
+
+	log.Debugf("ids:%+v", ids)
+
+	for i := 0; i < 10; i++ {
+		if ids[9-i] != int64(i) {
 			t.Fatalf("ids %d expect:%d, find:%d, ids:%+v", i, i, ids[i], ids)
 		}
 	}
