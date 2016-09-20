@@ -182,5 +182,17 @@ func (s *store) newMessage(msg *meta.Message) error {
 	}
 
 	log.Debugf("send message success, resp:%v", resp)
-	return nil
+	return errors.Trace(resp.Header.Error())
+}
+
+func (s *store) loadMessage(userID, id int64, reverse bool) ([]*meta.Message, error) {
+	log.Debugf("store loadMessage")
+	req := &meta.StoreLoadMessageRequest{User: userID, ID: id, Reverse: reverse}
+	resp, err := s.api.LoadMessage(s.ctx, req)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	log.Debugf("send message success, resp:%v", resp)
+	return resp.Msgs, errors.Trace(resp.Header.Error())
 }

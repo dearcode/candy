@@ -460,3 +460,19 @@ func (g *Gate) DownloadFile(ctx context.Context, req *meta.GateDownloadFileReque
 
 	return &meta.GateDownloadFileResponse{Files: files}, nil
 }
+
+// LoadMessage 客户端同步离线消息，每次可逆序(旧消息)或正序(新消息)接收100条
+func (g *Gate) LoadMessage(ctx context.Context, req *meta.GateLoadMessageRequest) (*meta.GateLoadMessageResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	msgs, err := g.store.loadMessage(s.id, req.ID, req.Reverse)
+	if err != nil {
+		log.Errorf("%d loadMessage error:%s", s.id, errors.ErrorStack(err))
+		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateLoadMessageResponse{Msgs: msgs}, nil
+}

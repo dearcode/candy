@@ -242,7 +242,7 @@ func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileReque
 	return &meta.StoreDownloadFileResponse{Files: files}, nil
 }
 
-// ID 参照消息ID，每次可逆序(旧消息)或正序(新消息)接收100条
+// LoadMessage 收取用户消息，每次可逆序(旧消息)或正序(新消息)接收100条
 // 如果ID为0，就逆序返回旧的100条消息
 func (s *Store) LoadMessage(_ context.Context, req *meta.StoreLoadMessageRequest) (*meta.StoreLoadMessageResponse, error) {
 	// 修正下，确定前面不会传错
