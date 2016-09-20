@@ -312,17 +312,32 @@ func (u *userDB) getLastMessageID(userID int64) (int64, error) {
 		return 0, errors.Trace(err)
 	}
 	return util.DecodeInt64(v), nil
-
 }
 
-func (u *userDB) getMessageIDs(userID int64, lastMsgID int64) ([]int64, error) {
-	start := UserMessageKey(userID, lastMsgID)
+// TODO 这不确定prev是不是可以倒着查.
+func (u *userDB) getMessage(userID int64, reverse bool, id int64) ([]int64, error) {
+	start := UserMessageKey(userID, id)
 	end := UserMessageKey(userID, math.MaxInt64)
+	if reverse {
+		end = UserMessageKey(userID, 0)
+	}
 	var ids []int64
 
 	it := u.db.NewIterator(&lu.Range{Start: start, Limit: end}, nil)
-	for it.Next(); it.Valid(); it.Next() {
+	if reverse {
+		it.Prev()
+	} else {
+		it.Next()
+	}
+
+	for it.Valid() {
 		ids = append(ids, util.DecodeInt64(it.Value()))
+
+		if reverse {
+			it.Prev()
+		} else {
+			it.Next()
+		}
 	}
 
 	return ids, nil

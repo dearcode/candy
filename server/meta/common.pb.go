@@ -45,6 +45,8 @@ It has these top-level messages:
 	GateDownloadFileResponse
 	GateNoticeRequest
 	GateNoticeResponse
+	GateLoadMessageRequest
+	GateLoadMessageResponse
 	NewIDRequest
 	NewIDResponse
 	SubscribeRequest
@@ -77,6 +79,8 @@ It has these top-level messages:
 	StoreCheckFileResponse
 	StoreDownloadFileRequest
 	StoreDownloadFileResponse
+	StoreLoadMessageRequest
+	StoreLoadMessageResponse
 */
 package meta
 

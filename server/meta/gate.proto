@@ -33,8 +33,12 @@ service Gate {
     // DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
     rpc DownloadFile (GateDownloadFileRequest) returns (GateDownloadFileResponse);
 
+    // ID 参照消息ID，每次可逆序(旧消息)或正序(新消息)接收100条
+    // 如果ID为0，就逆序返回旧的100条消息
+    rpc LoadMessage (GateLoadMessageRequest) returns (GateLoadMessageResponse);
 
-    // server interface.
+
+    // Notice 服务端向客户端推送接口.
     rpc Notice (GateNoticeRequest) returns (GateNoticeResponse);
 
 }
@@ -173,5 +177,17 @@ message GateNoticeRequest {
 
 message GateNoticeResponse {
     ResponseHeader header = 1;
+}
+
+
+message GateLoadMessageRequest {
+    int64 ID = 1;
+    bool Reverse = 2;
+}
+
+
+message GateLoadMessageResponse {
+    ResponseHeader header = 1;
+    repeated Message Msgs = 2;
 }
 

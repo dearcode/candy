@@ -1,6 +1,7 @@
 package store
 
 import (
+	"math"
 	"net"
 
 	"github.com/juju/errors"
@@ -170,8 +171,8 @@ func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*
 		msg.Method = meta.Method_FRIEND_CONFIRM
 	}
 
-	// 发通知
-	if err = s.notice.Push(msg, req.From); err != nil {
+	// 保存消息，发通知
+	if err = s.message.add(msg); err != nil {
 		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
@@ -239,4 +240,25 @@ func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileReque
 	}
 
 	return &meta.StoreDownloadFileResponse{Files: files}, nil
+}
+
+// ID 参照消息ID，每次可逆序(旧消息)或正序(新消息)接收100条
+// 如果ID为0，就逆序返回旧的100条消息
+func (s *Store) LoadMessage(_ context.Context, req *meta.StoreLoadMessageRequest) (*meta.StoreLoadMessageResponse, error) {
+	// 修正下，确定前面不会传错
+	if req.ID == 0 {
+		req.ID = math.MaxInt64
+		req.Reverse = true
+	}
+
+	ids, err := s.user.getMessage(req.User, req.Reverse, req.ID)
+	if err != nil {
+		return &meta.StoreLoadMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	msgs, err := s.message.get(ids...)
+	if err != nil {
+		return &meta.StoreLoadMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreLoadMessageResponse{Msgs: msgs}, nil
 }

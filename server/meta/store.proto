@@ -29,6 +29,10 @@ service Store {
     // DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
     rpc DownloadFile (StoreDownloadFileRequest) returns (StoreDownloadFileResponse);
 
+    // ID 参照消息ID，每次可逆序(旧消息)或正序(新消息)接收100条
+    // 如果ID为0，就逆序返回旧的100条消息
+    rpc LoadMessage (StoreLoadMessageRequest) returns (StoreLoadMessageResponse);
+
 }
 
 
@@ -151,5 +155,18 @@ message StoreDownloadFileRequest {
 message StoreDownloadFileResponse {
     ResponseHeader header = 1;
     map<string, bytes> Files = 2;
+}
+
+
+message StoreLoadMessageRequest {
+    int64 User = 1;
+    int64 ID = 2;
+    bool Reverse = 3;
+}
+
+
+message StoreLoadMessageResponse {
+    ResponseHeader header = 1;
+    repeated Message Msgs = 2;
 }
 

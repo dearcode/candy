@@ -97,7 +97,7 @@ func (m *messageDB) repush() {
 			}
 
 			log.Debugf("sender send msg:%v", msgs[0])
-			if err = m.sender.send(msgs[0]); err != nil {
+			if err = m.sender.send(*msgs[0]); err != nil {
 				if errors.Cause(err) != ErrInvalidSender {
 					log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
 					m.addRetry(id)
@@ -151,10 +151,9 @@ func (m *messageDB) delQueue(id int64) {
 	m.queue.Delete(key, nil)
 }
 
-func (m *messageDB) get(ids ...int64) ([]meta.Message, error) {
+func (m *messageDB) get(ids ...int64) ([]*meta.Message, error) {
 	log.Debugf("ids:%v", ids)
-	var mss []meta.Message
-	var msg meta.Message
+	var mss []*meta.Message
 
 	for _, id := range ids {
 		v, err := m.stable.Get(util.EncodeInt64(id), nil)
@@ -162,11 +161,12 @@ func (m *messageDB) get(ids ...int64) ([]meta.Message, error) {
 			return nil, errors.Trace(err)
 		}
 
+		var msg meta.Message
 		if err = json.Unmarshal(v, &msg); err != nil {
 			return nil, errors.Trace(err)
 		}
 
-		mss = append(mss, msg)
+		mss = append(mss, &msg)
 	}
 
 	return mss, nil
