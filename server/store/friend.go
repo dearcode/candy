@@ -13,6 +13,7 @@ import (
 type friendRelation struct {
 	ID    int64
 	State meta.FriendRelation
+	Msg   string
 }
 
 type friendDB struct {
@@ -24,8 +25,8 @@ func newFriendDB(db *userDB) *friendDB {
 }
 
 // 添加好友，返回当前状态，state 0:没关系, 1:我要添加对方为好友, 2:对方请求添加我为好友, 3:当前我们都已确认成为好友了
-func (f *friendDB) add(uid, fid int64, state meta.FriendRelation) (meta.FriendRelation, error) {
-	r := friendRelation{ID: fid, State: state}
+func (f *friendDB) add(uid, fid int64, state meta.FriendRelation, msg string) (meta.FriendRelation, error) {
+	r := friendRelation{ID: fid, State: state, Msg: msg}
 
 	key := UserFriendKey(uid, fid)
 	v, err := f.db.Get(key, nil)

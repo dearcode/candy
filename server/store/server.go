@@ -149,7 +149,7 @@ func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*me
 // AddFriend 添加好友添加完后会返回当前好友关系状态.
 func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*meta.StoreAddFriendResponse, error) {
 	log.Debugf("Store AddFriend, from:%v to:%v State:%v", req.From, req.To, req.State)
-	state, err := s.user.friend.add(req.From, req.To, req.State)
+	state, err := s.user.friend.add(req.From, req.To, req.State, req.Msg)
 	if err != nil {
 		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
