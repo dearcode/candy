@@ -214,7 +214,7 @@ func TestAddFriend(t *testing.T) {
 			if _, ok := relation[uid]; ok {
 				confirm = true
 			}
-			ok, err := client.AddFriend(uid, confirm)
+			ok, err := client.AddFriend(uid, confirm, "ok")
 			if err != nil {
 				t.Fatalf("AddFriend error:%v", err)
 			}
