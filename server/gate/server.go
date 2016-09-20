@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/server/util"
 	"github.com/dearcode/candy/server/util/log"
 )
 
@@ -25,43 +26,50 @@ var (
 // Gate recv client request.
 type Gate struct {
 	host     string
-	master   *master
 	store    *store
+	master   *util.Master
+	notice   *util.Notice
 	sessions map[string]*session
 	ids      map[int64]*session
 	sync.RWMutex
 }
 
 // NewGate new gate server.
-func NewGate(host, master, store string) *Gate {
+func NewGate() *Gate {
 	return &Gate{
-		host:     host,
-		master:   newMaster(master),
-		store:    newStore(store),
 		sessions: make(map[string]*session),
 		ids:      make(map[int64]*session),
 	}
 }
 
 // Start Gate service.
-func (g *Gate) Start() error {
+func (g *Gate) Start(host, notice, master, store string) error {
 	log.Debugf("Gate Start...")
-	serv := grpc.NewServer()
-	meta.RegisterGateServer(serv, g)
 
-	lis, err := net.Listen("tcp", g.host)
+	g.host = host
+
+	lis, err := net.Listen("tcp", host)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	if err = g.master.start(); err != nil {
+	g.notice, err = util.NewNotice(notice)
+	if err != nil {
 		return errors.Trace(err)
 	}
 
+	g.master, err = util.NewMaster(master)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	g.store = newStore(store)
 	if err = g.store.start(); err != nil {
 		return errors.Trace(err)
 	}
 
+	serv := grpc.NewServer()
+	meta.RegisterGateServer(serv, g)
 	return serv.Serve(lis)
 }
 
@@ -137,7 +145,7 @@ func (g *Gate) Register(ctx context.Context, req *meta.GateRegisterRequest) (*me
 		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	id, err := g.master.newID()
+	id, err := g.master.NewID()
 	if err != nil {
 		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -232,7 +240,7 @@ func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta
 	}
 
 	//登陆成功后订阅消息
-	err = g.store.subscribe(id, g.host)
+	err = g.notice.Subscribe(id, g.host)
 	if err != nil {
 		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -254,7 +262,7 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 	log.Debugf("Logout user:%v", req.User)
 
 	//注销需要先取消消息订阅
-	err = g.store.unSubscribe(s.getID(), g.host)
+	err = g.notice.UnSubscribe(s.getID(), g.host)
 	if err != nil {
 		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -309,7 +317,7 @@ func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*
 
 // Notice recv Notice server Message, and send Message to client.
 func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.GateNoticeResponse, error) {
-	log.Debugf("ChannelID:%v msg:%v", req.ChannelID, req.Msg)
+	log.Debugf("begin ChannelID:%v msg:%v", req.ChannelID, req.Msg)
 
 	s := g.getOnlineUser(req.ChannelID)
 	if s == nil {
@@ -324,8 +332,10 @@ func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.G
 	}
 
 	if err := client.Send(req.Msg); err != nil {
+		log.Errorf("client  Send msg:%v err:%v", req.Msg, err)
 		return &meta.GateNoticeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
+	log.Debugf("end ChannelID:%v msg:%v ok", req.ChannelID, req.Msg)
 
 	return &meta.GateNoticeResponse{}, nil
 }
@@ -344,7 +354,7 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 	}
 
 	// 主动添加对方为好友，更新自己本地信息
-	state, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Active)
+	state, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Active, req.Msg)
 	if err != nil {
 		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
 		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
@@ -355,7 +365,7 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 	}
 
 	// 被动添加好友，更新对方好友信息
-	if state, err = g.store.addFriend(req.UserID, s.id, meta.FriendRelation_Passive); err != nil {
+	if state, err = g.store.addFriend(req.UserID, s.id, meta.FriendRelation_Passive, req.Msg); err != nil {
 		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
 		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -363,7 +373,7 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 	// 如果对方返回FriendRelation_Confirm，说明之前对方添加过自己, 只不过本地信息未更新，要先更新本地信息，再返回FriendRelation_Confirm
 	if state == meta.FriendRelation_Confirm {
 		// 正常流程走不到这里，除非是数据丢失了
-		_, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Confirm)
+		_, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Confirm, req.Msg)
 		if err != nil {
 			log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
 			return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
@@ -395,7 +405,7 @@ func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
 		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	gid, err := g.master.newID()
+	gid, err := g.master.NewID()
 	if err != nil {
 		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}

@@ -7,12 +7,11 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/server/meta"
-	"github.com/dearcode/candy/server/util/log"
 )
 
 type gate struct {
 	clients map[string]meta.GateClient
-	sync.RWMutex
+	sync.Mutex
 }
 
 func newGate() *gate {
@@ -20,10 +19,10 @@ func newGate() *gate {
 }
 
 func (g *gate) client(addr string) (meta.GateClient, error) {
-	g.RLock()
+	g.Lock()
+	defer g.Unlock()
+
 	c, ok := g.clients[addr]
-	log.Debugf("clients:%v", g.clients)
-	g.RUnlock()
 	if ok {
 		return c, nil
 	}
@@ -32,15 +31,8 @@ func (g *gate) client(addr string) (meta.GateClient, error) {
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
+
 	c = meta.NewGateClient(conn)
-
-	g.Lock()
-	if _, ok := g.clients[addr]; ok {
-		conn.Close()
-	} else {
-		g.clients[addr] = c
-	}
-	g.Unlock()
-
+	g.clients[addr] = c
 	return c, nil
 }

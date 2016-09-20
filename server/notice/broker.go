@@ -55,76 +55,64 @@ func (b *broker) Start() error {
 }
 
 func (b *broker) sendMessage(m message) error {
-	log.Debugf("broker message:%v", m)
+	log.Debugf("broker message:%v, to gate:%s", m, m.addr)
 	g, err := b.gate.client(m.addr)
 	if err != nil {
 		log.Errorf("connect to %s error:%s", m.addr, err.Error())
 		return errors.Trace(err)
 	}
 	req := &meta.GateNoticeRequest{ChannelID: m.id, Msg: &m.Message}
-	_, err = g.Notice(context.Background(), req)
+	log.Debugf("begin call gate Notice")
+	resp, err := g.Notice(context.Background(), req)
+	log.Debugf("end call gate Notice err:%v, head:%v", err, resp.Header.Error())
+	if err != nil {
+		log.Errorf("Notice to gate:%s error:%s", m.addr, err.Error())
+		return errors.Trace(err)
+	}
 
 	return errors.Trace(err)
 }
 
 func (b *broker) Subscribe(id int64, addr string) {
-	b.RLock()
-	c, cok := b.channels[id]
-	b.RUnlock()
+	b.Lock()
 
-	if !cok {
+	c, ok := b.channels[id]
+	if !ok {
 		c = channel{id: id, gates: make(map[string]gateInfo)}
-		b.Lock()
 		b.channels[id] = c
-		b.Unlock()
 	}
 
-	c.RLock()
-	_, gok := c.gates[addr]
-	c.RUnlock()
-	if gok {
-		return
+	if _, ok = c.gates[addr]; !ok {
+		c.gates[addr] = gateInfo{addr: addr}
 	}
 
-	c.Lock()
-	c.gates[addr] = gateInfo{addr: addr}
-	c.Unlock()
+	b.Unlock()
+
+	log.Debugf("Subscribe id:%d, addr:%s", id, addr)
 }
 
 func (b *broker) UnSubscribe(id int64, addr string) {
 	b.Lock()
-	if c, cok := b.channels[id]; cok {
-		if _, gok := c.gates[addr]; gok {
-			delete(c.gates, addr)
-		}
-		if len(c.gates) == 0 {
-			delete(b.channels, id)
-		}
+	if c, ok := b.channels[id]; ok {
+		delete(c.gates, addr)
+		delete(b.channels, id)
 	}
 	b.Unlock()
-}
-
-func (b *broker) PushOne(msg meta.Message, id int64) {
-	log.Debugf("broker msg:%v id:%v", msg, id)
-	b.RLock()
-	c, cok := b.channels[id]
-	b.RUnlock()
-	if !cok {
-		log.Errorf("user not subscribe, c:%v cok:%v", c, cok)
-		return
-	}
-
-	c.RLock()
-	for _, g := range c.gates {
-		b.pusher <- message{id: id, addr: g.addr, Message: msg}
-		log.Debugf("pusher msg, id:%v addr:%v msg:%v", id, g.addr, msg)
-	}
-	c.RUnlock()
+	log.Debugf("UnSubscribe id:%d, addr:%s", id, addr)
 }
 
 func (b *broker) Push(msg meta.Message, ids ...int64) {
 	log.Debugf("broker msg:%v ids:%v", msg, ids)
+	b.Lock()
+
 	for _, id := range ids {
-		b.PushOne(msg, id)
+		if c, ok := b.channels[id]; ok {
+			for _, gate := range c.gates {
+				b.pusher <- message{id: id, addr: gate.addr, Message: msg}
+				log.Debugf("pusher msg, id:%v addr:%v msg:%v", id, gate.addr, msg)
+			}
+		}
 	}
+
+	b.Unlock()
 }

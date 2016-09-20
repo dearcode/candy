@@ -27,17 +27,19 @@ enum FriendRelation {
 }
 
 enum Method {
-    // 添加好友
+    // 有人请求添加好友
     FRIEND_ADD  = 0;
+    // 添加好友成功
+    FRIEND_CONFIRM = 1;
     // 被删除好友
-    FRIEND_DEL  = 1;
+    FRIEND_DEL  = 2;
 
     // 申请加群
-    GROUP_ADD   = 2;
+    GROUP_ADD   = 3;
     // 退出群组
-    GROUP_EXIT  = 3;
+    GROUP_EXIT  = 4;
     // 邀请指定用户入群
-    GROUP_INVITE= 4;
+    GROUP_INVITE= 5;
 }
 
 // Group 如果当前为群聊，设置为群组ID, 否则为0

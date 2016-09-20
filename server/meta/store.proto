@@ -29,9 +29,6 @@ service Store {
     // DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
     rpc DownloadFile (StoreDownloadFileRequest) returns (StoreDownloadFileResponse);
 
-    rpc Subscribe(StoreSubscribeRequest) returns (StoreSubscribeResponse);
-    rpc UnSubscribe(StoreUnSubscribeRequest) returns (StoreUnSubscribeResponse);
-
 }
 
 
@@ -48,6 +45,7 @@ message StoreAddFriendRequest {
     int64 From = 1;
     int64 To = 2;
     FriendRelation State = 3;
+    string Msg = 4;
 }
 
 message StoreAddFriendResponse {
@@ -153,23 +151,5 @@ message StoreDownloadFileRequest {
 message StoreDownloadFileResponse {
     ResponseHeader header = 1;
     map<string, bytes> Files = 2;
-}
-
-message StoreSubscribeRequest {
-    int64 ID = 1;
-    string host = 2;
-}
-
-message StoreSubscribeResponse {
-    ResponseHeader header = 1;
-}
-
-message StoreUnSubscribeRequest {
-    int64 ID = 1;
-    string host = 2;
-}
-
-message StoreUnSubscribeResponse {
-    ResponseHeader header = 1;
 }
 

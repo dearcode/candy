@@ -102,9 +102,9 @@ func (s *store) findUser(user string) ([]string, error) {
 	return resp.Users, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) addFriend(from, to int64, state meta.FriendRelation) (meta.FriendRelation, error) {
+func (s *store) addFriend(from, to int64, state meta.FriendRelation, msg string) (meta.FriendRelation, error) {
 	log.Debugf("store addFriend, from:%v to:%v state:%v", from, to, state)
-	req := &meta.StoreAddFriendRequest{From: from, To: to, State: state}
+	req := &meta.StoreAddFriendRequest{From: from, To: to, State: state, Msg: msg}
 	resp, err := s.api.AddFriend(s.ctx, req)
 	if err != nil {
 		return meta.FriendRelation_None, errors.Trace(err)
@@ -182,29 +182,5 @@ func (s *store) newMessage(msg *meta.Message) error {
 	}
 
 	log.Debugf("send message success, resp:%v", resp)
-	return nil
-}
-
-func (s *store) subscribe(id int64, host string) error {
-	log.Debugf("id:%v host:%v", id, host)
-	req := &meta.StoreSubscribeRequest{ID: id, Host: host}
-	resp, err := s.api.Subscribe(s.ctx, req)
-	if err != nil {
-		return errors.Trace(err)
-	}
-
-	log.Debugf("success, resp:%v", resp)
-	return nil
-}
-
-func (s *store) unSubscribe(id int64, host string) error {
-	log.Debugf("id:%v host:%v", id, host)
-	req := &meta.StoreUnSubscribeRequest{ID: id, Host: host}
-	resp, err := s.api.UnSubscribe(s.ctx, req)
-	if err != nil {
-		return errors.Trace(err)
-	}
-
-	log.Debugf("success, resp:%v", resp)
 	return nil
 }

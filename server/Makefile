@@ -33,6 +33,7 @@ vet:
 
 
 gate: godep
+	@go tool vet ./gate/ 2>&1
 	@echo "make gate"
 	@godep go build -ldflags '$(LDFLAGS)' -o bin/gate ./cmd/gate/main.go
 

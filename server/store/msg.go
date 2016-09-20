@@ -98,9 +98,11 @@ func (m *messageDB) repush() {
 
 			log.Debugf("sender send msg:%v", msgs[0])
 			if err = m.sender.send(msgs[0]); err != nil {
-				log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
-				m.addRetry(id)
-				continue
+				if errors.Cause(err) != ErrInvalidSender {
+					log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
+					m.addRetry(id)
+					continue
+				}
 			}
 			delete(m.retry, id)
 			log.Debugf("debug 2, time:%v", time.Now().Unix()-t)

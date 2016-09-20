@@ -148,7 +148,11 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	success, err := c.AddFriend(id, true)
+	fmt.Println("请输入附加消息:")
+	data, _, _ = reader.ReadLine()
+	msg := string(data)
+
+	success, err := c.AddFriend(id, false, msg)
 	if err != nil {
 		log.Errorf("addFriend error:%v", err)
 		return

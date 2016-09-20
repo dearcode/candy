@@ -22,12 +22,13 @@ type Store struct {
 	postman *postman
 	friend  *friendDB
 	file    *fileDB
-	notice  *notice
+	notice  *util.Notice
+	master  *util.Master
 }
 
 // NewStore new Store server.
-func NewStore(host, notice, dbPath string) *Store {
-	s := &Store{
+func NewStore(host, dbPath string) *Store {
+	return &Store{
 		host:    host,
 		dbPath:  dbPath,
 		user:    newUserDB(dbPath),
@@ -35,16 +36,10 @@ func NewStore(host, notice, dbPath string) *Store {
 		group:   newGroupDB(dbPath),
 		file:    newFileDB(dbPath),
 	}
-
-	s.friend = newFriendDB(s.user)
-	s.postman = newPostman(notice, s.user, s.friend, s.group)
-	s.notice = newNotice(notice)
-
-	return s
 }
 
 // Start Store service.
-func (s *Store) Start() error {
+func (s *Store) Start(notice, master string) error {
 	log.Debug("Store Start...")
 	serv := grpc.NewServer()
 	meta.RegisterStoreServer(serv, s)
@@ -54,19 +49,25 @@ func (s *Store) Start() error {
 		return err
 	}
 
+	s.notice, err = util.NewNotice(notice)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	s.master, err = util.NewMaster(master)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	s.friend = newFriendDB(s.user)
+
+	s.postman = newPostman(s.user, s.friend, s.group, s.notice)
+
 	if err = s.user.start(); err != nil {
 		return err
 	}
 
 	if err = s.group.start(); err != nil {
-		return err
-	}
-
-	if err = s.postman.start(); err != nil {
-		return err
-	}
-
-	if err = s.notice.start(); err != nil {
 		return err
 	}
 
@@ -153,6 +154,22 @@ func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*
 		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
+	// 发个提示消息
+	id, err := s.master.NewID()
+	if err != nil {
+		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	}
+
+	msg := meta.Message{ID: id, Method: meta.Method_FRIEND_ADD, From: req.To, Body: req.Msg}
+	if req.State == meta.FriendRelation_Confirm {
+		msg.Method = meta.Method_FRIEND_CONFIRM
+	}
+
+	// 发通知
+	if err = s.notice.Push(msg, req.From); err != nil {
+		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	}
+
 	return &meta.StoreAddFriendResponse{State: state}, nil
 }
 
@@ -217,22 +234,4 @@ func (s *Store) DownloadFile(_ context.Context, req *meta.StoreDownloadFileReque
 	}
 
 	return &meta.StoreDownloadFileResponse{Files: files}, nil
-}
-
-// Subscribe 订阅消息
-func (s *Store) Subscribe(_ context.Context, req *meta.StoreSubscribeRequest) (*meta.StoreSubscribeResponse, error) {
-	if err := s.notice.subscribe(req.ID, req.Host); err != nil {
-		return &meta.StoreSubscribeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
-	}
-
-	return &meta.StoreSubscribeResponse{}, nil
-}
-
-// UnSubscribe 取消消息订阅
-func (s *Store) UnSubscribe(_ context.Context, req *meta.StoreUnSubscribeRequest) (*meta.StoreUnSubscribeResponse, error) {
-	if err := s.notice.unSubscribe(req.ID, req.Host); err != nil {
-		return &meta.StoreUnSubscribeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
-	}
-
-	return &meta.StoreUnSubscribeResponse{}, nil
 }

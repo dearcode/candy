@@ -52,6 +52,7 @@ message GateFindUserResponse {
 message GateAddFriendRequest {
     int64 UserID = 1;
     bool Confirm = 2;
+    string Msg = 3;
 }
 
 message GateAddFriendResponse {

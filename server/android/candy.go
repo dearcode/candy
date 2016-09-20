@@ -8,6 +8,7 @@ import (
 
 	"github.com/dearcode/candy/server/meta"
 	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/server/util/log"
 )
 
 const (
@@ -120,8 +121,8 @@ func (c *CandyClient) GetUserInfo(user string) (*UserInfo, error) {
 	return userInfo, resp.Header.Error()
 }
 
-func (c *CandyClient) AddFriend(userID int64, confirm bool) (bool, error) {
-	req := &meta.GateAddFriendRequest{UserID: userID, Confirm: confirm}
+func (c *CandyClient) AddFriend(userID int64, confirm bool, msg string) (bool, error) {
+	req := &meta.GateAddFriendRequest{UserID: userID, Confirm: confirm, Msg: msg}
 	resp, err := c.api.AddFriend(context.Background(), req)
 	if err != nil {
 		return false, err
@@ -215,6 +216,7 @@ func (c *CandyClient) SendMessage(from, group, user int64, body string) error {
 func (c *CandyClient) loopRecvMessage() {
 	for !c.stop {
 		msg, err := c.stream.Recv()
+		log.Debugf("recv:%v, err:%v", msg, err)
 		if err != nil {
 			// 这里不退出会死循环
 			c.handler.OnError(err.Error())
