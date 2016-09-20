@@ -166,7 +166,7 @@ func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*
 	}
 
 	msg := meta.Message{ID: id, Method: meta.Method_FRIEND_ADD, From: req.To, Body: req.Msg}
-	if req.State == meta.FriendRelation_Confirm {
+	if state == meta.FriendRelation_Confirm {
 		msg.Method = meta.Method_FRIEND_CONFIRM
 	}
 
