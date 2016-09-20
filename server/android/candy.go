@@ -214,6 +214,8 @@ func (c *CandyClient) SendMessage(from, group, user int64, body string) error {
 
 // loopRecvMessage 一直接收服务器返回消息, 直到退出.
 func (c *CandyClient) loopRecvMessage() {
+	log.Debugf("start loopRecvMessage")
+
 	for !c.stop {
 		msg, err := c.stream.Recv()
 		log.Debugf("recv:%v, err:%v", msg, err)

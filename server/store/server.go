@@ -154,6 +154,11 @@ func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*
 		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
+	// 主动的添加消息就不需要推送了
+	if req.State == meta.FriendRelation_Active {
+		return &meta.StoreAddFriendResponse{State: state}, nil
+	}
+
 	// 发个提示消息
 	id, err := s.master.NewID()
 	if err != nil {

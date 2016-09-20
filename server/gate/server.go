@@ -359,10 +359,6 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
 		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	// 如果本地返回 FriendRelation_Confirm 说明之前对方添加过自己
-	if state == meta.FriendRelation_Confirm {
-		return &meta.GateAddFriendResponse{Confirm: true}, nil
-	}
 
 	// 被动添加好友，更新对方好友信息
 	if state, err = g.store.addFriend(req.UserID, s.id, meta.FriendRelation_Passive, req.Msg); err != nil {
