@@ -3,7 +3,7 @@
 	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
 	"Packages": [
-		"./..."
+		"github.com/dearcode/candy/"
 	],
 	"Deps": [
 		{
