@@ -1,11 +1,9 @@
 checkout:
   post:
-    - rm -rf         "${GOPATH%%:*}/src/github.com/dearcode/candy"
-    - mkdir -p       "${GOPATH%%:*}/src/github.com/dearcode/"
-    - mv ~/candy     "${GOPATH%%:*}/src/github.com/dearcode/"
+    - go get github.com/dearcode/candy
 
 test:
   pre:
     - go version
   override:
-      - cd ${GOPATH%%:*}/src/github.com/dearcode/candy/;make&&make test
+      - cd ${GOPATH%%:*}/src/github.com/dearcode/candy;make&&make test

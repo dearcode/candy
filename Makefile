@@ -50,6 +50,6 @@ store: godep
 	@godep go build -ldflags '$(LDFLAGS)' -o bin/store ./cmd/store/main.go
 
 test:
-	@go test ./android/
+	@go test ./client/
 	@go test ./store/
 
