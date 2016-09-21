@@ -1,6 +1,6 @@
 checkout:
-  post:
-    - go get github.com/dearcode/candy
+  override:
+      - go get -u github.com/dearcode/candy
 
 test:
   pre:
