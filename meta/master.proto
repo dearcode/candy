@@ -1,0 +1,21 @@
+syntax = "proto3";
+package candy.meta;
+
+option go_package = "meta";
+
+import "common.proto";
+
+service Master {
+    rpc NewID (NewIDRequest) returns (NewIDResponse);
+}
+
+
+message NewIDRequest {}
+message NewIDResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+
+
+

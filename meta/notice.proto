@@ -1,0 +1,42 @@
+syntax = "proto3";
+package candy.meta;
+
+option go_package = "meta";
+
+import "common.proto";
+
+service Notice {
+    rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
+    rpc UnSubscribe(UnSubscribeRequest) returns (UnSubscribeResponse);
+
+    rpc Push(PushRequest) returns (PushResponse);
+
+}
+
+
+message SubscribeRequest {
+    int64 ID = 1;
+    string host = 2;
+}
+
+message SubscribeResponse {
+    ResponseHeader header = 1;
+}
+
+message UnSubscribeRequest {
+    int64 ID = 1;
+    string host = 2;
+}
+
+message UnSubscribeResponse {
+    ResponseHeader header = 1;
+}
+
+message PushRequest {
+    repeated int64 ID = 1;
+    Message Msg = 2;
+}
+
+message PushResponse {
+    ResponseHeader header = 1;
+}

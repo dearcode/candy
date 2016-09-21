@@ -1,0 +1,172 @@
+syntax = "proto3";
+package candy.meta;
+
+option go_package = "meta";
+
+import "common.proto";
+
+service Store {
+    rpc Register(StoreRegisterRequest) returns (StoreRegisterResponse);
+    rpc UpdateUserInfo(StoreUpdateUserInfoRequest) returns (StoreUpdateUserInfoResponse);
+    rpc UpdateUserPassword(StoreUpdateUserPasswordRequest) returns (StoreUpdateUserPasswordResponse);
+    rpc GetUserInfo(StoreGetUserInfoRequest) returns (StoreGetUserInfoResponse);
+
+    rpc Auth(StoreAuthRequest) returns (StoreAuthResponse);
+
+    // AddFriend 添加好友
+    rpc AddFriend(StoreAddFriendRequest) returns (StoreAddFriendResponse);
+
+    // FindUser 根据字符串的用户名模糊查用户列表
+    rpc FindUser(StoreFindUserRequest) returns (StoreFindUserResponse);
+
+    rpc CreateGroup(StoreCreateGroupRequest) returns (StoreCreateGroupResponse);
+    rpc NewMessage(StoreNewMessageRequest) returns (StoreNewMessageResponse);
+
+    // UploadFile 上传文件接口，一次一个文件.
+    rpc UploadFile (StoreUploadFileRequest) returns (StoreUploadFileResponse);
+    // CheckFile 检测文件是否存在，文件的MD5, 服务器返回不存在的文件MD5.
+    rpc CheckFile (StoreCheckFileRequest) returns (StoreCheckFileResponse);
+    // DownloadFile 下载文件，传入文件MD5，返回具体文件内容.
+    rpc DownloadFile (StoreDownloadFileRequest) returns (StoreDownloadFileResponse);
+
+    // ID 参照消息ID，每次可逆序(旧消息)或正序(新消息)接收100条
+    // 如果ID为0，就逆序返回旧的100条消息
+    rpc LoadMessage (StoreLoadMessageRequest) returns (StoreLoadMessageResponse);
+
+}
+
+
+message StoreFindUserRequest {
+    string user = 1;
+}
+
+message StoreFindUserResponse {
+    ResponseHeader header = 1;
+    repeated string users = 2;
+}
+
+message StoreAddFriendRequest {
+    int64 From = 1;
+    int64 To = 2;
+    FriendRelation State = 3;
+    string Msg = 4;
+}
+
+message StoreAddFriendResponse {
+    ResponseHeader header = 1;
+    FriendRelation State = 2;
+}
+
+message StoreRegisterRequest {
+    int64 ID = 1;
+    string User = 2;
+    string Password = 3;
+}
+
+message StoreRegisterResponse {
+    ResponseHeader header = 1;
+}
+
+message StoreUpdateUserInfoRequest {
+    string User = 1;
+    string NickName = 2;
+    bytes Avatar = 3;
+}
+
+message StoreUpdateUserInfoResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+message StoreUpdateUserPasswordRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message StoreUpdateUserPasswordResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+message StoreGetUserInfoRequest {
+    string User = 1;
+}
+
+message StoreGetUserInfoResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+    string User = 3;
+    string NickName = 4;
+    bytes Avatar = 5;
+}
+
+message StoreAuthRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message StoreAuthResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+message StoreCreateGroupRequest {
+    int64 UserID = 1;
+    int64 GroupID = 2;
+}
+
+message StoreCreateGroupResponse {
+    ResponseHeader header = 1;
+}
+
+message StoreNewMessageRequest {
+    Message Msg = 1;
+}
+
+message StoreNewMessageResponse {
+    ResponseHeader header = 1;
+}
+
+message StoreUploadFileRequest {
+    RequestHeader header = 1;
+    bytes File = 2;
+}
+
+message StoreUploadFileResponse {
+    ResponseHeader header = 1;
+}
+
+message StoreCheckFileRequest {
+    RequestHeader header = 1;
+    repeated string Names = 2;
+}
+
+message StoreCheckFileResponse {
+    ResponseHeader header = 1;
+    repeated string Names = 2;
+}
+
+
+message StoreDownloadFileRequest {
+    RequestHeader header = 1;
+    repeated string Names = 2;
+}
+
+message StoreDownloadFileResponse {
+    ResponseHeader header = 1;
+    map<string, bytes> Files = 2;
+}
+
+
+message StoreLoadMessageRequest {
+    int64 User = 1;
+    int64 ID = 2;
+    bool Reverse = 3;
+}
+
+
+message StoreLoadMessageResponse {
+    ResponseHeader header = 1;
+    repeated Message Msgs = 2;
+}
+

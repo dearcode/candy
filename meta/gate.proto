@@ -1,0 +1,193 @@
+syntax = "proto3";
+package candy.meta;
+
+option go_package = "meta";
+
+import "common.proto";
+
+
+service Gate {
+    rpc Register (GateRegisterRequest) returns (GateRegisterResponse);
+    rpc UpdateUserInfo (GateUpdateUserInfoRequest) returns (GateUpdateUserInfoResponse);
+    rpc UpdateUserPassword (GateUpdateUserPasswordRequest) returns (GateUpdateUserPasswordResponse);
+    rpc GetUserInfo (GateGetUserInfoRequest) returns (GateGetUserInfoResponse);
+
+    rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
+    rpc Logout (GateUserLogoutRequest) returns (GateUserLogoutResponse);
+
+    rpc MessageStream (stream Message) returns (stream Message);
+
+    // AddFriend 添加好友或确认接受添加.
+    rpc AddFriend (GateAddFriendRequest) returns (GateAddFriendResponse);
+    // FindUser 添加好友前先查找出来对应的ID.
+    rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
+
+    rpc CreateGroup (GateCreateGroupRequest) returns (GateCreateGroupResponse);
+
+    rpc Heartbeat (GateHeartbeatRequest) returns (GateHeartbeatResponse);
+
+    // UploadFile 客户端上传文件接口，一次一个图片.
+    rpc UploadFile (GateUploadFileRequest) returns (GateUploadFileResponse);
+    // CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
+    rpc CheckFile (GateCheckFileRequest) returns (GateCheckFileResponse);
+    // DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
+    rpc DownloadFile (GateDownloadFileRequest) returns (GateDownloadFileResponse);
+
+    // ID 参照消息ID，每次可逆序(旧消息)或正序(新消息)接收100条
+    // 如果ID为0，就逆序返回旧的100条消息
+    rpc LoadMessage (GateLoadMessageRequest) returns (GateLoadMessageResponse);
+
+
+    // Notice 服务端向客户端推送接口.
+    rpc Notice (GateNoticeRequest) returns (GateNoticeResponse);
+
+}
+
+message GateFindUserRequest {
+    string User = 1;
+}
+
+message GateFindUserResponse {
+    ResponseHeader header = 1;
+    repeated string users = 2;
+
+}
+
+message GateAddFriendRequest {
+    int64 UserID = 1;
+    bool Confirm = 2;
+    string Msg = 3;
+}
+
+message GateAddFriendResponse {
+    ResponseHeader header = 1;
+    bool Confirm = 2;
+}
+
+message GateCreateGroupRequest {
+}
+
+message GateCreateGroupResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+
+message GateRegisterRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message GateRegisterResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+message GateUpdateUserInfoRequest {
+    string User = 1;
+    string NickName = 2;
+    bytes Avatar = 3;
+}
+
+message GateUpdateUserInfoResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+message GateUpdateUserPasswordRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message GateUpdateUserPasswordResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+message GateGetUserInfoRequest {
+    string User = 1;
+}
+
+message GateGetUserInfoResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+    string User = 3;
+    string NickName = 4;
+    bytes Avatar = 5;
+}
+
+
+message GateHeartbeatRequest { }
+
+message GateHeartbeatResponse {}
+
+message GateUserLoginRequest {
+    string User = 1;
+    string Password = 2;
+}
+
+message GateUserLoginResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+
+message GateUserLogoutRequest {
+    string User = 1;
+}
+
+message GateUserLogoutResponse {
+    ResponseHeader header = 1;
+}
+
+
+message GateUploadFileRequest {
+    bytes File = 1;
+}
+
+message GateUploadFileResponse {
+    ResponseHeader header = 1;
+}
+
+message GateCheckFileRequest {
+    repeated string Names = 1;
+}
+
+message GateCheckFileResponse {
+    ResponseHeader Header = 1;
+    repeated string Names = 2;
+}
+
+
+message GateDownloadFileRequest {
+    repeated string Names = 1;
+}
+
+message GateDownloadFileResponse {
+    ResponseHeader header = 1;
+    map <string, bytes> Files = 2;
+}
+
+
+message GateNoticeRequest {
+    int64 ChannelID = 1;
+    Message Msg = 2;
+}
+
+
+message GateNoticeResponse {
+    ResponseHeader header = 1;
+}
+
+
+message GateLoadMessageRequest {
+    int64 ID = 1;
+    bool Reverse = 2;
+}
+
+
+message GateLoadMessageResponse {
+    ResponseHeader header = 1;
+    repeated Message Msgs = 2;
+}
+

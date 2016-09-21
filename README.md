@@ -1,16 +1,19 @@
-![Logo](/res/logo.png?raw=true "Candy logo")
+![Logo](https://raw.githubusercontent.com/dearcode/web/master/logo.png "Candy logo")
 
 [![Circle CI](https://circleci.com/gh/dearcode/candy.svg?style=svg)](https://circleci.com/gh/dearcode/candy) 
 
 
 ## 项目背景 
-  Candy是邮差网开源的一款即时通信软件，最初是为自己内部沟通而做的 IM 工具。  
+  Candy是一款即时通信软件。  
 
 ## 项目框架 
-  服务端所在server目录中  
+### 服务端所在server目录中  
   * Gate 接收客户端请求，负责客户端连接维护  
   * Notice 消息分发中心，整个系统的消息队列  
   * Store 消息及用户信息存储  
+
+### Android客户端
+    https://github.com/dearcode/candy-android  
 
 ## 编译安装 
   `make`  
