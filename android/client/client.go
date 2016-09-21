@@ -6,8 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	candy "github.com/dearcode/candy/server/android"
-	"github.com/dearcode/candy/server/util/log"
+	candy "github.com/dearcode/candy/android"
+	"github.com/dearcode/candy/util/log"
 )
 
 func notice() {

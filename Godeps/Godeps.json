@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/dearcode/candy/server",
+	"ImportPath": "github.com/dearcode/candy",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
 	"Packages": [

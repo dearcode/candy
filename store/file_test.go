@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/util"
 )
 
 var (

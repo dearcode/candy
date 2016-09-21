@@ -7,7 +7,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
 
-	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/meta"
 )
 
 type friendRelation struct {

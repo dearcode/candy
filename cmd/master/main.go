@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"github.com/dearcode/candy/server/master"
-	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/master"
+	"github.com/dearcode/candy/util"
 )
 
 func main() {

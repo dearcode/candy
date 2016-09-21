@@ -5,7 +5,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/meta"
 )
 
 type Master struct {

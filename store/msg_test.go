@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dearcode/candy/server/meta"
+	"github.com/dearcode/candy/meta"
 )
 
 type testSender struct {

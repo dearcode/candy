@@ -3,7 +3,7 @@ package store
 import (
 	"math"
 
-	"github.com/dearcode/candy/server/util"
+	"github.com/dearcode/candy/util"
 )
 
 // UserMessageKey create msg key by userid and msgid.

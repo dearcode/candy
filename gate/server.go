@@ -9,9 +9,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/dearcode/candy/server/meta"
-	"github.com/dearcode/candy/server/util"
-	"github.com/dearcode/candy/server/util/log"
+	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/util"
+	"github.com/dearcode/candy/util/log"
 )
 
 var (

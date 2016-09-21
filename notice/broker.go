@@ -6,8 +6,8 @@ import (
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
 
-	"github.com/dearcode/candy/server/meta"
-	"github.com/dearcode/candy/server/util/log"
+	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/util/log"
 )
 
 type gateInfo struct {

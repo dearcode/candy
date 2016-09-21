@@ -6,9 +6,9 @@ import (
 	"github.com/juju/errors"
 	"github.com/syndtr/goleveldb/leveldb"
 
-	"github.com/dearcode/candy/server/meta"
-	"github.com/dearcode/candy/server/util"
-	"github.com/dearcode/candy/server/util/log"
+	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/util"
+	"github.com/dearcode/candy/util/log"
 )
 
 func main() {

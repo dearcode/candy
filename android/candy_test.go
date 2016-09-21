@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dearcode/candy/server/util/log"
+	"github.com/dearcode/candy/util/log"
 )
 
 var (

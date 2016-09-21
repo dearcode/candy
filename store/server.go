@@ -8,9 +8,9 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"github.com/dearcode/candy/server/meta"
-	"github.com/dearcode/candy/server/util"
-	"github.com/dearcode/candy/server/util/log"
+	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/util"
+	"github.com/dearcode/candy/util/log"
 )
 
 // Store save user, message.
