@@ -1,6 +1,6 @@
 ![Logo](https://raw.githubusercontent.com/dearcode/web/master/logo.png "Candy logo")
 
-[![Circle CI](https://circleci.com/gh/dearcode/candy.svg?style=svg)](https://circleci.com/gh/dearcode/candy) 
+[![Build Status](https://travis-ci.org/dearcode/candy.svg?branch=master)](https://travis-ci.org/dearcode/candy)
 
 
 ## 项目背景 
