@@ -20,6 +20,10 @@ service Store {
     rpc FindUser(StoreFindUserRequest) returns (StoreFindUserResponse);
 
     rpc CreateGroup(StoreCreateGroupRequest) returns (StoreCreateGroupResponse);
+    
+    // LoadGroupList 加载群组列表
+    rpc LoadGroupList(StoreLoadGroupListRequest) returns (StoreLoadGroupListResponse);
+
     rpc NewMessage(StoreNewMessageRequest) returns (StoreNewMessageResponse);
 
     // UploadFile 上传文件接口，一次一个文件.
@@ -169,5 +173,14 @@ message StoreLoadMessageRequest {
 message StoreLoadMessageResponse {
     ResponseHeader header = 1;
     repeated Message Msgs = 2;
+}
+
+message StoreLoadGroupListRequest {
+    int64 User = 1;
+}
+
+message StoreLoadGroupListResponse {
+    ResponseHeader header = 1;
+    repeated Group groups = 2;
 }
 

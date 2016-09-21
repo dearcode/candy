@@ -24,6 +24,9 @@ service Gate {
 
     rpc CreateGroup (GateCreateGroupRequest) returns (GateCreateGroupResponse);
 
+    // LoadGroupList 加载群组列表
+    rpc LoadGroupList (GateLoadGroupListRequest) returns (GateLoadGroupListResponse);
+
     rpc Heartbeat (GateHeartbeatRequest) returns (GateHeartbeatResponse);
 
     // UploadFile 客户端上传文件接口，一次一个图片.
@@ -190,5 +193,14 @@ message GateLoadMessageRequest {
 message GateLoadMessageResponse {
     ResponseHeader header = 1;
     repeated Message Msgs = 2;
+}
+
+
+message GateLoadGroupListRequest {
+}
+
+message GateLoadGroupListResponse {
+    ResponseHeader header = 1;
+    repeated Group groups = 2;
 }
 

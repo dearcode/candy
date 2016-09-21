@@ -415,6 +415,22 @@ func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest
 	return &meta.GateCreateGroupResponse{ID: gid}, nil
 }
 
+// LoadGroupList 加载群组列表
+func (g *Gate) LoadGroupList(ctx context.Context, req *meta.GateLoadGroupListRequest) (*meta.GateLoadGroupListResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	groups, err := g.store.loadGroupList(s.id)
+	if err != nil {
+		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateLoadGroupListResponse{Groups: groups}, nil
+}
+
 // UploadFile 客户端上传文件接口，一次一个文件.
 func (g *Gate) UploadFile(ctx context.Context, req *meta.GateUploadFileRequest) (*meta.GateUploadFileResponse, error) {
 	s, err := g.getOnlineSession(ctx)

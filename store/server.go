@@ -281,3 +281,26 @@ func (s *Store) CreateGroup(_ context.Context, req *meta.StoreCreateGroupRequest
 
 	return &meta.StoreCreateGroupResponse{}, nil
 }
+
+// LoadGroupList 加载群组列表
+func (s *Store) LoadGroupList(_ context.Context, req *meta.StoreLoadGroupListRequest) (*meta.StoreLoadGroupListResponse, error) {
+
+	//获取群组id列表
+	gids, err := s.user.getGroups(req.User)
+	if err != nil {
+		return &meta.StoreLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	var groups []*meta.Group
+	//分别获取群组信息
+	for _, gid := range gids {
+		g, err := s.group.get(gid)
+		if err != nil {
+			return &meta.StoreLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+
+		groups = append(groups, &g)
+	}
+
+	return &meta.StoreLoadGroupListResponse{Groups: groups}, nil
+}

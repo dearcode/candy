@@ -124,6 +124,16 @@ func (s *store) createGroup(userID, groupID int64, name string) error {
 	return errors.Trace(resp.Header.Error())
 }
 
+func (s *store) loadGroupList(userID int64) ([]*meta.Group, error) {
+	req := &meta.StoreLoadGroupListRequest{User: userID}
+	resp, err := s.api.LoadGroupList(s.ctx, req)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	return resp.Groups, errors.Trace(resp.Header.Error())
+}
+
 func (s *store) uploadFile(userID int64, data []byte) error {
 	log.Debugf("store UploadFile, userID:%v", userID)
 	req := &meta.StoreUploadFileRequest{

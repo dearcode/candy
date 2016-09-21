@@ -47,6 +47,8 @@ It has these top-level messages:
 	GateNoticeResponse
 	GateLoadMessageRequest
 	GateLoadMessageResponse
+	GateLoadGroupListRequest
+	GateLoadGroupListResponse
 	NewIDRequest
 	NewIDResponse
 	SubscribeRequest
@@ -81,6 +83,8 @@ It has these top-level messages:
 	StoreDownloadFileResponse
 	StoreLoadMessageRequest
 	StoreLoadMessageResponse
+	StoreLoadGroupListRequest
+	StoreLoadGroupListResponse
 */
 package meta
 
