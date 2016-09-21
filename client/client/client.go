@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	candy "github.com/dearcode/candy/android"
+	candy "github.com/dearcode/candy/client"
 	"github.com/dearcode/candy/util/log"
 )
 
