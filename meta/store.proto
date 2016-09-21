@@ -113,6 +113,7 @@ message StoreAuthResponse {
 message StoreCreateGroupRequest {
     int64 UserID = 1;
     int64 GroupID = 2;
+    string GroupName = 3;
 }
 
 message StoreCreateGroupResponse {

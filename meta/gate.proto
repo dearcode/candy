@@ -65,6 +65,7 @@ message GateAddFriendResponse {
 }
 
 message GateCreateGroupRequest {
+    string GroupName = 1;
 }
 
 message GateCreateGroupResponse {

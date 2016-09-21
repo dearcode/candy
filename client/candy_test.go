@@ -274,3 +274,13 @@ func TestHeartbeat(t *testing.T) {
 
 	t.Logf("Heartbeat success")
 }
+
+func TestCreateGroup(t *testing.T) {
+	gname := fmt.Sprintf("gname:%v", time.Now().Unix())
+	gid, err := client.CreateGroup(gname)
+	if err != nil {
+		t.Fatalf("CreateGroup error:%v", err)
+	}
+
+	t.Logf("CreateGroup success, gid:%v", gid)
+}

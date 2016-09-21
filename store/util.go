@@ -16,6 +16,11 @@ func UserLastMessageKey(id int64) []byte {
 	return util.EncodeKey(id, util.UserLastMessagePrefix)
 }
 
+// UserGroupKey create group key by userid and groupid.
+func UserGroupKey(user int64, group int64) []byte {
+	return util.EncodeKey(user, util.UserGroupPrefix, group)
+}
+
 // UserGroupRange create user group key range.
 func UserGroupRange(id int64) ([]byte, []byte) {
 	return util.EncodeKey(id, util.UserGroupPrefix, int64(0)), util.EncodeKey(id, util.UserGroupPrefix, math.MaxInt64)

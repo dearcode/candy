@@ -240,3 +240,14 @@ func (c *CandyClient) Heartbeat() error {
 
 	return nil
 }
+
+// CreateGroup 创建群组
+func (c *CandyClient) CreateGroup(name string) (int64, error) {
+	req := &meta.GateCreateGroupRequest{GroupName: name}
+	resp, err := c.api.CreateGroup(context.Background(), req)
+	if err != nil {
+		return -1, err
+	}
+
+	return resp.ID, nil
+}

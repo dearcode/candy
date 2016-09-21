@@ -401,12 +401,13 @@ func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
 		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
+
 	gid, err := g.master.NewID()
 	if err != nil {
 		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	if err = g.store.createGroup(s.getID(), gid); err != nil {
+	if err = g.store.createGroup(s.getID(), gid, req.GroupName); err != nil {
 		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 

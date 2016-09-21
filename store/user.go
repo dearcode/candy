@@ -337,3 +337,29 @@ func (u *userDB) getMessage(userID int64, reverse bool, id int64) ([]int64, erro
 
 	return ids, nil
 }
+
+func (u *userDB) addGroup(userID int64, groupID int64) error {
+	key := UserGroupKey(userID, groupID)
+	val := util.EncodeInt64(groupID)
+	if err := u.db.Put(key, val, nil); err != nil {
+		return errors.Trace(err)
+	}
+
+	return nil
+}
+
+func (u *userDB) getGroups(userID int64) ([]int64, error) {
+	start, end := UserGroupRange(userID)
+
+	var ids []int64
+	it := u.db.NewIterator(nil, nil)
+	for ok := it.Seek(start); ok; {
+		ids = append(ids, util.DecodeInt64(it.Value()))
+
+		ok = it.Next() && bytes.Compare(end, it.Key()) >= 0
+	}
+
+	it.Release()
+
+	return ids, nil
+}

@@ -179,12 +179,6 @@ func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*
 	return &meta.StoreAddFriendResponse{State: state}, nil
 }
 
-// CreateGroup create group.
-func (s *Store) CreateGroup(_ context.Context, req *meta.StoreCreateGroupRequest) (*meta.StoreCreateGroupResponse, error) {
-	log.Debugf("Store CreateGroup")
-	return nil, nil
-}
-
 // NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) (*meta.StoreNewMessageResponse, error) {
 	log.Debugf("Store NewMessage, msg:%v", req.Msg)
@@ -261,4 +255,29 @@ func (s *Store) LoadMessage(_ context.Context, req *meta.StoreLoadMessageRequest
 	}
 
 	return &meta.StoreLoadMessageResponse{Msgs: msgs}, nil
+}
+
+// CreateGroup 创建群组
+func (s *Store) CreateGroup(_ context.Context, req *meta.StoreCreateGroupRequest) (*meta.StoreCreateGroupResponse, error) {
+	//创建群组
+	group := meta.Group{ID: req.GroupID, Name: req.GroupName}
+	err := s.group.newGroup(group)
+	if err != nil {
+		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	//TODO 还需要考虑群主和管理员的处理
+	//向群组中添加用户
+	err = s.group.addUser(group.ID, req.UserID)
+	if err != nil {
+		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	//在用户数据库记录群组信息
+	err = s.user.addGroup(req.UserID, req.GroupID)
+	if err != nil {
+		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreCreateGroupResponse{}, nil
 }

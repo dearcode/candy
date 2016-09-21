@@ -100,11 +100,14 @@ func (m *messageDB) repush() {
 			if err = m.sender.send(*msgs[0]); err != nil {
 				if errors.Cause(err) != ErrInvalidSender {
 					log.Errorf("push message:%+v error:%s", msgs[0], errors.ErrorStack(err))
+					//TODO 这块应该考虑使用LRU算法，把不在线的放在最后去重试，优先推送在线的消息，离线用户多的话可以增加
+					//消息推送的效率???
 					m.addRetry(id)
 					continue
 				}
 			}
-			delete(m.retry, id)
+			//推送成功删除消息
+			m.delRetry(id)
 			log.Debugf("debug 2, time:%v", time.Now().Unix()-t)
 			log.Debugf("remove retry message:%d", id)
 		}
