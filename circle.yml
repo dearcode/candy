@@ -1,9 +1,0 @@
-checkout:
-  override:
-      - go get -u github.com/dearcode/candy
-
-test:
-  pre:
-    - go version
-  override:
-      - cd ${GOPATH%%:*}/src/github.com/dearcode/candy;make&&make test
