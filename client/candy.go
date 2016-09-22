@@ -131,10 +131,6 @@ func (c *CandyClient) AddFriend(userID int64, confirm bool, msg string) (bool, e
 	return resp.Confirm, resp.Header.Error()
 }
 
-type UserList struct {
-	Users []*UserInfo
-}
-
 // 支持模糊查询，返回对应用户的列表
 func (c *CandyClient) FindUser(user string) (*UserList, error) {
 	req := &meta.GateFindUserRequest{User: user}
@@ -250,4 +246,20 @@ func (c *CandyClient) CreateGroup(name string) (int64, error) {
 	}
 
 	return resp.ID, nil
+}
+
+// LoadGroupList 拉取群组列表
+func (c *CandyClient) LoadGroupList() (*GroupList, error) {
+	req := &meta.GateLoadGroupListRequest{}
+	resp, err := c.api.LoadGroupList(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	var groups []*GroupInfo
+	for _, group := range resp.Groups {
+		groups = append(groups, &GroupInfo{ID: group.ID, Name: group.Name, Users: group.Users})
+	}
+
+	return &GroupList{Groups: groups}, nil
 }

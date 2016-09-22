@@ -20,6 +20,8 @@ func notice() {
 	fmt.Println("6. 查找用户")
 	fmt.Println("7. 添加好友")
 	fmt.Println("8. 发送消息")
+	fmt.Println("9. 创建群组")
+	fmt.Println("10. 加载群组")
 	fmt.Println("0. 退出")
 	fmt.Println("---------------------------------")
 }
@@ -203,6 +205,39 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("==============================================")
 }
 
+func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
+	fmt.Println("================创建群组==================")
+	fmt.Println("请输入群组名称:")
+	data, _, _ := reader.ReadLine()
+	groupName := string(data)
+
+	gid, err := c.CreateGroup(groupName)
+	if err != nil {
+		log.Errorf("createGroup error:%v", err)
+		return
+	}
+
+	log.Debugf("createGroup success, groupName:%v groupID:%v", groupName, gid)
+	fmt.Println("==============================================")
+}
+
+func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
+	fmt.Println("===============加载群组列表===================")
+
+	gList, err := c.LoadGroupList()
+	if err != nil {
+		log.Errorf("loadGroupList error:%v", err)
+		return
+	}
+
+	for index, group := range gList.Groups {
+		log.Debugf("group%v {ID:%v Name:%v Users:%v}", index, group.ID, group.Name, group.Users)
+	}
+
+	log.Debugf("loadGroupList success")
+	fmt.Println("==============================================")
+}
+
 type cmdClient struct {
 }
 
@@ -252,6 +287,10 @@ func main() {
 			addFriend(c, reader)
 		} else if command == "8" {
 			newMessage(c, reader)
+		} else if command == "9" {
+			createGroup(c, reader)
+		} else if command == "10" {
+			loadGroupList(c, reader)
 		} else {
 			log.Errorf("未知命令")
 		}

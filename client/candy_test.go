@@ -276,11 +276,28 @@ func TestHeartbeat(t *testing.T) {
 }
 
 func TestCreateGroup(t *testing.T) {
-	gname := fmt.Sprintf("gname:%v", time.Now().Unix())
-	gid, err := client.CreateGroup(gname)
-	if err != nil {
-		t.Fatalf("CreateGroup error:%v", err)
+	for i := 0; i < 5; i++ {
+		gname := fmt.Sprintf("群组%v_%v", i, time.Now().Unix())
+		gid, err := client.CreateGroup(gname)
+		if err != nil {
+			t.Fatalf("CreateGroup error:%v", err)
+		}
+
+		t.Logf("CreateGroup success, gid:%v", gid)
 	}
 
-	t.Logf("CreateGroup success, gid:%v", gid)
+	t.Logf("CreateGroup All success")
+}
+
+func TestLoadGroupList(t *testing.T) {
+	groupList, err := client.LoadGroupList()
+	if err != nil {
+		t.Fatalf("LoadGroupList error:%v", err)
+	}
+
+	for index, group := range groupList.Groups {
+		fmt.Printf("group:%v {ID:%v, Name:%v, Users:%v}\n", index, group.ID, group.Name, group.Users)
+	}
+
+	t.Logf("LoadGroupList success")
 }
