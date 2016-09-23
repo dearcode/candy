@@ -93,7 +93,9 @@ message StoreUpdateUserPasswordResponse {
 }
 
 message StoreGetUserInfoRequest {
-    string User = 1;
+    int32 Type = 1;
+    string UserName = 2;
+    int64 UserID = 3;
 }
 
 message StoreGetUserInfoResponse {

@@ -109,7 +109,10 @@ message GateUpdateUserPasswordResponse {
 }
 
 message GateGetUserInfoRequest {
-    string User = 1;
+    //0:用户名称   1：用户ID
+    int32 type = 1;
+    string UserName = 2;
+    int64 UserID = 3;
 }
 
 message GateGetUserInfoResponse {

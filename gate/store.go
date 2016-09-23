@@ -78,15 +78,15 @@ func (s *store) updateUserPassword(user, passwd string) (int64, error) {
 	return resp.ID, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) getUserInfo(user string) (int64, string, string, []byte, error) {
-	log.Debugf("get userInfo user:%v", user)
-	req := &meta.StoreGetUserInfoRequest{User: user}
+func (s *store) getUserInfo(gtype int32, userName string, userID int64) (int64, string, string, []byte, error) {
+	log.Debugf("get userInfo type:%v userName:%v userID:%v", gtype, userName, userID)
+	req := &meta.StoreGetUserInfoRequest{Type: gtype, UserName: userName, UserID: userID}
 	resp, err := s.api.GetUserInfo(s.ctx, req)
 	if err != nil {
 		return -1, "", "", nil, errors.Trace(err)
 	}
 
-	log.Debugf("get userInfo finished, user:%s, err:%v", user, resp.Header.Error())
+	log.Debugf("get userInfo finished, user:%s, err:%v", userName, resp.Header.Error())
 
 	return resp.ID, resp.User, resp.NickName, resp.Avatar, errors.Trace(resp.Header.Error())
 }

@@ -109,15 +109,25 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
-func (c *CandyClient) GetUserInfo(user string) (*UserInfo, error) {
-	req := &meta.GateGetUserInfoRequest{User: user}
+func (c *CandyClient) GetUserInfoByName(user string) (*UserInfo, error) {
+	req := &meta.GateGetUserInfoRequest{Type: 0, UserName: user}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
 
 	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
+	return userInfo, resp.Header.Error()
+}
 
+func (c *CandyClient) GetUserInfoByID(userID int64) (*UserInfo, error) {
+	req := &meta.GateGetUserInfoRequest{Type: 1, UserID: userID}
+	resp, err := c.api.GetUserInfo(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
 	return userInfo, resp.Header.Error()
 }
 
@@ -141,7 +151,7 @@ func (c *CandyClient) FindUser(user string) (*UserList, error) {
 
 	users := make([]*UserInfo, 0)
 	for _, matchUser := range resp.Users {
-		userInfo, err := c.GetUserInfo(matchUser)
+		userInfo, err := c.GetUserInfoByName(matchUser)
 		if err != nil {
 			return nil, err
 		}

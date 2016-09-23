@@ -35,3 +35,8 @@ func UserFriendKey(user int64, friend int64) []byte {
 func UserFriendRange(id int64) ([]byte, []byte) {
 	return util.EncodeKey(id, util.UserFriendPrefix, int64(0)), util.EncodeKey(id, util.UserFriendPrefix, math.MaxInt64)
 }
+
+// UserUnionKey create user union key by userid
+func UserUnionKey(id int64) []byte {
+	return util.EncodeKey(id, util.UserIDPrefix)
+}

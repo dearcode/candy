@@ -120,7 +120,8 @@ func TestUpdateUserInfo(t *testing.T) {
 
 		t.Logf("UpdateUserInfo success, userID:%d userName:%v nickName:%v", id, name, nickName)
 
-		userInfo, err := client.GetUserInfo(name)
+		//根据用户名查询用户信息
+		userInfo, err := client.GetUserInfoByName(name)
 		if err != nil {
 			t.Fatalf("get userInfo error:%v, user:%s", err, name)
 		}
@@ -129,7 +130,13 @@ func TestUpdateUserInfo(t *testing.T) {
 			t.Fatalf("nick name not match, user:%s, expect:%s, recv:%s", name, nickName, userInfo.NickName)
 		}
 
-		t.Logf("GetUserInfo success, id:%v user:%v nickName:%v avatar:%v", userInfo.ID, userInfo.Name, userInfo.NickName, userInfo.Avatar)
+		//根据用户ID查询用户信息
+		userInfo, err = client.GetUserInfoByID(id)
+		if err != nil {
+			t.Fatalf("get userInfo by id error:%v, userID:%v", err, id)
+		}
+
+		t.Logf("GetUserInfoByName success, id:%v user:%v nickName:%v avatar:%v", userInfo.ID, userInfo.Name, userInfo.NickName, userInfo.Avatar)
 	}
 }
 

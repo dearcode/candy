@@ -28,6 +28,7 @@ const (
 	UserLastMessagePrefix = int64(1)
 	UserGroupPrefix       = int64(2)
 	UserFriendPrefix      = int64(3)
+	UserIDPrefix          = int64(4)
 
 	NetworkTimeout = time.Second * 3
 )

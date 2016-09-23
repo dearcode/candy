@@ -117,8 +117,8 @@ func (s *Store) UpdateUserPassword(_ context.Context, req *meta.StoreUpdateUserP
 
 // GetUserInfo get user base info
 func (s *Store) GetUserInfo(_ context.Context, req *meta.StoreGetUserInfoRequest) (*meta.StoreGetUserInfoResponse, error) {
-	log.Debugf("GetUserInfo, user:%v", req.User)
-	a, err := s.user.getUserInfo(req.User)
+	log.Debugf("GetUserInfo, type:%v userName:%v userID:%v", req.Type, req.UserName, req.UserID)
+	a, err := s.user.getUserInfo(req.Type, req.UserName, req.UserID)
 	if err != nil {
 		return &meta.StoreGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}

@@ -22,6 +22,7 @@ func notice() {
 	fmt.Println("8. 发送消息")
 	fmt.Println("9. 创建群组")
 	fmt.Println("10. 加载群组")
+	fmt.Println("11. 根据用户ID获取用户信息")
 	fmt.Println("0. 退出")
 	fmt.Println("---------------------------------")
 }
@@ -100,19 +101,42 @@ func updateUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("==============================================")
 }
 
-func getUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
+func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================获取用户信息==================")
 	fmt.Println("请输入用户名:")
 	data, _, _ := reader.ReadLine()
 	userName := string(data)
 
-	user, err := c.GetUserInfo(userName)
+	user, err := c.GetUserInfoByName(userName)
 	if err != nil {
 		log.Errorf("getUserInfo error:%v", err)
 		return
 	}
 
 	log.Debugf("getUserInfo success, userName:%v", userName)
+	log.Debugf("user detail, ID:%v Name:%v NickName:%v Avatar:%v", user.ID, user.Name, user.NickName, user.Avatar)
+	fmt.Println("==============================================")
+}
+
+func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
+	fmt.Println("================获取用户信息==================")
+	fmt.Println("请输入用户ID:")
+	data, _, _ := reader.ReadLine()
+	userID := string(data)
+
+	id, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		log.Errorf("Parse int error:%v", err)
+		return
+	}
+
+	user, err := c.GetUserInfoByID(id)
+	if err != nil {
+		log.Errorf("getUserInfoByID error:%v", err)
+		return
+	}
+
+	log.Debugf("getUserInfoByID success, userID:%v", id)
 	log.Debugf("user detail, ID:%v Name:%v NickName:%v Avatar:%v", user.ID, user.Name, user.NickName, user.Avatar)
 	fmt.Println("==============================================")
 }
@@ -280,7 +304,7 @@ func main() {
 		} else if command == "4" {
 			updateUserInfo(c, reader)
 		} else if command == "5" {
-			getUserInfo(c, reader)
+			getUserInfoByName(c, reader)
 		} else if command == "6" {
 			findUser(c, reader)
 		} else if command == "7" {
@@ -291,6 +315,8 @@ func main() {
 			createGroup(c, reader)
 		} else if command == "10" {
 			loadGroupList(c, reader)
+		} else if command == "11" {
+			getUserInfoByID(c, reader)
 		} else {
 			log.Errorf("未知命令")
 		}

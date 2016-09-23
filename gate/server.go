@@ -216,8 +216,8 @@ func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	log.Debugf("get UserInfo user:%v", req.User)
-	id, name, nickName, avatar, err := g.store.getUserInfo(req.User)
+	log.Debugf("get UserInfo type:%v userName:%v userID:%v", req.Type, req.UserName, req.UserID)
+	id, name, nickName, avatar, err := g.store.getUserInfo(req.Type, req.UserName, req.UserID)
 	if err != nil {
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}

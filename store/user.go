@@ -83,13 +83,24 @@ func (u *userDB) register(user, passwd string, id int64) error {
 		return errors.Trace(err)
 	}
 
+	//创建用户的同时增加userid+@+username的编码key，提供通过userid查找用户数据
+	buf, err = json.Marshal(user)
+	if err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	if err = txn.Put(UserUnionKey(id), buf, nil); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
 	if err = txn.Commit(); err != nil {
 		txn.Discard()
 		return errors.Trace(err)
 	}
 
 	log.Debugf("user:%s, passwd:%s, id:%d", user, passwd, id)
-
 	return nil
 }
 
@@ -264,8 +275,25 @@ func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) (int64, er
 	return a.ID, nil
 }
 
-func (u *userDB) getUserInfo(user string) (*account, error) {
-	v, err := u.db.Get([]byte(user), nil)
+func (u *userDB) getUserInfo(gtype int32, userName string, userID int64) (*account, error) {
+	var a *account
+	var err error
+
+	//根据用户名查询
+	if gtype == 0 {
+		log.Debugf("getUserInfoByName, userName:%v", userName)
+		a, err = u.getUserInfoByName(userName)
+	} else if gtype == 1 {
+		//根据用户ID查询
+		log.Debugf("getUserInfoByID, userID:%v", userID)
+		a, err = u.getUserInfoByID(userID)
+	}
+
+	return a, err
+}
+
+func (u *userDB) getUserInfoByName(name string) (*account, error) {
+	v, err := u.db.Get([]byte(name), nil)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -276,6 +304,27 @@ func (u *userDB) getUserInfo(user string) (*account, error) {
 	}
 
 	return &a, nil
+}
+
+func (u *userDB) getUserInfoByID(id int64) (*account, error) {
+	v, err := u.db.Get(UserUnionKey(id), nil)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	var name string
+	if err = json.Unmarshal(v, &name); err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	log.Debugf("get username by userid, name:%v", name)
+
+	a, err := u.getUserInfoByName(name)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	return a, nil
 }
 
 func (u *userDB) addMessage(userID int64, msgID int64) error {
