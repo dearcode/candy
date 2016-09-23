@@ -22,3 +22,8 @@ type GroupInfo struct {
 type GroupList struct {
 	Groups []*GroupInfo
 }
+
+//好友信息
+type FriendList struct {
+	Users []int64
+}

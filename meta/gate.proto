@@ -21,6 +21,8 @@ service Gate {
     rpc AddFriend (GateAddFriendRequest) returns (GateAddFriendResponse);
     // FindUser 添加好友前先查找出来对应的ID.
     rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
+    // 加载好友列表
+    rpc LoadFriendList (GateLoadFriendListRequest) returns (GateLoadFriendListResponse);
 
     rpc CreateGroup (GateCreateGroupRequest) returns (GateCreateGroupResponse);
 
@@ -207,3 +209,11 @@ message GateLoadGroupListResponse {
     repeated Group groups = 2;
 }
 
+message GateLoadFriendListRequest {
+
+}
+
+message GateLoadFriendListResponse {
+    ResponseHeader header = 1;
+    repeated int64 users = 2;
+}

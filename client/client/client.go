@@ -23,6 +23,7 @@ func notice() {
 	fmt.Println("9. 创建群组")
 	fmt.Println("10. 加载群组")
 	fmt.Println("11. 根据用户ID获取用户信息")
+	fmt.Println("12. 加载好友列表")
 	fmt.Println("0. 退出")
 	fmt.Println("---------------------------------")
 }
@@ -178,7 +179,7 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
-	success, err := c.AddFriend(id, false, msg)
+	success, err := c.AddFriend(id, true, msg)
 	if err != nil {
 		log.Errorf("addFriend error:%v", err)
 		return
@@ -259,6 +260,23 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 	}
 
 	log.Debugf("loadGroupList success")
+	fmt.Println("==============================================")
+}
+
+func loadFriendList(c *candy.CandyClient, read *bufio.Reader) {
+	fmt.Println("===============加载好友列表===================")
+
+	fList, err := c.LoadFriendList()
+	if err != nil {
+		log.Errorf("loadGroupList error:%v", err)
+		return
+	}
+
+	for index, user := range fList.Users {
+		log.Debugf("friend%v {ID:%v}", index, user)
+	}
+
+	log.Debugf("loadFriendList success")
 	fmt.Println("==============================================")
 }
 

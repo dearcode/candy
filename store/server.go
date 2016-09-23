@@ -179,6 +179,16 @@ func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*
 	return &meta.StoreAddFriendResponse{State: state}, nil
 }
 
+// LoadFriendList load user's friend list
+func (s *Store) LoadFriendList(_ context.Context, req *meta.StoreLoadFriendListRequest) (*meta.StoreLoadFriendListResponse, error) {
+	ids, err := s.friend.get(req.User)
+	if err != nil {
+		return &meta.StoreLoadFriendListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	}
+
+	return &meta.StoreLoadFriendListResponse{Users: ids}, nil
+}
+
 // NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) (*meta.StoreNewMessageResponse, error) {
 	log.Debugf("Store NewMessage, msg:%v", req.Msg)

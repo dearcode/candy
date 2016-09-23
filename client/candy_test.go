@@ -308,3 +308,16 @@ func TestLoadGroupList(t *testing.T) {
 
 	t.Logf("LoadGroupList success")
 }
+
+func TestLoadFriendList(t *testing.T) {
+	friendList, err := client.LoadFriendList()
+	if err != nil {
+		t.Fatalf("LoadFriendList error:%v", err)
+	}
+
+	for index, user := range friendList.Users {
+		fmt.Printf("friend%v  userID:%v\n", index, user)
+	}
+
+	t.Logf("LoadFriendList success")
+}

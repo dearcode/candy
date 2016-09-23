@@ -380,6 +380,21 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 	return &meta.GateAddFriendResponse{}, nil
 }
 
+func (g *Gate) LoadFriendList(ctx context.Context, req *meta.GateLoadFriendListRequest) (*meta.GateLoadFriendListResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	ids, err := g.store.loadFriendList(s.id)
+	if err != nil {
+		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateLoadFriendListResponse{Users: ids}, nil
+}
+
 // FindUser 添加好友前先查找,模糊查找
 func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*meta.GateFindUserResponse, error) {
 	_, err := g.getOnlineSession(ctx)

@@ -141,6 +141,16 @@ func (c *CandyClient) AddFriend(userID int64, confirm bool, msg string) (bool, e
 	return resp.Confirm, resp.Header.Error()
 }
 
+func (c *CandyClient) LoadFriendList() (*FriendList, error) {
+	req := &meta.GateLoadFriendListRequest{}
+	resp, err := c.api.LoadFriendList(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &FriendList{Users: resp.Users}, nil
+}
+
 // 支持模糊查询，返回对应用户的列表
 func (c *CandyClient) FindUser(user string) (*UserList, error) {
 	req := &meta.GateFindUserRequest{User: user}

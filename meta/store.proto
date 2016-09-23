@@ -16,6 +16,9 @@ service Store {
     // AddFriend 添加好友
     rpc AddFriend(StoreAddFriendRequest) returns (StoreAddFriendResponse);
 
+    // LoadFriendList 获取好友列表
+    rpc LoadFriendList(StoreLoadFriendListRequest) returns (StoreLoadFriendListResponse);
+
     // FindUser 根据字符串的用户名模糊查用户列表
     rpc FindUser(StoreFindUserRequest) returns (StoreFindUserResponse);
 
@@ -184,5 +187,14 @@ message StoreLoadGroupListRequest {
 message StoreLoadGroupListResponse {
     ResponseHeader header = 1;
     repeated Group groups = 2;
+}
+
+message StoreLoadFriendListRequest {
+    int64 User = 1;
+}
+
+message StoreLoadFriendListResponse {
+    ResponseHeader header = 1;
+    repeated int64 users = 2;
 }
 

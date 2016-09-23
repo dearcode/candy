@@ -113,6 +113,16 @@ func (s *store) addFriend(from, to int64, state meta.FriendRelation, msg string)
 	return resp.State, errors.Trace(resp.Header.Error())
 }
 
+func (s *store) loadFriendList(user int64) ([]int64, error) {
+	req := &meta.StoreLoadFriendListRequest{User: user}
+	resp, err := s.api.LoadFriendList(s.ctx, req)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	return resp.Users, errors.Trace(resp.Header.Error())
+}
+
 func (s *store) createGroup(userID, groupID int64, name string) error {
 	log.Debugf("store createGroup, userID:%v groupID:%v groupName:%v", userID, groupID, name)
 	req := &meta.StoreCreateGroupRequest{UserID: userID, GroupID: groupID, GroupName: name}
