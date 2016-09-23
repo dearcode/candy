@@ -380,6 +380,7 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 	return &meta.GateAddFriendResponse{}, nil
 }
 
+// LoadFriendList 加载好友列表
 func (g *Gate) LoadFriendList(ctx context.Context, req *meta.GateLoadFriendListRequest) (*meta.GateLoadFriendListResponse, error) {
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {

@@ -335,6 +335,8 @@ func main() {
 			loadGroupList(c, reader)
 		} else if command == "11" {
 			getUserInfoByID(c, reader)
+		} else if command == "12" {
+			loadFriendList(c, reader)
 		} else {
 			log.Errorf("未知命令")
 		}
