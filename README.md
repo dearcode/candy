@@ -14,8 +14,14 @@
 
 ### Android客户端
     https://github.com/dearcode/candy-android  
-
-## 编译安装 
+    
+## 项目运行
+### 获取源码
+  推荐使用以下方式之一获得源码:
+  1. 将 candy 代码 clone 到 $GOPATH/src/github.com/dearcode 目录下 
+  2. 使用 go get -u github.com/dearcode/candy
+  以保证 import 路径正确
+### 编译安装 
   `make`  
   依次启动 `master`, `notice`, `store`, `gate`  
   直接运行不需要参数，默认使用9000到9004端口   
