@@ -7,6 +7,8 @@ import (
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/metadata"
 
 	"github.com/dearcode/candy/meta"
@@ -32,13 +34,15 @@ type Gate struct {
 	sessions map[string]*session
 	ids      map[int64]*session
 	sync.RWMutex
+	healthServer *health.Server // nil means disabled
 }
 
 // NewGate new gate server.
 func NewGate() *Gate {
 	return &Gate{
-		sessions: make(map[string]*session),
-		ids:      make(map[int64]*session),
+		sessions:     make(map[string]*session),
+		ids:          make(map[int64]*session),
+		healthServer: health.NewServer(),
 	}
 }
 
@@ -70,6 +74,11 @@ func (g *Gate) Start(host, notice, master, store string) error {
 
 	serv := grpc.NewServer()
 	meta.RegisterGateServer(serv, g)
+
+	if g.healthServer != nil {
+		healthpb.RegisterHealthServer(serv, g.healthServer)
+	}
+
 	return serv.Serve(lis)
 }
 

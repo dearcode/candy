@@ -31,6 +31,11 @@ func (c *cmdClient) OnError(msg string) {
 	fmt.Printf("rpc error:%s\n", msg)
 }
 
+// OnUnHealth 连接异常
+func (c *cmdClient) OnUnHealth(msg string) {
+	fmt.Printf("connection unhealth, msg:%v", msg)
+}
+
 func TestMain(main *testing.M) {
 	userNames = make(map[string]int64)
 	passwd = make(map[string]string)

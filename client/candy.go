@@ -5,6 +5,7 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
@@ -22,6 +23,9 @@ type MessageHandler interface {
 
 	// OnError 连接被服务器断开，或其它错误
 	OnError(msg string)
+
+	// OnUnHealth 连接异常
+	OnUnHealth(msg string)
 }
 
 type CandyClient struct {
@@ -31,6 +35,7 @@ type CandyClient struct {
 	api     meta.GateClient
 	handler MessageHandler
 	stream  meta.Gate_MessageStreamClient
+	health  healthpb.HealthClient
 }
 
 func NewCandyClient(host string, handler MessageHandler) *CandyClient {
@@ -49,6 +54,11 @@ func (c *CandyClient) Start() (err error) {
 	}
 
 	go c.loopRecvMessage()
+
+	//健康检查
+	c.health = healthpb.NewHealthClient(c.conn)
+	go c.healthCheck()
+
 	return
 }
 
@@ -243,7 +253,20 @@ func (c *CandyClient) loopRecvMessage() {
 
 		c.handler.OnRecv(msg.ID, int(msg.Method), msg.Group, msg.From, msg.User, msg.Body)
 	}
+}
 
+func (c *CandyClient) healthCheck() {
+	for !c.stop {
+		time.Sleep(time.Second)
+		req := &healthpb.HealthCheckRequest{
+			Service: "",
+		}
+
+		_, err := c.health.Check(context.Background(), req)
+		if err != nil {
+			c.handler.OnUnHealth(err.Error())
+		}
+	}
 }
 
 // Heartbeat 向服务器发送心跳信息

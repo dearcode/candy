@@ -293,6 +293,11 @@ func (c *cmdClient) OnError(msg string) {
 	fmt.Printf("rpc error:%s\n", msg)
 }
 
+// OnUnHealth 连接异常
+func (c *cmdClient) OnUnHealth(msg string) {
+	fmt.Printf("connection UnHealth, msg:%v\n", msg)
+}
+
 func main() {
 	c := candy.NewCandyClient("127.0.0.1:9000", &cmdClient{})
 	if err := c.Start(); err != nil {
