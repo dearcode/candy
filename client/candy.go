@@ -1,6 +1,8 @@
 package candy
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"golang.org/x/net/context"
@@ -119,7 +121,21 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
-func (c *CandyClient) GetUserInfoByName(user string) (*UserInfo, error) {
+func (c *CandyClient) GetUserInfoByName(user string) ([]byte, error) {
+	userInfo, err := c.getUserInfoByName(user)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := c.EncodeJSON(userInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (c *CandyClient) getUserInfoByName(user string) (*UserInfo, error) {
 	req := &meta.GateGetUserInfoRequest{Type: 0, UserName: user}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
@@ -130,7 +146,21 @@ func (c *CandyClient) GetUserInfoByName(user string) (*UserInfo, error) {
 	return userInfo, resp.Header.Error()
 }
 
-func (c *CandyClient) GetUserInfoByID(userID int64) (*UserInfo, error) {
+func (c *CandyClient) GetUserInfoByID(userID int64) ([]byte, error) {
+	userInfo, err := c.getUserInfoByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := c.EncodeJSON(userInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (c *CandyClient) getUserInfoByID(userID int64) (*UserInfo, error) {
 	req := &meta.GateGetUserInfoRequest{Type: 1, UserID: userID}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
@@ -151,18 +181,24 @@ func (c *CandyClient) AddFriend(userID int64, confirm bool, msg string) (bool, e
 	return resp.Confirm, resp.Header.Error()
 }
 
-func (c *CandyClient) LoadFriendList() (*FriendList, error) {
+func (c *CandyClient) LoadFriendList() ([]byte, error) {
 	req := &meta.GateLoadFriendListRequest{}
 	resp, err := c.api.LoadFriendList(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
 
-	return &FriendList{Users: resp.Users}, nil
+	friendList := &FriendList{Users: resp.Users}
+	data, err := c.EncodeJSON(friendList)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
 
 // 支持模糊查询，返回对应用户的列表
-func (c *CandyClient) FindUser(user string) (*UserList, error) {
+func (c *CandyClient) FindUser(user string) ([]byte, error) {
 	req := &meta.GateFindUserRequest{User: user}
 	resp, err := c.api.FindUser(context.Background(), req)
 	if err != nil {
@@ -171,14 +207,19 @@ func (c *CandyClient) FindUser(user string) (*UserList, error) {
 
 	users := make([]*UserInfo, 0)
 	for _, matchUser := range resp.Users {
-		userInfo, err := c.GetUserInfoByName(matchUser)
+		userInfo, err := c.getUserInfoByName(matchUser)
 		if err != nil {
 			return nil, err
 		}
 		users = append(users, userInfo)
 	}
+	userList := &UserList{Users: users}
+	data, err := c.EncodeJSON(userList)
+	if err != nil {
+		return nil, err
+	}
 
-	return &UserList{Users: users}, resp.Header.Error()
+	return data, resp.Header.Error()
 }
 
 func (c *CandyClient) FileExist(key string) (bool, error) {
@@ -292,7 +333,7 @@ func (c *CandyClient) CreateGroup(name string) (int64, error) {
 }
 
 // LoadGroupList 拉取群组列表
-func (c *CandyClient) LoadGroupList() (*GroupList, error) {
+func (c *CandyClient) LoadGroupList() ([]byte, error) {
 	req := &meta.GateLoadGroupListRequest{}
 	resp, err := c.api.LoadGroupList(context.Background(), req)
 	if err != nil {
@@ -304,5 +345,55 @@ func (c *CandyClient) LoadGroupList() (*GroupList, error) {
 		groups = append(groups, &GroupInfo{ID: group.ID, Name: group.Name, Users: group.Users})
 	}
 
-	return &GroupList{Groups: groups}, nil
+	groupList := &GroupList{Groups: groups}
+	data, err := c.EncodeJSON(groupList)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (c *CandyClient) EncodeJSON(data interface{}) ([]byte, error) {
+	body, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+
+func (c *CandyClient) DecodeUserInfo(data []byte) (*UserInfo, error) {
+	userInfo := &UserInfo{}
+	if err := json.Unmarshal(data, &userInfo); err != nil {
+		return nil, fmt.Errorf("Decode UserInfo error:%v", err.Error())
+	}
+
+	return userInfo, nil
+}
+
+func (c *CandyClient) DecodeUserList(data []byte) (*UserList, error) {
+	userList := &UserList{}
+	if err := json.Unmarshal(data, &userList); err != nil {
+		return nil, fmt.Errorf("Decode UserList error:%v", err.Error())
+	}
+
+	return userList, nil
+}
+
+func (c *CandyClient) DecodeFriendList(data []byte) (*FriendList, error) {
+	friendList := &FriendList{}
+	if err := json.Unmarshal(data, &friendList); err != nil {
+		return nil, fmt.Errorf("Decode FriendList error:%v", err.Error())
+	}
+
+	return friendList, nil
+}
+
+func (c *CandyClient) DecodeGroupList(data []byte) (*GroupList, error) {
+	groupList := &GroupList{}
+	if err := json.Unmarshal(data, &groupList); err != nil {
+		return nil, fmt.Errorf("Decode GroupList error:%v", err.Error())
+	}
+
+	return groupList, nil
 }

@@ -108,9 +108,15 @@ func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ := reader.ReadLine()
 	userName := string(data)
 
-	user, err := c.GetUserInfoByName(userName)
+	data, err := c.GetUserInfoByName(userName)
 	if err != nil {
 		log.Errorf("getUserInfo error:%v", err)
+		return
+	}
+
+	user, err := c.DecodeUserInfo(data)
+	if err != nil {
+		log.Errorf("Decode UserInfo error:%v", err)
 		return
 	}
 
@@ -131,9 +137,15 @@ func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	user, err := c.GetUserInfoByID(id)
+	data, err = c.GetUserInfoByID(id)
 	if err != nil {
 		log.Errorf("getUserInfoByID error:%v", err)
+		return
+	}
+
+	user, err := c.DecodeUserInfo(data)
+	if err != nil {
+		log.Errorf("Decode UserInfo error:%v", err)
 		return
 	}
 
@@ -148,9 +160,15 @@ func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ := reader.ReadLine()
 	userName := string(data)
 
-	userList, err := c.FindUser(userName)
+	data, err := c.FindUser(userName)
 	if err != nil {
 		log.Errorf("findUser error:%v", err)
+		return
+	}
+
+	userList, err := c.DecodeUserList(data)
+	if err != nil {
+		log.Errorf("Decode UserList error:%v", err)
 		return
 	}
 
@@ -249,9 +267,15 @@ func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
 func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("===============加载群组列表===================")
 
-	gList, err := c.LoadGroupList()
+	data, err := c.LoadGroupList()
 	if err != nil {
 		log.Errorf("loadGroupList error:%v", err)
+		return
+	}
+
+	gList, err := c.DecodeGroupList(data)
+	if err != nil {
+		log.Errorf("Decode GroupList error:%v", err)
 		return
 	}
 
@@ -266,9 +290,15 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 func loadFriendList(c *candy.CandyClient, read *bufio.Reader) {
 	fmt.Println("===============加载好友列表===================")
 
-	fList, err := c.LoadFriendList()
+	data, err := c.LoadFriendList()
 	if err != nil {
 		log.Errorf("loadGroupList error:%v", err)
+		return
+	}
+
+	fList, err := c.DecodeFriendList(data)
+	if err != nil {
+		log.Errorf("Decode FriendList error:%v", err)
 		return
 	}
 

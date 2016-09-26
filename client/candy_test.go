@@ -126,9 +126,14 @@ func TestUpdateUserInfo(t *testing.T) {
 		t.Logf("UpdateUserInfo success, userID:%d userName:%v nickName:%v", id, name, nickName)
 
 		//根据用户名查询用户信息
-		userInfo, err := client.GetUserInfoByName(name)
+		data, err := client.GetUserInfoByName(name)
 		if err != nil {
 			t.Fatalf("get userInfo error:%v, user:%s", err, name)
+		}
+
+		userInfo, err := client.DecodeUserInfo(data)
+		if err != nil {
+			t.Fatalf("%v", err)
 		}
 
 		if userInfo.NickName != nickName {
@@ -136,13 +141,19 @@ func TestUpdateUserInfo(t *testing.T) {
 		}
 
 		//根据用户ID查询用户信息
-		userInfo, err = client.GetUserInfoByID(id)
+		data, err = client.GetUserInfoByID(id)
 		if err != nil {
 			t.Fatalf("get userInfo by id error:%v, userID:%v", err, id)
 		}
 
+		userInfo, err = client.DecodeUserInfo(data)
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
+
 		t.Logf("GetUserInfoByName success, id:%v user:%v nickName:%v avatar:%v", userInfo.ID, userInfo.Name, userInfo.NickName, userInfo.Avatar)
 	}
+
 }
 
 func TestUpdateUserPassword(t *testing.T) {
@@ -194,9 +205,14 @@ func TestFindUser(t *testing.T) {
 
 		for u := range userNames {
 			//find user
-			users, err := client.FindUser(u)
+			data, err := client.FindUser(u)
 			if err != nil {
 				t.Fatalf("Find user:%s error:%v", u, err)
+			}
+
+			users, err := client.DecodeUserList(data)
+			if err != nil {
+				t.Fatalf("%v", err)
 			}
 
 			if users == nil || len(users.Users) <= 0 {
@@ -302,7 +318,12 @@ func TestCreateGroup(t *testing.T) {
 }
 
 func TestLoadGroupList(t *testing.T) {
-	groupList, err := client.LoadGroupList()
+	data, err := client.LoadGroupList()
+	if err != nil {
+		t.Fatalf("LoadGroupList error:%v", err)
+	}
+
+	groupList, err := client.DecodeGroupList(data)
 	if err != nil {
 		t.Fatalf("LoadGroupList error:%v", err)
 	}
@@ -315,9 +336,14 @@ func TestLoadGroupList(t *testing.T) {
 }
 
 func TestLoadFriendList(t *testing.T) {
-	friendList, err := client.LoadFriendList()
+	data, err := client.LoadFriendList()
 	if err != nil {
 		t.Fatalf("LoadFriendList error:%v", err)
+	}
+
+	friendList, err := client.DecodeFriendList(data)
+	if err != nil {
+		t.Fatalf("Decode FriendList error:%v", err)
 	}
 
 	for index, user := range friendList.Users {
