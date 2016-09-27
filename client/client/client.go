@@ -105,8 +105,8 @@ func updateUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
 func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================获取用户信息==================")
 	fmt.Println("请输入用户名:")
-	data, _, _ := reader.ReadLine()
-	userName := string(data)
+	d, _, _ := reader.ReadLine()
+	userName := string(d)
 
 	data, err := c.GetUserInfoByName(userName)
 	if err != nil {
@@ -114,7 +114,7 @@ func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	user, err := candy.DecodeUserInfo(data)
+	user, err := candy.DecodeUserInfo([]byte(data))
 	if err != nil {
 		log.Errorf("Decode UserInfo error:%v", err)
 		return
@@ -128,8 +128,8 @@ func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================获取用户信息==================")
 	fmt.Println("请输入用户ID:")
-	data, _, _ := reader.ReadLine()
-	userID := string(data)
+	d, _, _ := reader.ReadLine()
+	userID := string(d)
 
 	id, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
@@ -137,13 +137,13 @@ func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	data, err = c.GetUserInfoByID(id)
+	data, err := c.GetUserInfoByID(id)
 	if err != nil {
 		log.Errorf("getUserInfoByID error:%v", err)
 		return
 	}
 
-	user, err := candy.DecodeUserInfo(data)
+	user, err := candy.DecodeUserInfo([]byte(data))
 	if err != nil {
 		log.Errorf("Decode UserInfo error:%v", err)
 		return
@@ -157,8 +157,8 @@ func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================查找用户==================")
 	fmt.Println("请输入用户名:")
-	data, _, _ := reader.ReadLine()
-	userName := string(data)
+	d, _, _ := reader.ReadLine()
+	userName := string(d)
 
 	data, err := c.FindUser(userName)
 	if err != nil {
@@ -166,7 +166,7 @@ func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	userList, err := candy.DecodeUserList(data)
+	userList, err := candy.DecodeUserList([]byte(data))
 	if err != nil {
 		log.Errorf("Decode UserList error:%v", err)
 		return
@@ -273,7 +273,7 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	gList, err := candy.DecodeGroupList(data)
+	gList, err := candy.DecodeGroupList([]byte(data))
 	if err != nil {
 		log.Errorf("Decode GroupList error:%v", err)
 		return
@@ -296,7 +296,7 @@ func loadFriendList(c *candy.CandyClient, read *bufio.Reader) {
 		return
 	}
 
-	fList, err := candy.DecodeFriendList(data)
+	fList, err := candy.DecodeFriendList([]byte(data))
 	if err != nil {
 		log.Errorf("Decode FriendList error:%v", err)
 		return
