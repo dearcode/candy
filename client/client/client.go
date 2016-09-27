@@ -114,7 +114,7 @@ func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	user, err := c.DecodeUserInfo(data)
+	user, err := candy.DecodeUserInfo(data)
 	if err != nil {
 		log.Errorf("Decode UserInfo error:%v", err)
 		return
@@ -143,7 +143,7 @@ func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	user, err := c.DecodeUserInfo(data)
+	user, err := candy.DecodeUserInfo(data)
 	if err != nil {
 		log.Errorf("Decode UserInfo error:%v", err)
 		return
@@ -166,7 +166,7 @@ func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	userList, err := c.DecodeUserList(data)
+	userList, err := candy.DecodeUserList(data)
 	if err != nil {
 		log.Errorf("Decode UserList error:%v", err)
 		return
@@ -273,7 +273,7 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	gList, err := c.DecodeGroupList(data)
+	gList, err := candy.DecodeGroupList(data)
 	if err != nil {
 		log.Errorf("Decode GroupList error:%v", err)
 		return
@@ -296,7 +296,7 @@ func loadFriendList(c *candy.CandyClient, read *bufio.Reader) {
 		return
 	}
 
-	fList, err := c.DecodeFriendList(data)
+	fList, err := candy.DecodeFriendList(data)
 	if err != nil {
 		log.Errorf("Decode FriendList error:%v", err)
 		return

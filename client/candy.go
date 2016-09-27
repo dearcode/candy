@@ -1,8 +1,6 @@
 package candy
 
 import (
-	"encoding/json"
-	"fmt"
 	"time"
 
 	"golang.org/x/net/context"
@@ -127,7 +125,7 @@ func (c *CandyClient) GetUserInfoByName(user string) ([]byte, error) {
 		return nil, err
 	}
 
-	data, err := c.EncodeJSON(userInfo)
+	data, err := encodeJSON(userInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +150,7 @@ func (c *CandyClient) GetUserInfoByID(userID int64) ([]byte, error) {
 		return nil, err
 	}
 
-	data, err := c.EncodeJSON(userInfo)
+	data, err := encodeJSON(userInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +187,7 @@ func (c *CandyClient) LoadFriendList() ([]byte, error) {
 	}
 
 	friendList := &FriendList{Users: resp.Users}
-	data, err := c.EncodeJSON(friendList)
+	data, err := encodeJSON(friendList)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +212,7 @@ func (c *CandyClient) FindUser(user string) ([]byte, error) {
 		users = append(users, userInfo)
 	}
 	userList := &UserList{Users: users}
-	data, err := c.EncodeJSON(userList)
+	data, err := encodeJSON(userList)
 	if err != nil {
 		return nil, err
 	}
@@ -346,54 +344,10 @@ func (c *CandyClient) LoadGroupList() ([]byte, error) {
 	}
 
 	groupList := &GroupList{Groups: groups}
-	data, err := c.EncodeJSON(groupList)
+	data, err := encodeJSON(groupList)
 	if err != nil {
 		return nil, err
 	}
 
 	return data, nil
-}
-
-func (c *CandyClient) EncodeJSON(data interface{}) ([]byte, error) {
-	body, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-	return body, nil
-}
-
-func (c *CandyClient) DecodeUserInfo(data []byte) (*UserInfo, error) {
-	userInfo := &UserInfo{}
-	if err := json.Unmarshal(data, &userInfo); err != nil {
-		return nil, fmt.Errorf("Decode UserInfo error:%v", err.Error())
-	}
-
-	return userInfo, nil
-}
-
-func (c *CandyClient) DecodeUserList(data []byte) (*UserList, error) {
-	userList := &UserList{}
-	if err := json.Unmarshal(data, &userList); err != nil {
-		return nil, fmt.Errorf("Decode UserList error:%v", err.Error())
-	}
-
-	return userList, nil
-}
-
-func (c *CandyClient) DecodeFriendList(data []byte) (*FriendList, error) {
-	friendList := &FriendList{}
-	if err := json.Unmarshal(data, &friendList); err != nil {
-		return nil, fmt.Errorf("Decode FriendList error:%v", err.Error())
-	}
-
-	return friendList, nil
-}
-
-func (c *CandyClient) DecodeGroupList(data []byte) (*GroupList, error) {
-	groupList := &GroupList{}
-	if err := json.Unmarshal(data, &groupList); err != nil {
-		return nil, fmt.Errorf("Decode GroupList error:%v", err.Error())
-	}
-
-	return groupList, nil
 }
