@@ -131,7 +131,7 @@ func TestUpdateUserInfo(t *testing.T) {
 			t.Fatalf("get userInfo error:%v, user:%s", err, name)
 		}
 
-		userInfo, err := DecodeUserInfo(data)
+		userInfo, err := DecodeUserInfo([]byte(data))
 		if err != nil {
 			t.Fatalf("%v", err)
 		}
@@ -146,7 +146,7 @@ func TestUpdateUserInfo(t *testing.T) {
 			t.Fatalf("get userInfo by id error:%v, userID:%v", err, id)
 		}
 
-		userInfo, err = DecodeUserInfo(data)
+		userInfo, err = DecodeUserInfo([]byte(data))
 		if err != nil {
 			t.Fatalf("%v", err)
 		}
@@ -210,7 +210,7 @@ func TestFindUser(t *testing.T) {
 				t.Fatalf("Find user:%s error:%v", u, err)
 			}
 
-			users, err := DecodeUserList(data)
+			users, err := DecodeUserList([]byte(data))
 			if err != nil {
 				t.Fatalf("%v", err)
 			}
@@ -323,7 +323,7 @@ func TestLoadGroupList(t *testing.T) {
 		t.Fatalf("LoadGroupList error:%v", err)
 	}
 
-	groupList, err := DecodeGroupList(data)
+	groupList, err := DecodeGroupList([]byte(data))
 	if err != nil {
 		t.Fatalf("LoadGroupList error:%v", err)
 	}
@@ -341,7 +341,7 @@ func TestLoadFriendList(t *testing.T) {
 		t.Fatalf("LoadFriendList error:%v", err)
 	}
 
-	friendList, err := DecodeFriendList(data)
+	friendList, err := DecodeFriendList([]byte(data))
 	if err != nil {
 		t.Fatalf("Decode FriendList error:%v", err)
 	}
