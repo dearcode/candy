@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/dearcode/candy.svg?branch=master)](https://travis-ci.org/dearcode/candy)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dearcode/candy)](https://goreportcard.com/report/github.com/dearcode/candy)
-[![Coverage Status](https://coveralls.io/repos/github/dearcode/candy/badge.svg?branch=master)](https://coveralls.io/github/dearcode/candy?branch=master)
+
 
 ## 项目背景 
   Candy是一款即时通信软件。  
