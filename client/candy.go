@@ -14,7 +14,7 @@ import (
 
 const (
 	networkTimeout = time.Second * 3
-	empty          = ""
+	emptyString    = ""
 )
 
 // MessageHandler 接收服务器端推送来的消息
@@ -163,12 +163,12 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
 func (c *CandyClient) GetUserInfoByName(user string) (string, error) {
 	userInfo, err := c.getUserInfoByName(user)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	data, err := encodeJSON(userInfo)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	return string(data), nil
@@ -194,12 +194,12 @@ func (c *CandyClient) getUserInfoByName(user string) (*UserInfo, error) {
 func (c *CandyClient) GetUserInfoByID(userID int64) (string, error) {
 	userInfo, err := c.getUserInfoByID(userID)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	data, err := encodeJSON(userInfo)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	return string(data), nil
@@ -232,13 +232,13 @@ func (c *CandyClient) LoadFriendList() (string, error) {
 	req := &meta.GateLoadFriendListRequest{}
 	resp, err := c.api.LoadFriendList(context.Background(), req)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	friendList := &FriendList{Users: resp.Users}
 	data, err := encodeJSON(friendList)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	return string(data), nil
@@ -249,21 +249,21 @@ func (c *CandyClient) FindUser(user string) (string, error) {
 	req := &meta.GateFindUserRequest{User: user}
 	resp, err := c.api.FindUser(context.Background(), req)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	var users []*UserInfo
 	for _, matchUser := range resp.Users {
 		userInfo, err := c.getUserInfoByName(matchUser)
 		if err != nil {
-			return empty, err
+			return emptyString, err
 		}
 		users = append(users, userInfo)
 	}
 	userList := &UserList{Users: users}
 	data, err := encodeJSON(userList)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	return string(data), resp.Header.Error()
@@ -389,7 +389,7 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 	req := &meta.GateLoadGroupListRequest{}
 	resp, err := c.api.LoadGroupList(context.Background(), req)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	var groups []*GroupInfo
@@ -400,7 +400,7 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 	groupList := &GroupList{Groups: groups}
 	data, err := encodeJSON(groupList)
 	if err != nil {
-		return empty, err
+		return emptyString, err
 	}
 
 	return string(data), nil
