@@ -1,18 +1,18 @@
 /*
-
+  
 Candy是一款即时通信软件。  
 
 Gate 接收客户端请求，负责客户端连接维护  
 Notice 消息分发中心，整个系统的消息队列  
 Store 消息及用户信息存储  
+  
+下载  
+将 candy 代码 clone 到 $GOPATH/src/github.com/dearcode 目录下   
+    
+编译安装   
+make  
 
-下载
-将 candy 代码 clone 到 $GOPATH/src/github.com/dearcode 目录下 
-   
-编译安装 
-make
-
-运行
+运行  
 依次启动 master, notice, store, gate, 直接运行不需要参数，默认使用9000到9004端口   
 
 
