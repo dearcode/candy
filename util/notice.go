@@ -9,10 +9,12 @@ import (
 	"github.com/dearcode/candy/util/log"
 )
 
+// Notice 连接notice服务.
 type Notice struct {
 	client meta.NoticeClient
 }
 
+// NewNotice 返回notice client.
 func NewNotice(host string) (*Notice, error) {
 	log.Debugf("dial host:%v", host)
 	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))

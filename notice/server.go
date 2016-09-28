@@ -49,7 +49,7 @@ func (n *Notifer) Subscribe(c context.Context, req *meta.SubscribeRequest) (*met
 	return &meta.SubscribeResponse{}, nil
 }
 
-// Unsubscribe unsubscribe a Notifer.
+// UnSubscribe unsubscribe a Notifer.
 func (n *Notifer) UnSubscribe(_ context.Context, req *meta.UnSubscribeRequest) (*meta.UnSubscribeResponse, error) {
 	n.broker.UnSubscribe(req.ID)
 	return &meta.UnSubscribeResponse{}, nil

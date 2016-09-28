@@ -8,10 +8,12 @@ import (
 	"github.com/dearcode/candy/meta"
 )
 
+// Master 连接master服务.
 type Master struct {
 	client meta.MasterClient
 }
 
+// NewMaster 返回master client.
 func NewMaster(host string) (*Master, error) {
 	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))
 	if err != nil {
@@ -20,6 +22,7 @@ func NewMaster(host string) (*Master, error) {
 	return &Master{client: meta.NewMasterClient(conn)}, nil
 }
 
+// NewID 生成新ID.
 func (m *Master) NewID() (int64, error) {
 	resp, err := m.client.NewID(context.Background(), &meta.NewIDRequest{})
 	if err != nil {
