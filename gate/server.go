@@ -262,13 +262,10 @@ func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta
 
 // Logout nil.
 func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*meta.GateUserLogoutResponse, error) {
-	log.Debug("Gate Logout")
 	s, err := g.getSession(ctx)
 	if err != nil {
 		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-
-	log.Debugf("Logout user:%v", req.User)
 
 	//注销需要先取消消息订阅
 	err = g.notice.UnSubscribe(s.getID(), g.host)

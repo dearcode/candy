@@ -24,6 +24,7 @@ func notice() {
 	fmt.Println("10. 加载群组")
 	fmt.Println("11. 根据用户ID获取用户信息")
 	fmt.Println("12. 加载好友列表")
+	fmt.Println("13. 更改用户密码")
 	fmt.Println("0. 退出")
 	fmt.Println("---------------------------------")
 }
@@ -69,17 +70,13 @@ func login(c *candy.CandyClient, reader *bufio.Reader) {
 
 func logout(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================注销=======================")
-	fmt.Println("请输入用户名:")
-	data, _, _ := reader.ReadLine()
-	userName := string(data)
-
-	err := c.Logout(userName)
+	err := c.Logout()
 	if err != nil {
 		log.Errorf("Logout error:%v", err)
 		return
 	}
 
-	log.Debugf("Logout success, userName:%v", userName)
+	log.Debugf("Logout success")
 	fmt.Println("==============================================")
 }
 
@@ -287,7 +284,7 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("==============================================")
 }
 
-func loadFriendList(c *candy.CandyClient, read *bufio.Reader) {
+func loadFriendList(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("===============加载好友列表===================")
 
 	data, err := c.LoadFriendList()
@@ -307,6 +304,25 @@ func loadFriendList(c *candy.CandyClient, read *bufio.Reader) {
 	}
 
 	log.Debugf("loadFriendList success")
+	fmt.Println("==============================================")
+}
+
+func updateUserPasswd(c *candy.CandyClient, reader *bufio.Reader) {
+	fmt.Println("===============更改用户密码===================")
+	fmt.Println("请输入用户名:")
+	data, _, _ := reader.ReadLine()
+	user := string(data)
+
+	fmt.Println("请输入新密码:")
+	data, _, _ = reader.ReadLine()
+	pwd := string(data)
+
+	id, err := c.UpdateUserPassword(user, pwd)
+	if err != nil {
+		log.Errorf("UpdateUserPassword error:%v", err)
+		return
+	}
+	log.Debugf("UpdateUserPassword success, id:%v", id)
 	fmt.Println("==============================================")
 }
 
@@ -372,6 +388,8 @@ func main() {
 			getUserInfoByID(c, reader)
 		} else if command == "12" {
 			loadFriendList(c, reader)
+		} else if command == "13" {
+			updateUserPasswd(c, reader)
 		} else {
 			log.Errorf("未知命令")
 		}

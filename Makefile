@@ -19,6 +19,8 @@ meta:
 lint: golint
 	golint gate/
 	golint store/
+	golint client/
+	golint master/
 	golint notice/
 	golint util/
 

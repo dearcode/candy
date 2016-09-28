@@ -73,7 +73,7 @@ func TestMain(main *testing.M) {
 	}
 
 	for i := 0; i < 10; i++ {
-		name := fmt.Sprintf("testuser_%v_%d", time.Now().Unix(), i)
+		name := fmt.Sprintf("testuser_%v_%d@qq.com", time.Now().Unix(), i)
 		pass := fmt.Sprintf("testpass_%v_%d", time.Now().Unix(), i)
 		id, err := client.Register(name, pass)
 		if err != nil {
@@ -175,7 +175,7 @@ func TestUpdateUserPassword(t *testing.T) {
 		t.Logf("UpdateUserPassword success, userID:%d userName:%v", id, name)
 
 		//Logout
-		err = client.Logout(name)
+		err = client.Logout()
 		if err != nil {
 			t.Fatalf("user Logout error:%v", err)
 		}
@@ -329,7 +329,7 @@ func TestLoadGroupList(t *testing.T) {
 	}
 
 	for index, group := range groupList.Groups {
-		fmt.Printf("group:%v {ID:%v, Name:%v, Users:%v}\n", index, group.ID, group.Name, group.Users)
+		t.Logf("group:%v {ID:%v, Name:%v, Users:%v}\n", index, group.ID, group.Name, group.Users)
 	}
 
 	t.Logf("LoadGroupList success")
@@ -347,7 +347,7 @@ func TestLoadFriendList(t *testing.T) {
 	}
 
 	for index, user := range friendList.Users {
-		fmt.Printf("friend%v  userID:%v\n", index, user)
+		t.Logf("friend%v  userID:%v\n", index, user)
 	}
 
 	t.Logf("LoadFriendList success")

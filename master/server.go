@@ -10,17 +10,19 @@ import (
 	"github.com/dearcode/candy/util/log"
 )
 
-// masterServer process gate request.
-type masterServer struct {
+// MasterServer process gate request.
+type MasterServer struct {
 	host        string
 	idAllocator *idAllocator
 }
 
-func NewMasterServer(host string) *masterServer {
-	return &masterServer{host: host, idAllocator: newIDAllocator()}
+// NewMasterServer create new MasterServer
+func NewMasterServer(host string) *MasterServer {
+	return &MasterServer{host: host, idAllocator: newIDAllocator()}
 }
 
-func (g *masterServer) Start() error {
+// Start start masterServer
+func (g *MasterServer) Start() error {
 	log.Debugf("masterServer Start...")
 	serv := grpc.NewServer()
 	meta.RegisterMasterServer(serv, g)
@@ -33,6 +35,7 @@ func (g *masterServer) Start() error {
 	return serv.Serve(lis)
 }
 
-func (g *masterServer) NewID(_ context.Context, _ *meta.NewIDRequest) (*meta.NewIDResponse, error) {
+// NewID return an new id
+func (g *MasterServer) NewID(_ context.Context, _ *meta.NewIDRequest) (*meta.NewIDResponse, error) {
 	return &meta.NewIDResponse{ID: g.idAllocator.newID()}, nil
 }
