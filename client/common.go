@@ -1,4 +1,4 @@
-package candy
+package client
 
 // UserInfo 用户信息
 type UserInfo struct {

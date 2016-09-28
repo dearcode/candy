@@ -1,4 +1,4 @@
-package candy
+package client
 
 import (
 	"time"

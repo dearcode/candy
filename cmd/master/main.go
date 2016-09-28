@@ -17,7 +17,7 @@ func main() {
 		return
 	}
 
-	s := master.NewMasterServer(*host)
+	s := master.NewMaster(*host)
 	if err := s.Start(); err != nil {
 		println(err.Error())
 	}
