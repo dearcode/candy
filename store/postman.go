@@ -51,7 +51,7 @@ func (p *postman) sendToUser(msg meta.Message) ([]*meta.PushID, error) {
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
-	return []*meta.PushID{&meta.PushID{Before: before, User: msg.User}}, nil
+	return []*meta.PushID{{Before: before, User: msg.User}}, nil
 }
 
 // sendToGroup 发送给群
