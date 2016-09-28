@@ -23,7 +23,7 @@ type Notifer struct {
 
 // NewNotifer new Notifer server.
 func NewNotifer(host string) *Notifer {
-	return &Notifer{host: host, broker: newBroker()}
+	return &Notifer{host: host, broker: newBroker(newGate())}
 }
 
 // Start start service.
@@ -38,10 +38,7 @@ func (n *Notifer) Start() error {
 		return err
 	}
 
-	err = n.broker.Start()
-	if err != nil {
-		return err
-	}
+	n.broker.Start()
 
 	return serv.Serve(lis)
 }
@@ -54,7 +51,7 @@ func (n *Notifer) Subscribe(c context.Context, req *meta.SubscribeRequest) (*met
 
 // Unsubscribe unsubscribe a Notifer.
 func (n *Notifer) UnSubscribe(_ context.Context, req *meta.UnSubscribeRequest) (*meta.UnSubscribeResponse, error) {
-	n.broker.UnSubscribe(req.ID, req.Host)
+	n.broker.UnSubscribe(req.ID)
 	return &meta.UnSubscribeResponse{}, nil
 }
 

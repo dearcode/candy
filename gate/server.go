@@ -326,25 +326,30 @@ func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*
 
 // Notice recv Notice server Message, and send Message to client.
 func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.GateNoticeResponse, error) {
-	log.Debugf("begin ChannelID:%v msg:%v", req.ChannelID, req.Msg)
+	log.Debugf("begin PushID:%v msg:%v", req.ID, req.Msg)
 
-	s := g.getOnlineUser(req.ChannelID)
-	if s == nil {
-		log.Debugf("User:%d offline", req.ChannelID)
-		return &meta.GateNoticeResponse{}, nil
+	for _, id := range req.ID {
+		s := g.getOnlineUser(id.User)
+		if s == nil {
+			log.Debugf("User:%d offline", id.User)
+			continue
+		}
+
+		client := s.getStream()
+		if client == nil {
+			log.Errorf("User:%d client strem is nil", id.User)
+			continue
+		}
+
+		req.Msg.Before = id.Before
+
+		if err := client.Send(req.Msg); err != nil {
+			log.Errorf("client  Send msg:%v err:%v", req.Msg, err)
+			continue
+		}
 	}
 
-	client := s.getStream()
-	if client == nil {
-		log.Errorf("User:%d client strem is nil", req.ChannelID)
-		return &meta.GateNoticeResponse{}, nil
-	}
-
-	if err := client.Send(req.Msg); err != nil {
-		log.Errorf("client  Send msg:%v err:%v", req.Msg, err)
-		return &meta.GateNoticeResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
-	}
-	log.Debugf("end ChannelID:%v msg:%v ok", req.ChannelID, req.Msg)
+	log.Debugf("end PushID:%v msg:%v ok", req.ID, req.Msg)
 
 	return &meta.GateNoticeResponse{}, nil
 }

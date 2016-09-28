@@ -2,12 +2,25 @@ package store
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/juju/errors"
+
 	"github.com/dearcode/candy/meta"
 )
+
+const (
+	testMessageDBPath = "/tmp/test_candy_db"
+)
+
+func init() {
+	if err := os.RemoveAll(testMessageDBPath); err != nil {
+		println(err.Error())
+	}
+}
 
 type testSender struct {
 }
@@ -17,9 +30,9 @@ func (s *testSender) send(msg meta.Message) error {
 }
 
 func TestMessageDB(t *testing.T) {
-	m := newMessageDB("/tmp/m.db")
+	m := newMessageDB(testMessageDBPath)
 	if err := m.start(&testSender{}); err != nil {
-		t.Fatalf("start error:%s", err.Error())
+		t.Fatalf("start error:%s", errors.ErrorStack(err))
 	}
 
 	var msgs []meta.Message

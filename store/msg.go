@@ -46,13 +46,13 @@ func newMessageDB(dir string) *messageDB {
 func (m *messageDB) start(s sender) error {
 	var err error
 	path := fmt.Sprintf("%s/%s", m.root, util.MessageDBPath)
-	log.Debugf("path:%v", path)
 	if m.stable, err = leveldb.OpenFile(path, nil); err != nil {
+		log.Errorf("db openFile:%v, err:%s", path, err.Error())
 		return errors.Trace(err)
 	}
 	path = fmt.Sprintf("%s/%s", m.root, util.MessageLogDBPath)
-	log.Debugf("path:%v", path)
 	if m.queue, err = leveldb.OpenFile(path, nil); err != nil {
+		log.Errorf("db openFile:%v, err:%s", path, err.Error())
 		return errors.Trace(err)
 	}
 

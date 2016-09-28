@@ -327,36 +327,28 @@ func (u *userDB) getUserInfoByID(id int64) (*account, error) {
 	return a, nil
 }
 
-func (u *userDB) addMessage(userID int64, msgID int64) error {
+func (u *userDB) addMessage(userID int64, msgID int64) (int64, error) {
 	key := UserMessageKey(userID, msgID)
 	val := util.EncodeInt64(msgID)
 	if err := u.db.Put(key, val, nil); err != nil {
-		return errors.Trace(err)
+		return 0, errors.Trace(err)
 	}
 
-	lastKey := UserLastMessageKey(userID)
-	var lastID int64
-
-	v, err := u.db.Get(lastKey, nil)
-	if err != nil {
-		if err != leveldb.ErrNotFound {
-			return errors.Trace(err)
-		}
-	} else {
-		lastID = util.DecodeInt64(v)
+	before := int64(0)
+	v, err := u.db.Get(UserLastMessageKey(userID), nil)
+	if err == nil {
+		before = util.DecodeInt64(v)
+	} else if err != leveldb.ErrNotFound {
+		return 0, errors.Trace(err)
 	}
 
-	if lastID > msgID {
-		return nil
-	}
-	log.Debugf("user:%d, lastMessageID:%d", userID, msgID)
+	log.Debugf("user:%d, before:%d, new:%d", userID, before, msgID)
 
-	return u.db.Put(UserLastMessageKey(userID), util.EncodeInt64(msgID), nil)
+	return before, u.db.Put(UserLastMessageKey(userID), util.EncodeInt64(msgID), nil)
 }
 
-func (u *userDB) getLastMessageID(userID int64) (int64, error) {
-	lastKey := UserLastMessageKey(userID)
-	v, err := u.db.Get(lastKey, nil)
+func (u *userDB) getLastID(userID int64) (int64, error) {
+	v, err := u.db.Get(UserLastMessageKey(userID), nil)
 	if err != nil {
 		return 0, errors.Trace(err)
 	}

@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/juju/errors"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
@@ -18,7 +19,7 @@ func newGate() *gate {
 	return &gate{clients: make(map[string]meta.GateClient)}
 }
 
-func (g *gate) client(addr string) (meta.GateClient, error) {
+func (g *gate) getClient(addr string) (meta.GateClient, error) {
 	g.Lock()
 	defer g.Unlock()
 
@@ -35,4 +36,18 @@ func (g *gate) client(addr string) (meta.GateClient, error) {
 	c = meta.NewGateClient(conn)
 	g.clients[addr] = c
 	return c, nil
+}
+
+func (g *gate) notice(addr string, ids []*meta.PushID, msg *meta.Message) error {
+	c, err := g.getClient(addr)
+	if err != nil {
+		return errors.Trace(err)
+	}
+	req := &meta.GateNoticeRequest{ID: ids, Msg: msg}
+	resp, err := c.Notice(context.Background(), req)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	return resp.Header.Error()
 }

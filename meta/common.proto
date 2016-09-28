@@ -42,17 +42,25 @@ enum Method {
     GROUP_INVITE= 5;
 }
 
+// PushID 用户的上一条消息ID,用户ID
+message PushID {
+    int64 User      = 1;
+    int64 Before    = 2;
+} 
+
 // Group 如果当前为群聊，设置为群组ID, 否则为0
 // User 如果当前为私聊，这个设置为收消息用户的ID, 否则为0
 // ID 客户端发送过来时这个字段为0， gate收到后写入实际从master处获取到的消息ID
+// Before 前一第消息的ID，用来确定是否有消息丢失
 // From 发消息的人的ID
 message Message {
     int64   ID      = 1;
-    Method  Method  = 2;
-    int64   From    = 3;
-    int64   Group   = 4;
-    int64   User    = 5;
-    string  Body    = 6;
+    int64   Before  = 2;
+    Method  Method  = 3;
+    int64   From    = 4;
+    int64   Group   = 5;
+    int64   User    = 6;
+    string  Body    = 7;
 }
 
 message Group {

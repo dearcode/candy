@@ -51,5 +51,6 @@ store: godep
 
 test:
 	@go test ./client/
+	@go test ./notice/
 	@go test ./store/
 

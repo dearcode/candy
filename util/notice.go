@@ -47,7 +47,7 @@ func (n *Notice) UnSubscribe(id int64, host string) error {
 }
 
 //Push  调用notice发推送消息
-func (n *Notice) Push(msg meta.Message, ids ...int64) error {
+func (n *Notice) Push(msg meta.Message, ids ...*meta.PushID) error {
 	req := &meta.PushRequest{ID: ids, Msg: &msg}
 	resp, err := n.client.Push(context.Background(), req)
 	if err != nil {

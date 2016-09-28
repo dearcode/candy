@@ -45,37 +45,57 @@ func (p *postman) check(msg meta.Message) error {
 	return nil
 }
 
+// sendToUser 发给单个用户
+func (p *postman) sendToUser(msg meta.Message) ([]*meta.PushID, error) {
+	before, err := p.user.addMessage(msg.User, msg.ID)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	return []*meta.PushID{&meta.PushID{Before: before, User: msg.User}}, nil
+}
+
+// sendToGroup 发送给群
+func (p *postman) sendToGroup(msg meta.Message) ([]*meta.PushID, error) {
+	var ids []*meta.PushID
+	group, err := p.group.get(msg.Group)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	//向组中每个人添加消息
+	for _, uid := range group.Users {
+		before, err := p.user.addMessage(uid, msg.ID)
+		if err != nil {
+			return nil, errors.Trace(err)
+		}
+		ids = append(ids, &meta.PushID{Before: before, User: uid})
+	}
+
+	return ids, nil
+}
+
 // send 分发消息
-// 推送流程：
-// 1.先添加到收件人消息列表中
-// 2.再添加到发件人的消息列表中
+// 1.检查是否存在好友关系或者群成员
+// 2.添加到收件人消息列表中
 // 3.调用notice接口Push通知
-// 如果是群发，需要依次添加到每个人的消息列表中
 func (p *postman) send(msg meta.Message) error {
 	log.Debugf("msg:%v", msg)
-	if err := p.check(msg); err != nil {
-		return errors.Trace(err)
-	}
-
-	//私聊：只给一个发就退出了
-	if msg.Group == 0 {
-		if err := p.user.addMessage(msg.User, msg.ID); err != nil {
-			return errors.Trace(err)
-		}
-		return p.notice.Push(msg, msg.User)
-	}
-
-	//群聊：向组中每个人添加消息
-	group, err := p.group.get(msg.Group)
+	err := p.check(msg)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	for _, uid := range group.Users {
-		if err := p.user.addMessage(uid, msg.ID); err != nil {
-			return errors.Trace(err)
-		}
+	var ids []*meta.PushID
+
+	if msg.Group == 0 {
+		ids, err = p.sendToUser(msg)
+	} else {
+		ids, err = p.sendToGroup(msg)
 	}
 
-	return p.notice.Push(msg, group.Users...)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	return p.notice.Push(msg, ids...)
 }

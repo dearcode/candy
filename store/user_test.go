@@ -68,11 +68,11 @@ func TestUserLastMessage(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		mid := int64(i * 100)
-		if err := u.addMessage(uid, mid); err != nil {
+		if _, err := u.addMessage(uid, mid); err != nil {
 			t.Fatalf("add message error:%s", err.Error())
 		}
 
-		last, err := u.getLastMessageID(uid)
+		last, err := u.getLastID(uid)
 		if err != nil {
 			t.Fatalf("add message error:%s", err.Error())
 		}
@@ -93,7 +93,7 @@ func TestUserMessage(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		mid := int64(i)
-		if err := u.addMessage(uid, mid); err != nil {
+		if _, err := u.addMessage(uid, mid); err != nil {
 			t.Fatalf("add message error:%s", err.Error())
 		}
 	}
@@ -123,7 +123,7 @@ func TestUserMessageReverse(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		mid := int64(i)
-		if err := u.addMessage(uid, mid); err != nil {
+		if _, err := u.addMessage(uid, mid); err != nil {
 			t.Fatalf("add message error:%s", err.Error())
 		}
 	}

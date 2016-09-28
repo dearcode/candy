@@ -4,115 +4,113 @@ import (
 	"sync"
 
 	"github.com/juju/errors"
-	"golang.org/x/net/context"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
 )
 
-type gateInfo struct {
-	addr string
-}
-
-type channel struct {
-	id    int64
-	gates map[string]gateInfo
-	sync.RWMutex
-}
-
 type message struct {
-	id   int64
+	ids  []*meta.PushID
 	addr string
 	meta.Message
 }
 
-type broker struct {
-	channels map[int64]channel
-	sync.RWMutex
+type sender interface {
+	notice(string, []*meta.PushID, *meta.Message) error
+}
 
-	pusher chan message
-	gate   *gate
+// users 存储用户ID对应的gate地址
+type broker struct {
+	mbox  chan message
+	gate  sender
+	users map[int64]string
+	sync.RWMutex
 }
 
 const (
 	defaultPushChanSize = 1000
+	// 默认推送线程数量
+	defaultSenderNumber = 4
 )
 
-func newBroker() *broker {
-	return &broker{channels: make(map[int64]channel), pusher: make(chan message, defaultPushChanSize), gate: newGate()}
+func newBroker(gate sender) *broker {
+	return &broker{users: make(map[int64]string), mbox: make(chan message, defaultPushChanSize), gate: gate}
 }
 
 // Start start service.
-func (b *broker) Start() error {
-	go func() {
-		for {
-			m := <-b.pusher
-			log.Debugf("sendMessage msg:%v", m)
-			b.sendMessage(m)
-		}
-	}()
-	return nil
+func (b *broker) Start() {
+	for i := 0; i < defaultSenderNumber; i++ {
+		go b.sender(i)
+	}
 }
 
-func (b *broker) sendMessage(m message) error {
-	log.Debugf("broker message:%v, to gate:%s", m, m.addr)
-	g, err := b.gate.client(m.addr)
-	if err != nil {
-		log.Errorf("connect to %s error:%s", m.addr, err.Error())
-		return errors.Trace(err)
-	}
-	req := &meta.GateNoticeRequest{ChannelID: m.id, Msg: &m.Message}
-	log.Debugf("begin call gate Notice")
-	resp, err := g.Notice(context.Background(), req)
-	log.Debugf("end call gate Notice err:%v, head:%v", err, resp.Header.Error())
-	if err != nil {
-		log.Errorf("Notice to gate:%s error:%s", m.addr, err.Error())
-		return errors.Trace(err)
-	}
+// split 按用户所在gate拆分请求
+func (b *broker) split(m message) []*message {
+	//数量少，不适合用map
+	var msgs []*message
 
-	return errors.Trace(err)
+	b.RLock()
+	for _, id := range m.ids {
+		addr, ok := b.users[id.User]
+		if !ok {
+			// 跳过未订阅的用户
+			continue
+		}
+
+		msg := (*message)(nil)
+		for i, m := range msgs {
+			if m.addr == addr {
+				msg = msgs[i]
+				break
+			}
+		}
+
+		if msg == nil {
+			msg = &message{addr: addr}
+			msgs = append(msgs, msg)
+		}
+
+		msg.ids = append(msg.ids, id)
+	}
+	b.RUnlock()
+
+	return msgs
+}
+
+func (b *broker) sender(sid int) {
+	for {
+		m := <-b.mbox
+
+		for _, msg := range b.split(m) {
+			log.Debugf("%d begin sendMessage:%v, to gate:%s", sid, m, msg.addr)
+			if err := b.gate.notice(msg.addr, msg.ids, &m.Message); err != nil {
+				log.Errorf("%d sendMessage error:%s", sid, errors.ErrorStack(err))
+				continue
+			}
+			log.Debugf("%d end sendMessage:%v, to gate:%s", sid, m, msg.addr)
+		}
+	}
 }
 
 func (b *broker) Subscribe(id int64, addr string) {
 	b.Lock()
-
-	c, ok := b.channels[id]
-	if !ok {
-		c = channel{id: id, gates: make(map[string]gateInfo)}
-		b.channels[id] = c
+	if _, ok := b.users[id]; !ok {
+		b.users[id] = addr
 	}
-
-	if _, ok = c.gates[addr]; !ok {
-		c.gates[addr] = gateInfo{addr: addr}
-	}
-
 	b.Unlock()
-
 	log.Debugf("Subscribe id:%d, addr:%s", id, addr)
 }
 
-func (b *broker) UnSubscribe(id int64, addr string) {
+func (b *broker) UnSubscribe(id int64) {
 	b.Lock()
-	if c, ok := b.channels[id]; ok {
-		delete(c.gates, addr)
-		delete(b.channels, id)
-	}
+	delete(b.users, id)
 	b.Unlock()
-	log.Debugf("UnSubscribe id:%d, addr:%s", id, addr)
+
+	log.Debugf("UnSubscribe id:%d", id)
 }
 
-func (b *broker) Push(msg meta.Message, ids ...int64) {
+// Push 过滤掉未订阅用户
+func (b *broker) Push(msg meta.Message, ids ...*meta.PushID) {
 	log.Debugf("broker msg:%v ids:%v", msg, ids)
-	b.Lock()
-
-	for _, id := range ids {
-		if c, ok := b.channels[id]; ok {
-			for _, gate := range c.gates {
-				b.pusher <- message{id: id, addr: gate.addr, Message: msg}
-				log.Debugf("pusher msg, id:%v addr:%v msg:%v", id, gate.addr, msg)
-			}
-		}
-	}
-
-	b.Unlock()
+	b.mbox <- message{ids: ids, Message: msg}
 }
