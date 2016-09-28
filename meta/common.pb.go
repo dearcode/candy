@@ -52,6 +52,8 @@ It has these top-level messages:
 	GateLoadGroupListResponse
 	GateLoadFriendListRequest
 	GateLoadFriendListResponse
+	GateSendMessageRequest
+	GateSendMessageResponse
 	NewIDRequest
 	NewIDResponse
 	SubscribeRequest

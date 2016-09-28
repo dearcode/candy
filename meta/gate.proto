@@ -15,7 +15,11 @@ service Gate {
     rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
     rpc Logout (GateUserLogoutRequest) returns (GateUserLogoutResponse);
 
-    rpc MessageStream (stream Message) returns (stream Message);
+    // SendMessage 发送消息
+    rpc SendMessage(GateSendMessageRequest) returns (GateSendMessageResponse);
+
+    // Ready 连接成功后立刻调用Ready, 开启推送
+    rpc Ready(Message) returns (stream Message);
 
     // AddFriend 添加好友或确认接受添加.
     rpc AddFriend (GateAddFriendRequest) returns (GateAddFriendResponse);
@@ -218,3 +222,12 @@ message GateLoadFriendListResponse {
     ResponseHeader header = 1;
     repeated int64 users = 2;
 }
+
+message GateSendMessageRequest {
+    Message Msg = 1;
+}
+
+message GateSendMessageResponse {
+    ResponseHeader header = 1;
+}
+

@@ -35,7 +35,7 @@ type CandyClient struct {
 	conn    *grpc.ClientConn
 	api     meta.GateClient
 	handler MessageHandler
-	stream  meta.Gate_MessageStreamClient
+	stream  meta.Gate_ReadyClient
 	health  healthpb.HealthClient
 }
 
@@ -50,7 +50,7 @@ func (c *CandyClient) Start() (err error) {
 	}
 
 	c.api = meta.NewGateClient(c.conn)
-	if c.stream, err = c.api.MessageStream(context.Background()); err != nil {
+	if c.stream, err = c.api.Ready(context.Background(), &meta.Message{}); err != nil {
 		return
 	}
 
@@ -271,11 +271,12 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 
 // SendMessage 向服务器发送消息.
 func (c *CandyClient) SendMessage(from, group, user int64, body string) error {
-	msg := &meta.Message{From: from, Group: group, User: user, Body: body}
-	if err := c.stream.Send(msg); err != nil {
+	msg := &meta.GateSendMessageRequest{Msg: &meta.Message{From: from, Group: group, User: user, Body: body}}
+	resp, err := c.api.SendMessage(context.Background(), msg)
+	if err != nil {
 		return err
 	}
-	return nil
+	return resp.Header.Error()
 }
 
 // loopRecvMessage 一直接收服务器返回消息, 直到退出.

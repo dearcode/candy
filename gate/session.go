@@ -17,7 +17,7 @@ type session struct {
 	state  int
 	last   int64
 	addr   string
-	stream meta.Gate_MessageStreamServer
+	stream meta.Gate_ReadyServer
 }
 
 func newSession(addr string) *session {
@@ -25,11 +25,11 @@ func newSession(addr string) *session {
 	return &session{addr: addr}
 }
 
-func (s *session) addStream(stream meta.Gate_MessageStreamServer) {
+func (s *session) addStream(stream meta.Gate_ReadyServer) {
 	s.stream = stream
 }
 
-func (s *session) getStream() meta.Gate_MessageStreamServer {
+func (s *session) getStream() meta.Gate_ReadyServer {
 	if s.stream != nil {
 		return s.stream
 	}
@@ -56,6 +56,10 @@ func (s *session) update() {
 func (s *session) getAddr() string {
 	log.Debugf("session getAddr addr:%v", s.addr)
 	return s.addr
+}
+
+func (s *session) addID(id int64) {
+	s.id = id
 }
 
 func (s *session) getID() int64 {

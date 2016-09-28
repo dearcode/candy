@@ -108,7 +108,8 @@ func (g *Gate) getSession(ctx context.Context) (*session, error) {
 	return s, nil
 }
 
-func (g *Gate) addOnlineUser(s *session) {
+func (g *Gate) online(s *session, id int64) {
+	s.online(id)
 	g.Lock()
 	g.ids[s.id] = s
 	g.Unlock()
@@ -126,7 +127,8 @@ func (g *Gate) getOnlineUser(id int64) *session {
 	return nil
 }
 
-func (g *Gate) delOnlineUser(s *session) {
+func (g *Gate) offline(s *session) {
+	s.offline()
 	g.Lock()
 	delete(g.ids, s.id)
 	g.Unlock()
@@ -248,14 +250,12 @@ func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta
 		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	//登陆成功后订阅消息
-	err = g.notice.Subscribe(id, g.host)
-	if err != nil {
+	g.online(s, id)
+
+	//订阅消息
+	if err = g.notice.Subscribe(s.getID(), g.host); err != nil {
 		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-
-	s.online(id)
-	g.addOnlineUser(s)
 
 	return &meta.GateUserLoginResponse{ID: id}, nil
 }
@@ -276,32 +276,35 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	g.delOnlineUser(s)
-	s.offline()
+	g.offline(s)
 	return &meta.GateUserLogoutResponse{}, nil
 }
 
-// MessageStream recv user message, send to client.
-func (g *Gate) MessageStream(stream meta.Gate_MessageStreamServer) error {
+// SendMessage 发送消息
+func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest) (*meta.GateSendMessageResponse, error) {
+	s, err := g.getSession(ctx)
+	if err != nil {
+		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	//防止乱写
+	req.Msg.From = s.getID()
+
+	if err = g.store.newMessage(req.Msg); err != nil {
+		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateSendMessageResponse{}, nil
+}
+
+// Ready 连接成功后立刻调用Ready, 开启推送
+func (g *Gate) Ready(msg *meta.Message, stream meta.Gate_ReadyServer) error {
 	s, err := g.getSession(stream.Context())
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
+
 	s.addStream(stream)
-
-	for {
-		msg, err := stream.Recv()
-		if err != nil {
-			log.Errorf("stream Recv error:%s", errors.ErrorStack(err))
-			break
-		}
-
-		err = g.store.newMessage(msg)
-		if err != nil {
-			log.Errorf("%v", err)
-			continue
-		}
-	}
 
 	return nil
 }
