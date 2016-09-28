@@ -166,13 +166,19 @@ func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*
 		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	msg := meta.Message{ID: id, Method: meta.Method_FRIEND_ADD, From: req.To, Body: req.Msg}
+	msg := meta.Message{ID: id, Method: meta.Method_FRIEND_ADD, From: req.To, User: req.From, Body: req.Msg}
 	if state == meta.FriendRelation_Confirm {
 		msg.Method = meta.Method_FRIEND_CONFIRM
 	}
 
-	// 保存消息，发通知
-	if err = s.message.add(msg); err != nil {
+	// add消息到db
+	if err := s.message.add(msg); err != nil {
+		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	}
+
+	log.Debugf("add message to db success")
+	// 直接发送，如果失败会自动插入到重试队列中
+	if err := s.message.send(msg); err != nil {
 		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
@@ -198,13 +204,12 @@ func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) 
 	}
 
 	log.Debugf("add message to db success")
-	// 再添加未推送消息队列
-	if err := s.message.addQueue(req.Msg.ID); err != nil {
+	// 直接发送，如果失败会自动插入到重试队列中
+	if err := s.message.send(*req.Msg); err != nil {
 		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-
 	log.Debugf("add messate to queue success")
-	// 再调用推送
+
 	return &meta.StoreNewMessageResponse{}, nil
 }
 

@@ -148,6 +148,16 @@ func (m *messageDB) addQueue(id int64) error {
 	return m.queue.Put(key, []byte(""), nil)
 }
 
+func (m *messageDB) send(msg meta.Message) error {
+	//直接发送，如果发送失败再插入队列中
+	if err := m.sender.send(msg); err != nil {
+		if err := m.addQueue(msg.ID); err != nil {
+			return errors.Trace(err)
+		}
+	}
+	return nil
+}
+
 func (m *messageDB) delQueue(id int64) {
 	log.Debugf("id:%v", id)
 	key := util.EncodeInt64(id)

@@ -194,18 +194,13 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
-	success, err := c.AddFriend(id, true, msg)
+	confirm, err := c.AddFriend(id, true, msg)
 	if err != nil {
 		log.Errorf("addFriend error:%v", err)
 		return
 	}
 
-	if !success {
-		log.Debugf("addFriend failure, userID:%v", userID)
-		return
-	}
-
-	log.Debugf("addFriend success, userID:%v", userID)
+	log.Debugf("addFriend confirm:%v, userID:%v", confirm, userID)
 	fmt.Println("==============================================")
 }
 

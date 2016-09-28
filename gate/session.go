@@ -13,27 +13,16 @@ const (
 )
 
 type session struct {
-	id     int64
-	state  int
-	last   int64
-	addr   string
-	stream meta.Gate_ReadyServer
+	id    int64
+	state int
+	last  int64
+	addr  string
+	push  chan *meta.Message
 }
 
 func newSession(addr string) *session {
 	log.Debugf("addr:%s", addr)
-	return &session{addr: addr}
-}
-
-func (s *session) addStream(stream meta.Gate_ReadyServer) {
-	s.stream = stream
-}
-
-func (s *session) getStream() meta.Gate_ReadyServer {
-	if s.stream != nil {
-		return s.stream
-	}
-	return nil
+	return &session{addr: addr, push: make(chan *meta.Message)}
 }
 
 func (s *session) online(id int64) {

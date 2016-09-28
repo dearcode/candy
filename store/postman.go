@@ -27,6 +27,11 @@ func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Not
 // check 检查发件人是否有权发送这个消息.
 func (p *postman) check(msg meta.Message) error {
 	log.Debugf("msg check")
+	if msg.Method != meta.Method_NONE {
+		log.Debugf("system message")
+		return nil
+	}
+
 	if msg.User == 0 {
 		// 检测用户是否在组中
 		if err := p.group.exist(msg.Group, msg.From); err != nil {
@@ -97,5 +102,6 @@ func (p *postman) send(msg meta.Message) error {
 		return errors.Trace(err)
 	}
 
+	log.Debugf("will push msg:%v, ids:%v", msg, ids)
 	return p.notice.Push(msg, ids...)
 }

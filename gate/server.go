@@ -286,6 +286,7 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 
 	//防止乱写
 	req.Msg.From = s.getID()
+	req.Msg.Method = meta.Method_NONE
 
 	if err = g.store.newMessage(req.Msg); err != nil {
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
@@ -301,9 +302,11 @@ func (g *Gate) Ready(msg *meta.Message, stream meta.Gate_ReadyServer) error {
 		return errors.Trace(err)
 	}
 
-	s.addStream(stream)
-
-	return nil
+	for {
+		m := <-s.push
+		log.Debugf("recv push request m:%v", m)
+		stream.Send(m)
+	}
 }
 
 // Heartbeat nil.
@@ -334,19 +337,9 @@ func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.G
 			log.Debugf("User:%d offline", id.User)
 			continue
 		}
-
-		client := s.getStream()
-		if client == nil {
-			log.Errorf("User:%d client strem is nil", id.User)
-			continue
-		}
-
 		req.Msg.Before = id.Before
-
-		if err := client.Send(req.Msg); err != nil {
-			log.Errorf("client  Send msg:%v err:%v", req.Msg, err)
-			continue
-		}
+		log.Debugf("will push user:%d, msg:%v", id.User, req.Msg)
+		s.push <- req.Msg
 	}
 
 	log.Debugf("end PushID:%v msg:%v ok", req.ID, req.Msg)
