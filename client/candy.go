@@ -25,6 +25,9 @@ type MessageHandler interface {
 	// OnError 连接被服务器断开，或其它错误
 	OnError(msg string)
 
+	// OnHealth 连接正常
+	OnHealth()
+
 	// OnUnHealth 连接异常
 	OnUnHealth(msg string)
 }
@@ -74,11 +77,11 @@ func (c *CandyClient) Stop() error {
 
 // Register 用户注册接口
 func (c *CandyClient) Register(user, passwd string) (int64, error) {
-	if err := CheckUserName(user); err != nil {
-		return -1, err
+	if code, err := CheckUserName(user); err != nil {
+		return -1, NewError(code, err.Error())
 	}
-	if err := CheckUserPassword(passwd); err != nil {
-		return -1, err
+	if code, err := CheckUserPassword(passwd); err != nil {
+		return -1, NewError(code, err.Error())
 	}
 
 	req := &meta.GateRegisterRequest{User: user, Password: passwd}
@@ -92,12 +95,12 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 
 // Login 用户登陆
 func (c *CandyClient) Login(user, passwd string) (int64, error) {
-	if err := CheckUserName(user); err != nil {
-		return -1, err
+	if code, err := CheckUserName(user); err != nil {
+		return -1, NewError(code, err.Error())
 	}
 
-	if err := CheckUserPassword(passwd); err != nil {
-		return -1, err
+	if code, err := CheckUserPassword(passwd); err != nil {
+		return -1, NewError(code, err.Error())
 	}
 
 	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
@@ -122,12 +125,12 @@ func (c *CandyClient) Logout() error {
 
 // UpdateUserInfo 更新用户信息， 昵称/头像
 func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int64, error) {
-	if err := CheckUserName(user); err != nil {
-		return -1, err
+	if code, err := CheckUserName(user); err != nil {
+		return -1, NewError(code, err.Error())
 	}
 
-	if err := CheckNickName(nickName); err != nil {
-		return -1, err
+	if code, err := CheckNickName(nickName); err != nil {
+		return -1, NewError(code, err.Error())
 	}
 
 	req := &meta.GateUpdateUserInfoRequest{User: user, NickName: nickName, Avatar: avatar}
@@ -141,12 +144,12 @@ func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int6
 
 // UpdateUserPassword 更新用户密码
 func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
-	if err := CheckUserName(user); err != nil {
-		return -1, err
+	if code, err := CheckUserName(user); err != nil {
+		return -1, NewError(code, err.Error())
 	}
 
-	if err := CheckUserPassword(passwd); err != nil {
-		return -1, err
+	if code, err := CheckUserPassword(passwd); err != nil {
+		return -1, NewError(code, err.Error())
 	}
 
 	req := &meta.GateUpdateUserPasswordRequest{User: user, Password: passwd}
@@ -175,8 +178,8 @@ func (c *CandyClient) GetUserInfoByName(user string) (string, error) {
 }
 
 func (c *CandyClient) getUserInfoByName(user string) (*UserInfo, error) {
-	if err := CheckUserName(user); err != nil {
-		return nil, err
+	if code, err := CheckUserName(user); err != nil {
+		return nil, NewError(code, err.Error())
 	}
 
 	req := &meta.GateGetUserInfoRequest{Type: 0, UserName: user}

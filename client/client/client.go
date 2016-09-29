@@ -40,7 +40,8 @@ func register(c *candy.CandyClient, reader *bufio.Reader) {
 
 	id, err := c.Register(userName, userPassword)
 	if err != nil {
-		log.Errorf("Register error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Register code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -60,7 +61,8 @@ func login(c *candy.CandyClient, reader *bufio.Reader) {
 
 	id, err := c.Login(userName, userPassword)
 	if err != nil {
-		log.Errorf("Login error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Login code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -72,7 +74,8 @@ func logout(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================注销=======================")
 	err := c.Logout()
 	if err != nil {
-		log.Errorf("Logout error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Logout code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -91,7 +94,8 @@ func updateUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
 
 	id, err := c.UpdateUserInfo(userName, nickName, nil)
 	if err != nil {
-		log.Errorf("updateUserInfo error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("updateUserInfo code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -107,13 +111,15 @@ func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 
 	data, err := c.GetUserInfoByName(userName)
 	if err != nil {
-		log.Errorf("getUserInfo error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("getUserInfo code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
 	user, err := candy.DecodeUserInfo([]byte(data))
 	if err != nil {
-		log.Errorf("Decode UserInfo error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Decode UserInfo code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -136,13 +142,15 @@ func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 
 	data, err := c.GetUserInfoByID(id)
 	if err != nil {
-		log.Errorf("getUserInfoByID error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("getUserInfoByID code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
 	user, err := candy.DecodeUserInfo([]byte(data))
 	if err != nil {
-		log.Errorf("Decode UserInfo error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Decode UserInfo code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -159,13 +167,15 @@ func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 
 	data, err := c.FindUser(userName)
 	if err != nil {
-		log.Errorf("findUser error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("findUser code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
 	userList, err := candy.DecodeUserList([]byte(data))
 	if err != nil {
-		log.Errorf("Decode UserList error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Decode UserList code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -186,7 +196,8 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 
 	id, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
-		log.Errorf("Parse int error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Parse int code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -196,7 +207,8 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 
 	confirm, err := c.AddFriend(id, true, msg)
 	if err != nil {
-		log.Errorf("addFriend error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("addFriend code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -212,7 +224,8 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 
 	from, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
-		log.Errorf("Parse int error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Parse int code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -222,7 +235,8 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 
 	user, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
-		log.Errorf("Parse int error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Parse int code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -232,7 +246,8 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 
 	err = c.SendMessage(from, 0, user, msg)
 	if err != nil {
-		log.Errorf("send message error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("send message code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -248,7 +263,8 @@ func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
 
 	gid, err := c.CreateGroup(groupName)
 	if err != nil {
-		log.Errorf("createGroup error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("createGroup code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -261,13 +277,15 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 
 	data, err := c.LoadGroupList()
 	if err != nil {
-		log.Errorf("loadGroupList error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("loadGroupList code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
 	gList, err := candy.DecodeGroupList([]byte(data))
 	if err != nil {
-		log.Errorf("Decode GroupList error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Decode GroupList code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -284,13 +302,15 @@ func loadFriendList(c *candy.CandyClient, reader *bufio.Reader) {
 
 	data, err := c.LoadFriendList()
 	if err != nil {
-		log.Errorf("loadGroupList error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("loadGroupList code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
 	fList, err := candy.DecodeFriendList([]byte(data))
 	if err != nil {
-		log.Errorf("Decode FriendList error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Decode FriendList code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
@@ -314,7 +334,8 @@ func updateUserPasswd(c *candy.CandyClient, reader *bufio.Reader) {
 
 	id, err := c.UpdateUserPassword(user, pwd)
 	if err != nil {
-		log.Errorf("UpdateUserPassword error:%v", err)
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("UpdateUserPassword code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 	log.Debugf("UpdateUserPassword success, id:%v", id)
@@ -332,6 +353,11 @@ func (c *cmdClient) OnRecv(id int64, method int, group int64, from int64, to int
 // OnError 连接被服务器断开，或其它错误
 func (c *cmdClient) OnError(msg string) {
 	fmt.Printf("rpc error:%s\n", msg)
+}
+
+// OnHealth 连接恢复
+func (c *cmdClient) OnHealth() {
+	fmt.Printf("connection recovery\n")
 }
 
 // OnUnHealth 连接异常

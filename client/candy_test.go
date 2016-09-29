@@ -31,6 +31,11 @@ func (c *cmdClient) OnError(msg string) {
 	fmt.Printf("rpc error:%s\n", msg)
 }
 
+// OnHealth 连接正常
+func (c *cmdClient) OnHealth() {
+	fmt.Printf("connection recovery\n")
+}
+
 // OnUnHealth 连接异常
 func (c *cmdClient) OnUnHealth(msg string) {
 	fmt.Printf("connection unhealth, msg:%v", msg)
