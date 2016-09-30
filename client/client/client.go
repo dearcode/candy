@@ -218,20 +218,11 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 
 func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("================发送消息==================")
-	fmt.Println("请输入发送用户ID:")
-	data, _, _ := reader.ReadLine()
-	userID := string(data)
-
-	from, err := strconv.ParseInt(userID, 10, 64)
-	if err != nil {
-		e := candy.ErrorParse(err.Error())
-		log.Errorf("Parse int code:%v error:%v", e.Code, e.Msg)
-		return
-	}
+	id := int64(0)
 
 	fmt.Println("请输入接收用户ID:")
-	data, _, _ = reader.ReadLine()
-	userID = string(data)
+	data, _, _ := reader.ReadLine()
+	userID := string(data)
 
 	user, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
@@ -244,14 +235,14 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
-	err = c.SendMessage(from, 0, user, msg)
+	id, err = c.SendMessage(0, user, msg)
 	if err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("send message code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
-	log.Debugf("send msg success, userID:%v", userID)
+	log.Debugf("send msg[%d] success, userID:%v", id, userID)
 	fmt.Println("==============================================")
 }
 
