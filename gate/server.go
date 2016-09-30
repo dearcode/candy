@@ -284,6 +284,10 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
+	if req.Msg.ID, err = g.master.NewID(); err != nil {
+		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
 	//防止乱写
 	req.Msg.From = s.getID()
 	req.Msg.Method = meta.Method_NONE
@@ -292,7 +296,7 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.GateSendMessageResponse{}, nil
+	return &meta.GateSendMessageResponse{Id: req.Msg.ID}, nil
 }
 
 // Ready 连接成功后立刻调用Ready, 开启推送

@@ -327,13 +327,13 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 }
 
 // SendMessage 向服务器发送消息.
-func (c *CandyClient) SendMessage(from, group, user int64, body string) error {
-	msg := &meta.GateSendMessageRequest{Msg: &meta.Message{From: from, Group: group, User: user, Body: body}}
-	resp, err := c.api.SendMessage(context.Background(), msg)
+func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
+	req := &meta.GateSendMessageRequest{Msg: &meta.Message{Group: group, User: to, Body: body}}
+	resp, err := c.api.SendMessage(context.Background(), req)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return resp.Header.Error()
+	return resp.Id, resp.Header.Error()
 }
 
 // loopRecvMessage 一直接收服务器返回消息, 直到退出.

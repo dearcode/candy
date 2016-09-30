@@ -228,5 +228,6 @@ message GateSendMessageRequest {
 
 message GateSendMessageResponse {
     ResponseHeader header = 1;
+    int64 id = 2;
 }
 

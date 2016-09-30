@@ -15,9 +15,9 @@ make
 运行
 依次启动 bin 目录下master, notice, store, gate, 直接运行不需要参数
 默认端口依次为:
-master:9001 
-motice:9003 
-store :9004 
+master:9001
+motice:9003
+store :9004
 gate  :9000
 
 
