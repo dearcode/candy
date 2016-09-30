@@ -246,19 +246,24 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	fmt.Println("请输入消息内容:")
-	data, _, _ = reader.ReadLine()
-	msg := string(data)
+	for {
+		fmt.Println("请输入消息内容(quit退出):")
+		data, _, _ = reader.ReadLine()
+		msg := string(data)
 
-	id, err = c.SendMessage(0, user, msg)
-	if err != nil {
-		e := candy.ErrorParse(err.Error())
-		log.Errorf("send message code:%v error:%v", e.Code, e.Msg)
-		return
+		if msg == "quit" {
+			break
+		}
+
+		id, err = c.SendMessage(0, user, msg)
+		if err != nil {
+			e := candy.ErrorParse(err.Error())
+			log.Errorf("send message code:%v error:%v", e.Code, e.Msg)
+			return
+		}
+
+		log.Debugf("send msg[%d] success, userID:%v", id, userID)
 	}
-
-	log.Debugf("send msg[%d] success, userID:%v", id, userID)
-
 }
 
 func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
