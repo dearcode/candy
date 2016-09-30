@@ -11,3 +11,10 @@ func (r *ResponseHeader) Error() error {
 	}
 	return fmt.Errorf("%d:%s", r.Code, r.Msg)
 }
+
+func (r *ResponseHeader) JsonError() error {
+	if r == nil {
+		return nil
+	}
+	return fmt.Errorf(`{"Code":%d, "Msg":"%s"}`, r.Code, r.Msg)
+}

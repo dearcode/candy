@@ -93,7 +93,7 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 		return -1, err
 	}
 
-	return resp.ID, resp.Header.Error()
+	return resp.ID, resp.Header.JsonError()
 }
 
 // Login 用户登陆
@@ -112,7 +112,7 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 		return -1, err
 	}
 
-	return resp.ID, resp.Header.Error()
+	return resp.ID, resp.Header.JsonError()
 }
 
 // Logout 注销登陆
@@ -123,7 +123,7 @@ func (c *CandyClient) Logout() error {
 		return err
 	}
 
-	return resp.Header.Error()
+	return resp.Header.JsonError()
 }
 
 // UpdateUserInfo 更新用户信息， 昵称/头像
@@ -247,7 +247,7 @@ func (c *CandyClient) LoadFriendList() (string, error) {
 		return emptyString, err
 	}
 
-	return string(data), nil
+	return string(data), resp.Header.Error()
 }
 
 // FindUser 支持模糊查询，返回对应用户的列表
@@ -291,7 +291,7 @@ func (c *CandyClient) FileExist(key string) (bool, error) {
 		return true, nil
 	}
 
-	return false, nil
+	return false, resp.Header.Error()
 }
 
 // FileUpload 文件上传
@@ -398,7 +398,7 @@ func (c *CandyClient) CreateGroup(name string) (int64, error) {
 		return -1, err
 	}
 
-	return resp.ID, nil
+	return resp.ID, resp.Header.Error()
 }
 
 // LoadGroupList 拉取群组列表
@@ -420,5 +420,5 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 		return emptyString, err
 	}
 
-	return string(data), nil
+	return string(data), resp.Header.Error()
 }

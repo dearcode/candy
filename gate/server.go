@@ -153,18 +153,18 @@ func (g *Gate) Register(ctx context.Context, req *meta.GateRegisterRequest) (*me
 	log.Debug("Gate Register")
 	_, err := g.getSession(ctx)
 	if err != nil {
-		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
 	id, err := g.master.NewID()
 	if err != nil {
-		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: util.ErrorMasterNewID, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("Register user:%v password:%v", req.User, req.Password)
 
 	if err = g.store.register(req.User, req.Password, id); err != nil {
-		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: util.ErrorRegister, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateRegisterResponse{ID: id}, nil
@@ -175,18 +175,18 @@ func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.GateUpdateUserInfoR
 	log.Debug("Gate UpdateUserInfo")
 	s, err := g.getSession(ctx)
 	if err != nil {
-		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
 	if !s.isOnline() {
 		err := errors.Errorf("current user is offline")
-		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorOffline, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("updateUserInfo user:%v niceName:%v", req.User, req.NickName)
 	id, err := g.store.updateUserInfo(req.User, req.NickName, req.Avatar)
 	if err != nil {
-		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}, ID: id}, nil
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserInfo, Msg: err.Error()}, ID: id}, nil
 	}
 
 	return &meta.GateUpdateUserInfoResponse{ID: id}, nil
@@ -197,18 +197,18 @@ func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserP
 	log.Debug("Gate UpdateUserPassword")
 	s, err := g.getSession(ctx)
 	if err != nil {
-		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
 	if !s.isOnline() {
 		err := errors.Errorf("current user is offline")
-		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorOffline, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("updateUserPassword user:%v", req.User)
 	id, err := g.store.updateUserPassword(req.User, req.Password)
 	if err != nil {
-		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserPasswd, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateUpdateUserPasswordResponse{ID: id}, nil
@@ -219,18 +219,18 @@ func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest
 	log.Debugf("Gate UserInfo")
 	s, err := g.getSession(ctx)
 	if err != nil {
-		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
 	if !s.isOnline() {
 		err := errors.Errorf("current user is offline")
-		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorOffline, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("get UserInfo type:%v userName:%v userID:%v", req.Type, req.UserName, req.UserID)
 	id, name, nickName, avatar, err := g.store.getUserInfo(req.Type, req.UserName, req.UserID)
 	if err != nil {
-		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetUserInfo, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateGetUserInfoResponse{ID: id, User: name, NickName: nickName, Avatar: avatar}, nil
@@ -241,20 +241,21 @@ func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta
 	log.Debug("Gate Login")
 	s, err := g.getSession(ctx)
 	if err != nil {
-		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("Login user:%v password:%v", req.User, req.Password)
 	id, err := g.store.auth(req.User, req.Password)
 	if err != nil {
-		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		log.Errorf("auth error:%v", err)
+		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorAuth, Msg: err.Error()}}, nil
 	}
 
 	g.online(s, id)
 
 	//订阅消息
-	if err = g.notice.Subscribe(s.getID(), g.host); err != nil {
-		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	if err := g.notice.Subscribe(s.getID(), g.host); err != nil {
+		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorSubscribe, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateUserLoginResponse{ID: id}, nil
@@ -264,13 +265,13 @@ func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta
 func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*meta.GateUserLogoutResponse, error) {
 	s, err := g.getSession(ctx)
 	if err != nil {
-		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
 	//注销需要先取消消息订阅
 	err = g.notice.UnSubscribe(s.getID(), g.host)
 	if err != nil {
-		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: util.ErrorUnSubscribe, Msg: err.Error()}}, nil
 	}
 
 	g.offline(s)
@@ -281,7 +282,7 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest) (*meta.GateSendMessageResponse, error) {
 	s, err := g.getSession(ctx)
 	if err != nil {
-		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
 	if req.Msg.ID, err = g.master.NewID(); err != nil {
@@ -293,7 +294,7 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 	req.Msg.Method = meta.Method_NONE
 
 	if err = g.store.newMessage(req.Msg); err != nil {
-		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorNewMessage, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateSendMessageResponse{Id: req.Msg.ID}, nil
@@ -355,26 +356,26 @@ func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.G
 func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*meta.GateAddFriendResponse, error) {
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	//自己要把自己添加成好友
 	if req.UserID == s.id {
 		log.Infof("%d add friend id:%d", s.id, req.UserID)
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "Friend ID must not be Self ID"}}, nil
+		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorFriendSelf, Msg: "Friend ID must not be Self ID"}}, nil
 	}
 
 	// 主动添加对方为好友，更新自己本地信息
 	state, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Active, req.Msg)
 	if err != nil {
 		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
 	}
 
 	// 被动添加好友，更新对方好友信息
 	if state, err = g.store.addFriend(req.UserID, s.id, meta.FriendRelation_Passive, req.Msg); err != nil {
 		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
 	}
 
 	// 如果对方返回FriendRelation_Confirm，说明之前对方添加过自己, 只不过本地信息未更新，要先更新本地信息，再返回FriendRelation_Confirm
@@ -383,7 +384,7 @@ func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*
 		_, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Confirm, req.Msg)
 		if err != nil {
 			log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
-			return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+			return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
 		}
 		return &meta.GateAddFriendResponse{Confirm: true}, nil
 	}
@@ -396,12 +397,12 @@ func (g *Gate) LoadFriendList(ctx context.Context, req *meta.GateLoadFriendListR
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	ids, err := g.store.loadFriendList(s.id)
 	if err != nil {
-		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: util.ErrorLoadFriendList, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateLoadFriendListResponse{Users: ids}, nil
@@ -412,11 +413,11 @@ func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*me
 	_, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 	users, err := g.store.findUser(req.User)
 	if err != nil {
-		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: util.ErrorFindUser, Msg: err.Error()}}, nil
 	}
 	return &meta.GateFindUserResponse{Users: users}, nil
 }
@@ -426,16 +427,16 @@ func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	gid, err := g.master.NewID()
 	if err != nil {
-		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorMasterNewID, Msg: err.Error()}}, nil
 	}
 
 	if err = g.store.createGroup(s.getID(), gid, req.GroupName); err != nil {
-		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("user:%d, create group:%d", s.getID(), gid)
@@ -447,12 +448,12 @@ func (g *Gate) LoadGroupList(ctx context.Context, req *meta.GateLoadGroupListReq
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	groups, err := g.store.loadGroupList(s.id)
 	if err != nil {
-		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: util.ErrorLoadGroup, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateLoadGroupListResponse{Groups: groups}, nil
@@ -463,11 +464,11 @@ func (g *Gate) UploadFile(ctx context.Context, req *meta.GateUploadFileRequest) 
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	if err = g.store.uploadFile(s.id, req.File); err != nil {
-		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorUploadFile, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateUploadFileResponse{}, nil
@@ -478,12 +479,12 @@ func (g *Gate) CheckFile(ctx context.Context, req *meta.GateCheckFileRequest) (*
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	names, err := g.store.checkFile(s.id, req.Names)
 	if err != nil {
-		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorCheckFile, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateCheckFileResponse{Names: names}, nil
@@ -494,12 +495,12 @@ func (g *Gate) DownloadFile(ctx context.Context, req *meta.GateDownloadFileReque
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	files, err := g.store.downloadFile(s.id, req.Names)
 	if err != nil {
-		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorDownloadFile, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateDownloadFileResponse{Files: files}, nil
@@ -510,12 +511,12 @@ func (g *Gate) LoadMessage(ctx context.Context, req *meta.GateLoadMessageRequest
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 	msgs, err := g.store.loadMessage(s.id, req.ID, req.Reverse)
 	if err != nil {
 		log.Errorf("%d loadMessage error:%s", s.id, errors.ErrorStack(err))
-		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorLoadMessage, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateLoadMessageResponse{Msgs: msgs}, nil

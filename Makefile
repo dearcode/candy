@@ -1,4 +1,4 @@
-all: lint gate master notice store 
+all: lint client gate master notice store 
 
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildTime=$(shell date)"
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildVersion=$(shell git rev-parse HEAD)"
@@ -9,7 +9,7 @@ golint:
 godep:
 	go get github.com/tools/godep
 
-.PHONY: gate master notice store
+.PHONY: client gate master notice store
 
 
 
@@ -52,6 +52,10 @@ notice: godep
 store: godep
 	@echo "make store"
 	@godep go build -ldflags '$(LDFLAGS)' -o bin/store ./cmd/store/main.go
+
+client: godep
+	@echo "make client"
+	@godep go build -ldflags '$(LDFLAGS)' -o bin/client ./candy.go
 
 test:
 	@go test ./client/

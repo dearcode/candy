@@ -15,12 +15,12 @@ var (
 
 // Error 返回错误
 type Error struct {
-	Code int
+	Code int32
 	Msg  string
 }
 
 // NewError - create an new Error
-func NewError(code int, msg string) *Error {
+func NewError(code int32, msg string) *Error {
 	return &Error{Code: code, Msg: msg}
 }
 
@@ -89,7 +89,7 @@ func DecodeGroupList(data []byte) (*GroupList, error) {
 }
 
 // CheckUserName - 用户名校验， 用户名目前只支持邮箱, 长度至少6位
-func CheckUserName(name string) (int, error) {
+func CheckUserName(name string) (int32, error) {
 	if len(name) < minUsernameLen {
 		return util.ErrorUserNameLen, fmt.Errorf("UserName minimum length is %v", minUsernameLen)
 	}
@@ -103,7 +103,7 @@ func CheckUserName(name string) (int, error) {
 }
 
 // CheckUserPassword - 用户密码校验， 密码强度暂时不限制， 当前只限制密码最小长度
-func CheckUserPassword(passwd string) (int, error) {
+func CheckUserPassword(passwd string) (int32, error) {
 	if len(passwd) < minUserpasswdLen {
 		return util.ErrorUserPasswdLen, fmt.Errorf("UserPasswd minimum length is %v", minUserpasswdLen)
 	}
@@ -113,7 +113,7 @@ func CheckUserPassword(passwd string) (int, error) {
 }
 
 // CheckNickName - 用户昵称校验
-func CheckNickName(nick string) (int, error) {
+func CheckNickName(nick string) (int32, error) {
 	//TODO 后续完善
 	return util.ErrorOK, nil
 }
