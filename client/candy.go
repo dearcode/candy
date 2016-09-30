@@ -41,6 +41,7 @@ type CandyClient struct {
 	handler MessageHandler
 	stream  meta.Gate_ReadyClient
 	health  healthpb.HealthClient
+	bhealth bool
 }
 
 // NewCandyClient - create an new CandyClient
@@ -58,6 +59,8 @@ func (c *CandyClient) Start() (err error) {
 	if c.stream, err = c.api.Ready(context.Background(), &meta.Message{}); err != nil {
 		return
 	}
+
+	c.bhealth = true
 
 	go c.loopRecvMessage()
 
@@ -360,7 +363,18 @@ func (c *CandyClient) healthCheck() {
 
 		_, err := c.health.Check(context.Background(), req)
 		if err != nil {
-			c.handler.OnUnHealth(err.Error())
+			//确保异常只会调用一次
+			if c.bhealth {
+				c.bhealth = false
+				c.handler.OnUnHealth(err.Error())
+			}
+			continue
+		}
+
+		//由异常到正常
+		if !c.bhealth {
+			c.bhealth = true
+			c.handler.OnHealth()
 		}
 	}
 }
