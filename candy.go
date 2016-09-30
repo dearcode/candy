@@ -13,7 +13,12 @@ Store 消息及用户信息存储
 make
 
 运行
-依次启动 master, notice, store, gate, 直接运行不需要参数，默认使用9000到9004端口
+依次启动 bin 目录下master, notice, store, gate, 直接运行不需要参数
+默认端口依次为:
+master:9001 
+motice:9003 
+store :9004 
+gate  :9000
 
 
 技术讨论QQ群：29996599
@@ -33,6 +38,7 @@ import (
 	"github.com/dearcode/candy/util/log"
 )
 
+// 这个文件仅用来触发ctags以解决 vim 开发下godef失效的问题
 func main() {
 	msg := meta.Message{}
 	fmt.Printf("msg:%+v\n", msg)
