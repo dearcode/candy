@@ -22,7 +22,7 @@ var (
 )
 
 type sender interface {
-	send(meta.Message) error
+	send(meta.PushMessage) error
 }
 
 // 消息处理流程
@@ -128,17 +128,6 @@ func (m *messageDB) delRetry(id int64) {
 	m.Unlock()
 }
 
-// 向数据库中插入新的消息.
-func (m *messageDB) add(msg meta.Message) error {
-	buf, err := json.Marshal(msg)
-	log.Debugf("buf:%v", string(buf))
-	if err != nil {
-		return errors.Trace(err)
-	}
-
-	return m.stable.Put(util.EncodeInt64(msg.ID), buf, nil)
-}
-
 // 向未发送队列中添加记录
 func (m *messageDB) addQueue(id int64) error {
 	log.Debugf("id:%v", id)
@@ -148,13 +137,24 @@ func (m *messageDB) addQueue(id int64) error {
 	return m.queue.Put(key, []byte(""), nil)
 }
 
-func (m *messageDB) send(msg meta.Message) error {
+func (m *messageDB) send(pm meta.PushMessage) error {
+	buf, err := json.Marshal(pm)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	// 向数据库中插入新的消息.
+	if err = m.stable.Put(util.EncodeInt64(pm.Msg.ID), buf, nil); err != nil {
+		return errors.Trace(err)
+	}
+
 	//直接发送，如果发送失败再插入队列中
-	if err := m.sender.send(msg); err != nil {
-		if err := m.addQueue(msg.ID); err != nil {
+	if err := m.sender.send(pm); err != nil {
+		if err := m.addQueue(pm.Msg.ID); err != nil {
 			return errors.Trace(err)
 		}
 	}
+
 	return nil
 }
 
@@ -164,9 +164,9 @@ func (m *messageDB) delQueue(id int64) {
 	m.queue.Delete(key, nil)
 }
 
-func (m *messageDB) get(ids ...int64) ([]*meta.Message, error) {
+func (m *messageDB) get(ids ...int64) ([]*meta.PushMessage, error) {
 	log.Debugf("ids:%v", ids)
-	var mss []*meta.Message
+	var mss []*meta.PushMessage
 
 	for _, id := range ids {
 		v, err := m.stable.Get(util.EncodeInt64(id), nil)
@@ -174,7 +174,7 @@ func (m *messageDB) get(ids ...int64) ([]*meta.Message, error) {
 			return nil, errors.Trace(err)
 		}
 
-		var msg meta.Message
+		var msg meta.PushMessage
 		if err = json.Unmarshal(v, &msg); err != nil {
 			return nil, errors.Trace(err)
 		}

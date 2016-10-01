@@ -13,37 +13,18 @@ message ResponseHeader {
     string Msg = 2;
 }
 
-
-// FriendRelation 好友关系
-enum FriendRelation {
-    // None 没关系
-    None    = 0;
-    // Active 我主动添加对方为好友
-    Active  = 1;
-    // Passive 对方请求添加我为好友
-    Passive = 2;
-    // Confirm 我们都已确认成为好友了
-    Confirm = 3;
+enum Relation {
+    // 没关系, 已删除
+    DEL     = 0;
+    // 添加
+    ADD     = 1;
+    // 确认
+    CONFIRM = 2;
+    // 拒绝
+    REFUSE  = 4;
 }
 
-enum Method {
 
-    // 客户端发送上来的消息
-    NONE = 0;
-    // 有人请求添加好友
-    FRIEND_ADD  = 1;
-    // 添加好友成功
-    FRIEND_CONFIRM = 2;
-    // 被删除好友
-    FRIEND_DEL  = 3;
-
-    // 申请加群
-    GROUP_ADD   = 4;
-    // 退出群组
-    GROUP_EXIT  = 5;
-    // 邀请指定用户入群
-    GROUP_INVITE= 6;
-}
 
 // PushID 用户的上一条消息ID,用户ID
 message PushID {
@@ -51,24 +32,50 @@ message PushID {
     int64 Before    = 2;
 } 
 
-// Group 如果当前为群聊，设置为群组ID, 否则为0
-// User 如果当前为私聊，这个设置为收消息用户的ID, 否则为0
-// ID 客户端发送过来时这个字段为0， gate收到后写入实际从master处获取到的消息ID
-// Before 前一第消息的ID，用来确定是否有消息丢失
-// From 发消息的人的ID
-message Message {
-    int64   ID      = 1;
-    int64   Before  = 2;
-    Method  Method  = 3;
-    int64   From    = 4;
-    int64   Group   = 5;
-    int64   User    = 6;
-    string  Body    = 7;
+
+// Event 事件（消息类型）
+enum Event {
+    //普通聊天的消息下推
+    None = 0;
+    //群消息
+    Group = 1;
+    //好友关系
+    Friend = 2;
+    //上线
+    Online = 3;
+    //下线
+    Offline = 4;
+    //通知
+    Notice = 5;
 }
 
-message Group {
-    int64   ID = 1;
-    string  Name = 2;
+message Message {
+    // ID 客户端发送过来时这个字段为0， gate收到后写入实际从master处获取到的消息ID
+    int64  ID     = 1;
+    // Before 前一第消息的ID，用来确定是否有消息丢失
+    int64  Before = 2;
+    // Group 如果当前为群聊，设置为群组ID, 否则为0
+    int64  Group  = 3;
+    // From 发消息的人的ID
+    int64  From   = 4;
+    // To 如果当前为私聊，这个设置为收消息用户的ID, 否则为0
+    int64  To     = 5;
+    string Body   = 6;
+}
+
+message GroupInfo {
+    int64       ID = 1;
+    string      Name = 2;
     repeated int64 Users = 3;
+}
+
+// 下推的消息，有系统消息(加群，加好友，上线通知啥的)，正常聊天消息
+message PushMessage {
+    //消息类型，如好友，群，通知， 上线，下线之类的操作
+    Event       Event   = 1;
+    // 关系操作，加好友，删除好友，T出群，加入群
+    Relation    Operate = 2;
+    // 具体消息
+    Message     Msg     = 3;
 }
 

@@ -102,15 +102,15 @@ func (s *store) findUser(user string) ([]string, error) {
 	return resp.Users, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) addFriend(from, to int64, state meta.FriendRelation, msg string) (meta.FriendRelation, error) {
-	log.Debugf("store addFriend, from:%v to:%v state:%v", from, to, state)
-	req := &meta.StoreAddFriendRequest{From: from, To: to, State: state, Msg: msg}
-	resp, err := s.api.AddFriend(s.ctx, req)
+func (s *store) friend(from, to int64, operate meta.Relation, msg string) error {
+	log.Debugf("store friend, from:%v to:%v operate:%v", from, to, operate)
+	req := &meta.StoreFriendRequest{From: from, To: to, Operate: operate, Msg: msg}
+	resp, err := s.api.Friend(s.ctx, req)
 	if err != nil {
-		return meta.FriendRelation_None, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	return resp.State, errors.Trace(resp.Header.Error())
+	return errors.Trace(resp.Header.Error())
 }
 
 func (s *store) loadFriendList(user int64) ([]int64, error) {
@@ -134,7 +134,7 @@ func (s *store) createGroup(userID, groupID int64, name string) error {
 	return errors.Trace(resp.Header.Error())
 }
 
-func (s *store) loadGroupList(userID int64) ([]*meta.Group, error) {
+func (s *store) loadGroupList(userID int64) ([]*meta.GroupInfo, error) {
 	req := &meta.StoreLoadGroupListRequest{User: userID}
 	resp, err := s.api.LoadGroupList(s.ctx, req)
 	if err != nil {
@@ -205,7 +205,7 @@ func (s *store) newMessage(msg *meta.Message) error {
 	return errors.Trace(resp.Header.Error())
 }
 
-func (s *store) loadMessage(userID, id int64, reverse bool) ([]*meta.Message, error) {
+func (s *store) loadMessage(userID, id int64, reverse bool) ([]*meta.PushMessage, error) {
 	log.Debugf("store loadMessage")
 	req := &meta.StoreLoadMessageRequest{User: userID, ID: id, Reverse: reverse}
 	resp, err := s.api.LoadMessage(s.ctx, req)

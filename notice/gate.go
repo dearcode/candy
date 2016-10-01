@@ -38,13 +38,13 @@ func (g *gate) getClient(addr string) (meta.GateClient, error) {
 	return c, nil
 }
 
-func (g *gate) notice(addr string, ids []*meta.PushID, msg *meta.Message) error {
+func (g *gate) notice(addr string, ids []*meta.PushID, msg *meta.PushMessage) error {
 	c, err := g.getClient(addr)
 	if err != nil {
 		return errors.Trace(err)
 	}
-	req := &meta.GateNoticeRequest{ID: ids, Msg: msg}
-	resp, err := c.Notice(context.Background(), req)
+	req := &meta.GatePushRequest{ID: ids, Msg: msg}
+	resp, err := c.Push(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}

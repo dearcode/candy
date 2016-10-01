@@ -13,8 +13,8 @@ service Store {
 
     rpc Auth(StoreAuthRequest) returns (StoreAuthResponse);
 
-    // AddFriend 添加好友
-    rpc AddFriend(StoreAddFriendRequest) returns (StoreAddFriendResponse);
+    // Friend 好友服务
+    rpc Friend(StoreFriendRequest) returns (StoreFriendResponse);
 
     // LoadFriendList 获取好友列表
     rpc LoadFriendList(StoreLoadFriendListRequest) returns (StoreLoadFriendListResponse);
@@ -52,16 +52,15 @@ message StoreFindUserResponse {
     repeated string users = 2;
 }
 
-message StoreAddFriendRequest {
-    int64 From = 1;
-    int64 To = 2;
-    FriendRelation State = 3;
-    string Msg = 4;
+message StoreFriendRequest {
+    Relation    Operate     = 1;
+    int64       From        = 2;
+    int64       To          = 3;
+    string      Msg         = 4;
 }
 
-message StoreAddFriendResponse {
+message StoreFriendResponse {
     ResponseHeader header = 1;
-    FriendRelation State = 2;
 }
 
 message StoreRegisterRequest {
@@ -177,7 +176,7 @@ message StoreLoadMessageRequest {
 
 message StoreLoadMessageResponse {
     ResponseHeader header = 1;
-    repeated Message Msgs = 2;
+    repeated PushMessage Msgs = 2;
 }
 
 message StoreLoadGroupListRequest {
@@ -186,7 +185,7 @@ message StoreLoadGroupListRequest {
 
 message StoreLoadGroupListResponse {
     ResponseHeader header = 1;
-    repeated Group groups = 2;
+    repeated GroupInfo groups = 2;
 }
 
 message StoreLoadFriendListRequest {

@@ -17,12 +17,12 @@ type session struct {
 	state int
 	last  int64
 	addr  string
-	push  chan *meta.Message
+	push  chan *meta.PushMessage
 }
 
 func newSession(addr string) *session {
 	log.Debugf("addr:%s", addr)
-	return &session{addr: addr, push: make(chan *meta.Message)}
+	return &session{addr: addr, push: make(chan *meta.PushMessage)}
 }
 
 func (s *session) online(id int64) {

@@ -20,7 +20,7 @@ const (
 // MessageHandler 接收服务器端推送来的消息
 type MessageHandler interface {
 	// OnRecv 这函数理论上是多线程调用，客户端需要注意下
-	OnRecv(id int64, method int, group int64, from int64, to int64, body string)
+	OnRecv(event meta.Event, operate meta.Relation, id int64, group int64, from int64, to int64, body string)
 
 	// OnError 连接被服务器断开，或其它错误
 	OnError(msg string)
@@ -222,15 +222,15 @@ func (c *CandyClient) getUserInfoByID(userID int64) (*UserInfo, error) {
 	return userInfo, resp.Header.Error()
 }
 
-// AddFriend 添加好友
-func (c *CandyClient) AddFriend(userID int64, confirm bool, msg string) (bool, error) {
-	req := &meta.GateAddFriendRequest{UserID: userID, Confirm: confirm, Msg: msg}
-	resp, err := c.api.AddFriend(context.Background(), req)
+// Friend 添加好友
+func (c *CandyClient) Friend(userID int64, operate meta.Relation, msg string) error {
+	req := &meta.GateFriendRequest{UserID: userID, Operate: operate, Msg: msg}
+	resp, err := c.api.Friend(context.Background(), req)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return resp.Confirm, resp.Header.Error()
+	return resp.Header.Error()
 }
 
 // LoadFriendList 加载好友列表
@@ -328,7 +328,7 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 
 // SendMessage 向服务器发送消息.
 func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
-	req := &meta.GateSendMessageRequest{Msg: &meta.Message{Group: group, User: to, Body: body}}
+	req := &meta.GateSendMessageRequest{Msg: &meta.Message{Group: group, To: to, Body: body}}
 	resp, err := c.api.SendMessage(context.Background(), req)
 	if err != nil {
 		return 0, err
@@ -341,15 +341,14 @@ func (c *CandyClient) loopRecvMessage() {
 	log.Debugf("start loopRecvMessage")
 
 	for !c.stop {
-		msg, err := c.stream.Recv()
-		log.Debugf("recv:%v, err:%v", msg, err)
+		pm, err := c.stream.Recv()
 		if err != nil {
 			// 这里不退出会死循环
 			c.handler.OnError(err.Error())
 			break
 		}
 
-		c.handler.OnRecv(msg.ID, int(msg.Method), msg.Group, msg.From, msg.User, msg.Body)
+		c.handler.OnRecv(pm.Event, pm.Operate, pm.Msg.ID, pm.Msg.Group, pm.Msg.From, pm.Msg.To, pm.Msg.Body)
 	}
 }
 

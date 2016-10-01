@@ -37,7 +37,7 @@ func (g *groupDB) start() error {
 }
 
 // 创建一个新的组
-func (g *groupDB) newGroup(group meta.Group) error {
+func (g *groupDB) newGroup(group meta.GroupInfo) error {
 	buf, err := json.Marshal(group)
 	if err != nil {
 		return errors.Trace(err)
@@ -58,16 +58,16 @@ func (g *groupDB) addUser(gid int64, ids ...int64) error {
 }
 
 // 获取组信息及所有用户ID
-func (g *groupDB) get(gid int64) (meta.Group, error) {
+func (g *groupDB) get(gid int64) (meta.GroupInfo, error) {
 	val, err := g.db.Get(util.EncodeInt64(gid), nil)
 	if err != nil {
-		return meta.Group{}, errors.Trace(err)
+		return meta.GroupInfo{}, errors.Trace(err)
 	}
 
-	var group meta.Group
+	var group meta.GroupInfo
 
 	if err = json.Unmarshal(val, &group); err != nil {
-		return meta.Group{}, errors.Trace(err)
+		return meta.GroupInfo{}, errors.Trace(err)
 	}
 
 	start := util.EncodeKey(gid, 0)

@@ -19,10 +19,10 @@ service Gate {
     rpc SendMessage(GateSendMessageRequest) returns (GateSendMessageResponse);
 
     // Ready 连接成功后立刻调用Ready, 开启推送
-    rpc Ready(Message) returns (stream Message);
+    rpc Ready(Message) returns (stream PushMessage);
 
     // AddFriend 添加好友或确认接受添加.
-    rpc AddFriend (GateAddFriendRequest) returns (GateAddFriendResponse);
+    rpc Friend (GateFriendRequest) returns (GateFriendResponse);
     // FindUser 添加好友前先查找出来对应的ID.
     rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
     // 加载好友列表
@@ -47,8 +47,8 @@ service Gate {
     rpc LoadMessage (GateLoadMessageRequest) returns (GateLoadMessageResponse);
 
 
-    // Notice 服务端向客户端推送接口.
-    rpc Notice (GateNoticeRequest) returns (GateNoticeResponse);
+    // Push 服务端向客户端推送接口, 这个接口应该只有服务器能调用.
+    rpc Push (GatePushRequest) returns (GatePushResponse);
 
 }
 
@@ -62,15 +62,14 @@ message GateFindUserResponse {
 
 }
 
-message GateAddFriendRequest {
-    int64 UserID = 1;
-    bool Confirm = 2;
-    string Msg = 3;
+message GateFriendRequest {
+    int64       UserID  = 1;
+    Relation    Operate = 2;
+    string      Msg     = 3;
 }
 
-message GateAddFriendResponse {
+message GateFriendResponse {
     ResponseHeader header = 1;
-    bool Confirm = 2;
 }
 
 message GateCreateGroupRequest {
@@ -182,13 +181,13 @@ message GateDownloadFileResponse {
 
 
 
-message GateNoticeRequest {
+message GatePushRequest {
     repeated PushID ID = 1;
-    Message Msg = 2;
+    PushMessage Msg = 2;
 }
 
 
-message GateNoticeResponse {
+message GatePushResponse {
     ResponseHeader header = 1;
 }
 
@@ -201,7 +200,7 @@ message GateLoadMessageRequest {
 
 message GateLoadMessageResponse {
     ResponseHeader header = 1;
-    repeated Message Msgs = 2;
+    repeated PushMessage Msgs = 2;
 }
 
 
@@ -209,8 +208,8 @@ message GateLoadGroupListRequest {
 }
 
 message GateLoadGroupListResponse {
-    ResponseHeader header = 1;
-    repeated Group groups = 2;
+    ResponseHeader      header = 1;
+    repeated GroupInfo  groups = 2;
 }
 
 message GateLoadFriendListRequest {

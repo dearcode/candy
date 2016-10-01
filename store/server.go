@@ -147,42 +147,51 @@ func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*me
 	return &meta.StoreFindUserResponse{Users: users}, nil
 }
 
-// AddFriend 添加好友添加完后会返回当前好友关系状态.
-func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*meta.StoreAddFriendResponse, error) {
-	log.Debugf("Store AddFriend, from:%v to:%v State:%v", req.From, req.To, req.State)
-	state, err := s.user.friend.add(req.From, req.To, req.State, req.Msg)
-	if err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+// Friend 添加好友添加完后会返回当前好友关系状态.
+func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.StoreFriendResponse, error) {
+	log.Debugf("Store Friend from:%v to:%v Operate:%v", req.From, req.To, req.Operate)
+	//这些事件都需要创建一个给对方的消息
+	var err error
+	switch req.Operate {
+	case meta.Relation_ADD:
+		//1.存储一个添加对方为好友的消息
+		//2.要给对方一个请求添加好友的消息
+		err = s.user.friend.set(req.From, req.To, req.Operate, req.Msg)
+
+	case meta.Relation_CONFIRM:
+		//1.存储一个确认添加为好友的消息
+		//2.要给对方一个确认添加好友的消息
+		err = s.user.friend.set(req.From, req.To, req.Operate, req.Msg)
+
+	case meta.Relation_REFUSE:
+		//只需要给对方一个拒绝的消息就行
+
+	case meta.Relation_DEL:
+		//只需要给对方发个通知
+		s.user.friend.remove(req.From, req.To)
+		s.user.friend.remove(req.To, req.From)
 	}
 
-	// 主动的添加消息就不需要推送了
-	if req.State == meta.FriendRelation_Active {
-		return &meta.StoreAddFriendResponse{State: state}, nil
+	if err != nil {
+		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))
+		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
 	// 发个提示消息
 	id, err := s.master.NewID()
 	if err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))
+		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	msg := meta.Message{ID: id, Method: meta.Method_FRIEND_ADD, From: req.To, User: req.From, Body: req.Msg}
-	if state == meta.FriendRelation_Confirm {
-		msg.Method = meta.Method_FRIEND_CONFIRM
-	}
-
-	// add消息到db
-	if err := s.message.add(msg); err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
-	}
-
-	log.Debugf("add message to db success")
+	pm := meta.PushMessage{Event: meta.Event_Friend, Operate: req.Operate, Msg: &meta.Message{ID: id, From: req.From, To: req.To, Body: req.Msg}}
 	// 直接发送，如果失败会自动插入到重试队列中
-	if err := s.message.send(msg); err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	if err := s.message.send(pm); err != nil {
+		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))
+		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	return &meta.StoreAddFriendResponse{State: state}, nil
+	return &meta.StoreFriendResponse{}, nil
 }
 
 // LoadFriendList load user's friend list
@@ -198,17 +207,11 @@ func (s *Store) LoadFriendList(_ context.Context, req *meta.StoreLoadFriendListR
 // NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) (*meta.StoreNewMessageResponse, error) {
 	log.Debugf("Store NewMessage, msg:%v", req.Msg)
-	// add消息到db
-	if err := s.message.add(*req.Msg); err != nil {
-		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
-	}
-
-	log.Debugf("add message to db success")
 	// 直接发送，如果失败会自动插入到重试队列中
-	if err := s.message.send(*req.Msg); err != nil {
+	if err := s.message.send(meta.PushMessage{Msg: req.Msg}); err != nil {
 		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
-	log.Debugf("add messate to queue success")
+	log.Debugf("Store messate success")
 
 	return &meta.StoreNewMessageResponse{}, nil
 }
@@ -275,7 +278,7 @@ func (s *Store) LoadMessage(_ context.Context, req *meta.StoreLoadMessageRequest
 // CreateGroup 创建群组
 func (s *Store) CreateGroup(_ context.Context, req *meta.StoreCreateGroupRequest) (*meta.StoreCreateGroupResponse, error) {
 	//创建群组
-	group := meta.Group{ID: req.GroupID, Name: req.GroupName}
+	group := meta.GroupInfo{ID: req.GroupID, Name: req.GroupName}
 	err := s.group.newGroup(group)
 	if err != nil {
 		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
@@ -306,7 +309,7 @@ func (s *Store) LoadGroupList(_ context.Context, req *meta.StoreLoadGroupListReq
 		return &meta.StoreLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	var groups []*meta.Group
+	var groups []*meta.GroupInfo
 	//分别获取群组信息
 	for _, gid := range gids {
 		g, err := s.group.get(gid)

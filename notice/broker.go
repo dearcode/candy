@@ -12,11 +12,11 @@ import (
 type message struct {
 	ids  []*meta.PushID
 	addr string
-	meta.Message
+	meta.PushMessage
 }
 
 type sender interface {
-	notice(string, []*meta.PushID, *meta.Message) error
+	notice(string, []*meta.PushID, *meta.PushMessage) error
 }
 
 // users 存储用户ID对应的gate地址
@@ -83,7 +83,7 @@ func (b *broker) sender(sid int) {
 
 		for _, msg := range b.split(m) {
 			log.Debugf("%d begin sendMessage:%v, to gate:%s", sid, m, msg.addr)
-			if err := b.gate.notice(msg.addr, msg.ids, &m.Message); err != nil {
+			if err := b.gate.notice(msg.addr, msg.ids, &m.PushMessage); err != nil {
 				log.Errorf("%d sendMessage error:%s", sid, errors.ErrorStack(err))
 				continue
 			}
@@ -110,7 +110,7 @@ func (b *broker) UnSubscribe(id int64) {
 }
 
 // Push 过滤掉未订阅用户
-func (b *broker) Push(msg meta.Message, ids ...*meta.PushID) {
+func (b *broker) Push(msg meta.PushMessage, ids ...*meta.PushID) {
 	log.Debugf("broker msg:%v ids:%v", msg, ids)
-	b.mbox <- message{ids: ids, Message: msg}
+	b.mbox <- message{ids: ids, PushMessage: msg}
 }

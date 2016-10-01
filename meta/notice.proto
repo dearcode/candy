@@ -5,7 +5,7 @@ option go_package = "meta";
 
 import "common.proto";
 
-service Notice {
+service NoticeService {
     rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
     rpc UnSubscribe(UnSubscribeRequest) returns (UnSubscribeResponse);
 
@@ -34,7 +34,7 @@ message UnSubscribeResponse {
 
 message PushRequest {
     repeated PushID ID = 1;
-    Message Msg = 2;
+    PushMessage Msg = 2;
 }
 
 message PushResponse {

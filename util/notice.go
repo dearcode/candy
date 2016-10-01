@@ -11,7 +11,7 @@ import (
 
 // Notice 连接notice服务.
 type Notice struct {
-	client meta.NoticeClient
+	client meta.NoticeServiceClient
 }
 
 // NewNotice 返回notice client.
@@ -21,7 +21,7 @@ func NewNotice(host string) (*Notice, error) {
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
-	return &Notice{client: meta.NewNoticeClient(conn)}, nil
+	return &Notice{client: meta.NewNoticeServiceClient(conn)}, nil
 }
 
 //Subscribe 调用notice订阅消息
@@ -49,7 +49,7 @@ func (n *Notice) UnSubscribe(id int64, host string) error {
 }
 
 //Push  调用notice发推送消息
-func (n *Notice) Push(msg meta.Message, ids ...*meta.PushID) error {
+func (n *Notice) Push(msg meta.PushMessage, ids ...*meta.PushID) error {
 	req := &meta.PushRequest{ID: ids, Msg: &msg}
 	resp, err := n.client.Push(context.Background(), req)
 	if err != nil {

@@ -291,7 +291,6 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 
 	//防止乱写
 	req.Msg.From = s.getID()
-	req.Msg.Method = meta.Method_NONE
 
 	if err = g.store.newMessage(req.Msg); err != nil {
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorNewMessage, Msg: err.Error()}}, nil
@@ -332,8 +331,8 @@ func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*
 	return &meta.GateHeartbeatResponse{}, nil
 }
 
-// Notice recv Notice server Message, and send Message to client.
-func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.GateNoticeResponse, error) {
+// Push recv Notice server Message, and send Message to client.
+func (g *Gate) Push(ctx context.Context, req *meta.GatePushRequest) (*meta.GatePushResponse, error) {
 	log.Debugf("begin PushID:%v msg:%v", req.ID, req.Msg)
 
 	for _, id := range req.ID {
@@ -342,54 +341,35 @@ func (g *Gate) Notice(ctx context.Context, req *meta.GateNoticeRequest) (*meta.G
 			log.Debugf("User:%d offline", id.User)
 			continue
 		}
-		req.Msg.Before = id.Before
+		req.Msg.Msg.Before = id.Before
 		log.Debugf("will push user:%d, msg:%v", id.User, req.Msg)
 		s.push <- req.Msg
 	}
 
 	log.Debugf("end PushID:%v msg:%v ok", req.ID, req.Msg)
 
-	return &meta.GateNoticeResponse{}, nil
+	return &meta.GatePushResponse{}, nil
 }
 
-// AddFriend 添加好友或确认接受添加.
-func (g *Gate) AddFriend(ctx context.Context, req *meta.GateAddFriendRequest) (*meta.GateAddFriendResponse, error) {
+// Friend 添加好友或确认接受添加.
+func (g *Gate) Friend(ctx context.Context, req *meta.GateFriendRequest) (*meta.GateFriendResponse, error) {
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	//自己要把自己添加成好友
 	if req.UserID == s.id {
 		log.Infof("%d add friend id:%d", s.id, req.UserID)
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorFriendSelf, Msg: "Friend ID must not be Self ID"}}, nil
+		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorFriendSelf, Msg: "Friend ID must not be Self ID"}}, nil
 	}
 
-	// 主动添加对方为好友，更新自己本地信息
-	state, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Active, req.Msg)
-	if err != nil {
-		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
+	if err = g.store.friend(s.id, req.UserID, req.Operate, req.Msg); err != nil {
+		log.Errorf("%d friend:%d operate:%d erorr:%s", s.id, req.UserID, req.Operate, errors.ErrorStack(err))
+		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
 	}
 
-	// 被动添加好友，更新对方好友信息
-	if state, err = g.store.addFriend(req.UserID, s.id, meta.FriendRelation_Passive, req.Msg); err != nil {
-		log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
-		return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
-	}
-
-	// 如果对方返回FriendRelation_Confirm，说明之前对方添加过自己, 只不过本地信息未更新，要先更新本地信息，再返回FriendRelation_Confirm
-	if state == meta.FriendRelation_Confirm {
-		// 正常流程走不到这里，除非是数据丢失了
-		_, err := g.store.addFriend(s.id, req.UserID, meta.FriendRelation_Confirm, req.Msg)
-		if err != nil {
-			log.Errorf("%d addFriend:%d erorr:%s", s.id, req.UserID, errors.ErrorStack(err))
-			return &meta.GateAddFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
-		}
-		return &meta.GateAddFriendResponse{Confirm: true}, nil
-	}
-
-	return &meta.GateAddFriendResponse{}, nil
+	return &meta.GateFriendResponse{}, nil
 }
 
 // LoadFriendList 加载好友列表

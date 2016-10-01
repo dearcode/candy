@@ -31,7 +31,7 @@ func (n *Notifer) Start() error {
 	log.Debug("notice Start...")
 	serv := grpc.NewServer()
 
-	meta.RegisterNoticeServer(serv, n)
+	meta.RegisterNoticeServiceServer(serv, n)
 
 	lis, err := net.Listen("tcp", n.host)
 	if err != nil {

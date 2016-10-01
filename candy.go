@@ -12,6 +12,7 @@ import (
 	"strconv"
 
 	candy "github.com/dearcode/candy/client"
+	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
 )
 
@@ -30,6 +31,7 @@ func notice() {
 11. 根据用户ID获取用户信息
 12. 加载好友列表
 13. 更改用户密码
+13. 确认添加好友
 0. 退出
 -----------------------------------------------`
 	fmt.Println(help)
@@ -220,16 +222,38 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
-	confirm, err := c.AddFriend(id, true, msg)
-	if err != nil {
+	if err = c.Friend(id, meta.Relation_ADD, msg); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("addFriend code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
-	log.Debugf("addFriend confirm:%v, userID:%v", confirm, userID)
+	log.Debugf("addFriend userID:%v", userID)
 }
 
+func confirmFriend(c *candy.CandyClient, reader *bufio.Reader) {
+	fmt.Println("----------------确认添加好友-----------------------")
+	defer endSection()
+
+	fmt.Println("请输入用户ID:")
+	data, _, _ := reader.ReadLine()
+	userID := string(data)
+
+	id, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Parse int code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.Friend(id, meta.Relation_CONFIRM, ""); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("confirmFriend code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("confirmFriend userID:%v", userID)
+}
 func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("----------------发送消息-----------------------")
 	defer endSection()
@@ -358,8 +382,8 @@ func updateUserPasswd(c *candy.CandyClient, reader *bufio.Reader) {
 type cmdClient struct{}
 
 // OnRecv 这函数理论上是多线程调用，客户端需要注意下
-func (c *cmdClient) OnRecv(id int64, method int, group int64, from int64, to int64, body string) {
-	log.Debugf("recv msg id:%d method:%d, group:%d, from:%d, to:%d, body:%s\n", id, method, group, from, to, body)
+func (c *cmdClient) OnRecv(event meta.Event, operate meta.Relation, id int64, group int64, from int64, to int64, body string) {
+	log.Debugf("recv msg id:%d event:%v, operate:%v, group:%d, from:%d, to:%d, body:%s\n", id, event, operate, group, from, to, body)
 }
 
 // OnError 连接被服务器断开，或其它错误
@@ -423,6 +447,8 @@ func main() {
 			loadFriendList(c, reader)
 		} else if command == "13" {
 			updateUserPasswd(c, reader)
+		} else if command == "14" {
+			confirmFriend(c, reader)
 		} else {
 			log.Errorf("未知命令")
 		}
