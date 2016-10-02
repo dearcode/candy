@@ -353,6 +353,7 @@ func (g *Gate) Push(ctx context.Context, req *meta.GatePushRequest) (*meta.GateP
 
 // Friend 添加好友或确认接受添加.
 func (g *Gate) Friend(ctx context.Context, req *meta.GateFriendRequest) (*meta.GateFriendResponse, error) {
+	log.Debugf("begin Friend req:%v", req)
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
@@ -369,6 +370,7 @@ func (g *Gate) Friend(ctx context.Context, req *meta.GateFriendRequest) (*meta.G
 		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
 	}
 
+	log.Debugf("end Friend req:%v", req)
 	return &meta.GateFriendResponse{}, nil
 }
 

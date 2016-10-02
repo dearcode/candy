@@ -74,7 +74,7 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 		ids = append(ids, &meta.PushID{Before: before, User: uid})
 	}
 
-	log.Debugf("send msg:%v, ids:%v", ids)
+	log.Debugf("send msg:%v, ids:%v", pm, ids)
 	return p.notice.Push(pm, ids...)
 }
 

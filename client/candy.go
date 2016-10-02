@@ -20,7 +20,7 @@ const (
 // MessageHandler 接收服务器端推送来的消息
 type MessageHandler interface {
 	// OnRecv 这函数理论上是多线程调用，客户端需要注意下
-	OnRecv(event meta.Event, operate meta.Relation, id int64, group int64, from int64, to int64, body string)
+	OnRecv(event int32, operate int32, id int64, group int64, from int64, to int64, body string)
 
 	// OnError 连接被服务器断开，或其它错误
 	OnError(msg string)
@@ -223,8 +223,8 @@ func (c *CandyClient) getUserInfoByID(userID int64) (*UserInfo, error) {
 }
 
 // Friend 添加好友
-func (c *CandyClient) Friend(userID int64, operate meta.Relation, msg string) error {
-	req := &meta.GateFriendRequest{UserID: userID, Operate: operate, Msg: msg}
+func (c *CandyClient) Friend(userID int64, operate int32, msg string) error {
+	req := &meta.GateFriendRequest{UserID: userID, Operate: meta.Relation(operate), Msg: msg}
 	resp, err := c.api.Friend(context.Background(), req)
 	if err != nil {
 		return err
@@ -348,7 +348,7 @@ func (c *CandyClient) loopRecvMessage() {
 			break
 		}
 
-		c.handler.OnRecv(pm.Event, pm.Operate, pm.Msg.ID, pm.Msg.Group, pm.Msg.From, pm.Msg.To, pm.Msg.Body)
+		c.handler.OnRecv(int32(pm.Event), int32(pm.Operate), pm.Msg.ID, pm.Msg.Group, pm.Msg.From, pm.Msg.To, pm.Msg.Body)
 	}
 }
 

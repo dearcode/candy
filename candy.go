@@ -222,7 +222,7 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
-	if err = c.Friend(id, meta.Relation_ADD, msg); err != nil {
+	if err = c.Friend(id, int32(meta.Relation_ADD), msg); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("addFriend code:%v error:%v", e.Code, e.Msg)
 		return
@@ -246,7 +246,7 @@ func confirmFriend(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Friend(id, meta.Relation_CONFIRM, ""); err != nil {
+	if err = c.Friend(id, int32(meta.Relation_CONFIRM), ""); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("confirmFriend code:%v error:%v", e.Code, e.Msg)
 		return
@@ -382,8 +382,8 @@ func updateUserPasswd(c *candy.CandyClient, reader *bufio.Reader) {
 type cmdClient struct{}
 
 // OnRecv 这函数理论上是多线程调用，客户端需要注意下
-func (c *cmdClient) OnRecv(event meta.Event, operate meta.Relation, id int64, group int64, from int64, to int64, body string) {
-	log.Debugf("recv msg id:%d event:%v, operate:%v, group:%d, from:%d, to:%d, body:%s\n", id, event, operate, group, from, to, body)
+func (c *cmdClient) OnRecv(event int32, operate int32, id int64, group int64, from int64, to int64, body string) {
+	log.Debugf("recv msg id:%d event:%v, operate:%v, group:%d, from:%d, to:%d, body:%s\n", id, meta.Event(event), meta.Relation(operate), group, from, to, body)
 }
 
 // OnError 连接被服务器断开，或其它错误

@@ -57,9 +57,9 @@ func (n *Notifer) UnSubscribe(_ context.Context, req *meta.UnSubscribeRequest) (
 
 // Push push a message to gate.
 func (n *Notifer) Push(_ context.Context, req *meta.PushRequest) (*meta.PushResponse, error) {
-	log.Debugf("begin push message, msg:%v", req.Msg)
+	log.Debugf("begin push message:%v, ids:%v", req.Msg, req.ID)
 	n.broker.Push(*req.Msg, req.ID...)
-	log.Debugf("end push message ok, msg:%v", req.Msg)
+	log.Debugf("end push message:%v, ids:%v", req.Msg, req.ID)
 
 	return &meta.PushResponse{}, nil
 }
