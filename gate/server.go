@@ -216,22 +216,18 @@ func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserP
 
 // GetUserInfo get user base info
 func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest) (*meta.GateGetUserInfoResponse, error) {
-	log.Debugf("Gate UserInfo")
-	s, err := g.getSession(ctx)
+	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
-	if !s.isOnline() {
-		err := errors.Errorf("current user is offline")
-		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorOffline, Msg: err.Error()}}, nil
-	}
+	log.Debugf("%d get UserInfo type:%v userName:%v userID:%v", s.id, req.Type, req.UserName, req.UserID)
 
-	log.Debugf("get UserInfo type:%v userName:%v userID:%v", req.Type, req.UserName, req.UserID)
 	id, name, nickName, avatar, err := g.store.getUserInfo(req.Type, req.UserName, req.UserID)
 	if err != nil {
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetUserInfo, Msg: err.Error()}}, nil
 	}
+	log.Debugf("%d get UserInfo type:%v userName:%v userID:%v, name:%v, nickname:%v", s.id, req.Type, req.UserName, req.UserID, name, nickName)
 
 	return &meta.GateGetUserInfoResponse{ID: id, User: name, NickName: nickName, Avatar: avatar}, nil
 }
@@ -382,10 +378,12 @@ func (g *Gate) LoadFriendList(ctx context.Context, req *meta.GateLoadFriendListR
 		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
+	log.Debugf("%d begin loadFriendList", s.id)
 	ids, err := g.store.loadFriendList(s.id)
 	if err != nil {
 		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: util.ErrorLoadFriendList, Msg: err.Error()}}, nil
 	}
+	log.Debugf("%d end loadFriendList:%v", s.id, ids)
 
 	return &meta.GateLoadFriendListResponse{Users: ids}, nil
 }
