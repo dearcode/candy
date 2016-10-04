@@ -162,13 +162,16 @@ func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.S
 		//1.存储一个确认添加为好友的消息
 		//2.要给对方一个确认添加好友的消息
 		err = s.user.friend.set(req.From, req.To, req.Operate, req.Msg)
+		if err == nil {
+			err = s.user.friend.confirm(req.To, req.From)
+		}
 
 	case meta.Relation_REFUSE:
 		//只需要给对方一个拒绝的消息就行
 
 	case meta.Relation_DEL:
 		//只需要给对方发个通知
-		er = s.user.friend.remove(req.From, req.To)
+		err = s.user.friend.remove(req.From, req.To)
 	}
 
 	if err != nil {

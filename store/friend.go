@@ -8,6 +8,7 @@ import (
 	lu "github.com/syndtr/goleveldb/leveldb/util"
 
 	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/util/log"
 )
 
 type friendRelation struct {
@@ -24,20 +25,40 @@ func newFriendDB(db *userDB) *friendDB {
 	return &friendDB{userDB: db}
 }
 
-// 添加好友，返回当前状态，state 0:没关系, 1:我要添加对方为好友, 2:对方请求添加我为好友, 3:当前我们都已确认成为好友了
+// 修改好友关系
 func (f *friendDB) set(uid, fid int64, state meta.Relation, msg string) error {
 	key := UserFriendKey(uid, fid)
-	v, err := f.db.Get(key, nil)
-	if err != nil && err != leveldb.ErrNotFound {
+
+	r := friendRelation{ID: fid, State: state, Msg: msg}
+	buf, err := json.Marshal(&r)
+	if err != nil {
 		return errors.Trace(err)
 	}
-	r := friendRelation{ID: fid, State: state, Msg: msg}
-	if len(v) > 0 {
-		if err = json.Unmarshal(v, &r); err != nil {
-			return errors.Trace(err)
-		}
+
+	if err = f.db.Put(key, buf, nil); err != nil {
+		return errors.Trace(err)
 	}
-	r.State |= state
+
+	return nil
+}
+
+func (f *friendDB) confirm(uid, fid int64) error {
+	key := UserFriendKey(uid, fid)
+	v, err := f.db.Get(key, nil)
+	if err != nil {
+		return errors.Trace(err)
+	}
+	var r friendRelation
+	if err = json.Unmarshal(v, &r); err != nil {
+		return errors.Trace(err)
+	}
+
+	if r.State != meta.Relation_ADD {
+		log.Infof("%d friend:%d state:%v", uid, fid, r.State)
+		return nil
+	}
+
+	r.State = meta.Relation_CONFIRM
 
 	buf, err := json.Marshal(&r)
 	if err != nil {
