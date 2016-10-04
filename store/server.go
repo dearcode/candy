@@ -168,8 +168,7 @@ func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.S
 
 	case meta.Relation_DEL:
 		//只需要给对方发个通知
-		s.user.friend.remove(req.From, req.To)
-		s.user.friend.remove(req.To, req.From)
+		er = s.user.friend.remove(req.From, req.To)
 	}
 
 	if err != nil {

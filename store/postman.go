@@ -26,8 +26,6 @@ func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Not
 
 // check 检查发件人是否有权发送这个消息.
 func (p *postman) check(msg *meta.Message) error {
-	log.Debugf("msg check")
-
 	if msg.Group != 0 {
 		// 检测组中是否存在这个发件人
 		if err := p.group.exist(msg.Group, msg.From); err != nil {
@@ -36,13 +34,11 @@ func (p *postman) check(msg *meta.Message) error {
 		return nil
 	}
 
-	// 检测用户是否为好友
-	log.Debugf("whether is friend")
-	if err := p.friend.exist(msg.From, msg.To); err != nil {
+	// 检测收件人的好友里面有没有发件人
+	if err := p.friend.exist(msg.To, msg.From); err != nil {
 		return errors.Annotatef(ErrInvalidSender, "unrelated from:%d to:%d", msg.From, msg.To)
 	}
 
-	log.Debugf("success")
 	return nil
 }
 
@@ -52,7 +48,7 @@ func (p *postman) sendToUser(pm meta.PushMessage) error {
 	if err != nil {
 		return errors.Trace(err)
 	}
-	log.Debugf("send msg:%v, ids:%v", pm.Msg.To)
+	log.Debugf("send msg:%v, ids:%v", pm, pm.Msg.To)
 	return p.notice.Push(pm, &meta.PushID{Before: before, User: pm.Msg.To})
 }
 
@@ -87,6 +83,7 @@ func (p *postman) send(pm meta.PushMessage) error {
 
 	if pm.Event == meta.Event_None {
 		if err := p.check(pm.Msg); err != nil {
+			log.Debugf("check error:%s", errors.ErrorStack(err))
 			return errors.Trace(err)
 		}
 	}
