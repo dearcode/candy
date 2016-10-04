@@ -109,7 +109,7 @@ func (f *friendDB) exist(uid, fid int64) error {
 		return errors.Trace(err)
 	}
 
-	if r.State != 3 {
+	if r.State != meta.Relation_CONFIRM {
 		return leveldb.ErrNotFound
 	}
 
