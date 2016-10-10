@@ -53,12 +53,12 @@ func (f *friendDB) confirm(uid, fid int64) error {
 		return errors.Trace(err)
 	}
 
-	if r.State != meta.Relation_ADD {
+	if r.State != meta.Relation_Add {
 		log.Infof("%d friend:%d state:%v", uid, fid, r.State)
 		return nil
 	}
 
-	r.State = meta.Relation_CONFIRM
+	r.State = meta.Relation_Confirm
 
 	buf, err := json.Marshal(&r)
 	if err != nil {
@@ -90,7 +90,7 @@ func (f *friendDB) get(uid int64) ([]int64, error) {
 			return nil, errors.Trace(err)
 		}
 
-		if r.State == meta.Relation_CONFIRM {
+		if r.State == meta.Relation_Confirm {
 			ids = append(ids, r.ID)
 		}
 	}
@@ -109,7 +109,7 @@ func (f *friendDB) exist(uid, fid int64) error {
 		return errors.Trace(err)
 	}
 
-	if r.State != meta.Relation_CONFIRM {
+	if r.State != meta.Relation_Confirm {
 		return leveldb.ErrNotFound
 	}
 

@@ -15,15 +15,14 @@ message ResponseHeader {
 
 enum Relation {
     // 没关系, 已删除
-    DEL     = 0;
+    Del     = 0;
     // 添加
-    ADD     = 1;
+    Add     = 1;
     // 确认
-    CONFIRM = 2;
+    Confirm = 2;
     // 拒绝
-    REFUSE  = 4;
+    Refuse  = 4;
 }
-
 
 
 // PushID 用户的上一条消息ID,用户ID
@@ -63,10 +62,18 @@ message Message {
     string Body   = 6;
 }
 
+// GroupInfo 群信息，目前只有名字，公告，头像
 message GroupInfo {
-    int64       ID = 1;
-    string      Name = 2;
-    repeated int64 Users = 3;
+    int64   ID      = 1;
+    int64   Owner   = 2;
+    string  Name    = 3;
+    string  Avatar  = 4;
+    string  Notice  = 5;
+
+    // Admins 管理员
+    repeated int64 Admins = 6;
+    // Member 成员
+    repeated int64 Member = 7;
 }
 
 // 下推的消息，有系统消息(加群，加好友，上线通知啥的)，正常聊天消息

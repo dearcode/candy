@@ -15,20 +15,27 @@ service Gate {
     rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
     rpc Logout (GateUserLogoutRequest) returns (GateUserLogoutResponse);
 
+    // FindUser 添加好友前先查找出来对应的ID.
+    rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
+
     // SendMessage 发送消息
     rpc SendMessage(GateSendMessageRequest) returns (GateSendMessageResponse);
 
     // Ready 连接成功后立刻调用Ready, 开启推送
     rpc Ready(Message) returns (stream PushMessage);
 
-    // AddFriend 添加好友或确认接受添加.
+    // Friend 好友的添加，删除、确认、拒绝.
     rpc Friend (GateFriendRequest) returns (GateFriendResponse);
-    // FindUser 添加好友前先查找出来对应的ID.
-    rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
     // 加载好友列表
     rpc LoadFriendList (GateLoadFriendListRequest) returns (GateLoadFriendListResponse);
 
-    rpc CreateGroup (GateCreateGroupRequest) returns (GateCreateGroupResponse);
+    // Group 添加，邀请，退出, 踢出
+    rpc Group (GateGroupRequest) returns (GateGroupResponse);
+
+    //GroupCreate 创建群
+    rpc GroupCreate (GateGroupCreateRequest) returns (GateGroupCreateResponse);
+    // GroupDelete 删除群，解散群
+    rpc GroupDelete (GateGroupDeleteRequest) returns (GateGroupDeleteResponse);
 
     // LoadGroupList 加载群组列表
     rpc LoadGroupList (GateLoadGroupListRequest) returns (GateLoadGroupListResponse);
@@ -75,6 +82,7 @@ message GateFriendResponse {
 message GateCreateGroupRequest {
     string GroupName = 1;
 }
+
 
 message GateCreateGroupResponse {
     ResponseHeader header = 1;
@@ -227,6 +235,57 @@ message GateSendMessageRequest {
 
 message GateSendMessageResponse {
     ResponseHeader header = 1;
-    int64 id = 2;
+    int64 ID = 2;
+}
+
+
+
+/*
+   邀请用户加入, 可以批量邀请，附加邀请消息
+   ID Add Users[UID] Msg
+
+   用户申请加入群
+   ID Add nil Msg
+
+   管理员通过用户申请入群的请求
+   ID Confirm Users[UID]
+
+   用户同意入群的邀请
+   ID Confirm nil
+
+   用户退出群
+   ID Del nil
+
+   踢用户出群
+   ID Del Users[UID]
+ */
+message GateGroupRequest {
+    int64       ID      = 1;
+    Relation    Operate = 2;
+    string      Msg     = 3;
+    repeated    int64   Users  = 4;
+}
+
+message GateGroupResponse {
+    ResponseHeader header = 1;
+}
+
+//创建群
+message GateGroupCreateRequest {
+    string Name = 1;
+}
+
+message GateGroupCreateResponse {
+    ResponseHeader  header  = 1;
+    int64           ID      = 2;
+}
+
+//解散群
+message GateGroupDeleteRequest {
+    int64   ID  = 2;
+}
+
+message GateGroupDeleteResponse {
+    ResponseHeader  header  = 1;
 }
 

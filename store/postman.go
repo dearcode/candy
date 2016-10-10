@@ -24,45 +24,41 @@ func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Not
 	return &postman{user: user, friend: friend, group: group, notice: notice}
 }
 
-// check 检查发件人是否有权发送这个消息.
-func (p *postman) check(msg *meta.Message) error {
-	if msg.Group != 0 {
-		// 检测组中是否存在这个发件人
-		if err := p.group.exist(msg.Group, msg.From); err != nil {
-			return errors.Annotatef(ErrInvalidSender, "group:%d not found user:%d", msg.Group, msg.From)
-		}
-		return nil
-	}
+func (p *postman) sendToUser(pm meta.PushMessage) error {
+	log.Debugf("begin send to User:%d msg:%v", pm.Msg.To, pm)
 
 	// 检测收件人的好友里面有没有发件人
-	if err := p.friend.exist(msg.To, msg.From); err != nil {
-		return errors.Annotatef(ErrInvalidSender, "unrelated from:%d to:%d", msg.From, msg.To)
+	if err := p.friend.exist(pm.Msg.To, pm.Msg.From); err != nil {
+		return errors.Annotatef(ErrInvalidSender, "unrelated from:%d to:%d", pm.Msg.From, pm.Msg.To)
 	}
 
-	return nil
-}
-
-// sendToUser 发给单个用户
-func (p *postman) sendToUser(pm meta.PushMessage) error {
 	before, err := p.user.addMessage(pm.Msg.To, pm.Msg.ID)
 	if err != nil {
 		return errors.Trace(err)
 	}
-	log.Debugf("send msg:%v, ids:%v", pm, pm.Msg.To)
-	return p.notice.Push(pm, &meta.PushID{Before: before, User: pm.Msg.To})
+
+	id := &meta.PushID{Before: before, User: pm.Msg.To}
+	log.Debugf("send msg:%v, id:%v", pm, id)
+	return p.notice.Push(pm, id)
 }
 
-// sendToGroup 发送给群
 func (p *postman) sendToGroup(pm meta.PushMessage) error {
+	log.Debugf("begin send Group msg:%v", pm)
+
+	// 检测组中是否存在这个发件人
+	if err := p.group.exist(pm.Msg.Group, pm.Msg.From); err != nil {
+		return errors.Annotatef(ErrInvalidSender, "group:%d not found user:%d", pm.Msg.Group, pm.Msg.From)
+	}
+
 	var ids []*meta.PushID
 
-	group, err := p.group.get(pm.Msg.Group)
+	group, err := p.group.getGroup(pm.Msg.Group)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
 	//向组中每个人添加消息
-	for _, uid := range group.Users {
+	for _, uid := range group.Member {
 		before, err := p.user.addMessage(uid, pm.Msg.ID)
 		if err != nil {
 			return errors.Trace(err)
@@ -70,28 +66,13 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 		ids = append(ids, &meta.PushID{Before: before, User: uid})
 	}
 
-	log.Debugf("send msg:%v, ids:%v", pm, ids)
+	log.Debugf("send to group, msg:%v, ids:%v", pm, ids)
 	return p.notice.Push(pm, ids...)
 }
 
-// send 分发消息
-// 1.检查是否存在好友关系或者群成员
-// 2.添加到收件人消息列表中
-// 3.调用notice接口Push通知
 func (p *postman) send(pm meta.PushMessage) error {
-	log.Debugf("begin send msg:%v", pm)
-
-	if pm.Event == meta.Event_None {
-		if err := p.check(pm.Msg); err != nil {
-			log.Debugf("check error:%s", errors.ErrorStack(err))
-			return errors.Trace(err)
-		}
+	if pm.Msg.Group != 0 {
+		return p.sendToGroup(pm)
 	}
-
-	if pm.Msg.Group == 0 {
-		return p.sendToUser(pm)
-	}
-
-	return p.sendToGroup(pm)
-
+	return p.sendToUser(pm)
 }

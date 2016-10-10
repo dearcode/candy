@@ -20,7 +20,7 @@ const (
 // MessageHandler 接收服务器端推送来的消息
 type MessageHandler interface {
 	// OnRecv 这函数理论上是多线程调用，客户端需要注意下
-	OnRecv(event int32, operate int32, id int64, group int64, from int64, to int64, body string)
+	OnRecv(event int32, operate int32, ID int64, group int64, from int64, to int64, body string)
 
 	// OnError 连接被服务器断开，或其它错误
 	OnError(msg string)
@@ -333,7 +333,7 @@ func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return resp.Id, resp.Header.Error()
+	return resp.ID, resp.Header.Error()
 }
 
 // loopRecvMessage 一直接收服务器返回消息, 直到退出.
@@ -391,8 +391,8 @@ func (c *CandyClient) Heartbeat() error {
 
 // CreateGroup 创建群组
 func (c *CandyClient) CreateGroup(name string) (int64, error) {
-	req := &meta.GateCreateGroupRequest{GroupName: name}
-	resp, err := c.api.CreateGroup(context.Background(), req)
+	req := &meta.GateGroupCreateRequest{Name: name}
+	resp, err := c.api.GroupCreate(context.Background(), req)
 	if err != nil {
 		return -1, err
 	}
@@ -410,7 +410,7 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 
 	var groups []*GroupInfo
 	for _, group := range resp.Groups {
-		groups = append(groups, &GroupInfo{ID: group.ID, Name: group.Name, Users: group.Users})
+		groups = append(groups, &GroupInfo{ID: group.ID, Name: group.Name, Member: group.Member, Admin: group.Admins})
 	}
 
 	groupList := &GroupList{Groups: groups}

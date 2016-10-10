@@ -15,9 +15,10 @@ type UserList struct {
 
 //GroupInfo 群组信息
 type GroupInfo struct {
-	ID    int64   `json:"ID"`
-	Name  string  `json:"Name"`
-	Users []int64 `json:"Users"`
+	ID     int64   `json:"ID"`
+	Name   string  `json:"Name"`
+	Admin  []int64 `json:"Admins"`
+	Member []int64 `json:"Member"`
 }
 
 // GroupList 群组列表

@@ -31,6 +31,16 @@ const (
 
 	// UserMessagePrefix 用户消息前缀.
 	UserMessagePrefix = int64(0)
+
+	//GroupAdminPrefix 群管理员
+	GroupAdminPrefix = int64(0)
+	//GroupMemberPrefix 群成员
+	GroupMemberPrefix = int64(1)
+	//GroupInvitePrefix 群邀请消息
+	GroupInvitePrefix = int64(2)
+	//GroupApplyPrefix 申请入群消息
+	GroupApplyPrefix = int64(3)
+
 	// UserLastMessagePrefix 用户最后一个消息ID.
 	UserLastMessagePrefix = int64(1)
 	// UserGroupPrefix 用户组前缀.

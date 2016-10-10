@@ -153,12 +153,12 @@ func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.S
 	//这些事件都需要创建一个给对方的消息
 	var err error
 	switch req.Operate {
-	case meta.Relation_ADD:
+	case meta.Relation_Add:
 		//1.存储一个添加对方为好友的消息
 		//2.要给对方一个请求添加好友的消息
 		err = s.user.friend.set(req.From, req.To, req.Operate, req.Msg)
 
-	case meta.Relation_CONFIRM:
+	case meta.Relation_Confirm:
 		//1.存储一个确认添加为好友的消息
 		//2.要给对方一个确认添加好友的消息
 		err = s.user.friend.set(req.From, req.To, req.Operate, req.Msg)
@@ -166,10 +166,10 @@ func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.S
 			err = s.user.friend.confirm(req.To, req.From)
 		}
 
-	case meta.Relation_REFUSE:
+	case meta.Relation_Refuse:
 		//只需要给对方一个拒绝的消息就行
 
-	case meta.Relation_DEL:
+	case meta.Relation_Del:
 		//只需要给对方发个通知
 		err = s.user.friend.remove(req.From, req.To)
 	}
@@ -277,34 +277,106 @@ func (s *Store) LoadMessage(_ context.Context, req *meta.StoreLoadMessageRequest
 	return &meta.StoreLoadMessageResponse{Msgs: msgs}, nil
 }
 
-// CreateGroup 创建群组
-func (s *Store) CreateGroup(_ context.Context, req *meta.StoreCreateGroupRequest) (*meta.StoreCreateGroupResponse, error) {
+// GroupCreate 创建群组
+func (s *Store) GroupCreate(_ context.Context, req *meta.StoreGroupCreateRequest) (*meta.StoreGroupCreateResponse, error) {
 	//创建群组
-	group := meta.GroupInfo{ID: req.GroupID, Name: req.GroupName}
-	err := s.group.newGroup(group)
+	err := s.group.newGroup(req.ID, req.User, req.Name)
 	if err != nil {
-		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.StoreGroupCreateResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	//TODO 还需要考虑群主和管理员的处理
-	//向群组中添加用户
-	err = s.group.addUser(group.ID, req.UserID)
-	if err != nil {
-		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	//向群组中添加群主
+	if err = s.group.addMember(req.ID, req.User); err != nil {
+		return &meta.StoreGroupCreateResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
 	//在用户数据库记录群组信息
-	err = s.user.addGroup(req.UserID, req.GroupID)
+	err = s.user.addGroup(req.User, req.ID)
 	if err != nil {
-		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		return &meta.StoreGroupCreateResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreCreateGroupResponse{}, nil
+	return &meta.StoreGroupCreateResponse{}, nil
+}
+
+//Group 加群，退出，邀请，踢人
+func (s *Store) Group(_ context.Context, req *meta.StoreGroupRequest) (*meta.StoreGroupResponse, error) {
+	var err error
+	log.Debugf("begin group:%+v", req)
+
+	switch req.Operate {
+	case meta.Relation_Add:
+		if len(req.Users) != 0 {
+			//邀请用户加入
+			err = s.group.invites(req.ID, req.User, req.Msg, req.Users...)
+		} else {
+			err = s.group.apply(req.ID, req.User, req.Msg)
+		}
+
+	case meta.Relation_Confirm:
+		if len(req.Users) == 1 {
+			//管理员同意用户申请入群的请求
+			err = s.group.agree(req.ID, req.User, req.Users[0])
+		} else {
+			err = s.group.accept(req.ID, req.User)
+		}
+
+	case meta.Relation_Del:
+		if len(req.Users) != 0 {
+			//踢人操作
+			err = s.group.delUsers(req.ID, req.User, req.Users...)
+		} else {
+			//退群操作
+			err = s.group.exit(req.ID, req.User)
+		}
+	}
+
+	if err != nil {
+		log.Errorf("end group:%+v, error:%s", req, errors.ErrorStack(err))
+		return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	id, err := s.master.NewID()
+	if err != nil {
+		log.Debugf("end group:%+v, new id error:%v", req, errors.ErrorStack(err))
+		return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	}
+
+	// FIXME 发消息这里应该有问题
+	pm := meta.PushMessage{Event: meta.Event_Group, Operate: req.Operate, Msg: &meta.Message{ID: id, From: req.User, Body: req.Msg}}
+	if len(req.Users) != 0 {
+		for _, u := range req.Users {
+			pm.Msg.To = u
+			if err := s.message.send(pm); err != nil {
+				log.Debugf("end Group:%+v, send error:%v", req, errors.ErrorStack(err))
+				return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+			}
+		}
+	} else {
+		pm.Msg.Group = req.ID
+		if err := s.message.send(pm); err != nil {
+			log.Debugf("end Group:%+v, send error:%v", req, errors.ErrorStack(err))
+			return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+		}
+	}
+
+	return &meta.StoreGroupResponse{}, nil
+}
+
+// GroupDelete 解散群组
+func (s *Store) GroupDelete(_ context.Context, req *meta.StoreGroupDeleteRequest) (*meta.StoreGroupDeleteResponse, error) {
+	//创建群组
+	if err := s.group.delGroup(req.ID, req.User); err != nil {
+		return &meta.StoreGroupDeleteResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	//TODO 给所有人发消息，告诉他们群没有了
+
+	return &meta.StoreGroupDeleteResponse{}, nil
 }
 
 // LoadGroupList 加载群组列表
 func (s *Store) LoadGroupList(_ context.Context, req *meta.StoreLoadGroupListRequest) (*meta.StoreLoadGroupListResponse, error) {
-
 	//获取群组id列表
 	gids, err := s.user.getGroups(req.User)
 	if err != nil {
@@ -314,7 +386,7 @@ func (s *Store) LoadGroupList(_ context.Context, req *meta.StoreLoadGroupListReq
 	var groups []*meta.GroupInfo
 	//分别获取群组信息
 	for _, gid := range gids {
-		g, err := s.group.get(gid)
+		g, err := s.group.getGroup(gid)
 		if err != nil {
 			return &meta.StoreLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 		}

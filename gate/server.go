@@ -292,7 +292,7 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorNewMessage, Msg: err.Error()}}, nil
 	}
 
-	return &meta.GateSendMessageResponse{Id: req.Msg.ID}, nil
+	return &meta.GateSendMessageResponse{ID: req.Msg.ID}, nil
 }
 
 // Ready 连接成功后立刻调用Ready, 开启推送
@@ -402,25 +402,57 @@ func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*me
 	return &meta.GateFindUserResponse{Users: users}, nil
 }
 
-// CreateGroup 用户创建一个聊天组.
-func (g *Gate) CreateGroup(ctx context.Context, req *meta.GateCreateGroupRequest) (*meta.GateCreateGroupResponse, error) {
+// GroupCreate 用户创建一个聊天组.
+func (g *Gate) GroupCreate(ctx context.Context, req *meta.GateGroupCreateRequest) (*meta.GateGroupCreateResponse, error) {
 	s, err := g.getOnlineSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+		return &meta.GateGroupCreateResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
 	gid, err := g.master.NewID()
 	if err != nil {
-		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorMasterNewID, Msg: err.Error()}}, nil
+		return &meta.GateGroupCreateResponse{Header: &meta.ResponseHeader{Code: util.ErrorMasterNewID, Msg: err.Error()}}, nil
 	}
 
-	if err = g.store.createGroup(s.getID(), gid, req.GroupName); err != nil {
-		return &meta.GateCreateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
+	if err = g.store.groupCreate(s.getID(), gid, req.Name); err != nil {
+		return &meta.GateGroupCreateResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
 	}
 
 	log.Debugf("user:%d, create group:%d", s.getID(), gid)
-	return &meta.GateCreateGroupResponse{ID: gid}, nil
+	return &meta.GateGroupCreateResponse{ID: gid}, nil
+}
+
+// GroupDelete 解散一个群.
+func (g *Gate) GroupDelete(ctx context.Context, req *meta.GateGroupDeleteRequest) (*meta.GateGroupDeleteResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return &meta.GateGroupDeleteResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	}
+
+	if err = g.store.groupDelete(s.getID(), req.ID); err != nil {
+		return &meta.GateGroupDeleteResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
+	}
+
+	log.Debugf("user:%d, delete group:%d", s.getID(), req.ID)
+	return &meta.GateGroupDeleteResponse{}, nil
+}
+
+// Group 添加，邀请，退出, 踢出
+func (g *Gate) Group(ctx context.Context, req *meta.GateGroupRequest) (*meta.GateGroupResponse, error) {
+	s, err := g.getOnlineSession(ctx)
+	if err != nil {
+		log.Errorf("getSession error:%s", errors.ErrorStack(err))
+		return &meta.GateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	}
+
+	if err = g.store.group(s.getID(), req.ID, req.Operate, req.Users, req.Msg); err != nil {
+		return &meta.GateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
+	}
+
+	log.Debugf("%d group:%d operate:%v, users:%v, msg:%v", s.getID(), req.ID, req.Operate, req.Users, req.Msg)
+	return &meta.GateGroupResponse{}, nil
 }
 
 // LoadGroupList 加载群组列表

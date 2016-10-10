@@ -222,7 +222,7 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
-	if err = c.Friend(id, int32(meta.Relation_ADD), msg); err != nil {
+	if err = c.Friend(id, int32(meta.Relation_Add), msg); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("addFriend code:%v error:%v", e.Code, e.Msg)
 		return
@@ -246,7 +246,7 @@ func confirmFriend(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Friend(id, int32(meta.Relation_CONFIRM), ""); err != nil {
+	if err = c.Friend(id, int32(meta.Relation_Confirm), ""); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("confirmFriend code:%v error:%v", e.Code, e.Msg)
 		return
@@ -327,7 +327,7 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 	}
 
 	for index, group := range gList.Groups {
-		log.Debugf("group%v {ID:%v Name:%v Users:%v}", index, group.ID, group.Name, group.Users)
+		log.Debugf("group%v {ID:%v Name:%v Users:%v}", index, group.ID, group.Name, group.Member)
 	}
 
 	log.Debugf("loadGroupList success")

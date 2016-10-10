@@ -123,10 +123,32 @@ func (s *store) loadFriendList(user int64) ([]int64, error) {
 	return resp.Users, errors.Trace(resp.Header.Error())
 }
 
-func (s *store) createGroup(userID, groupID int64, name string) error {
-	log.Debugf("store createGroup, userID:%v groupID:%v groupName:%v", userID, groupID, name)
-	req := &meta.StoreCreateGroupRequest{UserID: userID, GroupID: groupID, GroupName: name}
-	resp, err := s.api.CreateGroup(s.ctx, req)
+func (s *store) groupCreate(uid, gid int64, name string) error {
+	log.Debugf("store group create user:%v group:%v name:%v", uid, gid, name)
+	req := &meta.StoreGroupCreateRequest{User: uid, ID: gid, Name: name}
+	resp, err := s.api.GroupCreate(s.ctx, req)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	return errors.Trace(resp.Header.Error())
+}
+
+func (s *store) group(uid, gid int64, operate meta.Relation, users []int64, msg string) error {
+	log.Debugf("store group delete, user:%v group:%v", uid, gid)
+	req := &meta.StoreGroupRequest{User: uid, ID: gid, Operate: operate, Users: users, Msg: msg}
+	resp, err := s.api.Group(s.ctx, req)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	return errors.Trace(resp.Header.Error())
+}
+
+func (s *store) groupDelete(uid, gid int64) error {
+	log.Debugf("store group delete, user:%v group:%v", uid, gid)
+	req := &meta.StoreGroupDeleteRequest{User: uid, ID: gid}
+	resp, err := s.api.GroupDelete(s.ctx, req)
 	if err != nil {
 		return errors.Trace(err)
 	}

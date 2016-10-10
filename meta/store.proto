@@ -22,8 +22,13 @@ service Store {
     // FindUser 根据字符串的用户名模糊查用户列表
     rpc FindUser(StoreFindUserRequest) returns (StoreFindUserResponse);
 
-    rpc CreateGroup(StoreCreateGroupRequest) returns (StoreCreateGroupResponse);
-    
+    // GroupCreate 创建群
+    rpc GroupCreate(StoreGroupCreateRequest) returns (StoreGroupCreateResponse);
+    // Group 加群，退出，邀请，踢人
+    rpc Group(StoreGroupRequest) returns (StoreGroupResponse);
+    // GroupDelete 解散群, 要检测用户是不是群主
+    rpc GroupDelete(StoreGroupDeleteRequest) returns (StoreGroupDeleteResponse);
+
     // LoadGroupList 加载群组列表
     rpc LoadGroupList(StoreLoadGroupListRequest) returns (StoreLoadGroupListResponse);
 
@@ -118,13 +123,42 @@ message StoreAuthResponse {
     int64 ID = 2;
 }
 
-message StoreCreateGroupRequest {
-    int64 UserID = 1;
-    int64 GroupID = 2;
-    string GroupName = 3;
+message StoreGroupCreateRequest {
+    int64   ID      = 1;
+    int64   User    = 2;
+    string  Name    = 3;
 }
 
-message StoreCreateGroupResponse {
+message StoreGroupCreateResponse {
+    ResponseHeader header = 1;
+}
+
+/*
+   StoreGroupRequest
+   ID 群ID
+   User 当前操作用户ID
+   Operate 具体操作
+   Msg 附加消息
+   Users 对应的用户ID，如T哪些用户
+ */
+message StoreGroupRequest {
+    int64       ID      = 1;
+    int64       User    = 2;
+    Relation    Operate = 3;
+    string      Msg     = 4;
+    repeated    int64   Users  = 5;
+}
+
+message StoreGroupResponse {
+    ResponseHeader header = 1;
+}
+
+message StoreGroupDeleteRequest {
+    int64   ID      = 1;
+    int64   User    = 2;
+}
+
+message StoreGroupDeleteResponse {
     ResponseHeader header = 1;
 }
 
