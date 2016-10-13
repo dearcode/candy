@@ -54,7 +54,7 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 
 	group, err := p.group.getGroup(pm.Msg.Group)
 	if err != nil {
-		return errors.Trace(err)
+		return errors.Annotatef(ErrInvalidSender, "group:%d not found from:%d to:%d", pm.Msg.Group, pm.Msg.From, pm.Msg.To)
 	}
 
 	//向组中每个人添加消息

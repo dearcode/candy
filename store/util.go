@@ -60,3 +60,11 @@ func GroupMemberKey(group, user int64) []byte {
 func GroupAdminKey(group, user int64) []byte {
 	return util.EncodeKey(group, util.GroupAdminPrefix, user)
 }
+
+// DecodeGroupKey 解析GroupKey.
+func DecodeGroupKey(key []byte) (group int64, option int64, user int64) {
+	group = util.DecodeInt64(key)
+	option = util.DecodeInt64(key[8:])
+	user = util.DecodeInt64(key[16:])
+	return
+}

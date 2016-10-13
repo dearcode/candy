@@ -382,11 +382,12 @@ func (u *userDB) getMessage(userID int64, reverse bool, id int64) ([]int64, erro
 func (u *userDB) addGroup(userID int64, groupID int64) error {
 	key := UserGroupKey(userID, groupID)
 	val := util.EncodeInt64(groupID)
-	if err := u.db.Put(key, val, nil); err != nil {
-		return errors.Trace(err)
-	}
+	return errors.Trace(u.db.Put(key, val, nil))
+}
 
-	return nil
+func (u *userDB) delGroup(userID int64, groupID int64) error {
+	key := UserGroupKey(userID, groupID)
+	return errors.Trace(u.db.Delete(key, nil))
 }
 
 func (u *userDB) getGroups(userID int64) ([]int64, error) {

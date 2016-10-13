@@ -13,6 +13,7 @@ message ResponseHeader {
     string Msg = 2;
 }
 
+
 enum Relation {
     // 没关系, 已删除
     Del     = 0;
@@ -64,16 +65,17 @@ message Message {
 
 // GroupInfo 群信息，目前只有名字，公告，头像
 message GroupInfo {
-    int64   ID      = 1;
-    int64   Owner   = 2;
-    string  Name    = 3;
-    string  Avatar  = 4;
-    string  Notice  = 5;
+    bool    Active  = 1;
+    int64   ID      = 2;
+    int64   Owner   = 3;
+    string  Name    = 4;
+    string  Avatar  = 5;
+    string  Notice  = 6;
 
     // Admins 管理员
-    repeated int64 Admins = 6;
+    repeated int64 Admins = 7;
     // Member 成员
-    repeated int64 Member = 7;
+    repeated int64 Member = 8;
 }
 
 // 下推的消息，有系统消息(加群，加好友，上线通知啥的)，正常聊天消息

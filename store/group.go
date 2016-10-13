@@ -44,7 +44,7 @@ func (g *groupDB) start() error {
 
 // 创建一个新的组
 func (g *groupDB) newGroup(gid, uid int64, name string) error {
-	buf, err := json.Marshal(meta.GroupInfo{ID: gid, Owner: uid, Name: name})
+	buf, err := json.Marshal(meta.GroupInfo{ID: gid, Owner: uid, Name: name, Active: true})
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -67,6 +67,11 @@ func (g *groupDB) delGroup(gid, uid int64) error {
 		return errors.Trace(ErrInvalidOperator)
 	}
 
+	group.Active = false
+
+	//TODO 延迟清理
+	log.Infof("DeleteGroup:%d, User:%d", gid, uid)
+
 	return errors.Trace(g.db.Delete(key, nil))
 }
 
@@ -88,7 +93,8 @@ func (g *groupDB) getAdmins(gid int64) []int64 {
 
 	it := g.db.NewIterator(&lu.Range{Start: start, Limit: end}, nil)
 	for it.Next(); it.Valid(); it.Next() {
-		users = append(users, util.DecodeInt64(it.Key()[8:]))
+		_, _, user := DecodeGroupKey(it.Key())
+		users = append(users, user)
 	}
 	it.Release()
 
@@ -131,7 +137,8 @@ func (g *groupDB) getMember(gid int64) []int64 {
 
 	it := g.db.NewIterator(&lu.Range{Start: start, Limit: end}, nil)
 	for it.Next(); it.Valid(); it.Next() {
-		users = append(users, util.DecodeInt64(it.Key()[8:]))
+		_, _, user := DecodeGroupKey(it.Key())
+		users = append(users, user)
 	}
 	it.Release()
 

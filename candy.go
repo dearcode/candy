@@ -32,6 +32,7 @@ func notice() {
 12. 加载好友列表
 13. 更改用户密码
 14. 确认添加好友
+15. 解散群
 0. 退出
 -----------------------------------------------`
 	fmt.Println(help)
@@ -308,6 +309,30 @@ func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
 	log.Debugf("createGroup success, groupName:%v groupID:%v", groupName, gid)
 }
 
+func deleteGroup(c *candy.CandyClient, reader *bufio.Reader) {
+	fmt.Println("----------------解散群组-----------------------")
+	defer endSection()
+
+	fmt.Println("请输入群组ID:")
+	data, _, _ := reader.ReadLine()
+	groupID := string(data)
+
+	id, err := strconv.ParseInt(groupID, 10, 64)
+	if err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Parse int code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.DeleteGroup(id); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("deleteGroup code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("deleteGroup success, groupID:%v", groupID)
+}
+
 func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 	fmt.Println("---------------加载群组列表--------------------")
 	defer endSection()
@@ -449,6 +474,8 @@ func main() {
 			updateUserPasswd(c, reader)
 		} else if command == "14" {
 			confirmFriend(c, reader)
+		} else if command == "15" {
+			deleteGroup(c, reader)
 		} else {
 			log.Errorf("未知命令")
 		}

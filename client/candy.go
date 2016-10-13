@@ -400,6 +400,26 @@ func (c *CandyClient) CreateGroup(name string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
+// Group 群操作
+func (c *CandyClient) Group(id int64, operate int32, users []int64, msg string) error {
+	req := &meta.GateGroupRequest{ID: id, Msg: msg, Operate: meta.Relation(operate), Users: users}
+	resp, err := c.api.Group(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	return resp.Header.Error()
+}
+
+// DeleteGroup 解散群组
+func (c *CandyClient) DeleteGroup(id int64) error {
+	req := &meta.GateGroupDeleteRequest{ID: id}
+	resp, err := c.api.GroupDelete(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	return resp.Header.Error()
+}
+
 // LoadGroupList 拉取群组列表
 func (c *CandyClient) LoadGroupList() (string, error) {
 	req := &meta.GateLoadGroupListRequest{}
