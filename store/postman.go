@@ -27,9 +27,11 @@ func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Not
 func (p *postman) sendToUser(pm meta.PushMessage) error {
 	log.Debugf("begin send to User:%d msg:%v", pm.Msg.To, pm)
 
-	// 检测收件人的好友里面有没有发件人
-	if err := p.friend.exist(pm.Msg.To, pm.Msg.From); err != nil {
-		return errors.Annotatef(ErrInvalidSender, "unrelated from:%d to:%d", pm.Msg.From, pm.Msg.To)
+	if pm.Event == meta.Event_None {
+		// 检测收件人的好友里面有没有发件人
+		if err := p.friend.exist(pm.Msg.To, pm.Msg.From); err != nil {
+			return errors.Annotatef(ErrInvalidSender, "unrelated from:%d to:%d", pm.Msg.From, pm.Msg.To)
+		}
 	}
 
 	before, err := p.user.addMessage(pm.Msg.To, pm.Msg.ID)
@@ -45,9 +47,11 @@ func (p *postman) sendToUser(pm meta.PushMessage) error {
 func (p *postman) sendToGroup(pm meta.PushMessage) error {
 	log.Debugf("begin send Group msg:%v", pm)
 
-	// 检测组中是否存在这个发件人
-	if err := p.group.exist(pm.Msg.Group, pm.Msg.From); err != nil {
-		return errors.Annotatef(ErrInvalidSender, "group:%d not found user:%d", pm.Msg.Group, pm.Msg.From)
+	if pm.Event == meta.Event_None {
+		// 检测组中是否存在这个发件人
+		if err := p.group.exist(pm.Msg.Group, pm.Msg.From); err != nil {
+			return errors.Annotatef(ErrInvalidSender, "group:%d not found user:%d", pm.Msg.Group, pm.Msg.From)
+		}
 	}
 
 	var ids []*meta.PushID
@@ -71,8 +75,8 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 }
 
 func (p *postman) send(pm meta.PushMessage) error {
-	if pm.Msg.Group != 0 {
-		return p.sendToGroup(pm)
+	if pm.ToUser {
+		return p.sendToUser(pm)
 	}
-	return p.sendToUser(pm)
+	return p.sendToGroup(pm)
 }

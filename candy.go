@@ -11,45 +11,104 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/fatih/color"
+
 	candy "github.com/dearcode/candy/client"
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
 )
 
-func notice() {
-	help := `-----------------------------------------------
-1. 注册用户
-2. 登陆
-3. 注销
-4. 更新用户信息
-5. 获取用户信息
-6. 查找用户
-7. 添加好友
-8. 发送消息
-9. 创建群组
-10. 加载群组
-11. 根据用户ID获取用户信息
-12. 加载好友列表
-13. 更改用户密码
-14. 确认添加好友
-15. 解散群
-0. 退出
------------------------------------------------`
-	fmt.Println(help)
+const (
+	CmdExit = iota
+	CmdRegister
+
+	CmdLogin
+	CmdLogout
+
+	CmdUpdateUserInfo
+	CmdChangePassword
+
+	CmdFindUser
+	CmdGetUserInfoByName
+	CmdGetUserInfoByID
+
+	CmdLoadFriendList
+	CmdFriendAdd
+	CmdFriendAccept
+	CmdFriendDel
+
+	CmdSendMessage
+
+	CmdLoadGroupList
+	CmdGroupCreate
+	CmdGroupInvite
+	CmdGroupApply
+	CmdGroupAgree
+	CmdGroupAccept
+	CmdGroupKick
+	CmdGroupExit
+	CmdGroupDelete
+)
+
+type Cmd struct {
+	id    int
+	title string
 }
 
+func notice() {
+	cmdList := []Cmd{
+		{CmdRegister, "注册用户"},
+		{CmdLogin, "登  陆"},
+		{CmdLogout, "注  销"},
+		{CmdUpdateUserInfo, "修改用户信息"},
+		{CmdChangePassword, "修改密码"},
+
+		{CmdFindUser, "查找用户"},
+		{CmdGetUserInfoByName, "获取用户信息(Name)"},
+		{CmdGetUserInfoByID, "获取用户信息(ID)"},
+
+		{CmdLoadFriendList, "加载好友列表"},
+		{CmdFriendAdd, "添加好友"},
+		{CmdFriendAccept, "接受好友请求"},
+		{CmdFriendDel, "删除好友"},
+
+		{CmdSendMessage, "发送消息"},
+
+		{CmdLoadGroupList, "加载群列表"},
+		{CmdGroupCreate, "创建群"},
+		{CmdGroupInvite, "邀请用户入群"},
+		{CmdGroupApply, "申请入群"},
+		{CmdGroupAgree, "同意用户进群"},
+		{CmdGroupAccept, "接受群邀请"},
+		{CmdGroupKick, "踢用户出群"},
+		{CmdGroupExit, "退出群"},
+		{CmdGroupDelete, "解散群"},
+		{CmdExit, "退出"},
+	}
+
+	startSection("操作列表")
+	for _, cmd := range cmdList {
+		fmt.Printf("\t\t%2d %s\n", cmd.id, cmd.title)
+	}
+	endSection()
+
+}
+
+func startSection(key string) {
+	color.Green("-----------------%s--------------------", key)
+}
 func endSection() {
-	fmt.Println("-----------------------------------------------")
+	color.Green("-----------------------------------------------")
 }
 
 func register(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------用户注册-----------------------")
+	startSection("用户注册")
 	defer endSection()
 
-	fmt.Println("请输入用户名:")
+	color.Yellow("请输入用户名:")
 	data, _, _ := reader.ReadLine()
 	userName := string(data)
-	fmt.Println("请输入密码:")
+	color.Yellow("请输入密码:")
 	data, _, _ = reader.ReadLine()
 	userPassword := string(data)
 
@@ -64,13 +123,13 @@ func register(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func login(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------用户登陆-----------------------")
+	startSection("用户登陆")
 	defer endSection()
 
-	fmt.Println("请输入用户名:")
+	color.Yellow("请输入用户名:")
 	data, _, _ := reader.ReadLine()
 	userName := string(data)
-	fmt.Println("请输入密码:")
+	color.Yellow("请输入密码:")
 	data, _, _ = reader.ReadLine()
 	userPassword := string(data)
 
@@ -85,7 +144,7 @@ func login(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func logout(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------注销---------------------------")
+	startSection("注  销")
 	defer endSection()
 
 	err := c.Logout()
@@ -99,13 +158,13 @@ func logout(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func updateUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------更新用户信息-------------------")
+	startSection("更新用户信息")
 	defer endSection()
 
-	fmt.Println("请输入用户名:")
+	color.Yellow("请输入用户名:")
 	data, _, _ := reader.ReadLine()
 	userName := string(data)
-	fmt.Println("请输入用户昵称：")
+	color.Yellow("请输入用户昵称：")
 	data, _, _ = reader.ReadLine()
 	nickName := string(data)
 
@@ -120,10 +179,10 @@ func updateUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------获取用户信息-------------------")
+	startSection("获取用户信息")
 	defer endSection()
 
-	fmt.Println("请输入用户名:")
+	color.Yellow("请输入用户名:")
 	d, _, _ := reader.ReadLine()
 	userName := string(d)
 
@@ -146,10 +205,10 @@ func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------获取用户信息-------------------")
+	startSection("获取用户信息")
 	defer endSection()
 
-	fmt.Println("请输入用户ID:")
+	color.Yellow("请输入用户ID:")
 	d, _, _ := reader.ReadLine()
 	userID := string(d)
 
@@ -177,10 +236,10 @@ func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func findUser(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------查找用户-----------------------")
+	startSection("查找用户")
 	defer endSection()
 
-	fmt.Println("请输入用户名:")
+	color.Yellow("请输入用户名:")
 	d, _, _ := reader.ReadLine()
 	userName := string(d)
 
@@ -205,10 +264,10 @@ func findUser(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------添加好友-----------------------")
+	startSection("添加好友")
 	defer endSection()
 
-	fmt.Println("请输入用户ID:")
+	color.Yellow("请输入用户ID:")
 	data, _, _ := reader.ReadLine()
 	userID := string(data)
 
@@ -219,7 +278,7 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	fmt.Println("请输入附加消息:")
+	color.Yellow("请输入附加消息:")
 	data, _, _ = reader.ReadLine()
 	msg := string(data)
 
@@ -233,10 +292,10 @@ func addFriend(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func confirmFriend(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------确认添加好友-----------------------")
+	startSection("同意添加好友")
 	defer endSection()
 
-	fmt.Println("请输入用户ID:")
+	color.Yellow("请输入用户ID:")
 	data, _, _ := reader.ReadLine()
 	userID := string(data)
 
@@ -256,11 +315,11 @@ func confirmFriend(c *candy.CandyClient, reader *bufio.Reader) {
 	log.Debugf("confirmFriend userID:%v", userID)
 }
 func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------发送消息-----------------------")
+	startSection("发送消息")
 	defer endSection()
 	id := int64(0)
 
-	fmt.Println("请输入接收用户ID:")
+	color.Yellow("请输入接收用户ID:")
 	data, _, _ := reader.ReadLine()
 	userID := string(data)
 
@@ -272,7 +331,7 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	}
 
 	for {
-		fmt.Println("请输入消息内容(quit退出):")
+		color.Yellow("请输入消息内容(quit退出):")
 		data, _, _ = reader.ReadLine()
 		msg := string(data)
 
@@ -292,10 +351,10 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------创建群组-----------------------")
+	startSection("创建群组")
 	defer endSection()
 
-	fmt.Println("请输入群组名称:")
+	color.Yellow("请输入群组名称:")
 	data, _, _ := reader.ReadLine()
 	groupName := string(data)
 
@@ -309,11 +368,178 @@ func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
 	log.Debugf("createGroup success, groupName:%v groupID:%v", groupName, gid)
 }
 
-func deleteGroup(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("----------------解散群组-----------------------")
+func readID(reader *bufio.Reader) (int64, error) {
+	data, _, err := reader.ReadLine()
+	if err != nil {
+		return -1, err
+	}
+	return strconv.ParseInt(string(data), 10, 64)
+}
+
+func groupInviteUser(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("邀请用户入群")
 	defer endSection()
 
-	fmt.Println("请输入群组ID:")
+	var gid, uid int64
+	var err error
+
+	color.Yellow("请输入群组ID:")
+	if gid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read gid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	color.Yellow("请输入用户ID:")
+	if uid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read uid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.Group(gid, int32(meta.Relation_Add), []int64{uid}, "邀请你加群"); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("group invite success, group:%v, user:%v", gid, uid)
+}
+
+func groupUserApply(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("申请入群")
+	defer endSection()
+
+	var gid int64
+	var err error
+
+	color.Yellow("请输入群组ID:")
+	if gid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read gid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.Group(gid, int32(meta.Relation_Add), nil, "我要加你的群"); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("group apply success, group:%v", gid)
+}
+
+func groupAgreeUser(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("同意用户入群")
+	defer endSection()
+
+	var gid, uid int64
+	var err error
+
+	color.Yellow("请输入群组ID:")
+	if gid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read gid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	color.Yellow("请输入用户ID:")
+	if uid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read uid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.Group(gid, int32(meta.Relation_Confirm), []int64{uid}, "同意你入群了"); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("group agree success, group:%v, user:%v", gid, uid)
+}
+
+func groupUserAccept(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("接受入群邀请")
+	defer endSection()
+
+	var gid int64
+	var err error
+
+	color.Yellow("请输入群组ID:")
+	if gid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read gid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.Group(gid, int32(meta.Relation_Confirm), nil, "我同意进你的群了"); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("group accept success, group:%v", gid)
+}
+
+func groupKickUser(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("踢用户出群")
+	defer endSection()
+
+	var gid, uid int64
+	var err error
+
+	color.Yellow("请输入群组ID:")
+	if gid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read gid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	color.Yellow("请输入用户ID:")
+	if uid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read uid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.Group(gid, int32(meta.Relation_Del), []int64{uid}, "你被踢出群了"); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("group:%v kick user:%v success", gid, uid)
+}
+
+func groupUserExit(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("退出群")
+	defer endSection()
+
+	var gid int64
+	var err error
+
+	color.Yellow("请输入群组ID:")
+	if gid, err = readID(reader); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("read gid code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	if err = c.Group(gid, int32(meta.Relation_Del), nil, "我退群了"); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("group exit success, group:%v", gid)
+}
+
+func groupDelete(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("解散群组")
+	defer endSection()
+
+	color.Yellow("请输入群组ID:")
 	data, _, _ := reader.ReadLine()
 	groupID := string(data)
 
@@ -330,11 +556,11 @@ func deleteGroup(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	log.Debugf("deleteGroup success, groupID:%v", groupID)
+	log.Debugf("group:%v delete success", groupID)
 }
 
 func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("---------------加载群组列表--------------------")
+	startSection("加载群组列表")
 	defer endSection()
 
 	data, err := c.LoadGroupList()
@@ -359,7 +585,7 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func loadFriendList(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("---------------加载好友列表--------------------")
+	startSection("加载好友列表")
 	defer endSection()
 
 	data, err := c.LoadFriendList()
@@ -384,14 +610,14 @@ func loadFriendList(c *candy.CandyClient, reader *bufio.Reader) {
 }
 
 func updateUserPasswd(c *candy.CandyClient, reader *bufio.Reader) {
-	fmt.Println("---------------更改用户密码--------------------")
+	startSection("更改用户密码")
 	defer endSection()
 
-	fmt.Println("请输入用户名:")
+	color.Yellow("请输入用户名:")
 	data, _, _ := reader.ReadLine()
 	user := string(data)
 
-	fmt.Println("请输入新密码:")
+	color.Yellow("请输入新密码:")
 	data, _, _ = reader.ReadLine()
 	pwd := string(data)
 
@@ -437,46 +663,67 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	for running {
 		notice()
-		data, _, _ := reader.ReadLine()
-		command := string(data)
-		if command == "" {
+		id, err := readID(reader)
+		if err != nil {
+			running = false
 			continue
 		}
-
-		log.Debugf("command:%v", command)
-		if command == "0" {
+		switch id {
+		case CmdExit:
 			running = false
-		} else if command == "1" {
+		case CmdRegister:
 			register(c, reader)
-		} else if command == "2" {
+		case CmdLogin:
 			login(c, reader)
-		} else if command == "3" {
+		case CmdLogout:
 			logout(c, reader)
-		} else if command == "4" {
+
+		case CmdUpdateUserInfo:
 			updateUserInfo(c, reader)
-		} else if command == "5" {
-			getUserInfoByName(c, reader)
-		} else if command == "6" {
-			findUser(c, reader)
-		} else if command == "7" {
-			addFriend(c, reader)
-		} else if command == "8" {
-			newMessage(c, reader)
-		} else if command == "9" {
-			createGroup(c, reader)
-		} else if command == "10" {
-			loadGroupList(c, reader)
-		} else if command == "11" {
-			getUserInfoByID(c, reader)
-		} else if command == "12" {
-			loadFriendList(c, reader)
-		} else if command == "13" {
+		case CmdChangePassword:
 			updateUserPasswd(c, reader)
-		} else if command == "14" {
+
+		case CmdGetUserInfoByName:
+			getUserInfoByName(c, reader)
+		case CmdGetUserInfoByID:
+			getUserInfoByID(c, reader)
+
+		case CmdFindUser:
+			findUser(c, reader)
+
+		case CmdLoadFriendList:
+			loadFriendList(c, reader)
+		case CmdFriendAdd:
+			addFriend(c, reader)
+		case CmdFriendAccept:
 			confirmFriend(c, reader)
-		} else if command == "15" {
-			deleteGroup(c, reader)
-		} else {
+		case CmdFriendDel:
+
+		case CmdSendMessage:
+			newMessage(c, reader)
+
+		case CmdLoadGroupList:
+			loadGroupList(c, reader)
+		case CmdGroupCreate:
+			createGroup(c, reader)
+		case CmdGroupDelete:
+			groupDelete(c, reader)
+
+		case CmdGroupInvite:
+			groupInviteUser(c, reader)
+		case CmdGroupAccept:
+			groupUserAccept(c, reader)
+		case CmdGroupAgree:
+			groupAgreeUser(c, reader)
+		case CmdGroupApply:
+			groupUserApply(c, reader)
+
+		case CmdGroupKick:
+			groupKickUser(c, reader)
+		case CmdGroupExit:
+			groupUserExit(c, reader)
+
+		default:
 			log.Errorf("未知命令")
 		}
 	}

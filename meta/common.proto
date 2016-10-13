@@ -86,5 +86,7 @@ message PushMessage {
     Relation    Operate = 2;
     // 具体消息
     Message     Msg     = 3;
+    // 这消息到底是发给用户的，还是发给群的
+    bool        ToUser  = 4;
 }
 

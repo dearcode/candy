@@ -210,8 +210,12 @@ func (s *Store) LoadFriendList(_ context.Context, req *meta.StoreLoadFriendListR
 // NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) (*meta.StoreNewMessageResponse, error) {
 	log.Debugf("Store NewMessage, msg:%v", req.Msg)
+	pm := meta.PushMessage{Msg: req.Msg}
+	if req.Msg.Group != 0 {
+		pm.ToUser = true
+	}
 	// 直接发送，如果失败会自动插入到重试队列中
-	if err := s.message.send(meta.PushMessage{Msg: req.Msg}); err != nil {
+	if err := s.message.send(pm); err != nil {
 		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 	log.Debugf("Store messate success")
@@ -337,12 +341,12 @@ func (s *Store) Group(_ context.Context, req *meta.StoreGroupRequest) (*meta.Sto
 	case meta.Relation_Del:
 		if len(req.Users) != 0 {
 			//踢人操作
-			if err = s.group.delUsers(req.ID, req.User, req.Users...); err != nil {
-				err = s.user.delGroup(req.User, req.ID)
+			if err = s.group.delUsers(req.ID, req.User, req.Users...); err == nil {
+				err = s.user.delGroup(req.Users[0], req.ID)
 			}
 		} else {
 			//退群操作
-			if err = s.group.exit(req.ID, req.User); err != nil {
+			if err = s.group.exit(req.ID, req.User); err == nil {
 				err = s.user.delGroup(req.User, req.ID)
 			}
 		}
@@ -360,10 +364,11 @@ func (s *Store) Group(_ context.Context, req *meta.StoreGroupRequest) (*meta.Sto
 	}
 
 	// FIXME 发消息这里应该有问题
-	pm := meta.PushMessage{Event: meta.Event_Group, Operate: req.Operate, Msg: &meta.Message{ID: id, From: req.User, Body: req.Msg}}
+	pm := meta.PushMessage{Event: meta.Event_Group, Operate: req.Operate, Msg: &meta.Message{ID: id, Group: req.ID, From: req.User, Body: req.Msg}}
 	if len(req.Users) != 0 {
 		for _, u := range req.Users {
 			pm.Msg.To = u
+			pm.ToUser = true
 			if err := s.message.send(pm); err != nil {
 				log.Debugf("end Group:%+v, send error:%v", req, errors.ErrorStack(err))
 				return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil

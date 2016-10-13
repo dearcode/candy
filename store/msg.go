@@ -150,6 +150,7 @@ func (m *messageDB) send(pm meta.PushMessage) error {
 
 	//直接发送，如果发送失败再插入队列中
 	if err := m.sender.send(pm); err != nil {
+		log.Infof("send msg:%v error:%s", pm, errors.ErrorStack(err))
 		if err := m.addQueue(pm.Msg.ID); err != nil {
 			return errors.Trace(err)
 		}

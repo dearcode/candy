@@ -18,7 +18,8 @@ import (
 	"github.com/syndtr/goleveldb/leveldb/storage"
 )
 
-// ErrManifestCorrupted records manifest corruption.
+// ErrManifestCorrupted records manifest corruption. This error will be
+// wrapped with errors.ErrCorrupted.
 type ErrManifestCorrupted struct {
 	Field  string
 	Reason string
@@ -42,7 +43,7 @@ type session struct {
 	stSeqNum         uint64 // last mem compacted seq; need external synchronization
 
 	stor     storage.Storage
-	storLock storage.Lock
+	storLock storage.Locker
 	o        *cachedOptions
 	icmp     *iComparer
 	tops     *tOps
@@ -92,7 +93,7 @@ func (s *session) close() {
 
 // Release session lock.
 func (s *session) release() {
-	s.storLock.Release()
+	s.storLock.Unlock()
 }
 
 // Create a new database session; need external synchronization.

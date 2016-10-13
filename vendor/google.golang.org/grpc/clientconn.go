@@ -270,7 +270,16 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	if cc.dopts.bs == nil {
 		cc.dopts.bs = DefaultBackoffConfig
 	}
-
+	creds := cc.dopts.copts.TransportCredentials
+	if creds != nil && creds.Info().ServerName != "" {
+		cc.authority = creds.Info().ServerName
+	} else {
+		colonPos := strings.LastIndex(target, ":")
+		if colonPos == -1 {
+			colonPos = len(target)
+		}
+		cc.authority = target[:colonPos]
+	}
 	var ok bool
 	waitC := make(chan error, 1)
 	go func() {
@@ -279,7 +288,14 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 			// Connect to target directly if balancer is nil.
 			addrs = append(addrs, Address{Addr: target})
 		} else {
-			if err := cc.dopts.balancer.Start(target); err != nil {
+			var credsClone credentials.TransportCredentials
+			if creds != nil {
+				credsClone = creds.Clone()
+			}
+			config := BalancerConfig{
+				DialCreds: credsClone,
+			}
+			if err := cc.dopts.balancer.Start(target, config); err != nil {
 				waitC <- err
 				return
 			}
@@ -321,16 +337,6 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	// The lbWatcher goroutine will not be created.
 	if ok {
 		go cc.lbWatcher()
-	}
-	creds := cc.dopts.copts.TransportCredentials
-	if creds != nil && creds.Info().ServerName != "" {
-		cc.authority = creds.Info().ServerName
-	} else {
-		colonPos := strings.LastIndex(target, ":")
-		if colonPos == -1 {
-			colonPos = len(target)
-		}
-		cc.authority = target[:colonPos]
 	}
 	return cc, nil
 }

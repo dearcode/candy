@@ -9,7 +9,6 @@ import (
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
-	"github.com/dearcode/candy/util/log"
 )
 
 const (
@@ -338,8 +337,6 @@ func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
 
 // loopRecvMessage 一直接收服务器返回消息, 直到退出.
 func (c *CandyClient) loopRecvMessage() {
-	log.Debugf("start loopRecvMessage")
-
 	for !c.stop {
 		pm, err := c.stream.Recv()
 		if err != nil {

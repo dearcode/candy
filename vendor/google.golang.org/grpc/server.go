@@ -865,33 +865,49 @@ func (s *Server) testingCloseConns() {
 	s.mu.Unlock()
 }
 
-// SendHeader sends header metadata. It may be called at most once from a unary
-// RPC handler. The ctx is the RPC handler's Context or one derived from it.
-func SendHeader(ctx context.Context, md metadata.MD) error {
+// SetHeader sets the header metadata.
+// When called multiple times, all the provided metadata will be merged.
+// All the metadata will be sent out when one of the following happens:
+//  - grpc.SendHeader() is called;
+//  - The first response is sent out;
+//  - An RPC status is sent out (error or success).
+func SetHeader(ctx context.Context, md metadata.MD) error {
 	if md.Len() == 0 {
 		return nil
 	}
 	stream, ok := transport.StreamFromContext(ctx)
 	if !ok {
-		return fmt.Errorf("grpc: failed to fetch the stream from the context %v", ctx)
+		return Errorf(codes.Internal, "grpc: failed to fetch the stream from the context %v", ctx)
+	}
+	return stream.SetHeader(md)
+}
+
+// SendHeader sends header metadata. It may be called at most once.
+// The provided md and headers set by SetHeader() will be sent.
+func SendHeader(ctx context.Context, md metadata.MD) error {
+	stream, ok := transport.StreamFromContext(ctx)
+	if !ok {
+		return Errorf(codes.Internal, "grpc: failed to fetch the stream from the context %v", ctx)
 	}
 	t := stream.ServerTransport()
 	if t == nil {
 		grpclog.Fatalf("grpc: SendHeader: %v has no ServerTransport to send header metadata.", stream)
 	}
-	return t.WriteHeader(stream, md)
+	if err := t.WriteHeader(stream, md); err != nil {
+		return toRPCErr(err)
+	}
+	return nil
 }
 
 // SetTrailer sets the trailer metadata that will be sent when an RPC returns.
-// It may be called at most once from a unary RPC handler. The ctx is the RPC
-// handler's Context or one derived from it.
+// When called more than once, all the provided metadata will be merged.
 func SetTrailer(ctx context.Context, md metadata.MD) error {
 	if md.Len() == 0 {
 		return nil
 	}
 	stream, ok := transport.StreamFromContext(ctx)
 	if !ok {
-		return fmt.Errorf("grpc: failed to fetch the stream from the context %v", ctx)
+		return Errorf(codes.Internal, "grpc: failed to fetch the stream from the context %v", ctx)
 	}
 	return stream.SetTrailer(md)
 }
