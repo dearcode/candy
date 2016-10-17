@@ -5,33 +5,30 @@ option go_package = "meta";
 
 import "common.proto";
 
-service NoticeService {
-    rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
-    rpc UnSubscribe(UnSubscribeRequest) returns (UnSubscribeResponse);
+//Push 推送 TODO
+// 在线推送：android, ios, web
+// 离线推送：apn,gcm
+service Push {
+    // Subscribe 订阅，取消，接收消息接口.
+    rpc Subscribe(stream SubscribeRequest) returns (stream PushRequest);
 
+    //Push store调用的接口.
     rpc Push(PushRequest) returns (PushResponse);
-
 }
+
 
 
 message SubscribeRequest {
-    int64 ID = 1;
-    string host = 2;
+    // 用户ID
+    int64   ID      = 1; 
+    // 是要订阅，还是要取消
+    bool    Enable  = 2; 
+    // 用来区分用户的设备，如同一设备多次从不同的gate登录上来，则只推送最新的gate连接 
+    string  Device  = 3;
 }
 
-message SubscribeResponse {
-    ResponseHeader header = 1;
-}
 
-message UnSubscribeRequest {
-    int64 ID = 1;
-    string host = 2;
-}
-
-message UnSubscribeResponse {
-    ResponseHeader header = 1;
-}
-
+// PushRequest 推送的消息.
 message PushRequest {
     repeated PushID ID = 1;
     PushMessage Msg = 2;

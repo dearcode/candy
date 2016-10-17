@@ -21,8 +21,8 @@ service Gate {
     // SendMessage 发送消息
     rpc SendMessage(GateSendMessageRequest) returns (GateSendMessageResponse);
 
-    // Ready 连接成功后立刻调用Ready, 开启推送
-    rpc Ready(Message) returns (stream PushMessage);
+    // Stream 连接成功后立刻调用Stream, 开启推送
+    rpc Stream(Message) returns (stream PushMessage);
 
     // Friend 好友的添加，删除、确认、拒绝.
     rpc Friend (GateFriendRequest) returns (GateFriendResponse);
@@ -54,8 +54,6 @@ service Gate {
     rpc LoadMessage (GateLoadMessageRequest) returns (GateLoadMessageResponse);
 
 
-    // Push 服务端向客户端推送接口, 这个接口应该只有服务器能调用.
-    rpc Push (GatePushRequest) returns (GatePushResponse);
 
 }
 
@@ -142,8 +140,10 @@ message GateHeartbeatRequest { }
 message GateHeartbeatResponse {}
 
 message GateUserLoginRequest {
-    string User = 1;
+    string User     = 1;
     string Password = 2;
+    //设备号
+    string Device   = 3; 
 }
 
 message GateUserLoginResponse {
@@ -187,17 +187,6 @@ message GateDownloadFileResponse {
     map <string, bytes> Files = 2;
 }
 
-
-
-message GatePushRequest {
-    repeated PushID ID = 1;
-    PushMessage Msg = 2;
-}
-
-
-message GatePushResponse {
-    ResponseHeader header = 1;
-}
 
 
 message GateLoadMessageRequest {

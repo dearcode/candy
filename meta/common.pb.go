@@ -45,8 +45,6 @@ It has these top-level messages:
 	GateCheckFileResponse
 	GateDownloadFileRequest
 	GateDownloadFileResponse
-	GatePushRequest
-	GatePushResponse
 	GateLoadMessageRequest
 	GateLoadMessageResponse
 	GateLoadGroupListRequest
@@ -64,9 +62,6 @@ It has these top-level messages:
 	NewIDRequest
 	NewIDResponse
 	SubscribeRequest
-	SubscribeResponse
-	UnSubscribeRequest
-	UnSubscribeResponse
 	PushRequest
 	PushResponse
 	StoreFindUserRequest

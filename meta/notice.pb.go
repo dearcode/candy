@@ -19,8 +19,12 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type SubscribeRequest struct {
-	ID   int64  `protobuf:"varint,1,opt,name=ID,json=iD" json:"ID,omitempty"`
-	Host string `protobuf:"bytes,2,opt,name=host" json:"host,omitempty"`
+	// 用户ID
+	ID int64 `protobuf:"varint,1,opt,name=ID,json=iD" json:"ID,omitempty"`
+	// 是要订阅，还是要取消
+	Enable bool `protobuf:"varint,2,opt,name=Enable,json=enable" json:"Enable,omitempty"`
+	// 用来区分用户的设备，如同一设备多次从不同的gate登录上来，则只推送最新的gate连接
+	Device string `protobuf:"bytes,3,opt,name=Device,json=device" json:"Device,omitempty"`
 }
 
 func (m *SubscribeRequest) Reset()                    { *m = SubscribeRequest{} }
@@ -28,48 +32,7 @@ func (m *SubscribeRequest) String() string            { return proto.CompactText
 func (*SubscribeRequest) ProtoMessage()               {}
 func (*SubscribeRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
-type SubscribeResponse struct {
-	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-}
-
-func (m *SubscribeResponse) Reset()                    { *m = SubscribeResponse{} }
-func (m *SubscribeResponse) String() string            { return proto.CompactTextString(m) }
-func (*SubscribeResponse) ProtoMessage()               {}
-func (*SubscribeResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
-
-func (m *SubscribeResponse) GetHeader() *ResponseHeader {
-	if m != nil {
-		return m.Header
-	}
-	return nil
-}
-
-type UnSubscribeRequest struct {
-	ID   int64  `protobuf:"varint,1,opt,name=ID,json=iD" json:"ID,omitempty"`
-	Host string `protobuf:"bytes,2,opt,name=host" json:"host,omitempty"`
-}
-
-func (m *UnSubscribeRequest) Reset()                    { *m = UnSubscribeRequest{} }
-func (m *UnSubscribeRequest) String() string            { return proto.CompactTextString(m) }
-func (*UnSubscribeRequest) ProtoMessage()               {}
-func (*UnSubscribeRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
-
-type UnSubscribeResponse struct {
-	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-}
-
-func (m *UnSubscribeResponse) Reset()                    { *m = UnSubscribeResponse{} }
-func (m *UnSubscribeResponse) String() string            { return proto.CompactTextString(m) }
-func (*UnSubscribeResponse) ProtoMessage()               {}
-func (*UnSubscribeResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{3} }
-
-func (m *UnSubscribeResponse) GetHeader() *ResponseHeader {
-	if m != nil {
-		return m.Header
-	}
-	return nil
-}
-
+// PushRequest 推送的消息.
 type PushRequest struct {
 	ID  []*PushID    `protobuf:"bytes,1,rep,name=ID,json=iD" json:"ID,omitempty"`
 	Msg *PushMessage `protobuf:"bytes,2,opt,name=Msg,json=msg" json:"Msg,omitempty"`
@@ -78,7 +41,7 @@ type PushRequest struct {
 func (m *PushRequest) Reset()                    { *m = PushRequest{} }
 func (m *PushRequest) String() string            { return proto.CompactTextString(m) }
 func (*PushRequest) ProtoMessage()               {}
-func (*PushRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{4} }
+func (*PushRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
 
 func (m *PushRequest) GetID() []*PushID {
 	if m != nil {
@@ -101,7 +64,7 @@ type PushResponse struct {
 func (m *PushResponse) Reset()                    { *m = PushResponse{} }
 func (m *PushResponse) String() string            { return proto.CompactTextString(m) }
 func (*PushResponse) ProtoMessage()               {}
-func (*PushResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{5} }
+func (*PushResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
 
 func (m *PushResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -112,9 +75,6 @@ func (m *PushResponse) GetHeader() *ResponseHeader {
 
 func init() {
 	proto.RegisterType((*SubscribeRequest)(nil), "candy.meta.SubscribeRequest")
-	proto.RegisterType((*SubscribeResponse)(nil), "candy.meta.SubscribeResponse")
-	proto.RegisterType((*UnSubscribeRequest)(nil), "candy.meta.UnSubscribeRequest")
-	proto.RegisterType((*UnSubscribeResponse)(nil), "candy.meta.UnSubscribeResponse")
 	proto.RegisterType((*PushRequest)(nil), "candy.meta.PushRequest")
 	proto.RegisterType((*PushResponse)(nil), "candy.meta.PushResponse")
 }
@@ -127,157 +87,159 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion3
 
-// Client API for NoticeService service
+// Client API for Push service
 
-type NoticeServiceClient interface {
-	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error)
-	UnSubscribe(ctx context.Context, in *UnSubscribeRequest, opts ...grpc.CallOption) (*UnSubscribeResponse, error)
+type PushClient interface {
+	// Subscribe 订阅，取消，接收消息接口.
+	Subscribe(ctx context.Context, opts ...grpc.CallOption) (Push_SubscribeClient, error)
+	// Push store调用的接口.
 	Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error)
 }
 
-type noticeServiceClient struct {
+type pushClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewNoticeServiceClient(cc *grpc.ClientConn) NoticeServiceClient {
-	return &noticeServiceClient{cc}
+func NewPushClient(cc *grpc.ClientConn) PushClient {
+	return &pushClient{cc}
 }
 
-func (c *noticeServiceClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error) {
-	out := new(SubscribeResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.NoticeService/Subscribe", in, out, c.cc, opts...)
+func (c *pushClient) Subscribe(ctx context.Context, opts ...grpc.CallOption) (Push_SubscribeClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_Push_serviceDesc.Streams[0], c.cc, "/candy.meta.Push/Subscribe", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &pushSubscribeClient{stream}
+	return x, nil
 }
 
-func (c *noticeServiceClient) UnSubscribe(ctx context.Context, in *UnSubscribeRequest, opts ...grpc.CallOption) (*UnSubscribeResponse, error) {
-	out := new(UnSubscribeResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.NoticeService/UnSubscribe", in, out, c.cc, opts...)
-	if err != nil {
+type Push_SubscribeClient interface {
+	Send(*SubscribeRequest) error
+	Recv() (*PushRequest, error)
+	grpc.ClientStream
+}
+
+type pushSubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *pushSubscribeClient) Send(m *SubscribeRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *pushSubscribeClient) Recv() (*PushRequest, error) {
+	m := new(PushRequest)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return m, nil
 }
 
-func (c *noticeServiceClient) Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error) {
+func (c *pushClient) Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error) {
 	out := new(PushResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.NoticeService/Push", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/candy.meta.Push/Push", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for NoticeService service
+// Server API for Push service
 
-type NoticeServiceServer interface {
-	Subscribe(context.Context, *SubscribeRequest) (*SubscribeResponse, error)
-	UnSubscribe(context.Context, *UnSubscribeRequest) (*UnSubscribeResponse, error)
+type PushServer interface {
+	// Subscribe 订阅，取消，接收消息接口.
+	Subscribe(Push_SubscribeServer) error
+	// Push store调用的接口.
 	Push(context.Context, *PushRequest) (*PushResponse, error)
 }
 
-func RegisterNoticeServiceServer(s *grpc.Server, srv NoticeServiceServer) {
-	s.RegisterService(&_NoticeService_serviceDesc, srv)
+func RegisterPushServer(s *grpc.Server, srv PushServer) {
+	s.RegisterService(&_Push_serviceDesc, srv)
 }
 
-func _NoticeService_Subscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeRequest)
-	if err := dec(in); err != nil {
+func _Push_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(PushServer).Subscribe(&pushSubscribeServer{stream})
+}
+
+type Push_SubscribeServer interface {
+	Send(*PushRequest) error
+	Recv() (*SubscribeRequest, error)
+	grpc.ServerStream
+}
+
+type pushSubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *pushSubscribeServer) Send(m *PushRequest) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *pushSubscribeServer) Recv() (*SubscribeRequest, error) {
+	m := new(SubscribeRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(NoticeServiceServer).Subscribe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/candy.meta.NoticeService/Subscribe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).Subscribe(ctx, req.(*SubscribeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
-func _NoticeService_UnSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnSubscribeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NoticeServiceServer).UnSubscribe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/candy.meta.NoticeService/UnSubscribe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).UnSubscribe(ctx, req.(*UnSubscribeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _NoticeService_Push_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Push_Push_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PushRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NoticeServiceServer).Push(ctx, in)
+		return srv.(PushServer).Push(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/candy.meta.NoticeService/Push",
+		FullMethod: "/candy.meta.Push/Push",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).Push(ctx, req.(*PushRequest))
+		return srv.(PushServer).Push(ctx, req.(*PushRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _NoticeService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "candy.meta.NoticeService",
-	HandlerType: (*NoticeServiceServer)(nil),
+var _Push_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "candy.meta.Push",
+	HandlerType: (*PushServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Subscribe",
-			Handler:    _NoticeService_Subscribe_Handler,
-		},
-		{
-			MethodName: "UnSubscribe",
-			Handler:    _NoticeService_UnSubscribe_Handler,
-		},
-		{
 			MethodName: "Push",
-			Handler:    _NoticeService_Push_Handler,
+			Handler:    _Push_Push_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _Push_Subscribe_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: fileDescriptor3,
 }
 
 func init() { proto.RegisterFile("notice.proto", fileDescriptor3) }
 
 var fileDescriptor3 = []byte{
-	// 302 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x52, 0x4d, 0x4b, 0xb4, 0x50,
-	0x14, 0xc6, 0x0f, 0x84, 0x39, 0xfa, 0xbe, 0xd4, 0x69, 0x91, 0x48, 0x1f, 0x83, 0x2b, 0xdb, 0xb8,
-	0x30, 0x88, 0xda, 0x0e, 0x42, 0xe3, 0x62, 0x86, 0x70, 0x68, 0x13, 0x6d, 0xd4, 0x39, 0xa8, 0x0b,
-	0xbd, 0x93, 0x57, 0x83, 0xfe, 0x6f, 0x3f, 0x24, 0xbc, 0x6a, 0xd9, 0xc8, 0x6c, 0xa6, 0x9d, 0xf8,
-	0x7c, 0x9c, 0xe7, 0x3c, 0xe7, 0x82, 0x51, 0xb2, 0x3a, 0x4f, 0xc8, 0xdd, 0x55, 0xac, 0x66, 0x08,
-	0x49, 0x54, 0x6e, 0x3f, 0xdc, 0x82, 0xea, 0xc8, 0x32, 0x12, 0x56, 0x14, 0xac, 0xec, 0x10, 0xfb,
-	0x0e, 0x4e, 0x36, 0x4d, 0xcc, 0x93, 0x2a, 0x8f, 0x29, 0xa4, 0xb7, 0x86, 0x78, 0x8d, 0xff, 0x41,
-	0x0e, 0x7c, 0x53, 0x9a, 0x4b, 0x8e, 0x12, 0xca, 0xb9, 0x8f, 0x08, 0x6a, 0xc6, 0x78, 0x6d, 0xca,
-	0x73, 0xc9, 0x99, 0x85, 0xe2, 0xdb, 0x7e, 0x84, 0xd3, 0x91, 0x8e, 0xef, 0x58, 0xc9, 0x09, 0x3d,
-	0xd0, 0x32, 0x8a, 0xb6, 0x54, 0x09, 0xb1, 0xee, 0x59, 0xee, 0xcf, 0x5c, 0x77, 0x60, 0x2d, 0x05,
-	0x23, 0xec, 0x99, 0xf6, 0x3d, 0xe0, 0x73, 0x79, 0x54, 0x84, 0x00, 0xce, 0x7e, 0x29, 0xff, 0x10,
-	0xe2, 0x15, 0xf4, 0xa7, 0x86, 0x67, 0xc3, 0x74, 0xbb, 0x9f, 0xae, 0x38, 0xba, 0x87, 0x63, 0x79,
-	0x4b, 0x0a, 0x7c, 0x91, 0xe8, 0x06, 0x94, 0x15, 0x4f, 0x45, 0x20, 0xdd, 0x3b, 0xdf, 0x27, 0xad,
-	0x88, 0xf3, 0x28, 0xa5, 0x50, 0x29, 0x78, 0x6a, 0x2f, 0xc0, 0xe8, 0xdc, 0x8f, 0x4f, 0xe8, 0x7d,
-	0x4a, 0xf0, 0x6f, 0x2d, 0x4e, 0xba, 0xa1, 0xea, 0x3d, 0x4f, 0x08, 0x97, 0x30, 0xfb, 0x5e, 0x1e,
-	0x2f, 0xc6, 0x16, 0xfb, 0x6d, 0x5a, 0x97, 0x07, 0xd0, 0x3e, 0xcf, 0x1a, 0xf4, 0x51, 0x91, 0x78,
-	0x35, 0x66, 0x4f, 0x6f, 0x63, 0x5d, 0x1f, 0xc4, 0x7b, 0xbf, 0x07, 0x50, 0xdb, 0x7d, 0x71, 0xd2,
-	0xca, 0xe0, 0x60, 0x4e, 0x81, 0x4e, 0xba, 0xd0, 0x5e, 0xd4, 0xf6, 0x67, 0xac, 0x89, 0xd7, 0x79,
-	0xfb, 0x15, 0x00, 0x00, 0xff, 0xff, 0x87, 0x68, 0xf2, 0xf5, 0xc7, 0x02, 0x00, 0x00,
+	// 272 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x74, 0x91, 0x41, 0x4b, 0xc3, 0x30,
+	0x14, 0xc7, 0x49, 0x3b, 0x82, 0x7b, 0x2d, 0x22, 0x39, 0x68, 0x29, 0x1e, 0x4a, 0x4f, 0xf5, 0x52,
+	0x24, 0x9e, 0xbc, 0x8e, 0x2a, 0xee, 0x30, 0x90, 0x78, 0x13, 0x2f, 0x69, 0xfa, 0xe8, 0x0a, 0x36,
+	0x99, 0x4d, 0x2b, 0xf8, 0x11, 0xfc, 0xd6, 0xd2, 0xb4, 0xd3, 0xb1, 0xe1, 0xf1, 0xbd, 0xf7, 0x7b,
+	0xbf, 0xfc, 0x93, 0x40, 0xa8, 0x4d, 0xdf, 0x28, 0xcc, 0x77, 0x9d, 0xe9, 0x0d, 0x03, 0x25, 0x75,
+	0xf5, 0x95, 0xb7, 0xd8, 0xcb, 0x38, 0x54, 0xa6, 0x6d, 0x8d, 0x9e, 0x26, 0xa9, 0x80, 0x8b, 0x97,
+	0xa1, 0xb4, 0xaa, 0x6b, 0x4a, 0x14, 0xf8, 0x31, 0xa0, 0xed, 0xd9, 0x39, 0x78, 0xeb, 0x22, 0x22,
+	0x09, 0xc9, 0x7c, 0xe1, 0x35, 0x05, 0xbb, 0x04, 0xfa, 0xa0, 0x65, 0xf9, 0x8e, 0x91, 0x97, 0x90,
+	0xec, 0x4c, 0x50, 0x74, 0xd5, 0xd8, 0x2f, 0xf0, 0xb3, 0x51, 0x18, 0xf9, 0x09, 0xc9, 0x96, 0x82,
+	0x56, 0xae, 0x4a, 0xdf, 0x20, 0x78, 0x1e, 0xec, 0x76, 0xaf, 0x4b, 0x67, 0x9d, 0x9f, 0x05, 0x9c,
+	0xe5, 0x7f, 0x49, 0xf2, 0x11, 0x5a, 0x17, 0xee, 0x88, 0x1b, 0xf0, 0x37, 0xb6, 0x76, 0xfe, 0x80,
+	0x5f, 0x1d, 0x43, 0x1b, 0xb4, 0x56, 0xd6, 0x28, 0xfc, 0xd6, 0xd6, 0xe9, 0x0a, 0xc2, 0xc9, 0x6e,
+	0x77, 0x46, 0x5b, 0x64, 0x1c, 0xe8, 0x16, 0x65, 0x85, 0x9d, 0x4b, 0x1c, 0xf0, 0xf8, 0x70, 0x7b,
+	0x4f, 0x3d, 0x39, 0x42, 0xcc, 0x24, 0xff, 0x26, 0xb0, 0x18, 0x25, 0xec, 0x11, 0x96, 0xbf, 0xd7,
+	0x67, 0xd7, 0x87, 0x9b, 0xc7, 0xaf, 0x12, 0x9f, 0xa4, 0x9a, 0x07, 0x19, 0xb9, 0x25, 0xec, 0x7e,
+	0xf6, 0xfd, 0x07, 0xc5, 0xd1, 0xe9, 0x60, 0x4a, 0xb6, 0xa2, 0xaf, 0x8b, 0xb1, 0x59, 0x52, 0xf7,
+	0x21, 0x77, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xcd, 0xd4, 0x2a, 0xf2, 0xba, 0x01, 0x00, 0x00,
 }

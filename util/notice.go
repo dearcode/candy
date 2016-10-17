@@ -4,6 +4,7 @@ import (
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"time"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
@@ -11,41 +12,56 @@ import (
 
 // Notice 连接notice服务.
 type Notice struct {
-	client meta.NoticeServiceClient
+	conn   *grpc.ClientConn
+	client meta.PushClient
+	stream meta.Push_SubscribeClient
+	push   chan<- *meta.PushRequest
 }
 
 // NewNotice 返回notice client.
-func NewNotice(host string) (*Notice, error) {
+func NewNotice(host string, push chan<- *meta.PushRequest) (*Notice, error) {
+	var err error
+
+	n := &Notice{}
 	log.Debugf("dial host:%v", host)
-	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))
-	if err != nil {
-		return nil, errors.Trace(err)
+	if n.conn, err = grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout)); err != nil {
+		return n, errors.Trace(err)
 	}
-	return &Notice{client: meta.NewNoticeServiceClient(conn)}, nil
+
+	n.client = meta.NewPushClient(n.conn)
+	if n.stream, err = n.client.Subscribe(context.Background()); err != nil {
+		n.conn.Close()
+		return n, errors.Trace(err)
+	}
+
+	go n.run()
+
+	return n, nil
 }
 
-//Subscribe 调用notice订阅消息
-func (n *Notice) Subscribe(id int64, host string) error {
-	req := &meta.SubscribeRequest{ID: id, Host: host}
-	resp, err := n.client.Subscribe(context.Background(), req)
-	if err != nil {
-		return errors.Trace(err)
-	}
-
-	log.Debugf("resp:%v", resp)
-	return errors.Trace(resp.Header.Error())
+//Subscribe 订阅消息
+func (n *Notice) Subscribe(id int64, device string) error {
+	req := &meta.SubscribeRequest{ID: id, Enable: true, Device: device}
+	return errors.Trace(n.stream.Send(req))
 }
 
-//UnSubscribe 调用notice取消订阅消息
-func (n *Notice) UnSubscribe(id int64, host string) error {
-	req := &meta.UnSubscribeRequest{ID: id, Host: host}
-	resp, err := n.client.UnSubscribe(context.Background(), req)
-	if err != nil {
-		return errors.Trace(err)
-	}
+//UnSubscribe 取消订阅消息, 取消哪个渠道的推送
+func (n *Notice) UnSubscribe(id int64, device string) error {
+	req := &meta.SubscribeRequest{ID: id, Enable: false, Device: device}
+	return errors.Trace(n.stream.Send(req))
+}
 
-	log.Debugf("resp:%v", resp)
-	return errors.Trace(resp.Header.Error())
+func (n *Notice) run() error {
+	for {
+		pr, err := n.stream.Recv()
+		if err != nil {
+			log.Errorf("stream Recv error:%s", errors.ErrorStack(err))
+			time.Sleep(time.Second)
+			continue
+		}
+
+		n.push <- pr
+	}
 }
 
 //Push  调用notice发推送消息

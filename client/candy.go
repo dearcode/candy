@@ -38,7 +38,7 @@ type CandyClient struct {
 	conn    *grpc.ClientConn
 	api     meta.GateClient
 	handler MessageHandler
-	stream  meta.Gate_ReadyClient
+	stream  meta.Gate_StreamClient
 	health  healthpb.HealthClient
 	bhealth bool
 }
@@ -55,7 +55,7 @@ func (c *CandyClient) Start() (err error) {
 	}
 
 	c.api = meta.NewGateClient(c.conn)
-	if c.stream, err = c.api.Ready(context.Background(), &meta.Message{}); err != nil {
+	if c.stream, err = c.api.Stream(context.Background(), &meta.Message{}); err != nil {
 		return
 	}
 
