@@ -99,39 +99,37 @@ message GateRegisterResponse {
 }
 
 message GateUpdateUserInfoRequest {
-    string User = 1;
+    string Name     = 1;
     string NickName = 2;
-    bytes Avatar = 3;
+    string Avatar   = 3;
 }
 
 message GateUpdateUserInfoResponse {
     ResponseHeader header = 1;
-    int64 ID = 2;
 }
 
 message GateUpdateUserPasswordRequest {
-    string User = 1;
-    string Password = 2;
+    string Name         = 1;
+    string Password     = 2;
+    string NewPassword  = 3;
 }
 
 message GateUpdateUserPasswordResponse {
     ResponseHeader header = 1;
-    int64 ID = 2;
 }
 
 message GateGetUserInfoRequest {
-    //0:用户名称   1：用户ID
-    int32 type = 1;
-    string UserName = 2;
-    int64 UserID = 3;
+    bool    FindByName  = 1;
+    string  UserName    = 2;
+    int64   UserID      = 3;
 }
 
 message GateGetUserInfoResponse {
-    ResponseHeader header = 1;
-    int64 ID = 2;
-    string User = 3;
-    string NickName = 4;
-    bytes Avatar = 5;
+    ResponseHeader  header  = 1;
+    int64           ID      = 2;
+    string          User    = 3;
+    string          NickName= 4;
+    string          Avatar  = 5;
 }
 
 

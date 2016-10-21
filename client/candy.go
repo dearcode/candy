@@ -126,41 +126,41 @@ func (c *CandyClient) Logout() error {
 }
 
 // UpdateUserInfo 更新用户信息， 昵称/头像
-func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int64, error) {
+func (c *CandyClient) UpdateUserInfo(user, nickName, avatar string) error {
 	if code, err := CheckUserName(user); err != nil {
-		return -1, NewError(code, err.Error())
+		return NewError(code, err.Error())
 	}
 
 	if code, err := CheckNickName(nickName); err != nil {
-		return -1, NewError(code, err.Error())
+		return NewError(code, err.Error())
 	}
 
-	req := &meta.GateUpdateUserInfoRequest{User: user, NickName: nickName, Avatar: avatar}
+	req := &meta.GateUpdateUserInfoRequest{Name: user, NickName: nickName, Avatar: avatar}
 	resp, err := c.api.UpdateUserInfo(context.Background(), req)
 	if err != nil {
-		return -1, err
+		return err
 	}
 
-	return resp.ID, resp.Header.Error()
+	return resp.Header.Error()
 }
 
 // UpdateUserPassword 更新用户密码
-func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
+func (c *CandyClient) UpdateUserPassword(user, passwd string) error {
 	if code, err := CheckUserName(user); err != nil {
-		return -1, NewError(code, err.Error())
+		return NewError(code, err.Error())
 	}
 
 	if code, err := CheckUserPassword(passwd); err != nil {
-		return -1, NewError(code, err.Error())
+		return NewError(code, err.Error())
 	}
 
-	req := &meta.GateUpdateUserPasswordRequest{User: user, Password: passwd}
+	req := &meta.GateUpdateUserPasswordRequest{Name: user, Password: passwd}
 	resp, err := c.api.UpdateUserPassword(context.Background(), req)
 	if err != nil {
-		return -1, err
+		return err
 	}
 
-	return resp.ID, resp.Header.Error()
+	return resp.Header.Error()
 }
 
 // GetUserInfoByName 根据用户名获取用户信息
@@ -184,7 +184,7 @@ func (c *CandyClient) getUserInfoByName(user string) (*UserInfo, error) {
 		return nil, NewError(code, err.Error())
 	}
 
-	req := &meta.GateGetUserInfoRequest{Type: 0, UserName: user}
+	req := &meta.GateGetUserInfoRequest{FindByName: true, UserName: user}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return nil, err
@@ -211,7 +211,7 @@ func (c *CandyClient) GetUserInfoByID(userID int64) (string, error) {
 }
 
 func (c *CandyClient) getUserInfoByID(userID int64) (*UserInfo, error) {
-	req := &meta.GateGetUserInfoRequest{Type: 1, UserID: userID}
+	req := &meta.GateGetUserInfoRequest{UserID: userID}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return nil, err

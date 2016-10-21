@@ -25,7 +25,7 @@ type account struct {
 	Name     string
 	Password string
 	NickName string
-	Avatar   []byte
+	Avatar   string
 }
 
 type userDB struct {
@@ -150,146 +150,147 @@ func (u *userDB) auth(user, passwd string) (int64, error) {
 	return a.ID, nil
 }
 
-func (u *userDB) updateUserPassword(user, passwd string) (int64, error) {
+// resetUserPassword 后台接口，直接重置用户密码
+func (u *userDB) resetUserPassword(name, passwd string) error {
+	log.Debugf("begin user:%s reset passwd:%s", name, passwd)
 	txn, err := u.db.OpenTransaction()
 	if err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	log.Debugf("open transaction finished")
-	v, err := txn.Get([]byte(user), nil)
-	if err != nil && err != leveldb.ErrNotFound {
+	buf, err := txn.Get([]byte(name), nil)
+	if err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
-	}
-
-	log.Debugf("check whether the user exist")
-	if len(v) == 0 {
-		txn.Discard()
-		return -1, errors.Errorf("user:%s not exist info:%s", user, string(v))
+		return errors.Trace(err)
 	}
 
 	var a account
-	var update bool
-	if err = json.Unmarshal(v, &a); err != nil {
+	if err = json.Unmarshal(buf, &a); err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	log.Infof("compare passwod")
-	if passwd != "" && a.Password != passwd {
-		a.Password = passwd
-		update = true
-	}
+	a.Password = passwd
 
-	//no update
-	if !update {
+	if buf, err = json.Marshal(a); err != nil {
 		txn.Discard()
-		return a.ID, nil
+		return errors.Trace(err)
 	}
 
-	buf, err := json.Marshal(a)
-	if err != nil {
+	if err = txn.Put([]byte(name), buf, nil); err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	if err = txn.Put([]byte(user), buf, nil); err != nil {
-		txn.Discard()
-		return -1, errors.Trace(err)
-	}
-
-	log.Infof("prepare commit change")
 	if err = txn.Commit(); err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
+	log.Infof("end user:%s new passwd:%s", name, passwd)
 
-	return a.ID, nil
+	return nil
 }
 
-func (u *userDB) updateUserInfo(user, nickName string, avatar []byte) (int64, error) {
+// updateUserPassword 用户自己修改密码，需要原密码
+func (u *userDB) updateUserPassword(id int64, name, oldPasswd, newPasswd string) error {
+	log.Debugf("begin %d user:%s change passwd from:%s to:%s", id, name, oldPasswd, newPasswd)
 	txn, err := u.db.OpenTransaction()
 	if err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	log.Debugf("open transaction finished")
-	v, err := txn.Get([]byte(user), nil)
-	if err != nil && err != leveldb.ErrNotFound {
+	buf, err := txn.Get([]byte(name), nil)
+	if err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
-	}
-
-	log.Debugf("check whether the user exist")
-	if len(v) == 0 {
-		txn.Discard()
-		return -1, errors.Errorf("user:%s not exist info:%s", user, string(v))
+		return errors.Trace(err)
 	}
 
 	var a account
-	var update bool
-	if err = json.Unmarshal(v, &a); err != nil {
+	if err = json.Unmarshal(buf, &a); err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	log.Debugf("compare nickName, old:%v new:%v", a.NickName, nickName)
+	if oldPasswd != a.Password {
+		txn.Discard()
+		return errors.Trace(ErrInvalidOperator)
+	}
+
+	a.Password = newPasswd
+
+	if buf, err = json.Marshal(a); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	if err = txn.Put([]byte(name), buf, nil); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	if err = txn.Commit(); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	log.Infof("end %d name:%s new passwd:%s", id, name, newPasswd)
+	return nil
+}
+
+//updateUserInfo 如果nickname没改，avatar也没改，就不要调用这个函数了
+func (u *userDB) updateUserInfo(id int64, name, nickName string, avatar string) error {
+	txn, err := u.db.OpenTransaction()
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	log.Debugf("%d open transaction finished", id)
+	buf, err := txn.Get([]byte(name), nil)
+	if err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	var a account
+	if err = json.Unmarshal(buf, &a); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	if a.ID != id {
+		txn.Discard()
+		return errors.Trace(ErrInvalidOperator)
+	}
+
 	if nickName != "" && a.NickName != nickName {
+		log.Debugf("%d nickName old:%v new:%v", id, a.NickName, nickName)
 		a.NickName = nickName
-		update = true
 	}
 
-	log.Debugf("compare avatar")
-	if avatar != nil && bytes.Compare(a.Avatar, avatar) != 0 {
+	if avatar != "" && a.Avatar != avatar {
+		log.Debugf("%d avatar old:%v new:%v", id, a.Avatar, avatar)
 		a.Avatar = avatar
-		update = true
 	}
 
-	//no change
-	if !update {
+	if buf, err = json.Marshal(a); err != nil {
 		txn.Discard()
-		return a.ID, nil
+		return errors.Trace(err)
 	}
 
-	buf, err := json.Marshal(a)
-	if err != nil {
+	if err = txn.Put([]byte(name), buf, nil); err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
-	}
-
-	if err = txn.Put([]byte(user), buf, nil); err != nil {
-		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
 	if err = txn.Commit(); err != nil {
 		txn.Discard()
-		return -1, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
-	log.Debugf("success")
-
-	return a.ID, nil
-}
-
-func (u *userDB) getUserInfo(gtype int32, userName string, userID int64) (*account, error) {
-	var a *account
-	var err error
-
-	//根据用户名查询
-	if gtype == 0 {
-		log.Debugf("getUserInfoByName, userName:%v", userName)
-		a, err = u.getUserInfoByName(userName)
-	} else if gtype == 1 {
-		//根据用户ID查询
-		log.Debugf("getUserInfoByID, userID:%v", userID)
-		a, err = u.getUserInfoByID(userID)
-	}
-
-	return a, err
+	log.Debugf("%d update info success", id)
+	return nil
 }
 
 func (u *userDB) getUserInfoByName(name string) (*account, error) {

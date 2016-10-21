@@ -1,6 +1,8 @@
 syntax = "proto3";
 package candy.meta;
 
+import weak "gogoproto/gogo.proto";
+
 option go_package = "meta";
 
 // RequestHeader Gate向后端发请求时，带上这个头，方便记录具体操作信息.
@@ -85,7 +87,7 @@ message PushMessage {
     // 关系操作，加好友，删除好友，T出群，加入群
     Relation    Operate = 2;
     // 具体消息
-    Message     Msg     = 3;
+    Message     Msg     = 3[(gogoproto.nullable) = false];
     // 这消息到底是发给用户的，还是发给群的
     bool        ToUser  = 4;
 }

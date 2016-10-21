@@ -58,7 +58,6 @@ client: godep
 	@godep go build -ldflags '$(LDFLAGS)' -o bin/client ./candy.go
 
 test:
-	@go test ./client/
 	@go test ./notice/
 	@go test ./store/
 

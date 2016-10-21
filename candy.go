@@ -168,14 +168,13 @@ func updateUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	nickName := string(data)
 
-	id, err := c.UpdateUserInfo(userName, nickName, nil)
-	if err != nil {
+	if err := c.UpdateUserInfo(userName, nickName, ""); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("updateUserInfo code:%v error:%v", e.Code, e.Msg)
 		return
 	}
 
-	log.Debugf("updateUserInfo success, userName:%v nickName:%v userID:%v", userName, nickName, id)
+	log.Debugf("updateUserInfo success, userName:%v nickName:%v", userName, nickName)
 }
 
 func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
@@ -621,13 +620,12 @@ func updateUserPasswd(c *candy.CandyClient, reader *bufio.Reader) {
 	data, _, _ = reader.ReadLine()
 	pwd := string(data)
 
-	id, err := c.UpdateUserPassword(user, pwd)
-	if err != nil {
+	if err := c.UpdateUserPassword(user, pwd); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("UpdateUserPassword code:%v error:%v", e.Code, e.Msg)
 		return
 	}
-	log.Debugf("UpdateUserPassword success, id:%v", id)
+	log.Debugf("UpdateUserPassword success")
 }
 
 type cmdClient struct{}

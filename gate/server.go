@@ -94,41 +94,43 @@ func (g *Gate) Register(ctx context.Context, req *meta.GateRegisterRequest) (*me
 	return &meta.GateRegisterResponse{ID: id}, nil
 }
 
-// UpdateUserInfo nickname.
+// UpdateUserInfo nickname, avatar.
 func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.GateUpdateUserInfoRequest) (*meta.GateUpdateUserInfoResponse, error) {
-	log.Debug("Gate UpdateUserInfo")
-	_, _, err := g.manager.getSession(ctx)
+	s, _, err := g.manager.getSession(ctx)
 	if err != nil {
 		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
+	log.Debug("%d name:%v nickname:%v avatar:%v", s.user, req.Name, req.NickName, req.Avatar)
 
-	//TODO 这不能传用户名，应该传id
-	log.Debugf("updateUserInfo user:%v niceName:%v", req.User, req.NickName)
-
-	id, err := g.store.updateUserInfo(req.User, req.NickName, req.Avatar)
-	if err != nil {
-		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserInfo, Msg: err.Error()}, ID: id}, nil
+	if req.NickName == "" && req.Avatar == "" {
+		log.Errorf("%d name:%v nickname:%v avatar:%v", s.user, req.Name, req.NickName, req.Avatar)
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserInfo, Msg: err.Error()}}, nil
 	}
 
-	return &meta.GateUpdateUserInfoResponse{ID: id}, nil
+	if err = g.store.updateUserInfo(s.user, req.Name, req.NickName, req.Avatar); err != nil {
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserInfo, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateUpdateUserInfoResponse{}, nil
 }
 
 // UpdateUserPassword update user password
 func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserPasswordRequest) (*meta.GateUpdateUserPasswordResponse, error) {
-	log.Debug("Gate UpdateUserPassword")
-	_, _, err := g.manager.getSession(ctx)
+	s, _, err := g.manager.getSession(ctx)
 	if err != nil {
 		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
-	//TODO 这不能传用户名，应该传id
-	log.Debugf("updateUserPassword user:%v", req.User)
-	id, err := g.store.updateUserPassword(req.User, req.Password)
-	if err != nil {
+	log.Debug("%d name:%v passwd old:%v new:%v", s.user, req.Name, req.Password, req.NewPassword)
+	if req.NewPassword == "" {
+		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserPasswd, Msg: "new password is nil"}}, nil
+	}
+
+	if err = g.store.updateUserPassword(s.user, req.Name, req.Password, req.NewPassword); err != nil {
 		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserPasswd, Msg: err.Error()}}, nil
 	}
 
-	return &meta.GateUpdateUserPasswordResponse{ID: id}, nil
+	return &meta.GateUpdateUserPasswordResponse{}, nil
 }
 
 // GetUserInfo get user base info
@@ -138,13 +140,13 @@ func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
-	log.Debugf("%d get UserInfo type:%v userName:%v userID:%v", s.user, req.Type, req.UserName, req.UserID)
+	log.Debugf("%d get UserInfo byName:%v userName:%v userID:%v", s.user, req.FindByName, req.UserName, req.UserID)
 
-	id, name, nickName, avatar, err := g.store.getUserInfo(req.Type, req.UserName, req.UserID)
+	id, name, nickName, avatar, err := g.store.getUserInfo(s.user, req.FindByName, req.UserName, req.UserID)
 	if err != nil {
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetUserInfo, Msg: err.Error()}}, nil
 	}
-	log.Debugf("%d get UserInfo type:%v userName:%v userID:%v, name:%v, nickname:%v", s.user, req.Type, req.UserName, req.UserID, name, nickName)
+	log.Debugf("%d get UserInfo ByName:%v userName:%v userID:%v, name:%v, nickname:%v", s.user, req.FindByName, req.UserName, req.UserID, name, nickName)
 
 	return &meta.GateGetUserInfoResponse{ID: id, User: name, NickName: nickName, Avatar: avatar}, nil
 }
@@ -195,7 +197,7 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 	//防止乱写
 	req.Msg.From = s.user
 
-	if err = g.store.newMessage(req.Msg); err != nil {
+	if err = g.store.newMessage(s.user, *req.Msg); err != nil {
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorNewMessage, Msg: err.Error()}}, nil
 	}
 
@@ -270,12 +272,12 @@ func (g *Gate) LoadFriendList(ctx context.Context, req *meta.GateLoadFriendListR
 
 // FindUser 添加好友前先查找,模糊查找
 func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*meta.GateFindUserResponse, error) {
-	_, _, err := g.manager.getSession(ctx)
+	s, _, err := g.manager.getSession(ctx)
 	if err != nil {
 		log.Errorf("getSession error:%s", errors.ErrorStack(err))
 		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
-	users, err := g.store.findUser(req.User)
+	users, err := g.store.findUser(s.user, req.User)
 	if err != nil {
 		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: util.ErrorFindUser, Msg: err.Error()}}, nil
 	}

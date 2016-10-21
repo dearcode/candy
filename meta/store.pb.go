@@ -8,6 +8,8 @@ import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+// skipping weak import gogoproto "gogoproto"
+
 import (
 	context "golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
@@ -21,7 +23,8 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type StoreFindUserRequest struct {
-	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	Name          string `protobuf:"bytes,2,opt,name=Name,json=name,proto3" json:"Name,omitempty"`
 }
 
 func (m *StoreFindUserRequest) Reset()                    { *m = StoreFindUserRequest{} }
@@ -31,7 +34,7 @@ func (*StoreFindUserRequest) Descriptor() ([]byte, []int) { return fileDescripto
 
 type StoreFindUserResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	Users  []string        `protobuf:"bytes,2,rep,name=users" json:"users,omitempty"`
+	Users  []string        `protobuf:"bytes,2,rep,name=Users,json=users" json:"Users,omitempty"`
 }
 
 func (m *StoreFindUserResponse) Reset()                    { *m = StoreFindUserResponse{} }
@@ -47,10 +50,11 @@ func (m *StoreFindUserResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreFriendRequest struct {
-	Operate Relation `protobuf:"varint,1,opt,name=Operate,json=operate,proto3,enum=candy.meta.Relation" json:"Operate,omitempty"`
-	From    int64    `protobuf:"varint,2,opt,name=From,json=from,proto3" json:"From,omitempty"`
-	To      int64    `protobuf:"varint,3,opt,name=To,json=to,proto3" json:"To,omitempty"`
-	Msg     string   `protobuf:"bytes,4,opt,name=Msg,json=msg,proto3" json:"Msg,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	Operate       Relation `protobuf:"varint,2,opt,name=Operate,json=operate,proto3,enum=candy.meta.Relation" json:"Operate,omitempty"`
+	From          int64    `protobuf:"varint,3,opt,name=From,json=from,proto3" json:"From,omitempty"`
+	To            int64    `protobuf:"varint,4,opt,name=To,json=to,proto3" json:"To,omitempty"`
+	Msg           string   `protobuf:"bytes,5,opt,name=Msg,json=msg,proto3" json:"Msg,omitempty"`
 }
 
 func (m *StoreFriendRequest) Reset()                    { *m = StoreFriendRequest{} }
@@ -102,9 +106,10 @@ func (m *StoreRegisterResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreUpdateUserInfoRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User,json=user,proto3" json:"User,omitempty"`
-	NickName string `protobuf:"bytes,2,opt,name=NickName,json=nickName,proto3" json:"NickName,omitempty"`
-	Avatar   []byte `protobuf:"bytes,3,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	Name          string `protobuf:"bytes,2,opt,name=Name,json=name,proto3" json:"Name,omitempty"`
+	NickName      string `protobuf:"bytes,3,opt,name=NickName,json=nickName,proto3" json:"NickName,omitempty"`
+	Avatar        string `protobuf:"bytes,4,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
 }
 
 func (m *StoreUpdateUserInfoRequest) Reset()                    { *m = StoreUpdateUserInfoRequest{} }
@@ -114,7 +119,6 @@ func (*StoreUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDes
 
 type StoreUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
 }
 
 func (m *StoreUpdateUserInfoResponse) Reset()                    { *m = StoreUpdateUserInfoResponse{} }
@@ -130,8 +134,10 @@ func (m *StoreUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreUpdateUserPasswordRequest struct {
-	User     string `protobuf:"bytes,1,opt,name=User,json=user,proto3" json:"User,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password,json=password,proto3" json:"Password,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	Name          string `protobuf:"bytes,2,opt,name=Name,json=name,proto3" json:"Name,omitempty"`
+	Password      string `protobuf:"bytes,3,opt,name=Password,json=password,proto3" json:"Password,omitempty"`
+	NewPassword   string `protobuf:"bytes,4,opt,name=NewPassword,json=newPassword,proto3" json:"NewPassword,omitempty"`
 }
 
 func (m *StoreUpdateUserPasswordRequest) Reset()         { *m = StoreUpdateUserPasswordRequest{} }
@@ -143,7 +149,6 @@ func (*StoreUpdateUserPasswordRequest) Descriptor() ([]byte, []int) {
 
 type StoreUpdateUserPasswordResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	ID     int64           `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
 }
 
 func (m *StoreUpdateUserPasswordResponse) Reset()         { *m = StoreUpdateUserPasswordResponse{} }
@@ -161,9 +166,10 @@ func (m *StoreUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreGetUserInfoRequest struct {
-	Type     int32  `protobuf:"varint,1,opt,name=Type,json=type,proto3" json:"Type,omitempty"`
-	UserName string `protobuf:"bytes,2,opt,name=UserName,json=userName,proto3" json:"UserName,omitempty"`
-	UserID   int64  `protobuf:"varint,3,opt,name=UserID,json=userID,proto3" json:"UserID,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	ByName        bool   `protobuf:"varint,2,opt,name=ByName,json=byName,proto3" json:"ByName,omitempty"`
+	Name          string `protobuf:"bytes,3,opt,name=Name,json=name,proto3" json:"Name,omitempty"`
+	ID            int64  `protobuf:"varint,4,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
 }
 
 func (m *StoreGetUserInfoRequest) Reset()                    { *m = StoreGetUserInfoRequest{} }
@@ -176,7 +182,7 @@ type StoreGetUserInfoResponse struct {
 	ID       int64           `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
 	User     string          `protobuf:"bytes,3,opt,name=User,json=user,proto3" json:"User,omitempty"`
 	NickName string          `protobuf:"bytes,4,opt,name=NickName,json=nickName,proto3" json:"NickName,omitempty"`
-	Avatar   []byte          `protobuf:"bytes,5,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
+	Avatar   string          `protobuf:"bytes,5,opt,name=Avatar,json=avatar,proto3" json:"Avatar,omitempty"`
 }
 
 func (m *StoreGetUserInfoResponse) Reset()                    { *m = StoreGetUserInfoResponse{} }
@@ -219,9 +225,9 @@ func (m *StoreAuthResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreGroupCreateRequest struct {
-	ID   int64  `protobuf:"varint,1,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
-	User int64  `protobuf:"varint,2,opt,name=User,json=user,proto3" json:"User,omitempty"`
-	Name string `protobuf:"bytes,3,opt,name=Name,json=name,proto3" json:"Name,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	ID            int64  `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
+	Name          string `protobuf:"bytes,3,opt,name=Name,json=name,proto3" json:"Name,omitempty"`
 }
 
 func (m *StoreGroupCreateRequest) Reset()                    { *m = StoreGroupCreateRequest{} }
@@ -253,11 +259,11 @@ func (m *StoreGroupCreateResponse) GetHeader() *ResponseHeader {
 // Msg 附加消息
 // Users 对应的用户ID，如T哪些用户
 type StoreGroupRequest struct {
-	ID      int64    `protobuf:"varint,1,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
-	User    int64    `protobuf:"varint,2,opt,name=User,json=user,proto3" json:"User,omitempty"`
-	Operate Relation `protobuf:"varint,3,opt,name=Operate,json=operate,proto3,enum=candy.meta.Relation" json:"Operate,omitempty"`
-	Msg     string   `protobuf:"bytes,4,opt,name=Msg,json=msg,proto3" json:"Msg,omitempty"`
-	Users   []int64  `protobuf:"varint,5,rep,packed,name=Users,json=users" json:"Users,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	ID            int64    `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
+	Operate       Relation `protobuf:"varint,3,opt,name=Operate,json=operate,proto3,enum=candy.meta.Relation" json:"Operate,omitempty"`
+	Msg           string   `protobuf:"bytes,4,opt,name=Msg,json=msg,proto3" json:"Msg,omitempty"`
+	Users         []int64  `protobuf:"varint,5,rep,packed,name=Users,json=users" json:"Users,omitempty"`
 }
 
 func (m *StoreGroupRequest) Reset()                    { *m = StoreGroupRequest{} }
@@ -282,8 +288,8 @@ func (m *StoreGroupResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreGroupDeleteRequest struct {
-	ID   int64 `protobuf:"varint,1,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
-	User int64 `protobuf:"varint,2,opt,name=User,json=user,proto3" json:"User,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	ID            int64 `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
 }
 
 func (m *StoreGroupDeleteRequest) Reset()                    { *m = StoreGroupDeleteRequest{} }
@@ -308,7 +314,8 @@ func (m *StoreGroupDeleteResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreNewMessageRequest struct {
-	Msg *Message `protobuf:"bytes,1,opt,name=Msg,json=msg" json:"Msg,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	Msg           Message `protobuf:"bytes,2,opt,name=Msg,json=msg" json:"Msg"`
 }
 
 func (m *StoreNewMessageRequest) Reset()                    { *m = StoreNewMessageRequest{} }
@@ -316,11 +323,11 @@ func (m *StoreNewMessageRequest) String() string            { return proto.Compa
 func (*StoreNewMessageRequest) ProtoMessage()               {}
 func (*StoreNewMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{20} }
 
-func (m *StoreNewMessageRequest) GetMsg() *Message {
+func (m *StoreNewMessageRequest) GetMsg() Message {
 	if m != nil {
 		return m.Msg
 	}
-	return nil
+	return Message{}
 }
 
 type StoreNewMessageResponse struct {
@@ -340,21 +347,14 @@ func (m *StoreNewMessageResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreUploadFileRequest struct {
-	Header *RequestHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	File   []byte         `protobuf:"bytes,2,opt,name=File,json=file,proto3" json:"File,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	File          []byte `protobuf:"bytes,2,opt,name=File,json=file,proto3" json:"File,omitempty"`
 }
 
 func (m *StoreUploadFileRequest) Reset()                    { *m = StoreUploadFileRequest{} }
 func (m *StoreUploadFileRequest) String() string            { return proto.CompactTextString(m) }
 func (*StoreUploadFileRequest) ProtoMessage()               {}
 func (*StoreUploadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{22} }
-
-func (m *StoreUploadFileRequest) GetHeader() *RequestHeader {
-	if m != nil {
-		return m.Header
-	}
-	return nil
-}
 
 type StoreUploadFileResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -373,21 +373,14 @@ func (m *StoreUploadFileResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreCheckFileRequest struct {
-	Header *RequestHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	Names  []string       `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	Names         []string `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
 }
 
 func (m *StoreCheckFileRequest) Reset()                    { *m = StoreCheckFileRequest{} }
 func (m *StoreCheckFileRequest) String() string            { return proto.CompactTextString(m) }
 func (*StoreCheckFileRequest) ProtoMessage()               {}
 func (*StoreCheckFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{24} }
-
-func (m *StoreCheckFileRequest) GetHeader() *RequestHeader {
-	if m != nil {
-		return m.Header
-	}
-	return nil
-}
 
 type StoreCheckFileResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -407,21 +400,14 @@ func (m *StoreCheckFileResponse) GetHeader() *ResponseHeader {
 }
 
 type StoreDownloadFileRequest struct {
-	Header *RequestHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
-	Names  []string       `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	Names         []string `protobuf:"bytes,2,rep,name=Names,json=names" json:"Names,omitempty"`
 }
 
 func (m *StoreDownloadFileRequest) Reset()                    { *m = StoreDownloadFileRequest{} }
 func (m *StoreDownloadFileRequest) String() string            { return proto.CompactTextString(m) }
 func (*StoreDownloadFileRequest) ProtoMessage()               {}
 func (*StoreDownloadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{26} }
-
-func (m *StoreDownloadFileRequest) GetHeader() *RequestHeader {
-	if m != nil {
-		return m.Header
-	}
-	return nil
-}
 
 type StoreDownloadFileResponse struct {
 	Header *ResponseHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -448,9 +434,9 @@ func (m *StoreDownloadFileResponse) GetFiles() map[string][]byte {
 }
 
 type StoreLoadMessageRequest struct {
-	User    int64 `protobuf:"varint,1,opt,name=User,json=user,proto3" json:"User,omitempty"`
-	ID      int64 `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
-	Reverse bool  `protobuf:"varint,3,opt,name=Reverse,json=reverse,proto3" json:"Reverse,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
+	ID            int64 `protobuf:"varint,2,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
+	Reverse       bool  `protobuf:"varint,3,opt,name=Reverse,json=reverse,proto3" json:"Reverse,omitempty"`
 }
 
 func (m *StoreLoadMessageRequest) Reset()                    { *m = StoreLoadMessageRequest{} }
@@ -483,7 +469,7 @@ func (m *StoreLoadMessageResponse) GetMsgs() []*PushMessage {
 }
 
 type StoreLoadGroupListRequest struct {
-	User int64 `protobuf:"varint,1,opt,name=User,json=user,proto3" json:"User,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
 }
 
 func (m *StoreLoadGroupListRequest) Reset()                    { *m = StoreLoadGroupListRequest{} }
@@ -516,7 +502,7 @@ func (m *StoreLoadGroupListResponse) GetGroups() []*GroupInfo {
 }
 
 type StoreLoadFriendListRequest struct {
-	User int64 `protobuf:"varint,1,opt,name=User,json=user,proto3" json:"User,omitempty"`
+	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
 }
 
 func (m *StoreLoadFriendListRequest) Reset()                    { *m = StoreLoadFriendListRequest{} }
@@ -1219,11 +1205,19 @@ func (m *StoreFindUserRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.User) > 0 {
-		data[i] = 0xa
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n1, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n1
+	if len(m.Name) > 0 {
+		data[i] = 0x12
 		i++
-		i = encodeVarintStore(data, i, uint64(len(m.User)))
-		i += copy(data[i:], m.User)
+		i = encodeVarintStore(data, i, uint64(len(m.Name)))
+		i += copy(data[i:], m.Name)
 	}
 	return i, nil
 }
@@ -1247,11 +1241,11 @@ func (m *StoreFindUserResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n1, err := m.Header.MarshalTo(data[i:])
+		n2, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n1
+		i += n2
 	}
 	if len(m.Users) > 0 {
 		for _, s := range m.Users {
@@ -1286,23 +1280,31 @@ func (m *StoreFriendRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n3, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n3
 	if m.Operate != 0 {
-		data[i] = 0x8
+		data[i] = 0x10
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Operate))
 	}
 	if m.From != 0 {
-		data[i] = 0x10
+		data[i] = 0x18
 		i++
 		i = encodeVarintStore(data, i, uint64(m.From))
 	}
 	if m.To != 0 {
-		data[i] = 0x18
+		data[i] = 0x20
 		i++
 		i = encodeVarintStore(data, i, uint64(m.To))
 	}
 	if len(m.Msg) > 0 {
-		data[i] = 0x22
+		data[i] = 0x2a
 		i++
 		i = encodeVarintStore(data, i, uint64(len(m.Msg)))
 		i += copy(data[i:], m.Msg)
@@ -1329,11 +1331,11 @@ func (m *StoreFriendResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n2, err := m.Header.MarshalTo(data[i:])
+		n4, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n2
+		i += n4
 	}
 	return i, nil
 }
@@ -1392,11 +1394,11 @@ func (m *StoreRegisterResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n3, err := m.Header.MarshalTo(data[i:])
+		n5, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n3
+		i += n5
 	}
 	return i, nil
 }
@@ -1416,20 +1418,28 @@ func (m *StoreUpdateUserInfoRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.User) > 0 {
-		data[i] = 0xa
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n6, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n6
+	if len(m.Name) > 0 {
+		data[i] = 0x12
 		i++
-		i = encodeVarintStore(data, i, uint64(len(m.User)))
-		i += copy(data[i:], m.User)
+		i = encodeVarintStore(data, i, uint64(len(m.Name)))
+		i += copy(data[i:], m.Name)
 	}
 	if len(m.NickName) > 0 {
-		data[i] = 0x12
+		data[i] = 0x1a
 		i++
 		i = encodeVarintStore(data, i, uint64(len(m.NickName)))
 		i += copy(data[i:], m.NickName)
 	}
 	if len(m.Avatar) > 0 {
-		data[i] = 0x1a
+		data[i] = 0x22
 		i++
 		i = encodeVarintStore(data, i, uint64(len(m.Avatar)))
 		i += copy(data[i:], m.Avatar)
@@ -1456,16 +1466,11 @@ func (m *StoreUpdateUserInfoResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n4, err := m.Header.MarshalTo(data[i:])
+		n7, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n4
-	}
-	if m.ID != 0 {
-		data[i] = 0x10
-		i++
-		i = encodeVarintStore(data, i, uint64(m.ID))
+		i += n7
 	}
 	return i, nil
 }
@@ -1485,17 +1490,31 @@ func (m *StoreUpdateUserPasswordRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.User) > 0 {
-		data[i] = 0xa
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n8, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n8
+	if len(m.Name) > 0 {
+		data[i] = 0x12
 		i++
-		i = encodeVarintStore(data, i, uint64(len(m.User)))
-		i += copy(data[i:], m.User)
+		i = encodeVarintStore(data, i, uint64(len(m.Name)))
+		i += copy(data[i:], m.Name)
 	}
 	if len(m.Password) > 0 {
-		data[i] = 0x12
+		data[i] = 0x1a
 		i++
 		i = encodeVarintStore(data, i, uint64(len(m.Password)))
 		i += copy(data[i:], m.Password)
+	}
+	if len(m.NewPassword) > 0 {
+		data[i] = 0x22
+		i++
+		i = encodeVarintStore(data, i, uint64(len(m.NewPassword)))
+		i += copy(data[i:], m.NewPassword)
 	}
 	return i, nil
 }
@@ -1519,16 +1538,11 @@ func (m *StoreUpdateUserPasswordResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n5, err := m.Header.MarshalTo(data[i:])
+		n9, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n5
-	}
-	if m.ID != 0 {
-		data[i] = 0x10
-		i++
-		i = encodeVarintStore(data, i, uint64(m.ID))
+		i += n9
 	}
 	return i, nil
 }
@@ -1548,21 +1562,34 @@ func (m *StoreGetUserInfoRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Type != 0 {
-		data[i] = 0x8
-		i++
-		i = encodeVarintStore(data, i, uint64(m.Type))
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n10, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
-	if len(m.UserName) > 0 {
-		data[i] = 0x12
+	i += n10
+	if m.ByName {
+		data[i] = 0x10
 		i++
-		i = encodeVarintStore(data, i, uint64(len(m.UserName)))
-		i += copy(data[i:], m.UserName)
+		if m.ByName {
+			data[i] = 1
+		} else {
+			data[i] = 0
+		}
+		i++
 	}
-	if m.UserID != 0 {
-		data[i] = 0x18
+	if len(m.Name) > 0 {
+		data[i] = 0x1a
 		i++
-		i = encodeVarintStore(data, i, uint64(m.UserID))
+		i = encodeVarintStore(data, i, uint64(len(m.Name)))
+		i += copy(data[i:], m.Name)
+	}
+	if m.ID != 0 {
+		data[i] = 0x20
+		i++
+		i = encodeVarintStore(data, i, uint64(m.ID))
 	}
 	return i, nil
 }
@@ -1586,11 +1613,11 @@ func (m *StoreGetUserInfoResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n6, err := m.Header.MarshalTo(data[i:])
+		n11, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n11
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -1667,11 +1694,11 @@ func (m *StoreAuthResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n7, err := m.Header.MarshalTo(data[i:])
+		n12, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n12
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -1696,15 +1723,18 @@ func (m *StoreGroupCreateRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.ID != 0 {
-		data[i] = 0x8
-		i++
-		i = encodeVarintStore(data, i, uint64(m.ID))
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n13, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
-	if m.User != 0 {
+	i += n13
+	if m.ID != 0 {
 		data[i] = 0x10
 		i++
-		i = encodeVarintStore(data, i, uint64(m.User))
+		i = encodeVarintStore(data, i, uint64(m.ID))
 	}
 	if len(m.Name) > 0 {
 		data[i] = 0x1a
@@ -1734,11 +1764,11 @@ func (m *StoreGroupCreateResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n8, err := m.Header.MarshalTo(data[i:])
+		n14, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n8
+		i += n14
 	}
 	return i, nil
 }
@@ -1758,15 +1788,18 @@ func (m *StoreGroupRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.ID != 0 {
-		data[i] = 0x8
-		i++
-		i = encodeVarintStore(data, i, uint64(m.ID))
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n15, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
-	if m.User != 0 {
+	i += n15
+	if m.ID != 0 {
 		data[i] = 0x10
 		i++
-		i = encodeVarintStore(data, i, uint64(m.User))
+		i = encodeVarintStore(data, i, uint64(m.ID))
 	}
 	if m.Operate != 0 {
 		data[i] = 0x18
@@ -1780,22 +1813,22 @@ func (m *StoreGroupRequest) MarshalTo(data []byte) (int, error) {
 		i += copy(data[i:], m.Msg)
 	}
 	if len(m.Users) > 0 {
-		data10 := make([]byte, len(m.Users)*10)
-		var j9 int
+		data17 := make([]byte, len(m.Users)*10)
+		var j16 int
 		for _, num1 := range m.Users {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				data10[j9] = uint8(uint64(num)&0x7f | 0x80)
+				data17[j16] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j9++
+				j16++
 			}
-			data10[j9] = uint8(num)
-			j9++
+			data17[j16] = uint8(num)
+			j16++
 		}
 		data[i] = 0x2a
 		i++
-		i = encodeVarintStore(data, i, uint64(j9))
-		i += copy(data[i:], data10[:j9])
+		i = encodeVarintStore(data, i, uint64(j16))
+		i += copy(data[i:], data17[:j16])
 	}
 	return i, nil
 }
@@ -1819,11 +1852,11 @@ func (m *StoreGroupResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n11, err := m.Header.MarshalTo(data[i:])
+		n18, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n11
+		i += n18
 	}
 	return i, nil
 }
@@ -1843,15 +1876,18 @@ func (m *StoreGroupDeleteRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.ID != 0 {
-		data[i] = 0x8
-		i++
-		i = encodeVarintStore(data, i, uint64(m.ID))
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n19, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
-	if m.User != 0 {
+	i += n19
+	if m.ID != 0 {
 		data[i] = 0x10
 		i++
-		i = encodeVarintStore(data, i, uint64(m.User))
+		i = encodeVarintStore(data, i, uint64(m.ID))
 	}
 	return i, nil
 }
@@ -1875,11 +1911,11 @@ func (m *StoreGroupDeleteResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n12, err := m.Header.MarshalTo(data[i:])
+		n20, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n12
+		i += n20
 	}
 	return i, nil
 }
@@ -1899,16 +1935,22 @@ func (m *StoreNewMessageRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Msg != nil {
-		data[i] = 0xa
-		i++
-		i = encodeVarintStore(data, i, uint64(m.Msg.Size()))
-		n13, err := m.Msg.MarshalTo(data[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n13
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n21, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n21
+	data[i] = 0x12
+	i++
+	i = encodeVarintStore(data, i, uint64(m.Msg.Size()))
+	n22, err := m.Msg.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n22
 	return i, nil
 }
 
@@ -1931,11 +1973,11 @@ func (m *StoreNewMessageResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n14, err := m.Header.MarshalTo(data[i:])
+		n23, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n14
+		i += n23
 	}
 	return i, nil
 }
@@ -1955,16 +1997,14 @@ func (m *StoreUploadFileRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Header != nil {
-		data[i] = 0xa
-		i++
-		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n15, err := m.Header.MarshalTo(data[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n15
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n24, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n24
 	if len(m.File) > 0 {
 		data[i] = 0x12
 		i++
@@ -1993,11 +2033,11 @@ func (m *StoreUploadFileResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n16, err := m.Header.MarshalTo(data[i:])
+		n25, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n16
+		i += n25
 	}
 	return i, nil
 }
@@ -2017,16 +2057,14 @@ func (m *StoreCheckFileRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Header != nil {
-		data[i] = 0xa
-		i++
-		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n17, err := m.Header.MarshalTo(data[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n17
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n26, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n26
 	if len(m.Names) > 0 {
 		for _, s := range m.Names {
 			data[i] = 0x12
@@ -2064,11 +2102,11 @@ func (m *StoreCheckFileResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n18, err := m.Header.MarshalTo(data[i:])
+		n27, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n18
+		i += n27
 	}
 	if len(m.Names) > 0 {
 		for _, s := range m.Names {
@@ -2103,16 +2141,14 @@ func (m *StoreDownloadFileRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Header != nil {
-		data[i] = 0xa
-		i++
-		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n19, err := m.Header.MarshalTo(data[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n19
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n28, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n28
 	if len(m.Names) > 0 {
 		for _, s := range m.Names {
 			data[i] = 0x12
@@ -2150,11 +2186,11 @@ func (m *StoreDownloadFileResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n20, err := m.Header.MarshalTo(data[i:])
+		n29, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n20
+		i += n29
 	}
 	if len(m.Files) > 0 {
 		for k, _ := range m.Files {
@@ -2197,11 +2233,14 @@ func (m *StoreLoadMessageRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.User != 0 {
-		data[i] = 0x8
-		i++
-		i = encodeVarintStore(data, i, uint64(m.User))
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n30, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n30
 	if m.ID != 0 {
 		data[i] = 0x10
 		i++
@@ -2239,11 +2278,11 @@ func (m *StoreLoadMessageResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n21, err := m.Header.MarshalTo(data[i:])
+		n31, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n21
+		i += n31
 	}
 	if len(m.Msgs) > 0 {
 		for _, msg := range m.Msgs {
@@ -2275,11 +2314,14 @@ func (m *StoreLoadGroupListRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.User != 0 {
-		data[i] = 0x8
-		i++
-		i = encodeVarintStore(data, i, uint64(m.User))
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n32, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n32
 	return i, nil
 }
 
@@ -2302,11 +2344,11 @@ func (m *StoreLoadGroupListResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n22, err := m.Header.MarshalTo(data[i:])
+		n33, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n22
+		i += n33
 	}
 	if len(m.Groups) > 0 {
 		for _, msg := range m.Groups {
@@ -2338,11 +2380,14 @@ func (m *StoreLoadFriendListRequest) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.User != 0 {
-		data[i] = 0x8
-		i++
-		i = encodeVarintStore(data, i, uint64(m.User))
+	data[i] = 0xa
+	i++
+	i = encodeVarintStore(data, i, uint64(m.RequestHeader.Size()))
+	n34, err := m.RequestHeader.MarshalTo(data[i:])
+	if err != nil {
+		return 0, err
 	}
+	i += n34
 	return i, nil
 }
 
@@ -2365,29 +2410,29 @@ func (m *StoreLoadFriendListResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintStore(data, i, uint64(m.Header.Size()))
-		n23, err := m.Header.MarshalTo(data[i:])
+		n35, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n23
+		i += n35
 	}
 	if len(m.Users) > 0 {
-		data25 := make([]byte, len(m.Users)*10)
-		var j24 int
+		data37 := make([]byte, len(m.Users)*10)
+		var j36 int
 		for _, num1 := range m.Users {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				data25[j24] = uint8(uint64(num)&0x7f | 0x80)
+				data37[j36] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j24++
+				j36++
 			}
-			data25[j24] = uint8(num)
-			j24++
+			data37[j36] = uint8(num)
+			j36++
 		}
 		data[i] = 0x12
 		i++
-		i = encodeVarintStore(data, i, uint64(j24))
-		i += copy(data[i:], data25[:j24])
+		i = encodeVarintStore(data, i, uint64(j36))
+		i += copy(data[i:], data37[:j36])
 	}
 	return i, nil
 }
@@ -2422,7 +2467,9 @@ func encodeVarintStore(data []byte, offset int, v uint64) int {
 func (m *StoreFindUserRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.User)
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovStore(uint64(l))
 	}
@@ -2448,6 +2495,8 @@ func (m *StoreFindUserResponse) Size() (n int) {
 func (m *StoreFriendRequest) Size() (n int) {
 	var l int
 	_ = l
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	if m.Operate != 0 {
 		n += 1 + sovStore(uint64(m.Operate))
 	}
@@ -2504,7 +2553,9 @@ func (m *StoreRegisterResponse) Size() (n int) {
 func (m *StoreUpdateUserInfoRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.User)
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovStore(uint64(l))
 	}
@@ -2526,20 +2577,23 @@ func (m *StoreUpdateUserInfoResponse) Size() (n int) {
 		l = m.Header.Size()
 		n += 1 + l + sovStore(uint64(l))
 	}
-	if m.ID != 0 {
-		n += 1 + sovStore(uint64(m.ID))
-	}
 	return n
 }
 
 func (m *StoreUpdateUserPasswordRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.User)
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovStore(uint64(l))
 	}
 	l = len(m.Password)
+	if l > 0 {
+		n += 1 + l + sovStore(uint64(l))
+	}
+	l = len(m.NewPassword)
 	if l > 0 {
 		n += 1 + l + sovStore(uint64(l))
 	}
@@ -2553,24 +2607,23 @@ func (m *StoreUpdateUserPasswordResponse) Size() (n int) {
 		l = m.Header.Size()
 		n += 1 + l + sovStore(uint64(l))
 	}
-	if m.ID != 0 {
-		n += 1 + sovStore(uint64(m.ID))
-	}
 	return n
 }
 
 func (m *StoreGetUserInfoRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.Type != 0 {
-		n += 1 + sovStore(uint64(m.Type))
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
+	if m.ByName {
+		n += 2
 	}
-	l = len(m.UserName)
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovStore(uint64(l))
 	}
-	if m.UserID != 0 {
-		n += 1 + sovStore(uint64(m.UserID))
+	if m.ID != 0 {
+		n += 1 + sovStore(uint64(m.ID))
 	}
 	return n
 }
@@ -2630,11 +2683,10 @@ func (m *StoreAuthResponse) Size() (n int) {
 func (m *StoreGroupCreateRequest) Size() (n int) {
 	var l int
 	_ = l
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	if m.ID != 0 {
 		n += 1 + sovStore(uint64(m.ID))
-	}
-	if m.User != 0 {
-		n += 1 + sovStore(uint64(m.User))
 	}
 	l = len(m.Name)
 	if l > 0 {
@@ -2656,11 +2708,10 @@ func (m *StoreGroupCreateResponse) Size() (n int) {
 func (m *StoreGroupRequest) Size() (n int) {
 	var l int
 	_ = l
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	if m.ID != 0 {
 		n += 1 + sovStore(uint64(m.ID))
-	}
-	if m.User != 0 {
-		n += 1 + sovStore(uint64(m.User))
 	}
 	if m.Operate != 0 {
 		n += 1 + sovStore(uint64(m.Operate))
@@ -2692,11 +2743,10 @@ func (m *StoreGroupResponse) Size() (n int) {
 func (m *StoreGroupDeleteRequest) Size() (n int) {
 	var l int
 	_ = l
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	if m.ID != 0 {
 		n += 1 + sovStore(uint64(m.ID))
-	}
-	if m.User != 0 {
-		n += 1 + sovStore(uint64(m.User))
 	}
 	return n
 }
@@ -2714,10 +2764,10 @@ func (m *StoreGroupDeleteResponse) Size() (n int) {
 func (m *StoreNewMessageRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.Msg != nil {
-		l = m.Msg.Size()
-		n += 1 + l + sovStore(uint64(l))
-	}
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
+	l = m.Msg.Size()
+	n += 1 + l + sovStore(uint64(l))
 	return n
 }
 
@@ -2734,10 +2784,8 @@ func (m *StoreNewMessageResponse) Size() (n int) {
 func (m *StoreUploadFileRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.Header != nil {
-		l = m.Header.Size()
-		n += 1 + l + sovStore(uint64(l))
-	}
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	l = len(m.File)
 	if l > 0 {
 		n += 1 + l + sovStore(uint64(l))
@@ -2758,10 +2806,8 @@ func (m *StoreUploadFileResponse) Size() (n int) {
 func (m *StoreCheckFileRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.Header != nil {
-		l = m.Header.Size()
-		n += 1 + l + sovStore(uint64(l))
-	}
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	if len(m.Names) > 0 {
 		for _, s := range m.Names {
 			l = len(s)
@@ -2790,10 +2836,8 @@ func (m *StoreCheckFileResponse) Size() (n int) {
 func (m *StoreDownloadFileRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.Header != nil {
-		l = m.Header.Size()
-		n += 1 + l + sovStore(uint64(l))
-	}
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	if len(m.Names) > 0 {
 		for _, s := range m.Names {
 			l = len(s)
@@ -2828,9 +2872,8 @@ func (m *StoreDownloadFileResponse) Size() (n int) {
 func (m *StoreLoadMessageRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.User != 0 {
-		n += 1 + sovStore(uint64(m.User))
-	}
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	if m.ID != 0 {
 		n += 1 + sovStore(uint64(m.ID))
 	}
@@ -2859,9 +2902,8 @@ func (m *StoreLoadMessageResponse) Size() (n int) {
 func (m *StoreLoadGroupListRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.User != 0 {
-		n += 1 + sovStore(uint64(m.User))
-	}
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	return n
 }
 
@@ -2884,9 +2926,8 @@ func (m *StoreLoadGroupListResponse) Size() (n int) {
 func (m *StoreLoadFriendListRequest) Size() (n int) {
 	var l int
 	_ = l
-	if m.User != 0 {
-		n += 1 + sovStore(uint64(m.User))
-	}
+	l = m.RequestHeader.Size()
+	n += 1 + l + sovStore(uint64(l))
 	return n
 }
 
@@ -2951,7 +2992,37 @@ func (m *StoreFindUserRequest) Unmarshal(data []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2976,7 +3047,7 @@ func (m *StoreFindUserRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(data[iNdEx:postIndex])
+			m.Name = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3141,6 +3212,36 @@ func (m *StoreFriendRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Operate", wireType)
 			}
@@ -3159,7 +3260,7 @@ func (m *StoreFriendRequest) Unmarshal(data []byte) error {
 					break
 				}
 			}
-		case 2:
+		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field From", wireType)
 			}
@@ -3178,7 +3279,7 @@ func (m *StoreFriendRequest) Unmarshal(data []byte) error {
 					break
 				}
 			}
-		case 3:
+		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field To", wireType)
 			}
@@ -3197,7 +3298,7 @@ func (m *StoreFriendRequest) Unmarshal(data []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Msg", wireType)
 			}
@@ -3571,7 +3672,37 @@ func (m *StoreUpdateUserInfoRequest) Unmarshal(data []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3596,9 +3727,9 @@ func (m *StoreUpdateUserInfoRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(data[iNdEx:postIndex])
+			m.Name = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field NickName", wireType)
 			}
@@ -3627,11 +3758,11 @@ func (m *StoreUpdateUserInfoRequest) Unmarshal(data []byte) error {
 			}
 			m.NickName = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Avatar", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStore
@@ -3641,22 +3772,20 @@ func (m *StoreUpdateUserInfoRequest) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				stringLen |= (uint64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthStore
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Avatar = append(m.Avatar[:0], data[iNdEx:postIndex]...)
-			if m.Avatar == nil {
-				m.Avatar = []byte{}
-			}
+			m.Avatar = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3741,25 +3870,6 @@ func (m *StoreUpdateUserInfoResponse) Unmarshal(data []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
-			}
-			m.ID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowStore
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				m.ID |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStore(data[iNdEx:])
@@ -3812,7 +3922,37 @@ func (m *StoreUpdateUserPasswordRequest) Unmarshal(data []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3837,9 +3977,9 @@ func (m *StoreUpdateUserPasswordRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(data[iNdEx:postIndex])
+			m.Name = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Password", wireType)
 			}
@@ -3867,6 +4007,35 @@ func (m *StoreUpdateUserPasswordRequest) Unmarshal(data []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Password = string(data[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewPassword", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NewPassword = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3951,25 +4120,6 @@ func (m *StoreUpdateUserPasswordResponse) Unmarshal(data []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
-			}
-			m.ID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowStore
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				m.ID |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStore(data[iNdEx:])
@@ -4021,10 +4171,10 @@ func (m *StoreGetUserInfoRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
-			m.Type = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStore
@@ -4034,14 +4184,45 @@ func (m *StoreGetUserInfoRequest) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				m.Type |= (int32(b) & 0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ByName", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.ByName = bool(v != 0)
+		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserName", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -4066,13 +4247,13 @@ func (m *StoreGetUserInfoRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UserName = string(data[iNdEx:postIndex])
+			m.Name = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserID", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
 			}
-			m.UserID = 0
+			m.ID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStore
@@ -4082,7 +4263,7 @@ func (m *StoreGetUserInfoRequest) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				m.UserID |= (int64(b) & 0x7F) << shift
+				m.ID |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4251,7 +4432,7 @@ func (m *StoreGetUserInfoResponse) Unmarshal(data []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Avatar", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStore
@@ -4261,22 +4442,20 @@ func (m *StoreGetUserInfoResponse) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				stringLen |= (uint64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthStore
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Avatar = append(m.Avatar[:0], data[iNdEx:postIndex]...)
-			if m.Avatar == nil {
-				m.Avatar = []byte{}
-			}
+			m.Avatar = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -4539,6 +4718,36 @@ func (m *StoreGroupCreateRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
 			}
@@ -4553,25 +4762,6 @@ func (m *StoreGroupCreateRequest) Unmarshal(data []byte) error {
 				b := data[iNdEx]
 				iNdEx++
 				m.ID |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			m.User = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowStore
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				m.User |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4739,6 +4929,36 @@ func (m *StoreGroupRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
 			}
@@ -4753,25 +4973,6 @@ func (m *StoreGroupRequest) Unmarshal(data []byte) error {
 				b := data[iNdEx]
 				iNdEx++
 				m.ID |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			m.User = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowStore
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				m.User |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5020,6 +5221,36 @@ func (m *StoreGroupDeleteRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
 			}
@@ -5034,25 +5265,6 @@ func (m *StoreGroupDeleteRequest) Unmarshal(data []byte) error {
 				b := data[iNdEx]
 				iNdEx++
 				m.ID |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			m.User = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowStore
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				m.User |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5192,7 +5404,7 @@ func (m *StoreNewMessageRequest) Unmarshal(data []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Msg", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -5216,8 +5428,35 @@ func (m *StoreNewMessageRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Msg == nil {
-				m.Msg = &Message{}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Msg", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
 			}
 			if err := m.Msg.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
@@ -5358,7 +5597,7 @@ func (m *StoreUploadFileRequest) Unmarshal(data []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -5382,10 +5621,7 @@ func (m *StoreUploadFileRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Header == nil {
-				m.Header = &RequestHeader{}
-			}
-			if err := m.Header.Unmarshal(data[iNdEx:postIndex]); err != nil {
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -5555,7 +5791,7 @@ func (m *StoreCheckFileRequest) Unmarshal(data []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -5579,10 +5815,7 @@ func (m *StoreCheckFileRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Header == nil {
-				m.Header = &RequestHeader{}
-			}
-			if err := m.Header.Unmarshal(data[iNdEx:postIndex]); err != nil {
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -5779,7 +6012,7 @@ func (m *StoreDownloadFileRequest) Unmarshal(data []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -5803,10 +6036,7 @@ func (m *StoreDownloadFileRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Header == nil {
-				m.Header = &RequestHeader{}
-			}
-			if err := m.Header.Unmarshal(data[iNdEx:postIndex]); err != nil {
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -6090,10 +6320,10 @@ func (m *StoreLoadMessageRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
-			m.User = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStore
@@ -6103,11 +6333,22 @@ func (m *StoreLoadMessageRequest) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				m.User |= (int64(b) & 0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
@@ -6312,10 +6553,10 @@ func (m *StoreLoadGroupListRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
-			m.User = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStore
@@ -6325,11 +6566,22 @@ func (m *StoreLoadGroupListRequest) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				m.User |= (int64(b) & 0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStore(data[iNdEx:])
@@ -6495,10 +6747,10 @@ func (m *StoreLoadFriendListRequest) Unmarshal(data []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestHeader", wireType)
 			}
-			m.User = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStore
@@ -6508,11 +6760,22 @@ func (m *StoreLoadFriendListRequest) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				m.User |= (int64(b) & 0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthStore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestHeader.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStore(data[iNdEx:])
@@ -6787,79 +7050,82 @@ var (
 func init() { proto.RegisterFile("store.proto", fileDescriptorStore) }
 
 var fileDescriptorStore = []byte{
-	// 1169 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x58, 0xdd, 0x72, 0xdb, 0x44,
-	0x14, 0x46, 0x96, 0xec, 0x38, 0xc7, 0x21, 0x53, 0xb6, 0x69, 0xeb, 0x0a, 0xea, 0x1a, 0xb5, 0x29,
-	0x99, 0x76, 0x30, 0xc5, 0xdc, 0x74, 0x98, 0x61, 0x98, 0x36, 0xc6, 0x34, 0x43, 0xf3, 0x83, 0xa8,
-	0x29, 0x03, 0x33, 0xc0, 0xd6, 0xde, 0x38, 0x9a, 0x58, 0x92, 0xd1, 0xca, 0xc9, 0x18, 0x2e, 0x78,
-	0x04, 0x78, 0x0a, 0x9e, 0x85, 0x4b, 0x78, 0x00, 0x66, 0x98, 0xf0, 0x22, 0xcc, 0xae, 0x56, 0xf6,
-	0x4a, 0x5a, 0xd9, 0x69, 0xe5, 0xbb, 0xac, 0x75, 0xf6, 0x3b, 0xdf, 0x9e, 0xf3, 0xe9, 0xec, 0xa7,
-	0x40, 0x8d, 0x86, 0x7e, 0x40, 0x5a, 0xe3, 0xc0, 0x0f, 0x7d, 0x04, 0x7d, 0xec, 0x0d, 0xa6, 0x2d,
-	0x97, 0x84, 0xd8, 0xdc, 0xe8, 0xfb, 0xae, 0xeb, 0x7b, 0xd1, 0x13, 0xeb, 0x3e, 0x6c, 0x7d, 0xc5,
-	0x02, 0xbb, 0x8e, 0x37, 0xe8, 0x51, 0x12, 0xd8, 0xe4, 0xa7, 0x09, 0xa1, 0x21, 0x42, 0x60, 0x4c,
-	0x28, 0x09, 0xea, 0x5a, 0x53, 0xdb, 0x59, 0xb7, 0xf9, 0xdf, 0x16, 0x86, 0x6b, 0xa9, 0x58, 0x3a,
-	0xf6, 0x3d, 0x4a, 0x50, 0x1b, 0x2a, 0x27, 0x04, 0x0f, 0x44, 0x78, 0xad, 0x6d, 0xb6, 0xe6, 0xf9,
-	0x5a, 0x71, 0xd4, 0x53, 0x1e, 0x61, 0x8b, 0x48, 0xb4, 0x05, 0x65, 0x06, 0x4a, 0xeb, 0xa5, 0xa6,
-	0xbe, 0xb3, 0x6e, 0x47, 0x0b, 0xeb, 0x67, 0x40, 0x51, 0x8a, 0xc0, 0x21, 0xde, 0x20, 0x26, 0xd3,
-	0x82, 0xb5, 0xc3, 0x31, 0x09, 0x70, 0x48, 0x78, 0x82, 0xcd, 0xf6, 0x56, 0x32, 0xc1, 0x08, 0x87,
-	0x8e, 0xef, 0xd9, 0x6b, 0x7e, 0x14, 0xc4, 0xc8, 0x77, 0x03, 0xdf, 0xad, 0x97, 0x9a, 0xda, 0x8e,
-	0x6e, 0x1b, 0xc7, 0x81, 0xef, 0xa2, 0x4d, 0x28, 0x3d, 0xf7, 0xeb, 0x3a, 0xff, 0xa5, 0x14, 0xfa,
-	0xe8, 0x0a, 0xe8, 0xfb, 0x74, 0x58, 0x37, 0xf8, 0xf9, 0x74, 0x97, 0x0e, 0xad, 0x3d, 0xb8, 0x9a,
-	0xc8, 0xfd, 0xfa, 0x87, 0xb3, 0xbe, 0x16, 0x55, 0xb5, 0xc9, 0xd0, 0xa1, 0xe1, 0xbc, 0xaa, 0x9b,
-	0x50, 0xda, 0xeb, 0x70, 0x1c, 0xdd, 0x2e, 0x39, 0x1d, 0x46, 0x94, 0x15, 0x92, 0x13, 0x15, 0x55,
-	0x46, 0x26, 0x54, 0x8f, 0x30, 0xa5, 0xe7, 0x7e, 0x30, 0xe0, 0x74, 0xd7, 0xed, 0xea, 0x58, 0xac,
-	0xad, 0x2f, 0x44, 0x07, 0xe6, 0xb8, 0x05, 0x48, 0x0e, 0xc0, 0xe4, 0x60, 0xbd, 0xf1, 0x00, 0x87,
-	0x84, 0xf1, 0xd8, 0xf3, 0x8e, 0x7d, 0x49, 0x00, 0xbd, 0x94, 0x00, 0x18, 0xb5, 0x03, 0xa7, 0x7f,
-	0x7a, 0x80, 0x5d, 0x22, 0x28, 0x57, 0x3d, 0xb1, 0x46, 0xd7, 0xa1, 0xf2, 0xf8, 0x0c, 0x87, 0x38,
-	0xe0, 0xa4, 0x37, 0xec, 0x0a, 0xe6, 0x2b, 0x0b, 0xc3, 0xdb, 0xca, 0x2c, 0x05, 0xa4, 0x13, 0x55,
-	0xb1, 0x14, 0x57, 0xd1, 0x3a, 0x82, 0x46, 0x2a, 0x45, 0x5c, 0xc0, 0x25, 0x87, 0x99, 0xd5, 0xb9,
-	0x94, 0xaa, 0x33, 0x81, 0xdb, 0xb9, 0x88, 0x2b, 0x24, 0x8e, 0xe1, 0x06, 0x4f, 0xf3, 0x39, 0x09,
-	0x15, 0xe5, 0x7f, 0x3e, 0x1d, 0x47, 0x7a, 0x2f, 0xdb, 0x46, 0x38, 0x1d, 0x13, 0xc6, 0x98, 0x85,
-	0xc9, 0xe5, 0x9f, 0x88, 0x35, 0x2b, 0x3f, 0x87, 0xe8, 0x08, 0x89, 0x57, 0x26, 0x7c, 0x65, 0xfd,
-	0xa1, 0x41, 0x3d, 0x9b, 0x63, 0x75, 0x67, 0x98, 0x95, 0x56, 0xcf, 0xd1, 0x89, 0x91, 0xab, 0x93,
-	0x72, 0x42, 0x27, 0x4f, 0xe0, 0x0a, 0xe7, 0xf9, 0x78, 0x12, 0x9e, 0xbc, 0x6e, 0xdb, 0x5e, 0xc0,
-	0x5b, 0x12, 0xc6, 0x0a, 0x1b, 0xf5, 0x65, 0xdc, 0xa8, 0xc0, 0x9f, 0x8c, 0x77, 0x03, 0x82, 0x43,
-	0x72, 0x99, 0x57, 0x5a, 0x17, 0x9c, 0x11, 0x18, 0xbc, 0x16, 0xa2, 0x46, 0x1e, 0x76, 0x89, 0x75,
-	0x10, 0xf7, 0x45, 0x86, 0x2c, 0xf0, 0x36, 0xff, 0xa6, 0x89, 0xc3, 0x73, 0xc0, 0x57, 0x61, 0x27,
-	0x4d, 0x57, 0xfd, 0x32, 0xd3, 0x35, 0x33, 0x39, 0xd9, 0x2c, 0xef, 0xf1, 0x59, 0x5e, 0x6e, 0xea,
-	0x3b, 0x7a, 0x3c, 0xcb, 0x9f, 0x8a, 0x59, 0x2e, 0x08, 0x15, 0x38, 0xdb, 0x27, 0x72, 0xf9, 0x3b,
-	0x64, 0x44, 0x5e, 0xa9, 0xfc, 0xc9, 0x52, 0xc7, 0xdb, 0x0b, 0xd0, 0xf9, 0x14, 0xae, 0x73, 0xbc,
-	0x03, 0x72, 0xbe, 0x4f, 0x28, 0xc5, 0xc3, 0x19, 0x9b, 0xed, 0xa8, 0x34, 0x11, 0xd4, 0x55, 0x19,
-	0x2a, 0x0e, 0xe4, 0x37, 0xcd, 0xbe, 0x38, 0x8f, 0x0c, 0x50, 0x80, 0xcf, 0x0f, 0x82, 0x4f, 0x6f,
-	0x3c, 0xf2, 0xf1, 0xa0, 0xeb, 0x8c, 0x66, 0x7c, 0x3e, 0x4c, 0xa1, 0xdd, 0x4c, 0xa2, 0xf1, 0xa0,
-	0x94, 0xf4, 0xd9, 0xdd, 0xe9, 0x8c, 0xa2, 0x01, 0xb3, 0x61, 0x1b, 0xc7, 0xce, 0x88, 0xcc, 0xf8,
-	0xca, 0x09, 0x0a, 0xf0, 0xfd, 0x51, 0xdc, 0x62, 0xbb, 0x27, 0xa4, 0x7f, 0x5a, 0x90, 0xee, 0x16,
-	0x94, 0xd9, 0xab, 0x35, 0xb3, 0x11, 0xec, 0xdd, 0xa2, 0xd6, 0x4b, 0x51, 0x11, 0x29, 0x43, 0x31,
-	0xab, 0xa2, 0xc8, 0xd1, 0x17, 0xaa, 0xea, 0xf8, 0xe7, 0xde, 0x0a, 0xea, 0xae, 0x4e, 0xf2, 0xb7,
-	0x06, 0x37, 0x15, 0x59, 0x0a, 0x1c, 0xa6, 0x0b, 0x65, 0x86, 0x11, 0xe5, 0xa9, 0xb5, 0x1f, 0xca,
-	0x5b, 0x72, 0x33, 0xb5, 0xf8, 0x96, 0xcf, 0xbc, 0x30, 0x98, 0xda, 0x65, 0x26, 0x09, 0x6a, 0x3e,
-	0x02, 0x98, 0xff, 0xc8, 0x66, 0xc2, 0x29, 0x99, 0x8a, 0x41, 0xcd, 0xfe, 0x64, 0xe7, 0x39, 0xc3,
-	0xa3, 0x49, 0x2c, 0xa4, 0x68, 0xf1, 0x71, 0xe9, 0x91, 0x66, 0xbd, 0x10, 0x6a, 0x7a, 0xe6, 0xe3,
-	0x41, 0xea, 0xfd, 0x91, 0x07, 0x7e, 0x3c, 0x9e, 0xd2, 0x17, 0x4e, 0x1d, 0xd6, 0x6c, 0x72, 0x46,
-	0x02, 0x1a, 0x8d, 0xab, 0xaa, 0xbd, 0x16, 0x44, 0x4b, 0xeb, 0x17, 0xd1, 0x91, 0x04, 0x70, 0x81,
-	0x52, 0x3d, 0x00, 0x63, 0x9f, 0x0e, 0xe3, 0x4a, 0xdd, 0x90, 0x77, 0x1c, 0x4d, 0xe8, 0x49, 0x9c,
-	0xc2, 0x70, 0xe9, 0x90, 0x5a, 0x1f, 0x88, 0x46, 0xb1, 0xe4, 0x7c, 0xd0, 0x3c, 0x73, 0x68, 0xb8,
-	0xe0, 0x5c, 0xd6, 0xaf, 0xc2, 0x7e, 0xa5, 0x36, 0x14, 0xe0, 0xfb, 0x3e, 0x54, 0x86, 0x0c, 0x28,
-	0x66, 0x7c, 0x4d, 0xde, 0xc3, 0x53, 0xf0, 0xdb, 0x5f, 0x04, 0x59, 0x0f, 0x25, 0x02, 0x91, 0xe7,
-	0x5d, 0x46, 0x79, 0x28, 0xbc, 0x5c, 0x7a, 0xc7, 0xaa, 0x3e, 0x03, 0xe2, 0xab, 0xa3, 0xfd, 0x4f,
-	0x0d, 0xca, 0x3c, 0x13, 0x3a, 0x84, 0x6a, 0x6c, 0x76, 0x51, 0x33, 0xa3, 0xd5, 0x94, 0xbf, 0x36,
-	0xdf, 0x5d, 0x10, 0x21, 0x48, 0x62, 0xd8, 0x4c, 0x5a, 0x51, 0x74, 0x2f, 0xb3, 0x49, 0xe9, 0x88,
-	0xcd, 0xf7, 0x96, 0xc6, 0x89, 0x14, 0x2e, 0xa0, 0xac, 0x71, 0x44, 0xf7, 0x17, 0x6c, 0x4f, 0xf9,
-	0x55, 0xf3, 0xc1, 0xa5, 0x62, 0x45, 0xba, 0x6f, 0xa0, 0x26, 0x99, 0x3b, 0x74, 0x27, 0xb3, 0x37,
-	0x6b, 0x2f, 0xcd, 0xbb, 0x8b, 0x83, 0x04, 0xf2, 0x2e, 0x18, 0xcc, 0x4a, 0xa1, 0x77, 0x32, 0xd1,
-	0x92, 0x4b, 0x33, 0x6f, 0xe5, 0x3c, 0x15, 0x20, 0x7b, 0x50, 0x89, 0xb4, 0x82, 0x1a, 0x99, 0xc0,
-	0xc4, 0x67, 0x9e, 0x79, 0x3b, 0xf7, 0xf9, 0xbc, 0x77, 0x49, 0xe9, 0x29, 0x7a, 0xa7, 0x54, 0xb3,
-	0xa2, 0x77, 0x39, 0x1a, 0x3e, 0x84, 0x6a, 0xfc, 0x79, 0xab, 0xd0, 0x5b, 0xea, 0x2b, 0x59, 0xa1,
-	0xb7, 0xcc, 0xb7, 0x31, 0xeb, 0xce, 0xdc, 0xe2, 0xa9, 0xba, 0x93, 0xf1, 0x94, 0xaa, 0xee, 0x28,
-	0x5c, 0x62, 0x17, 0xca, 0xfc, 0x67, 0x74, 0x4b, 0x1d, 0x1e, 0xa3, 0x35, 0xf2, 0x1e, 0xa7, 0x18,
-	0x46, 0xce, 0x28, 0x8f, 0x61, 0xc2, 0x76, 0xe5, 0x31, 0x4c, 0x99, 0xab, 0xef, 0xe1, 0xcd, 0xc4,
-	0x74, 0x43, 0xdb, 0xca, 0x36, 0xa4, 0xc7, 0xa5, 0x79, 0x6f, 0x59, 0x98, 0xc0, 0xef, 0x01, 0xcc,
-	0x2d, 0x14, 0xb2, 0x32, 0xbb, 0x32, 0x06, 0xcd, 0xbc, 0xb3, 0x30, 0x66, 0x0e, 0x3b, 0x77, 0x3a,
-	0x0a, 0xd8, 0x8c, 0xcf, 0x52, 0xc0, 0x2a, 0xac, 0x92, 0x0d, 0xeb, 0x33, 0x3f, 0x82, 0xb2, 0xca,
-	0x49, 0xbb, 0x21, 0xd3, 0x5a, 0x14, 0x22, 0x30, 0xbf, 0x83, 0x0d, 0xf9, 0xbe, 0x46, 0x77, 0x97,
-	0x5c, 0xe7, 0x11, 0xf2, 0xf6, 0xa5, 0x2e, 0x7d, 0x26, 0x0c, 0xe9, 0x2a, 0x55, 0x08, 0x23, 0x7b,
-	0x83, 0x2b, 0x84, 0xa1, 0xb8, 0x8d, 0x9f, 0x5c, 0xff, 0xf3, 0xa2, 0xa1, 0xfd, 0x75, 0xd1, 0xd0,
-	0xfe, 0xbd, 0x68, 0x68, 0xbf, 0xff, 0xd7, 0x78, 0xe3, 0x5b, 0x83, 0x6d, 0x78, 0x59, 0xe1, 0xff,
-	0x94, 0xfa, 0xe8, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0xe0, 0x43, 0x38, 0x87, 0xbd, 0x12, 0x00,
-	0x00,
+	// 1220 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xb4, 0x58, 0xdb, 0x52, 0xe4, 0xc4,
+	0x1b, 0x27, 0x93, 0xcc, 0x30, 0x7c, 0xc3, 0x9f, 0xda, 0x7f, 0x2f, 0xcb, 0xce, 0x46, 0x77, 0x18,
+	0xb3, 0x07, 0x29, 0x29, 0x47, 0x0b, 0x6f, 0xb6, 0xf4, 0x6a, 0x01, 0x71, 0x29, 0x17, 0x58, 0xa3,
+	0x28, 0x6a, 0x95, 0x55, 0x81, 0x69, 0xc2, 0xc8, 0x24, 0x3d, 0xa6, 0x33, 0x50, 0xe8, 0x85, 0x96,
+	0x4f, 0x60, 0xf9, 0x06, 0xde, 0x78, 0xeb, 0xa5, 0x3e, 0xc2, 0x5e, 0xae, 0x0f, 0xe0, 0x96, 0x85,
+	0x2f, 0x62, 0xf5, 0x21, 0x93, 0x53, 0x07, 0x28, 0x13, 0xee, 0xa6, 0x7b, 0xbe, 0xf3, 0xef, 0xeb,
+	0xfe, 0x7e, 0x1d, 0x68, 0xd1, 0x90, 0x04, 0xb8, 0x37, 0x0a, 0x48, 0x48, 0x10, 0x1c, 0x38, 0x7e,
+	0xff, 0xac, 0xe7, 0xe1, 0xd0, 0x31, 0xe7, 0x5d, 0xe2, 0x12, 0xbe, 0xfd, 0x16, 0xfb, 0x25, 0x24,
+	0xcc, 0xd9, 0x03, 0xe2, 0x79, 0xc4, 0x17, 0x2b, 0xcb, 0x85, 0xf9, 0x8f, 0x99, 0xfa, 0xc6, 0xc0,
+	0xef, 0xef, 0x52, 0x1c, 0xd8, 0xf8, 0x9b, 0x31, 0xa6, 0x21, 0x7a, 0x0f, 0x1a, 0x47, 0xd8, 0xe9,
+	0xe3, 0xa0, 0xad, 0x75, 0xb5, 0xa5, 0xd6, 0xca, 0x9d, 0x5e, 0x6c, 0xb8, 0x27, 0x85, 0x9e, 0x70,
+	0x81, 0xd5, 0xe6, 0xf3, 0x97, 0x8b, 0x53, 0x2f, 0x5e, 0x2e, 0x6a, 0xb6, 0x54, 0x41, 0x08, 0x8c,
+	0x6d, 0xc7, 0xc3, 0xed, 0x5a, 0x57, 0x5b, 0x9a, 0xb1, 0x0d, 0xdf, 0xf1, 0xb0, 0xe5, 0xc0, 0xad,
+	0x8c, 0x23, 0x3a, 0x22, 0x3e, 0xc5, 0x68, 0x25, 0xe3, 0xc9, 0x4c, 0x7b, 0x12, 0x52, 0xc2, 0xd5,
+	0xc4, 0xc1, 0x3c, 0xd4, 0x99, 0x0d, 0xda, 0xae, 0x75, 0xf5, 0xa5, 0x19, 0xbb, 0x3e, 0x66, 0x0b,
+	0xeb, 0x77, 0x0d, 0x90, 0xf0, 0x11, 0x0c, 0xb0, 0xdf, 0xaf, 0x24, 0x95, 0x1e, 0x4c, 0xef, 0x8c,
+	0x70, 0xe0, 0x84, 0x22, 0x9b, 0xb9, 0x95, 0xf9, 0xb4, 0xf6, 0xd0, 0x09, 0x07, 0xc4, 0xb7, 0xa7,
+	0x89, 0x10, 0x62, 0xa9, 0x6f, 0x04, 0xc4, 0x6b, 0xeb, 0x5d, 0x6d, 0x49, 0xb7, 0x8d, 0xc3, 0x80,
+	0x78, 0x68, 0x0e, 0x6a, 0x9f, 0x90, 0xb6, 0xc1, 0x77, 0x6a, 0x21, 0x41, 0x37, 0x40, 0xdf, 0xa2,
+	0x6e, 0xbb, 0xce, 0xab, 0xa3, 0x7b, 0xd4, 0xb5, 0x36, 0xe1, 0x66, 0x2a, 0xf0, 0xff, 0x5e, 0x1a,
+	0xeb, 0x53, 0x09, 0xa8, 0x8d, 0xdd, 0x01, 0x0d, 0x63, 0x40, 0xe7, 0xa0, 0xb6, 0xb9, 0xce, 0xed,
+	0xe8, 0x76, 0x6d, 0xb0, 0xce, 0x02, 0x65, 0x25, 0x8c, 0x30, 0x62, 0x15, 0x44, 0x26, 0x34, 0x9f,
+	0x39, 0x94, 0x9e, 0x92, 0xa0, 0xcf, 0x13, 0x98, 0xb1, 0x9b, 0x23, 0xb9, 0xb6, 0x3e, 0x94, 0xf8,
+	0xc5, 0x76, 0x4b, 0x04, 0xf9, 0x8b, 0x06, 0x26, 0xb7, 0xb6, 0x3b, 0xea, 0x3b, 0x21, 0x66, 0x81,
+	0x6c, 0xfa, 0x87, 0xe4, 0xba, 0x9a, 0x8f, 0x25, 0xb6, 0x3d, 0x38, 0x38, 0xe6, 0xfb, 0x32, 0x31,
+	0x5f, 0xae, 0xd1, 0x02, 0x34, 0x1e, 0x9f, 0x38, 0xa1, 0x13, 0x70, 0x84, 0x66, 0xec, 0x86, 0xc3,
+	0x57, 0xd6, 0x47, 0xf0, 0x8a, 0x32, 0xc4, 0x12, 0x69, 0xff, 0xa6, 0x41, 0x27, 0x63, 0x33, 0xaa,
+	0xf7, 0x75, 0xa6, 0x5e, 0x84, 0x29, 0xea, 0x42, 0x6b, 0x1b, 0x9f, 0x4e, 0xfe, 0x16, 0xf9, 0xb7,
+	0xfc, 0x78, 0xcb, 0xda, 0x85, 0xc5, 0xc2, 0x80, 0x4b, 0x14, 0xe2, 0x67, 0x0d, 0x6e, 0x73, 0xbb,
+	0x1f, 0xe0, 0xb0, 0x52, 0xf0, 0x17, 0xa0, 0xb1, 0x7a, 0x36, 0xa9, 0x41, 0xd3, 0x6e, 0xec, 0xf3,
+	0xd5, 0xa4, 0x32, 0x7a, 0xa2, 0x32, 0xe2, 0x44, 0x18, 0xd1, 0x89, 0xb0, 0x7e, 0xd5, 0xa0, 0x9d,
+	0x0f, 0xaa, 0xc4, 0x2d, 0x25, 0x1c, 0xd4, 0x72, 0x47, 0x4e, 0x4f, 0x1f, 0xb9, 0x49, 0x67, 0x1a,
+	0x85, 0x9d, 0x59, 0x4f, 0x75, 0xe6, 0x2a, 0xdc, 0xe0, 0x71, 0x3e, 0x1e, 0x87, 0x47, 0x51, 0xd5,
+	0x22, 0xdb, 0x5a, 0xc1, 0x71, 0xae, 0x65, 0x8e, 0xf3, 0x67, 0xf0, 0xff, 0x84, 0x8d, 0xea, 0x92,
+	0xb4, 0xbe, 0x8d, 0x90, 0x0d, 0xc8, 0x78, 0xb4, 0x16, 0x60, 0x27, 0xc4, 0x95, 0x20, 0xab, 0x28,
+	0x66, 0x16, 0x51, 0x6b, 0x3b, 0x02, 0x30, 0xe9, 0xbb, 0x44, 0x9b, 0xfe, 0xa1, 0xc9, 0x2a, 0x71,
+	0x83, 0xd7, 0x92, 0x46, 0x62, 0xbe, 0xe8, 0x57, 0x99, 0x2f, 0x72, 0x76, 0x18, 0x93, 0xd9, 0x11,
+	0xcf, 0xc2, 0x7a, 0x57, 0x5f, 0xd2, 0xa3, 0x59, 0xf8, 0x44, 0x8e, 0x42, 0x19, 0x79, 0x89, 0x22,
+	0x1c, 0x26, 0x01, 0x5d, 0xc7, 0x43, 0x7c, 0x3d, 0x80, 0xa6, 0xc1, 0x8b, 0xfc, 0x94, 0x88, 0xfb,
+	0x47, 0x0d, 0x16, 0xb8, 0xc1, 0x6d, 0x7c, 0xba, 0x85, 0x29, 0x75, 0xdc, 0x6a, 0xe2, 0x5e, 0x16,
+	0x08, 0xd4, 0xb8, 0xe6, 0xcd, 0xa4, 0xa6, 0xf4, 0xb2, 0x6a, 0x30, 0x1d, 0x31, 0xd8, 0xb7, 0x64,
+	0xf1, 0x92, 0x31, 0x94, 0xc8, 0x69, 0x20, 0x53, 0xda, 0x1d, 0x0d, 0x89, 0xd3, 0xdf, 0x18, 0x0c,
+	0x71, 0x55, 0x73, 0x83, 0xd9, 0xe2, 0x39, 0xcd, 0xda, 0xc6, 0xe1, 0x60, 0x88, 0x27, 0x91, 0x27,
+	0x5d, 0x95, 0x88, 0xfc, 0x6b, 0x49, 0x1f, 0xd6, 0x8e, 0xf0, 0xc1, 0x71, 0x65, 0x81, 0xcf, 0x43,
+	0x9d, 0x5d, 0x02, 0x13, 0x1e, 0xc8, 0x6e, 0x01, 0x6a, 0xed, 0xcb, 0x2a, 0x25, 0x7c, 0x95, 0xe3,
+	0x9a, 0x0a, 0x1f, 0x9e, 0xec, 0xd6, 0x75, 0x72, 0xea, 0x57, 0x8a, 0x85, 0xda, 0xdd, 0x9f, 0x1a,
+	0xdc, 0x51, 0xf8, 0x2b, 0x91, 0xd6, 0x06, 0xd4, 0x99, 0x0d, 0xe1, 0xa7, 0xb5, 0xf2, 0x76, 0x52,
+	0xa5, 0xd0, 0x53, 0x8f, 0xab, 0xbc, 0xef, 0x87, 0xc1, 0x99, 0x5d, 0x67, 0x6d, 0x42, 0xcd, 0x47,
+	0x00, 0xf1, 0x26, 0xbb, 0x9e, 0x8e, 0xf1, 0x99, 0x9c, 0x42, 0xec, 0x27, 0xcb, 0xe7, 0xc4, 0x19,
+	0x8e, 0xa3, 0xe6, 0x12, 0x8b, 0x77, 0x6b, 0x8f, 0x34, 0xeb, 0x87, 0x88, 0x04, 0x3c, 0x25, 0x4e,
+	0xbf, 0xca, 0x13, 0x9a, 0xbd, 0x63, 0xdb, 0x30, 0x6d, 0xe3, 0x13, 0x1c, 0x50, 0x71, 0xc7, 0x36,
+	0xed, 0xe9, 0x40, 0x2c, 0xad, 0xef, 0x24, 0x8a, 0xa9, 0x08, 0x4a, 0x14, 0x75, 0x19, 0x8c, 0x2d,
+	0xea, 0x46, 0x35, 0xbd, 0x9d, 0xd4, 0x78, 0x36, 0xa6, 0x47, 0x91, 0x0b, 0xc3, 0xa3, 0x2e, 0xb5,
+	0xf6, 0x24, 0xa4, 0xcc, 0x39, 0xbf, 0xf4, 0x9e, 0x0e, 0x68, 0x58, 0x45, 0x01, 0xac, 0xef, 0x25,
+	0xbb, 0xce, 0x58, 0x2e, 0x91, 0xd8, 0x9b, 0xd0, 0x70, 0x99, 0xa1, 0x28, 0xb5, 0x5b, 0x49, 0x1d,
+	0xee, 0x82, 0xb3, 0x25, 0x29, 0x64, 0x7d, 0x9e, 0x08, 0x40, 0xbc, 0x69, 0x2a, 0xcb, 0xcd, 0x95,
+	0xb4, 0x3c, 0x6b, 0xba, 0xdc, 0x09, 0x1f, 0x4f, 0x5e, 0x93, 0xd1, 0x04, 0x5d, 0xf9, 0xab, 0x05,
+	0x75, 0xee, 0x09, 0xed, 0x40, 0x33, 0x7a, 0xf5, 0xa0, 0x6e, 0xee, 0x9c, 0x64, 0x1e, 0x5a, 0xe6,
+	0x6b, 0x17, 0x48, 0xc8, 0x20, 0x1d, 0x98, 0x4b, 0xbf, 0x2a, 0xd0, 0xc3, 0x9c, 0x92, 0xf2, 0x65,
+	0x64, 0xbe, 0x7e, 0xa9, 0x9c, 0x74, 0xe1, 0x01, 0xca, 0x73, 0x76, 0xf4, 0xc6, 0x05, 0xea, 0x99,
+	0x97, 0x88, 0xb9, 0x7c, 0x25, 0x59, 0xe9, 0x6e, 0x0f, 0x5a, 0x09, 0xd6, 0x8c, 0xee, 0xe5, 0x74,
+	0xf3, 0x44, 0xdf, 0xbc, 0x7f, 0xb1, 0x90, 0xb4, 0xbc, 0x06, 0x06, 0xe3, 0xa8, 0xe8, 0xd5, 0x9c,
+	0x74, 0x82, 0xfe, 0x9a, 0x77, 0x0b, 0xfe, 0x95, 0x46, 0x36, 0xa1, 0x21, 0x7a, 0x05, 0x75, 0x72,
+	0x82, 0xa9, 0x8f, 0x05, 0xe6, 0x62, 0xe1, 0xff, 0x31, 0x76, 0xe9, 0xd6, 0x53, 0x60, 0xa7, 0x6c,
+	0x7b, 0x05, 0x76, 0x05, 0x3d, 0xbc, 0x03, 0xcd, 0xe8, 0x2b, 0x89, 0xa2, 0xdf, 0x32, 0x5f, 0x6a,
+	0x14, 0xfd, 0x96, 0xfb, 0xc4, 0xc2, 0xd0, 0x89, 0x29, 0xb1, 0x0a, 0x9d, 0x1c, 0x59, 0x57, 0xa1,
+	0xa3, 0x60, 0xd5, 0x1b, 0x50, 0xe7, 0xdb, 0xe8, 0xae, 0x5a, 0x3c, 0xb2, 0xd6, 0x29, 0xfa, 0x3b,
+	0x13, 0xa1, 0xe0, 0x7d, 0x45, 0x11, 0xa6, 0xd8, 0x67, 0x51, 0x84, 0x19, 0xea, 0xf8, 0x15, 0xfc,
+	0x2f, 0x75, 0x0d, 0xa2, 0x07, 0x4a, 0x18, 0xb2, 0x17, 0xb0, 0xf9, 0xf0, 0x32, 0x31, 0x69, 0x7f,
+	0x17, 0x20, 0x26, 0x77, 0xc8, 0xca, 0x69, 0xe5, 0xd8, 0xa7, 0x79, 0xef, 0x42, 0x99, 0xd8, 0x6c,
+	0xcc, 0xbc, 0x14, 0x66, 0x73, 0x0c, 0x50, 0x61, 0x56, 0x41, 0xdd, 0x6c, 0x98, 0x99, 0xb0, 0x22,
+	0x94, 0xef, 0x9c, 0x2c, 0x3b, 0x33, 0xad, 0x8b, 0x44, 0xa4, 0xcd, 0x2f, 0x61, 0x36, 0xc9, 0x15,
+	0xd0, 0xfd, 0x4b, 0xa8, 0x84, 0xb0, 0xfc, 0xe0, 0x4a, 0x84, 0x83, 0x35, 0x46, 0x62, 0x38, 0x2b,
+	0x1a, 0x23, 0x4f, 0x1e, 0x14, 0x8d, 0xa1, 0x98, 0xef, 0xab, 0x0b, 0xcf, 0xcf, 0x3b, 0xda, 0x8b,
+	0xf3, 0x8e, 0xf6, 0xf7, 0x79, 0x47, 0xfb, 0xe9, 0x9f, 0xce, 0xd4, 0x17, 0x06, 0x53, 0xd8, 0x9b,
+	0xda, 0x6f, 0xf0, 0x4f, 0xa3, 0xef, 0xfc, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x15, 0xf8, 0x9e, 0xd7,
+	0x59, 0x15, 0x00, 0x00,
 }

@@ -5,7 +5,7 @@ type UserInfo struct {
 	ID       int64  `json:"ID"`
 	Name     string `json:"Name"`
 	NickName string `json:"NickName"`
-	Avatar   []byte `json:"Avatar"`
+	Avatar   string `json:"Avatar"`
 }
 
 // UserList 用户列表

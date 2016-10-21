@@ -79,7 +79,7 @@ func TestBrokerPush(t *testing.T) {
 	cid := b.addPushChan(c)
 	b.subscribe(uid, dev, cid)
 
-	msg := meta.PushMessage{Msg: &meta.Message{Body: "test"}}
+	msg := meta.PushMessage{Msg: meta.Message{Body: "test"}}
 	pushID := meta.PushID{User: uid, Before: 2222}
 	b.push(msg, pushID)
 

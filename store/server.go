@@ -96,31 +96,44 @@ func (s *Store) Register(_ context.Context, req *meta.StoreRegisterRequest) (*me
 
 // UpdateUserInfo update user base info, ex: nickname, picurl and so on
 func (s *Store) UpdateUserInfo(_ context.Context, req *meta.StoreUpdateUserInfoRequest) (*meta.StoreUpdateUserInfoResponse, error) {
-	log.Debugf("Store UpdateInfo, user:%v niceName:%v", req.User, req.NickName)
-	id, err := s.user.updateUserInfo(req.User, req.NickName, req.Avatar)
-	if err != nil {
+	log.Debugf("%d Store UpdateInfo, user:%v niceName:%v", req.User, req.Name, req.NickName)
+	if req.NickName == "" && req.Avatar == "" {
+		return &meta.StoreUpdateUserInfoResponse{}, nil
+	}
+
+	if err := s.user.updateUserInfo(req.User, req.Name, req.NickName, req.Avatar); err != nil {
 		return &meta.StoreUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreUpdateUserInfoResponse{ID: id}, nil
+	return &meta.StoreUpdateUserInfoResponse{}, nil
 }
 
 // UpdateUserPassword update user password
 func (s *Store) UpdateUserPassword(_ context.Context, req *meta.StoreUpdateUserPasswordRequest) (*meta.StoreUpdateUserPasswordResponse, error) {
 	log.Debugf("Store UpdatePassword, user:")
-	id, err := s.user.updateUserPassword(req.User, req.Password)
-	if err != nil {
+	if req.NewPassword == "" {
+		return &meta.StoreUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "password is nil"}}, nil
+	}
+	if err := s.user.updateUserPassword(req.User, req.Name, req.Password, req.NewPassword); err != nil {
 		return &meta.StoreUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreUpdateUserPasswordResponse{ID: id}, nil
+	return &meta.StoreUpdateUserPasswordResponse{}, nil
 }
 
 // GetUserInfo get user base info
 func (s *Store) GetUserInfo(_ context.Context, req *meta.StoreGetUserInfoRequest) (*meta.StoreGetUserInfoResponse, error) {
-	log.Debugf("GetUserInfo, type:%v userName:%v userID:%v", req.Type, req.UserName, req.UserID)
-	a, err := s.user.getUserInfo(req.Type, req.UserName, req.UserID)
+	log.Debugf("begin %d findByName:%v name:%v id:%v", req.User, req.ByName, req.Name, req.ID)
+	var a *account
+	var err error
+
+	if req.ByName {
+		a, err = s.user.getUserInfoByName(req.Name)
+	} else {
+		a, err = s.user.getUserInfoByID(req.ID)
+	}
 	if err != nil {
+		log.Infof("end %d findByName:%v name:%v, id:%v, error:%s", req.User, req.ByName, req.Name, req.ID, errors.ErrorStack(err))
 		return &meta.StoreGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
@@ -140,8 +153,8 @@ func (s *Store) Auth(_ context.Context, req *meta.StoreAuthRequest) (*meta.Store
 
 // FindUser 根据字符串的用户名模糊查询用户信息.
 func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*meta.StoreFindUserResponse, error) {
-	log.Debugf("Store FindUser, user:%v", req.User)
-	users, err := s.user.findUser(req.User)
+	log.Debugf("begin %d FindUser name:%v", req.User, req.Name)
+	users, err := s.user.findUser(req.Name)
 	if err != nil {
 		return &meta.StoreFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
@@ -187,7 +200,7 @@ func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.S
 		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	pm := meta.PushMessage{Event: meta.Event_Friend, Operate: req.Operate, Msg: &meta.Message{ID: id, From: req.From, To: req.To, Body: req.Msg}}
+	pm := meta.PushMessage{Event: meta.Event_Friend, Operate: req.Operate, Msg: meta.Message{ID: id, From: req.From, To: req.To, Body: req.Msg}}
 	// 直接发送，如果失败会自动插入到重试队列中
 	if err := s.message.send(pm); err != nil {
 		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))
@@ -363,8 +376,7 @@ func (s *Store) Group(_ context.Context, req *meta.StoreGroupRequest) (*meta.Sto
 		return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	// FIXME 发消息这里应该有问题
-	pm := meta.PushMessage{Event: meta.Event_Group, Operate: req.Operate, Msg: &meta.Message{ID: id, Group: req.ID, From: req.User, Body: req.Msg}}
+	pm := meta.PushMessage{Event: meta.Event_Group, Operate: req.Operate, Msg: meta.Message{ID: id, Group: req.ID, From: req.User, Body: req.Msg}}
 	if len(req.Users) != 0 {
 		for _, u := range req.Users {
 			pm.Msg.To = u
@@ -401,7 +413,7 @@ func (s *Store) GroupDelete(_ context.Context, req *meta.StoreGroupDeleteRequest
 	}
 
 	//给所有人发消息，告诉他们群没有了
-	pm := meta.PushMessage{Operate: meta.Relation_Del, Msg: &meta.Message{ID: id, Group: req.ID, From: req.User, Body: "群没了"}}
+	pm := meta.PushMessage{Operate: meta.Relation_Del, Msg: meta.Message{ID: id, Group: req.ID, From: req.User, Body: "群没了"}}
 	if err := s.message.send(pm); err != nil {
 		log.Debugf("end Group delete:%+v, send error:%v", req, errors.ErrorStack(err))
 		return &meta.StoreGroupDeleteResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
