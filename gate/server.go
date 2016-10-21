@@ -17,8 +17,6 @@ import (
 var (
 	// ErrUndefineMethod 方法未定义.
 	ErrUndefineMethod = errors.New("undefine method")
-	// ErrInvalidContext 从context中解析客户端地址时出错.
-	ErrInvalidContext = errors.New("invalid context")
 	// ErrInvalidState 当前用户离线或未登录.
 	ErrInvalidState = errors.New("invalid context")
 )

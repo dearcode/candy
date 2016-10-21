@@ -5,7 +5,6 @@ import (
 
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc/metadata"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
@@ -21,15 +20,15 @@ type session struct {
 // manager 管理所有session.
 type manager struct {
 	stop     bool
-	notice   *util.Notice
+	notifer  *util.Notifer
 	conns    map[string]*connection // 所有的connection
 	sessions map[int64]*session     // 在线用户
-	pushChan chan *meta.PushRequest
+	pushChan chan meta.PushRequest
 	sync.RWMutex
 }
 
 func newManager() *manager {
-	return &manager{sessions: make(map[int64]*session), conns: make(map[string]*connection), pushChan: make(chan *meta.PushRequest, 1000)}
+	return &manager{sessions: make(map[int64]*session), conns: make(map[string]*connection), pushChan: make(chan meta.PushRequest, 1000)}
 }
 
 func newSession(id int64, c *connection) *session {
@@ -49,7 +48,7 @@ func (m *manager) addConnection(id int64, device string, c *connection) {
 	m.Unlock()
 
 	//订阅消息
-	if err := m.notice.Subscribe(id, device); err != nil {
+	if err := m.notifer.Subscribe(id, device); err != nil {
 		log.Errorf("%d dev:%s Subscribe error:%s", id, device, errors.ErrorStack(err))
 	}
 }
@@ -66,7 +65,7 @@ func (m *manager) delConnection(id int64, c *connection) {
 	c.close()
 
 	//消息订阅
-	if err := m.notice.Subscribe(id, c.getDevice()); err != nil {
+	if err := m.notifer.Subscribe(id, c.getDevice()); err != nil {
 		log.Errorf("UnSubscribe error:%s", errors.ErrorStack(err))
 	}
 }
@@ -113,28 +112,10 @@ func (s *session) walkConnection(call func(*connection) bool) {
 	}
 }
 
-func (m *manager) getContextAddr(ctx context.Context) (string, error) {
-	md, ok := metadata.FromContext(ctx)
-	if !ok {
-		return "", errors.Trace(ErrInvalidContext)
-	}
-
-	addrs, ok := md["remote"]
-	if !ok {
-		return "", errors.Trace(ErrInvalidContext)
-	}
-
-	if len(addrs) != 1 {
-		return "", errors.Trace(ErrInvalidContext)
-	}
-
-	return addrs[0], nil
-}
-
 func (m *manager) getConnection(ctx context.Context) (c *connection, ok bool, err error) {
 	var addr string
 
-	if addr, err = m.getContextAddr(ctx); err != nil {
+	if addr, err = util.ContextAddr(ctx); err != nil {
 		return
 	}
 
@@ -165,23 +146,23 @@ func (m *manager) getSession(ctx context.Context) (*session, *connection, error)
 	}
 
 	if !ok || c.getUser() == 0 {
-		return nil, c, errors.Trace(ErrInvalidContext)
+		return nil, c, errors.Trace(util.ErrInvalidContext)
 	}
 
-    s := m.getUserSession(c.getUser())
+	s := m.getUserSession(c.getUser())
 	if s == nil {
-		return nil, c, errors.Trace(ErrInvalidContext)
+		return nil, c, errors.Trace(util.ErrInvalidContext)
 	}
 
 	return s, c, nil
 }
 
-func (m *manager) start(noticeAddr string) error {
-	n, err := util.NewNotice(noticeAddr, m.getPushChan())
+func (m *manager) start(notiferAddr string) error {
+	n, err := util.NewNotifer(notiferAddr)
 	if err != nil {
 		return errors.Trace(err)
 	}
-	m.notice = n
+	m.notifer = n
 
 	go m.run()
 
@@ -190,20 +171,24 @@ func (m *manager) start(noticeAddr string) error {
 
 func (m *manager) run() {
 	for !m.stop {
-		req := <-m.pushChan
+		req, err := m.notifer.Recv()
+		if err != nil {
+			log.Errorf("recv push message error:%s", err)
+			continue
+		}
 		for _, id := range req.ID {
 			s := m.getUserSession(id.User)
 			if s == nil {
 				continue
 			}
 			s.walkConnection(func(c *connection) bool {
-				c.send(req.Msg)
+				c.send(&req.Msg)
 				return false
 			})
 		}
 	}
 }
 
-func (m *manager) getPushChan() chan<- *meta.PushRequest {
+func (m *manager) getPushChan() chan<- meta.PushRequest {
 	return m.pushChan
 }

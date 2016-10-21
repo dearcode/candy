@@ -1,5 +1,9 @@
 package util
 
+import (
+	"github.com/juju/errors"
+)
+
 const (
 	// ErrorOK 成功
 	ErrorOK int32 = 0
@@ -61,4 +65,9 @@ const (
 	ErrorDownloadFile = 1050
 	// ErrorLoadMessage 加载消息列表失败
 	ErrorLoadMessage = 1051
+)
+
+var (
+	// ErrInvalidContext 从context中解析客户端地址时出错.
+	ErrInvalidContext = errors.New("invalid context")
 )

@@ -24,7 +24,7 @@ type Store struct {
 	postman *postman
 	friend  *friendDB
 	file    *fileDB
-	notice  *util.Notice
+	notice  *util.Notifer
 	master  *util.Master
 }
 
@@ -51,7 +51,7 @@ func (s *Store) Start(notice, master string) error {
 		return err
 	}
 
-	s.notice, err = util.NewNotice(notice)
+	s.notice, err = util.NewNotifer(notice)
 	if err != nil {
 		return errors.Trace(err)
 	}

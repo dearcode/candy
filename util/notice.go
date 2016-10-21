@@ -4,25 +4,24 @@ import (
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"time"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
 )
 
-// Notice 连接notice服务.
-type Notice struct {
+// Notifer 连接Push服务.
+type Notifer struct {
 	conn   *grpc.ClientConn
 	client meta.PushClient
 	stream meta.Push_SubscribeClient
-	push   chan<- *meta.PushRequest
+	push   chan<- meta.PushRequest
 }
 
-// NewNotice 返回notice client.
-func NewNotice(host string, push chan<- *meta.PushRequest) (*Notice, error) {
+// NewNotifer 返回Notifer client.
+func NewNotifer(host string) (*Notifer, error) {
 	var err error
 
-	n := &Notice{}
+	n := &Notifer{}
 	log.Debugf("dial host:%v", host)
 	if n.conn, err = grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout)); err != nil {
 		return n, errors.Trace(err)
@@ -34,39 +33,29 @@ func NewNotice(host string, push chan<- *meta.PushRequest) (*Notice, error) {
 		return n, errors.Trace(err)
 	}
 
-	go n.run()
-
 	return n, nil
 }
 
+// Recv 接收stream消息
+func (n *Notifer) Recv() (*meta.PushRequest, error) {
+	return n.stream.Recv()
+}
+
 //Subscribe 订阅消息
-func (n *Notice) Subscribe(id int64, device string) error {
+func (n *Notifer) Subscribe(id int64, device string) error {
 	req := &meta.SubscribeRequest{ID: id, Enable: true, Device: device}
 	return errors.Trace(n.stream.Send(req))
 }
 
 //UnSubscribe 取消订阅消息, 取消哪个渠道的推送
-func (n *Notice) UnSubscribe(id int64, device string) error {
+func (n *Notifer) UnSubscribe(id int64, device string) error {
 	req := &meta.SubscribeRequest{ID: id, Enable: false, Device: device}
 	return errors.Trace(n.stream.Send(req))
 }
 
-func (n *Notice) run() error {
-	for {
-		pr, err := n.stream.Recv()
-		if err != nil {
-			log.Errorf("stream Recv error:%s", errors.ErrorStack(err))
-			time.Sleep(time.Second)
-			continue
-		}
-
-		n.push <- pr
-	}
-}
-
-//Push  调用notice发推送消息
-func (n *Notice) Push(msg meta.PushMessage, ids ...*meta.PushID) error {
-	req := &meta.PushRequest{ID: ids, Msg: &msg}
+//Push  调用Notifer发推送消息
+func (n *Notifer) Push(msg meta.PushMessage, ids ...meta.PushID) error {
+	req := &meta.PushRequest{ID: ids, Msg: msg}
 	resp, err := n.client.Push(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)

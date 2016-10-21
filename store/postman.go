@@ -12,7 +12,7 @@ type postman struct {
 	user   *userDB
 	friend *friendDB
 	group  *groupDB
-	notice *util.Notice
+	notice *util.Notifer
 }
 
 var (
@@ -20,7 +20,7 @@ var (
 	ErrInvalidSender = errors.New("invalid sender")
 )
 
-func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Notice) *postman {
+func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Notifer) *postman {
 	return &postman{user: user, friend: friend, group: group, notice: notice}
 }
 
@@ -39,7 +39,7 @@ func (p *postman) sendToUser(pm meta.PushMessage) error {
 		return errors.Trace(err)
 	}
 
-	id := &meta.PushID{Before: before, User: pm.Msg.To}
+	id := meta.PushID{Before: before, User: pm.Msg.To}
 	log.Debugf("send msg:%v, id:%v", pm, id)
 	return p.notice.Push(pm, id)
 }
@@ -54,7 +54,7 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 		}
 	}
 
-	var ids []*meta.PushID
+	var ids []meta.PushID
 
 	group, err := p.group.getGroup(pm.Msg.Group)
 	if err != nil {
@@ -67,7 +67,7 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 		if err != nil {
 			return errors.Trace(err)
 		}
-		ids = append(ids, &meta.PushID{Before: before, User: uid})
+		ids = append(ids, meta.PushID{Before: before, User: uid})
 	}
 
 	log.Debugf("send to group, msg:%v, ids:%v", pm, ids)

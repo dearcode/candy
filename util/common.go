@@ -4,6 +4,10 @@ import (
 	"crypto/md5"
 	"fmt"
 	"time"
+
+	"github.com/juju/errors"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc/metadata"
 )
 
 var (
@@ -89,4 +93,23 @@ func MD5(data []byte) []byte {
 	hash := md5.New()
 	hash.Write(data)
 	return hash.Sum(nil)
+}
+
+// ContextAddr 获取当前会话的client地址，这个要配合grpc修改（添加remote变量)
+func ContextAddr(ctx context.Context) (string, error) {
+	md, ok := metadata.FromContext(ctx)
+	if !ok {
+		return "", errors.Trace(ErrInvalidContext)
+	}
+
+	addrs, ok := md["remote"]
+	if !ok {
+		return "", errors.Trace(ErrInvalidContext)
+	}
+
+	if len(addrs) != 1 {
+		return "", errors.Trace(ErrInvalidContext)
+	}
+
+	return addrs[0], nil
 }

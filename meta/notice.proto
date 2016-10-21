@@ -3,6 +3,8 @@ package candy.meta;
 
 option go_package = "meta";
 
+import weak "gogoproto/gogo.proto";
+
 import "common.proto";
 
 //Push 推送 TODO
@@ -30,8 +32,8 @@ message SubscribeRequest {
 
 // PushRequest 推送的消息.
 message PushRequest {
-    repeated PushID ID = 1;
-    PushMessage Msg = 2;
+    repeated PushID ID = 1 [(gogoproto.nullable) = false];
+    PushMessage Msg = 2 [(gogoproto.nullable) = false];
 }
 
 message PushResponse {
