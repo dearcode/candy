@@ -20,8 +20,7 @@ func main() {
 		return
 	}
 
-	s := gate.NewGate()
-	if err := s.Start(*host, *notice, *master, *store); err != nil {
+	if _, err := gate.NewGate(*host, *master, *notice, *store); err != nil {
 		println(err.Error())
 	}
 

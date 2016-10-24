@@ -21,8 +21,22 @@ type manager struct {
 	sync.RWMutex
 }
 
-func newManager() *manager {
-	return &manager{sessions: make(map[int64]*session), conns: make(map[string]*connection), pushChan: make(chan meta.PushRequest, 1000)}
+func newManager(host string) (*manager, error) {
+	n, err := util.NewNotifer(host)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	m := &manager{
+		notifer:  n,
+		sessions: make(map[int64]*session),
+		conns:    make(map[string]*connection),
+		pushChan: make(chan meta.PushRequest, 1000),
+	}
+
+	go m.run()
+
+	return m, nil
 }
 
 func (m *manager) online(id int64, device string, c *connection) {
@@ -116,18 +130,6 @@ func (m *manager) getSession(ctx context.Context) (*session, *connection, error)
 	return s, c, nil
 }
 
-func (m *manager) start(notiferAddr string) error {
-	n, err := util.NewNotifer(notiferAddr)
-	if err != nil {
-		return errors.Trace(err)
-	}
-	m.notifer = n
-
-	go m.run()
-
-	return nil
-}
-
 func (m *manager) run() {
 	for !m.stop {
 		req, err := m.notifer.Recv()
@@ -146,8 +148,4 @@ func (m *manager) run() {
 			})
 		}
 	}
-}
-
-func (m *manager) getPushChan() chan<- meta.PushRequest {
-	return m.pushChan
 }

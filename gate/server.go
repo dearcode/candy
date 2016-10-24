@@ -23,53 +23,41 @@ var (
 
 // Gate recv client request.
 type Gate struct {
-	host         string
 	store        *store
 	manager      *manager
 	master       *util.Master
 	healthServer *health.Server // nil means disabled
+	server       *grpc.Server
 }
 
 // NewGate new gate server.
-func NewGate() *Gate {
-	return &Gate{
-		manager:      newManager(),
-		healthServer: health.NewServer(),
-	}
-}
-
-// Start Gate service.
-func (g *Gate) Start(host, notice, master, store string) error {
-	log.Debugf("Gate Start...")
-
-	g.host = host
-
-	lis, err := net.Listen("tcp", host)
+func NewGate(host, master, notifer, store string) (*Gate, error) {
+	l, err := net.Listen("tcp", host)
 	if err != nil {
-		return errors.Trace(err)
+		return nil, errors.Trace(err)
 	}
 
-	if err = g.manager.start(notice); err != nil {
-		return errors.Trace(err)
+	m, err := newManager(notifer)
+	if err != nil {
+		return nil, errors.Trace(err)
 	}
 
-	if g.master, err = util.NewMaster(master); err != nil {
-		return errors.Trace(err)
+	s, err := newStore(store)
+	if err != nil {
+		return nil, errors.Trace(err)
 	}
 
-	g.store = newStore(store)
-	if err = g.store.start(); err != nil {
-		return errors.Trace(err)
+	g := &Gate{
+		manager:      m,
+		store:        s,
+		healthServer: health.NewServer(),
+		server:       grpc.NewServer(),
 	}
+	meta.RegisterGateServer(g.server, g)
 
-	serv := grpc.NewServer()
-	meta.RegisterGateServer(serv, g)
+	healthpb.RegisterHealthServer(g.server, g.healthServer)
 
-	if g.healthServer != nil {
-		healthpb.RegisterHealthServer(serv, g.healthServer)
-	}
-
-	return serv.Serve(lis)
+	return g, g.server.Serve(l)
 }
 
 // Register user, passwd.

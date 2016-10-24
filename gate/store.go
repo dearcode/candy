@@ -11,29 +11,21 @@ import (
 )
 
 type store struct {
-	host string
-	ctx  context.Context
-	api  meta.StoreClient
+	client meta.StoreClient
 }
 
-func newStore(host string) *store {
-	return &store{host: host, ctx: context.Background()}
-}
-
-func (s *store) start() error {
-	log.Debug("store start...")
-	conn, err := grpc.Dial(s.host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout))
+func newStore(host string) (*store, error) {
+	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout))
 	if err != nil {
-		return errors.Trace(err)
+		return nil, errors.Trace(err)
 	}
-	s.api = meta.NewStoreClient(conn)
-	return nil
+	return &store{client: meta.NewStoreClient(conn)}, nil
 }
 
 func (s *store) register(user, passwd string, id int64) error {
 	log.Debugf("store register, user:%v passwd:%v", user, passwd)
 	req := &meta.StoreRegisterRequest{User: user, Password: passwd, ID: id}
-	resp, err := s.api.Register(s.ctx, req)
+	resp, err := s.client.Register(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -45,7 +37,7 @@ func (s *store) register(user, passwd string, id int64) error {
 func (s *store) auth(user, passwd string) (int64, error) {
 	log.Debugf("store auth, user:%v passwd:%v", user, passwd)
 	req := &meta.StoreAuthRequest{User: user, Password: passwd}
-	resp, err := s.api.Auth(s.ctx, req)
+	resp, err := s.client.Auth(context.Background(), req)
 	if err != nil {
 		return 0, errors.Trace(err)
 	}
@@ -62,7 +54,7 @@ func (s *store) updateUserInfo(id int64, name, nickName, avatar string) error {
 		NickName:      nickName,
 		Avatar:        avatar,
 	}
-	resp, err := s.api.UpdateUserInfo(s.ctx, req)
+	resp, err := s.client.UpdateUserInfo(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -74,7 +66,7 @@ func (s *store) updateUserInfo(id int64, name, nickName, avatar string) error {
 func (s *store) updateUserPassword(id int64, name, passwd, newPasswd string) error {
 	log.Debugf("%d name:%v passwd old:%v, new:%v", id, name, passwd, newPasswd)
 	req := &meta.StoreUpdateUserPasswordRequest{RequestHeader: meta.RequestHeader{User: id}, Name: name, Password: passwd, NewPassword: newPasswd}
-	resp, err := s.api.UpdateUserPassword(s.ctx, req)
+	resp, err := s.client.UpdateUserPassword(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -86,7 +78,7 @@ func (s *store) updateUserPassword(id int64, name, passwd, newPasswd string) err
 func (s *store) getUserInfo(id int64, findByName bool, userName string, userID int64) (int64, string, string, string, error) {
 	log.Debugf("get userInfo findByName:%v userName:%v userID:%v", findByName, userName, userID)
 	req := &meta.StoreGetUserInfoRequest{RequestHeader: meta.RequestHeader{User: id}, ByName: findByName, Name: userName, ID: userID}
-	resp, err := s.api.GetUserInfo(s.ctx, req)
+	resp, err := s.client.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return -1, "", "", "", errors.Trace(err)
 	}
@@ -99,7 +91,7 @@ func (s *store) getUserInfo(id int64, findByName bool, userName string, userID i
 func (s *store) findUser(id int64, user string) ([]string, error) {
 	log.Debugf("store findUser, user:%v", user)
 	req := &meta.StoreFindUserRequest{RequestHeader: meta.RequestHeader{User: id}, Name: user}
-	resp, err := s.api.FindUser(s.ctx, req)
+	resp, err := s.client.FindUser(context.Background(), req)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -110,7 +102,7 @@ func (s *store) findUser(id int64, user string) ([]string, error) {
 func (s *store) friend(id, to int64, operate meta.Relation, msg string) error {
 	log.Debugf("store friend, from:%v to:%v operate:%v", id, to, operate)
 	req := &meta.StoreFriendRequest{RequestHeader: meta.RequestHeader{User: id}, From: id, To: to, Operate: operate, Msg: msg}
-	resp, err := s.api.Friend(s.ctx, req)
+	resp, err := s.client.Friend(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -120,7 +112,7 @@ func (s *store) friend(id, to int64, operate meta.Relation, msg string) error {
 
 func (s *store) loadFriendList(id int64) ([]int64, error) {
 	req := &meta.StoreLoadFriendListRequest{RequestHeader: meta.RequestHeader{User: id}}
-	resp, err := s.api.LoadFriendList(s.ctx, req)
+	resp, err := s.client.LoadFriendList(context.Background(), req)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -131,7 +123,7 @@ func (s *store) loadFriendList(id int64) ([]int64, error) {
 func (s *store) groupCreate(uid, gid int64, name string) error {
 	log.Debugf("store group create user:%v group:%v name:%v", uid, gid, name)
 	req := &meta.StoreGroupCreateRequest{RequestHeader: meta.RequestHeader{User: uid}, ID: gid, Name: name}
-	resp, err := s.api.GroupCreate(s.ctx, req)
+	resp, err := s.client.GroupCreate(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -142,7 +134,7 @@ func (s *store) groupCreate(uid, gid int64, name string) error {
 func (s *store) group(uid, gid int64, operate meta.Relation, users []int64, msg string) error {
 	log.Debugf("store group delete, user:%v group:%v", uid, gid)
 	req := &meta.StoreGroupRequest{RequestHeader: meta.RequestHeader{User: uid}, ID: gid, Operate: operate, Users: users, Msg: msg}
-	resp, err := s.api.Group(s.ctx, req)
+	resp, err := s.client.Group(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -153,7 +145,7 @@ func (s *store) group(uid, gid int64, operate meta.Relation, users []int64, msg 
 func (s *store) groupDelete(uid, gid int64) error {
 	log.Debugf("store group delete, user:%v group:%v", uid, gid)
 	req := &meta.StoreGroupDeleteRequest{RequestHeader: meta.RequestHeader{User: uid}, ID: gid}
-	resp, err := s.api.GroupDelete(s.ctx, req)
+	resp, err := s.client.GroupDelete(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -163,7 +155,7 @@ func (s *store) groupDelete(uid, gid int64) error {
 
 func (s *store) loadGroupList(id int64) ([]*meta.GroupInfo, error) {
 	req := &meta.StoreLoadGroupListRequest{RequestHeader: meta.RequestHeader{User: id}}
-	resp, err := s.api.LoadGroupList(s.ctx, req)
+	resp, err := s.client.LoadGroupList(context.Background(), req)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -177,7 +169,7 @@ func (s *store) uploadFile(userID int64, data []byte) error {
 		RequestHeader: meta.RequestHeader{User: userID},
 		File:          data,
 	}
-	resp, err := s.api.UploadFile(s.ctx, req)
+	resp, err := s.client.UploadFile(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -194,7 +186,7 @@ func (s *store) checkFile(userID int64, names []string) ([]string, error) {
 		Names:         names,
 	}
 
-	resp, err := s.api.CheckFile(s.ctx, req)
+	resp, err := s.client.CheckFile(context.Background(), req)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -210,7 +202,7 @@ func (s *store) downloadFile(userID int64, names []string) (map[string][]byte, e
 		Names:         names,
 	}
 
-	resp, err := s.api.DownloadFile(s.ctx, req)
+	resp, err := s.client.DownloadFile(context.Background(), req)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -223,7 +215,7 @@ func (s *store) newMessage(id int64, msg meta.Message) error {
 	log.Debugf("store newMessage[%d]:%+v", msg.ID, msg)
 
 	req := &meta.StoreNewMessageRequest{RequestHeader: meta.RequestHeader{User: id}, Msg: msg}
-	resp, err := s.api.NewMessage(s.ctx, req)
+	resp, err := s.client.NewMessage(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -235,7 +227,7 @@ func (s *store) newMessage(id int64, msg meta.Message) error {
 func (s *store) loadMessage(userID, id int64, reverse bool) ([]*meta.PushMessage, error) {
 	log.Debugf("store loadMessage")
 	req := &meta.StoreLoadMessageRequest{RequestHeader: meta.RequestHeader{User: userID}, ID: id, Reverse: reverse}
-	resp, err := s.api.LoadMessage(s.ctx, req)
+	resp, err := s.client.LoadMessage(context.Background(), req)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}

@@ -19,21 +19,20 @@ type Notifer struct {
 
 // NewNotifer 返回Notifer client.
 func NewNotifer(host string) (*Notifer, error) {
-	var err error
-
-	n := &Notifer{}
-	log.Debugf("dial host:%v", host)
-	if n.conn, err = grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout)); err != nil {
-		return n, errors.Trace(err)
+	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))
+	if err != nil {
+		return nil, errors.Trace(err)
 	}
 
-	n.client = meta.NewPushClient(n.conn)
-	if n.stream, err = n.client.Subscribe(context.Background()); err != nil {
-		n.conn.Close()
-		return n, errors.Trace(err)
+	client := meta.NewPushClient(conn)
+
+	stream, err := client.Subscribe(context.Background())
+	if err != nil {
+		conn.Close()
+		return nil, errors.Trace(err)
 	}
 
-	return n, nil
+	return &Notifer{conn: conn, stream: stream, client: client}, nil
 }
 
 // Recv 接收stream消息
