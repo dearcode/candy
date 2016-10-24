@@ -1,4 +1,4 @@
-![Logo](https://raw.githubusercontent.com/dearcode/web/master/res/logo.png "Candy logo")
+![Logo](https://raw.githubusercontent.com/dearcode/web/master/static/img/logo.png "Candy logo")
 
 [![Build Status](https://travis-ci.org/dearcode/candy.svg?branch=master)](https://travis-ci.org/dearcode/candy)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dearcode/candy)](https://goreportcard.com/report/github.com/dearcode/candy)
