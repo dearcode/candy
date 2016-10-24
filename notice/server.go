@@ -79,10 +79,10 @@ func (n *Notifer) Subscribe(stream meta.Push_SubscribeServer) error {
 		}
 		if req.Enable {
 			n.broker.subscribe(req.ID, req.Device, cid)
-			log.Debugf("subscribe user:%d dev:%s cid:%d")
+			log.Debugf("subscribe user:%d dev:%s cid:%d", req.ID, req.Device, cid)
 		} else {
 			n.broker.unSubscribe(req.ID, req.Device)
-			log.Debugf("unsubscribe user:%d dev:%s")
+			log.Debugf("unsubscribe user:%d dev:%s", req.ID, req.Device)
 		}
 	}
 

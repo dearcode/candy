@@ -25,7 +25,7 @@ func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Not
 }
 
 func (p *postman) sendToUser(pm meta.PushMessage) error {
-	log.Debugf("begin send to User:%d msg:%v", pm.Msg.To, pm)
+	log.Debugf("begin send to User:%d msg:%+v", pm.Msg.To, pm)
 
 	if pm.Event == meta.Event_None {
 		// 检测收件人的好友里面有没有发件人
@@ -40,12 +40,12 @@ func (p *postman) sendToUser(pm meta.PushMessage) error {
 	}
 
 	id := meta.PushID{Before: before, User: pm.Msg.To}
-	log.Debugf("send msg:%v, id:%v", pm, id)
+	log.Debugf("send msg:%+v, id:%v", pm, id)
 	return p.notice.Push(pm, id)
 }
 
 func (p *postman) sendToGroup(pm meta.PushMessage) error {
-	log.Debugf("begin send Group msg:%v", pm)
+	log.Debugf("begin send Group msg:%+v", pm)
 
 	if pm.Event == meta.Event_None {
 		// 检测组中是否存在这个发件人
@@ -70,7 +70,7 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 		ids = append(ids, meta.PushID{Before: before, User: uid})
 	}
 
-	log.Debugf("send to group, msg:%v, ids:%v", pm, ids)
+	log.Debugf("send to group, msg:%+v, ids:%v", pm, ids)
 	return p.notice.Push(pm, ids...)
 }
 

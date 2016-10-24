@@ -200,7 +200,7 @@ func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.S
 		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	pm := meta.PushMessage{Event: meta.Event_Friend, Operate: req.Operate, Msg: meta.Message{ID: id, From: req.From, To: req.To, Body: req.Msg}}
+	pm := meta.PushMessage{Event: meta.Event_Friend, Operate: req.Operate, Msg: meta.Message{ID: id, From: req.From, To: req.To, Body: req.Msg}, ToUser: true}
 	// 直接发送，如果失败会自动插入到重试队列中
 	if err := s.message.send(pm); err != nil {
 		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))

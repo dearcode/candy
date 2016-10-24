@@ -166,7 +166,7 @@ func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta
 		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorAuth, Msg: err.Error()}}, nil
 	}
 
-	g.manager.addConnection(id, req.Device, c)
+	g.manager.online(id, req.Device, c)
 
 	return &meta.GateUserLoginResponse{ID: id}, nil
 }
@@ -178,7 +178,7 @@ func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*me
 		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
 	}
 
-	g.manager.delConnection(s.user, c)
+	g.manager.offline(s.user, c)
 
 	return &meta.GateUserLogoutResponse{}, nil
 }
@@ -206,7 +206,7 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 
 // Stream 连接成功后立刻调用Stream, 开启推送
 func (g *Gate) Stream(msg *meta.Message, stream meta.Gate_StreamServer) error {
-	_, c, err := g.manager.getSession(stream.Context())
+	c, _, err := g.manager.getConnection(stream.Context())
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -234,6 +234,7 @@ func (g *Gate) Friend(ctx context.Context, req *meta.GateFriendRequest) (*meta.G
 	log.Debugf("begin Friend req:%v", req)
 	s, _, err := g.manager.getSession(ctx)
 	if err != nil {
+		log.Infof("get session error:%s", errors.ErrorStack(err))
 		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
 	}
 
