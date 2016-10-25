@@ -65,6 +65,7 @@ func (m *manager) offline(id int64, c *connection) {
 	m.Lock()
 	if s, ok := m.sessions[id]; ok {
 		s.delConnection(c)
+		delete(m.sessions, id)
 	}
 
 	delete(m.conns, c.getAddr())
