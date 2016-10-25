@@ -23,9 +23,9 @@ var (
 
 // Gate recv client request.
 type Gate struct {
-	store        *store
+	store        *storeClient
 	manager      *manager
-	master       *util.Master
+	master       *util.MasterClient
 	healthServer *health.Server // nil means disabled
 	server       *grpc.Server
 }
@@ -37,19 +37,25 @@ func NewGate(host, master, notifer, store string) (*Gate, error) {
 		return nil, errors.Trace(err)
 	}
 
-	m, err := newManager(notifer)
+	nc, err := util.NewNotiferClient(notifer)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
 
-	s, err := newStore(store)
+	mc, err := util.NewMasterClient(master)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	sc, err := newStoreClient(store)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
 
 	g := &Gate{
-		manager:      m,
-		store:        s,
+		manager:      newManager(nc),
+		store:        sc,
+		master:       mc,
 		healthServer: health.NewServer(),
 		server:       grpc.NewServer(),
 	}

@@ -11,22 +11,17 @@ import (
 	"github.com/dearcode/candy/util/log"
 )
 
-// manager 管理所有session.
+// manager 管理所有session, connection.
 type manager struct {
 	stop     bool
-	notifer  *util.Notifer
+	notifer  *util.NotiferClient
 	conns    map[string]*connection // 所有的connection
 	sessions map[int64]*session     // 在线用户
 	pushChan chan meta.PushRequest
 	sync.RWMutex
 }
 
-func newManager(host string) (*manager, error) {
-	n, err := util.NewNotifer(host)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-
+func newManager(n *util.NotiferClient) *manager {
 	m := &manager{
 		notifer:  n,
 		sessions: make(map[int64]*session),
@@ -36,7 +31,7 @@ func newManager(host string) (*manager, error) {
 
 	go m.run()
 
-	return m, nil
+	return m
 }
 
 func (m *manager) online(id int64, device string, c *connection) {

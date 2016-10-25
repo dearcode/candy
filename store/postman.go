@@ -9,10 +9,10 @@ import (
 )
 
 type postman struct {
-	user   *userDB
-	friend *friendDB
-	group  *groupDB
-	notice *util.Notifer
+	user    *userDB
+	friend  *friendDB
+	group   *groupDB
+	notifer *util.NotiferClient
 }
 
 var (
@@ -20,8 +20,8 @@ var (
 	ErrInvalidSender = errors.New("invalid sender")
 )
 
-func newPostman(user *userDB, friend *friendDB, group *groupDB, notice *util.Notifer) *postman {
-	return &postman{user: user, friend: friend, group: group, notice: notice}
+func newPostman(user *userDB, friend *friendDB, group *groupDB, notifer *util.NotiferClient) *postman {
+	return &postman{user: user, friend: friend, group: group, notifer: notifer}
 }
 
 func (p *postman) sendToUser(pm meta.PushMessage) error {
@@ -41,7 +41,7 @@ func (p *postman) sendToUser(pm meta.PushMessage) error {
 
 	id := meta.PushID{Before: before, User: pm.Msg.To}
 	log.Debugf("send msg:%+v, id:%v", pm, id)
-	return p.notice.Push(pm, id)
+	return p.notifer.Push(pm, id)
 }
 
 func (p *postman) sendToGroup(pm meta.PushMessage) error {
@@ -71,7 +71,7 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 	}
 
 	log.Debugf("send to group, msg:%+v, ids:%v", pm, ids)
-	return p.notice.Push(pm, ids...)
+	return p.notifer.Push(pm, ids...)
 }
 
 func (p *postman) send(pm meta.PushMessage) error {
