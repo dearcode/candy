@@ -72,8 +72,6 @@ func (m *manager) offline(id int64, c *connection) {
 
 	m.Unlock()
 
-	c.close()
-
 	//消息订阅
 	if err := m.notifer.Subscribe(id, c.getDevice()); err != nil {
 		log.Errorf("UnSubscribe error:%s", errors.ErrorStack(err))
