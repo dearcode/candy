@@ -35,22 +35,22 @@
 ### Android库编译  
   可以直接使用gomobile编译出安卓可用的版本  
 
-  环境要求：  
+#### 环境要求：  
   1. JDK 1.7版本以上  
   2. Android SDK  
   3. 安装gomobile   
 
-  编译命令:    
+#### 编译命令:    
   gomobile bind -v -target=android/arm github.com/dearcode/candy/client   
   
 ### IOS库编译
   可以直接使用gomobile编译出IOS可用的版本  
 
-  环境要求：  
+#### 环境要求：  
   1. IOS SDK  
   2. 安装gomobile   
 
-  编译命令:   
+#### 编译命令:   
   gomobile bind -v -target=ios github.com/dearcode/candy/client   
 
 
