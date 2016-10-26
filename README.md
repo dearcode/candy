@@ -33,21 +33,21 @@
   Candy客户端可以直接使用gomobile编译出安卓/IOS客户端可用的库文件，可以方便快捷的和服务器通信, 用户无需关注客户端服务器的实现； 只需要把重点放在客户端开发上。
   
 ### Android库编译  
-  可以直接使用gomobile编译出安卓可用的版本
-  环境要求：
-  1. JDK 1.7版本以上
-  2. Android SDK
+  可以直接使用gomobile编译出安卓可用的版本  
+  环境要求：  
+  1. JDK 1.7版本以上  
+  2. Android SDK  
   3. 安装gomobile   
-  编译命令  
-  gomobile bind -v -target=android/arm github.com/dearcode/candy/client 
-
+  编译命令:    
+  gomobile bind -v -target=android/arm github.com/dearcode/candy/client   
+  
 ### IOS库编译
-  可以直接使用gomobile编译出IOS可用的版本
-  环境要求：
-  1. IOS SDK
+  可以直接使用gomobile编译出IOS可用的版本  
+  环境要求：  
+  1. IOS SDK  
   3. 安装gomobile   
   编译命令  
-  gomobile bind -v -target=ios github.com/dearcode/candy/client 
+  gomobile bind -v -target=ios github.com/dearcode/candy/client   
 
 
 
