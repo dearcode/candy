@@ -29,6 +29,19 @@
   依次启动 `master`, `notice`, `store`, `gate`  
   直接运行不需要参数，默认使用9000到9004端口   
 
+## 跨平台支持  
+  Candy客户端可以直接使用gomobile编译出安卓/IOS客户端可用的库文件，可以方便快捷的和服务器通信, 用户无需关注客户端服务器的实现； 只需要把重点放在客户端开发上。
+  
+### Android库编译  
+  可以直接使用gomobile编译出安卓可用的版本
+  环境要求：
+  1. JDK 1.7版本以上
+  2. Android SDK
+  3. gomobile 
+  gomobile bind -v -target=android/arm github.com/dearcode/candy/client 
+
+### IOS库编译
+
 
 技术讨论QQ群：[![Circle CI](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=d43cad7db88d71f70da81523c02b2fe59343111e1d0a9d5f5ac2a198ee047279) 29996599    
 
