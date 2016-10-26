@@ -8,8 +8,15 @@ import "common.proto";
 
 service Store {
     rpc Register(StoreRegisterRequest) returns (StoreRegisterResponse);
+    // UpdateUserInfo 更新用户信息 昵称-头像
     rpc UpdateUserInfo(StoreUpdateUserInfoRequest) returns (StoreUpdateUserInfoResponse);
+
+    // UpdateSignature 更新签名
+    rpc UpdateSignature(StoreUpdateSignatureRequest) returns (StoreUpdateSignatureResponse);
+
+    // UpdateUserPassword 更新用户密码
     rpc UpdateUserPassword(StoreUpdateUserPasswordRequest) returns (StoreUpdateUserPasswordResponse);
+
     rpc GetUserInfo(StoreGetUserInfoRequest) returns (StoreGetUserInfoResponse);
 
     rpc Auth(StoreAuthRequest) returns (StoreAuthResponse);
@@ -116,6 +123,7 @@ message StoreGetUserInfoResponse {
     string          User        = 3;
     string          NickName    = 4;
     string          Avatar      = 5;
+    string          Signature   = 6;
 }
 
 message StoreAuthRequest {
@@ -235,5 +243,15 @@ message StoreLoadFriendListRequest {
 message StoreLoadFriendListResponse {
     ResponseHeader header   = 1;
     repeated int64 users    = 2;
+}
+
+message StoreUpdateSignatureRequest {
+    RequestHeader   header      = 1 [(gogoproto.nullable) = false, (gogoproto.embed) = true];
+    string          Name        = 2;
+    string          Signature   = 3;
+}
+
+message StoreUpdateSignatureResponse {
+    ResponseHeader header   = 1;
 }
 

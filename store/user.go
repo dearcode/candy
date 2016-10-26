@@ -11,6 +11,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	lu "github.com/syndtr/goleveldb/leveldb/util"
 
+	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
 	"github.com/dearcode/candy/util/log"
 )
@@ -19,14 +20,6 @@ const (
 	//模糊查询用户最大数量
 	maxFindUserCount = 20
 )
-
-type account struct {
-	ID       int64
-	Name     string
-	Password string
-	NickName string
-	Avatar   string
-}
 
 type userDB struct {
 	root   string
@@ -72,7 +65,7 @@ func (u *userDB) register(user, passwd string, id int64) error {
 		return errors.Errorf("user:%s exist info:%s", user, string(v))
 	}
 
-	buf, err := json.Marshal(account{Name: user, Password: passwd, ID: id})
+	buf, err := json.Marshal(meta.UserInfo{ID: id, Name: user, Password: passwd})
 	if err != nil {
 		txn.Discard()
 		return errors.Trace(err)
@@ -110,7 +103,7 @@ func (u *userDB) findUser(user string) ([]string, error) {
 
 	it := u.db.NewIterator(&lu.Range{Start: []byte(user)}, nil)
 	for it.Next(); it.Valid(); it.Next() {
-		var a account
+		var a meta.UserInfo
 		if err := json.Unmarshal(it.Value(), &a); err != nil {
 			return nil, errors.Trace(err)
 		}
@@ -137,7 +130,7 @@ func (u *userDB) auth(user, passwd string) (int64, error) {
 		return 0, errors.Trace(err)
 	}
 
-	var a account
+	var a meta.UserInfo
 
 	if err = json.Unmarshal(v, &a); err != nil {
 		return 0, errors.Trace(err)
@@ -165,7 +158,7 @@ func (u *userDB) resetUserPassword(name, passwd string) error {
 		return errors.Trace(err)
 	}
 
-	var a account
+	var a meta.UserInfo
 	if err = json.Unmarshal(buf, &a); err != nil {
 		txn.Discard()
 		return errors.Trace(err)
@@ -207,7 +200,7 @@ func (u *userDB) updateUserPassword(id int64, name, oldPasswd, newPasswd string)
 		return errors.Trace(err)
 	}
 
-	var a account
+	var a meta.UserInfo
 	if err = json.Unmarshal(buf, &a); err != nil {
 		txn.Discard()
 		return errors.Trace(err)
@@ -253,7 +246,7 @@ func (u *userDB) updateUserInfo(id int64, name, nickName string, avatar string) 
 		return errors.Trace(err)
 	}
 
-	var a account
+	var a meta.UserInfo
 	if err = json.Unmarshal(buf, &a); err != nil {
 		txn.Discard()
 		return errors.Trace(err)
@@ -293,13 +286,61 @@ func (u *userDB) updateUserInfo(id int64, name, nickName string, avatar string) 
 	return nil
 }
 
-func (u *userDB) getUserInfoByName(name string) (*account, error) {
+func (u *userDB) updateSignature(id int64, name, signature string) error {
+	txn, err := u.db.OpenTransaction()
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	log.Debugf("%d open transaction finished", id)
+	buf, err := txn.Get([]byte(name), nil)
+	if err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	var a meta.UserInfo
+	if err = json.Unmarshal(buf, &a); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	if a.ID != id {
+		txn.Discard()
+		return errors.Trace(ErrInvalidOperator)
+	}
+
+	if signature != "" && a.Signature != signature {
+		log.Debugf("%d Signature old:%v new:%v", id, a.Signature, signature)
+		a.Signature = signature
+	}
+
+	if buf, err = json.Marshal(a); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	if err = txn.Put([]byte(name), buf, nil); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	if err = txn.Commit(); err != nil {
+		txn.Discard()
+		return errors.Trace(err)
+	}
+
+	log.Debugf("%d update Signature success", id)
+	return nil
+}
+
+func (u *userDB) getUserInfoByName(name string) (*meta.UserInfo, error) {
 	v, err := u.db.Get([]byte(name), nil)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
 
-	var a account
+	var a meta.UserInfo
 	if err = json.Unmarshal(v, &a); err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -307,7 +348,7 @@ func (u *userDB) getUserInfoByName(name string) (*account, error) {
 	return &a, nil
 }
 
-func (u *userDB) getUserInfoByID(id int64) (*account, error) {
+func (u *userDB) getUserInfoByID(id int64) (*meta.UserInfo, error) {
 	v, err := u.db.Get(UserUnionKey(id), nil)
 	if err != nil {
 		return nil, errors.Trace(err)

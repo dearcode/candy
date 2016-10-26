@@ -8,8 +8,17 @@ import "common.proto";
 
 service Gate {
     rpc Register (GateRegisterRequest) returns (GateRegisterResponse);
+
+    // UpdateUserInfo 更新用户信息
     rpc UpdateUserInfo (GateUpdateUserInfoRequest) returns (GateUpdateUserInfoResponse);
+    
+    // UpdateSignature 更新用户签名
+    rpc UpdateSignature(GateUpdateSignatureRequest) returns (GateUpdateSignatureResponse);
+
+    // UpdateUserPassword 修改密码
     rpc UpdateUserPassword (GateUpdateUserPasswordRequest) returns (GateUpdateUserPasswordResponse);
+
+    // GetUserInfo 查询用户信息
     rpc GetUserInfo (GateGetUserInfoRequest) returns (GateGetUserInfoResponse);
 
     rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
@@ -125,11 +134,12 @@ message GateGetUserInfoRequest {
 }
 
 message GateGetUserInfoResponse {
-    ResponseHeader  header  = 1;
-    int64           ID      = 2;
-    string          User    = 3;
-    string          NickName= 4;
-    string          Avatar  = 5;
+    ResponseHeader  header      = 1;
+    int64           ID          = 2;
+    string          User        = 3;
+    string          NickName    = 4;
+    string          Avatar      = 5;
+    string          Signature   = 6;
 }
 
 
@@ -274,5 +284,15 @@ message GateGroupDeleteRequest {
 
 message GateGroupDeleteResponse {
     ResponseHeader  header  = 1;
+}
+
+//更新用户签名
+message GateUpdateSignatureRequest {
+    string Name             = 1;
+    string Signature        = 2;
+}
+
+message GateUpdateSignatureResponse {
+    ResponseHeader header = 1;
 }
 

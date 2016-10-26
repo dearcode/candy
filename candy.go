@@ -27,6 +27,7 @@ const (
 
 	CmdUpdateUserInfo
 	CmdChangePassword
+	CmdUpdateSignature
 
 	CmdFindUser
 	CmdGetUserInfoByName
@@ -62,6 +63,7 @@ func notice() {
 		{CmdLogout, "注  销"},
 		{CmdUpdateUserInfo, "修改用户信息"},
 		{CmdChangePassword, "修改密码"},
+		{CmdUpdateSignature, "修改签名"},
 
 		{CmdFindUser, "查找用户"},
 		{CmdGetUserInfoByName, "获取用户信息(Name)"},
@@ -177,6 +179,26 @@ func updateUserInfo(c *candy.CandyClient, reader *bufio.Reader) {
 	log.Debugf("updateUserInfo success, userName:%v nickName:%v", userName, nickName)
 }
 
+func updateSignature(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("更新用户签名")
+	defer endSection()
+
+	color.Yellow("请输入用户名:")
+	data, _, _ := reader.ReadLine()
+	userName := string(data)
+	color.Yellow("请输入签名：")
+	data, _, _ = reader.ReadLine()
+	signature := string(data)
+
+	if err := c.UpdateUserSignature(userName, signature); err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("updateUserSignature code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("updateUserSignature success, userName:%v Signature:%v", userName, signature)
+}
+
 func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 	startSection("获取用户信息")
 	defer endSection()
@@ -200,7 +222,8 @@ func getUserInfoByName(c *candy.CandyClient, reader *bufio.Reader) {
 	}
 
 	log.Debugf("getUserInfo success, userName:%v", userName)
-	log.Debugf("user detail, ID:%v Name:%v NickName:%v Avatar:%v", user.ID, user.Name, user.NickName, user.Avatar)
+	log.Debugf("user detail, ID:%v Name:%v NickName:%v Avatar:%v Signature:%v",
+		user.ID, user.Name, user.NickName, user.Avatar, user.Signature)
 }
 
 func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
@@ -231,7 +254,8 @@ func getUserInfoByID(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 	log.Debugf("getUserInfoByID success, userID:%v", id)
-	log.Debugf("user detail, ID:%v Name:%v NickName:%v Avatar:%v", user.ID, user.Name, user.NickName, user.Avatar)
+	log.Debugf("user detail, ID:%v Name:%v NickName:%v Avatar:%v Signature:%v",
+		user.ID, user.Name, user.NickName, user.Avatar, user.Signature)
 }
 
 func findUser(c *candy.CandyClient, reader *bufio.Reader) {
@@ -680,6 +704,8 @@ func main() {
 			updateUserInfo(c, reader)
 		case CmdChangePassword:
 			updateUserPasswd(c, reader)
+		case CmdUpdateSignature:
+			updateSignature(c, reader)
 
 		case CmdGetUserInfoByName:
 			getUserInfoByName(c, reader)

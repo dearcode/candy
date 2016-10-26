@@ -108,6 +108,19 @@ func (s *Store) UpdateUserInfo(_ context.Context, req *meta.StoreUpdateUserInfoR
 	return &meta.StoreUpdateUserInfoResponse{}, nil
 }
 
+// UpdateSignature update user Signature info
+func (s *Store) UpdateSignature(_ context.Context, req *meta.StoreUpdateSignatureRequest) (*meta.StoreUpdateSignatureResponse, error) {
+	if req.Signature == "" {
+		return &meta.StoreUpdateSignatureResponse{}, nil
+	}
+
+	if err := s.user.updateSignature(req.User, req.Name, req.Signature); err != nil {
+		return &meta.StoreUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreUpdateSignatureResponse{}, nil
+}
+
 // UpdateUserPassword update user password
 func (s *Store) UpdateUserPassword(_ context.Context, req *meta.StoreUpdateUserPasswordRequest) (*meta.StoreUpdateUserPasswordResponse, error) {
 	log.Debugf("Store UpdatePassword, user:")
@@ -124,7 +137,7 @@ func (s *Store) UpdateUserPassword(_ context.Context, req *meta.StoreUpdateUserP
 // GetUserInfo get user base info
 func (s *Store) GetUserInfo(_ context.Context, req *meta.StoreGetUserInfoRequest) (*meta.StoreGetUserInfoResponse, error) {
 	log.Debugf("begin %d findByName:%v name:%v id:%v", req.User, req.ByName, req.Name, req.ID)
-	var a *account
+	var a *meta.UserInfo
 	var err error
 
 	if req.ByName {
@@ -137,7 +150,13 @@ func (s *Store) GetUserInfo(_ context.Context, req *meta.StoreGetUserInfoRequest
 		return &meta.StoreGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreGetUserInfoResponse{ID: a.ID, User: a.Name, NickName: a.NickName, Avatar: a.Avatar}, nil
+	return &meta.StoreGetUserInfoResponse{
+		ID:        a.ID,
+		User:      a.Name,
+		NickName:  a.NickName,
+		Avatar:    a.Avatar,
+		Signature: a.Signature,
+	}, nil
 }
 
 // Auth check password.

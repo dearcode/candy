@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
 )
 
@@ -17,11 +18,17 @@ var (
 type Error struct {
 	Code int32
 	Msg  string
+	Data string
 }
 
 // NewError - create an new Error
 func NewError(code int32, msg string) *Error {
 	return &Error{Code: code, Msg: msg}
+}
+
+// NewData - create an data Error
+func NewData(code int32, msg string, data string) *Error {
+	return &Error{Code: code, Msg: msg, Data: data}
 }
 
 // ErrorParse - parse error string to an Error object
@@ -53,8 +60,8 @@ func encodeJSON(data interface{}) ([]byte, error) {
 }
 
 // DecodeUserInfo 把json数据解析成UserInfo
-func DecodeUserInfo(data []byte) (*UserInfo, error) {
-	userInfo := &UserInfo{}
+func DecodeUserInfo(data []byte) (*meta.UserInfo, error) {
+	userInfo := &meta.UserInfo{}
 	if err := json.Unmarshal(data, &userInfo); err != nil {
 		return nil, fmt.Errorf("Decode UserInfo error:%v", err.Error())
 	}
@@ -62,8 +69,8 @@ func DecodeUserInfo(data []byte) (*UserInfo, error) {
 }
 
 // DecodeUserList 把json数据解析成UserList
-func DecodeUserList(data []byte) (*UserList, error) {
-	userList := &UserList{}
+func DecodeUserList(data []byte) (*meta.UserList, error) {
+	userList := &meta.UserList{}
 	if err := json.Unmarshal(data, &userList); err != nil {
 		return nil, fmt.Errorf("Decode UserList error:%v", err.Error())
 	}
@@ -71,8 +78,8 @@ func DecodeUserList(data []byte) (*UserList, error) {
 }
 
 // DecodeFriendList 把json数据解析成FriendList
-func DecodeFriendList(data []byte) (*FriendList, error) {
-	friendList := &FriendList{}
+func DecodeFriendList(data []byte) (*meta.FriendList, error) {
+	friendList := &meta.FriendList{}
 	if err := json.Unmarshal(data, &friendList); err != nil {
 		return nil, fmt.Errorf("Decode FriendList error:%v", err.Error())
 	}
@@ -80,8 +87,8 @@ func DecodeFriendList(data []byte) (*FriendList, error) {
 }
 
 // DecodeGroupList 把json数据解析成GroupList
-func DecodeGroupList(data []byte) (*GroupList, error) {
-	groupList := &GroupList{}
+func DecodeGroupList(data []byte) (*meta.GroupList, error) {
+	groupList := &meta.GroupList{}
 	if err := json.Unmarshal(data, &groupList); err != nil {
 		return nil, fmt.Errorf("Decode GroupList error:%v", err.Error())
 	}

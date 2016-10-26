@@ -15,7 +15,6 @@ message ResponseHeader {
     string Msg = 2;
 }
 
-
 enum Relation {
     // 没关系, 已删除
     Del     = 0;
@@ -65,6 +64,22 @@ message Message {
     string Body   = 6;
 }
 
+// UserInfo 用户信息
+message UserInfo {
+	int64   ID          = 1;
+	string  Name        = 2;
+    string  Password    = 3;
+	string  NickName    = 4;
+	string  Avatar      = 5;
+	string  Signature   = 6;
+}
+
+// UserList 用户列表
+message UserList {
+	repeated UserInfo Users = 1;
+}
+
+
 // GroupInfo 群信息，目前只有名字，公告，头像
 message GroupInfo {
     bool    Active  = 1;
@@ -78,6 +93,16 @@ message GroupInfo {
     repeated int64 Admins = 7;
     // Member 成员
     repeated int64 Member = 8;
+}
+
+// GroupList 群组列表
+message GroupList {
+	repeated GroupInfo Groups = 1;
+}
+
+// FriendList 好友列表
+message FriendList {
+    repeated int64 Users = 1;
 }
 
 // 下推的消息，有系统消息(加群，加好友，上线通知啥的)，正常聊天消息
