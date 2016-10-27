@@ -108,6 +108,25 @@ func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.GateUpdateUserInfoR
 	return &meta.GateUpdateUserInfoResponse{}, nil
 }
 
+// UpdateSignature update user Signature
+func (g *Gate) UpdateSignature(ctx context.Context, req *meta.GateUpdateSignatureRequest) (*meta.GateUpdateSignatureResponse, error) {
+	s, _, err := g.manager.getSession(ctx)
+	if err != nil {
+		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
+	}
+
+	if req.Signature == "" {
+		log.Errorf("%d name:%v signature:%v", s.user, req.Name, req.Signature)
+		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateSignature, Msg: err.Error()}}, nil
+	}
+
+	if err = g.store.updateSignature(s.user, req.Name, req.Signature); err != nil {
+		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateSignature, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateUpdateSignatureResponse{}, nil
+}
+
 // UpdateUserPassword update user password
 func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserPasswordRequest) (*meta.GateUpdateUserPasswordResponse, error) {
 	s, _, err := g.manager.getSession(ctx)
@@ -136,13 +155,19 @@ func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest
 
 	log.Debugf("%d get UserInfo byName:%v userName:%v userID:%v", s.user, req.FindByName, req.UserName, req.UserID)
 
-	id, name, nickName, avatar, err := g.store.getUserInfo(s.user, req.FindByName, req.UserName, req.UserID)
+	userInfo, err := g.store.getUserInfo(s.user, req.FindByName, req.UserName, req.UserID)
 	if err != nil {
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetUserInfo, Msg: err.Error()}}, nil
 	}
-	log.Debugf("%d get UserInfo ByName:%v userName:%v userID:%v, name:%v, nickname:%v", s.user, req.FindByName, req.UserName, req.UserID, name, nickName)
+	log.Debugf("%d get UserInfo ByName:%v userName:%v userID:%v, name:%v, nickname:%v", s.user, req.FindByName, req.UserName, req.UserID, userInfo.Name, userInfo.NickName)
 
-	return &meta.GateGetUserInfoResponse{ID: id, User: name, NickName: nickName, Avatar: avatar}, nil
+	return &meta.GateGetUserInfoResponse{
+		ID:        userInfo.ID,
+		User:      userInfo.Name,
+		NickName:  userInfo.NickName,
+		Avatar:    userInfo.Avatar,
+		Signature: userInfo.Signature,
+	}, nil
 }
 
 // Login user,passwd.

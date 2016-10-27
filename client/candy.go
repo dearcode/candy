@@ -144,6 +144,21 @@ func (c *CandyClient) UpdateUserInfo(user, nickName, avatar string) error {
 	return resp.Header.Error()
 }
 
+// UpdateUserSignature 更新用户签名
+func (c *CandyClient) UpdateUserSignature(name, signature string) error {
+	if code, err := CheckUserName(name); err != nil {
+		return NewError(code, err.Error())
+	}
+
+	req := &meta.GateUpdateSignatureRequest{Name: name, Signature: signature}
+	resp, err := c.api.UpdateSignature(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	return resp.Header.Error()
+}
+
 // UpdateUserPassword 更新用户密码
 func (c *CandyClient) UpdateUserPassword(user, passwd string) error {
 	if code, err := CheckUserName(user); err != nil {
@@ -179,7 +194,7 @@ func (c *CandyClient) GetUserInfoByName(user string) (string, error) {
 	return string(data), nil
 }
 
-func (c *CandyClient) getUserInfoByName(user string) (*UserInfo, error) {
+func (c *CandyClient) getUserInfoByName(user string) (*meta.UserInfo, error) {
 	if code, err := CheckUserName(user); err != nil {
 		return nil, NewError(code, err.Error())
 	}
@@ -190,7 +205,13 @@ func (c *CandyClient) getUserInfoByName(user string) (*UserInfo, error) {
 		return nil, err
 	}
 
-	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
+	userInfo := &meta.UserInfo{
+		ID:        resp.ID,
+		Name:      resp.User,
+		NickName:  resp.NickName,
+		Avatar:    resp.Avatar,
+		Signature: resp.Signature,
+	}
 	return userInfo, resp.Header.Error()
 }
 
@@ -210,14 +231,20 @@ func (c *CandyClient) GetUserInfoByID(userID int64) (string, error) {
 	return string(data), nil
 }
 
-func (c *CandyClient) getUserInfoByID(userID int64) (*UserInfo, error) {
+func (c *CandyClient) getUserInfoByID(userID int64) (*meta.UserInfo, error) {
 	req := &meta.GateGetUserInfoRequest{UserID: userID}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
 
-	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
+	userInfo := &meta.UserInfo{
+		ID:        resp.ID,
+		Name:      resp.User,
+		NickName:  resp.NickName,
+		Avatar:    resp.Avatar,
+		Signature: resp.Signature,
+	}
 	return userInfo, resp.Header.Error()
 }
 
@@ -240,7 +267,7 @@ func (c *CandyClient) LoadFriendList() (string, error) {
 		return emptyString, err
 	}
 
-	friendList := &FriendList{Users: resp.Users}
+	friendList := &meta.FriendList{Users: resp.Users}
 	data, err := encodeJSON(friendList)
 	if err != nil {
 		return emptyString, err
@@ -257,7 +284,7 @@ func (c *CandyClient) FindUser(user string) (string, error) {
 		return emptyString, err
 	}
 
-	var users []*UserInfo
+	var users []*meta.UserInfo
 	for _, matchUser := range resp.Users {
 		userInfo, err := c.getUserInfoByName(matchUser)
 		if err != nil {
@@ -265,7 +292,7 @@ func (c *CandyClient) FindUser(user string) (string, error) {
 		}
 		users = append(users, userInfo)
 	}
-	userList := &UserList{Users: users}
+	userList := &meta.UserList{Users: users}
 	data, err := encodeJSON(userList)
 	if err != nil {
 		return emptyString, err
@@ -425,12 +452,12 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 		return emptyString, err
 	}
 
-	var groups []*GroupInfo
+	var groups []*meta.GroupInfo
 	for _, group := range resp.Groups {
-		groups = append(groups, &GroupInfo{ID: group.ID, Name: group.Name, Member: group.Member, Admin: group.Admins})
+		groups = append(groups, &meta.GroupInfo{ID: group.ID, Name: group.Name, Member: group.Member, Admins: group.Admins})
 	}
 
-	groupList := &GroupList{Groups: groups}
+	groupList := &meta.GroupList{Groups: groups}
 	data, err := encodeJSON(groupList)
 	if err != nil {
 		return emptyString, err

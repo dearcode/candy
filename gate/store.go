@@ -24,7 +24,11 @@ func newStoreClient(host string) (*storeClient, error) {
 
 func (s *storeClient) register(user, passwd string, id int64) error {
 	log.Debugf("store register, user:%v passwd:%v", user, passwd)
-	req := &meta.StoreRegisterRequest{User: user, Password: passwd, ID: id}
+	req := &meta.StoreRegisterRequest{
+		User:     user,
+		Password: passwd,
+		ID:       id,
+	}
 	resp, err := s.client.Register(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
@@ -36,7 +40,10 @@ func (s *storeClient) register(user, passwd string, id int64) error {
 
 func (s *storeClient) auth(user, passwd string) (int64, error) {
 	log.Debugf("store auth, user:%v passwd:%v", user, passwd)
-	req := &meta.StoreAuthRequest{User: user, Password: passwd}
+	req := &meta.StoreAuthRequest{
+		User:     user,
+		Password: passwd,
+	}
 	resp, err := s.client.Auth(context.Background(), req)
 	if err != nil {
 		return 0, errors.Trace(err)
@@ -63,9 +70,28 @@ func (s *storeClient) updateUserInfo(id int64, name, nickName, avatar string) er
 	return errors.Trace(resp.Header.Error())
 }
 
+func (s *storeClient) updateSignature(id int64, name, signature string) error {
+	req := &meta.StoreUpdateSignatureRequest{
+		RequestHeader: meta.RequestHeader{User: id},
+		Name:          name,
+		Signature:     signature,
+	}
+	resp, err := s.client.UpdateSignature(context.Background(), req)
+	if err != nil {
+		return errors.Trace(resp.Header.Error())
+	}
+
+	return errors.Trace(resp.Header.Error())
+}
+
 func (s *storeClient) updateUserPassword(id int64, name, passwd, newPasswd string) error {
 	log.Debugf("%d name:%v passwd old:%v, new:%v", id, name, passwd, newPasswd)
-	req := &meta.StoreUpdateUserPasswordRequest{RequestHeader: meta.RequestHeader{User: id}, Name: name, Password: passwd, NewPassword: newPasswd}
+	req := &meta.StoreUpdateUserPasswordRequest{
+		RequestHeader: meta.RequestHeader{User: id},
+		Name:          name,
+		Password:      passwd,
+		NewPassword:   newPasswd,
+	}
 	resp, err := s.client.UpdateUserPassword(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
@@ -75,17 +101,29 @@ func (s *storeClient) updateUserPassword(id int64, name, passwd, newPasswd strin
 	return errors.Trace(resp.Header.Error())
 }
 
-func (s *storeClient) getUserInfo(id int64, findByName bool, userName string, userID int64) (int64, string, string, string, error) {
+func (s *storeClient) getUserInfo(id int64, findByName bool, userName string, userID int64) (*meta.UserInfo, error) {
 	log.Debugf("get userInfo findByName:%v userName:%v userID:%v", findByName, userName, userID)
-	req := &meta.StoreGetUserInfoRequest{RequestHeader: meta.RequestHeader{User: id}, ByName: findByName, Name: userName, ID: userID}
+	req := &meta.StoreGetUserInfoRequest{
+		RequestHeader: meta.RequestHeader{User: id},
+		ByName:        findByName,
+		Name:          userName,
+		ID:            userID,
+	}
 	resp, err := s.client.GetUserInfo(context.Background(), req)
 	if err != nil {
-		return -1, "", "", "", errors.Trace(err)
+		return nil, errors.Trace(err)
 	}
 
 	log.Debugf("get userInfo finished, user:%s, err:%v", userName, resp.Header.Error())
+	userInfo := &meta.UserInfo{
+		ID:        resp.ID,
+		Name:      resp.User,
+		NickName:  resp.NickName,
+		Avatar:    resp.Avatar,
+		Signature: resp.Signature,
+	}
 
-	return resp.ID, resp.User, resp.NickName, resp.Avatar, errors.Trace(resp.Header.Error())
+	return userInfo, errors.Trace(resp.Header.Error())
 }
 
 func (s *storeClient) findUser(id int64, user string) ([]string, error) {
@@ -101,7 +139,13 @@ func (s *storeClient) findUser(id int64, user string) ([]string, error) {
 
 func (s *storeClient) friend(id, to int64, operate meta.Relation, msg string) error {
 	log.Debugf("store friend, from:%v to:%v operate:%v", id, to, operate)
-	req := &meta.StoreFriendRequest{RequestHeader: meta.RequestHeader{User: id}, From: id, To: to, Operate: operate, Msg: msg}
+	req := &meta.StoreFriendRequest{
+		RequestHeader: meta.RequestHeader{User: id},
+		From:          id,
+		To:            to,
+		Operate:       operate,
+		Msg:           msg,
+	}
 	resp, err := s.client.Friend(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
@@ -122,7 +166,11 @@ func (s *storeClient) loadFriendList(id int64) ([]int64, error) {
 
 func (s *storeClient) groupCreate(uid, gid int64, name string) error {
 	log.Debugf("store group create user:%v group:%v name:%v", uid, gid, name)
-	req := &meta.StoreGroupCreateRequest{RequestHeader: meta.RequestHeader{User: uid}, ID: gid, Name: name}
+	req := &meta.StoreGroupCreateRequest{
+		RequestHeader: meta.RequestHeader{User: uid},
+		ID:            gid,
+		Name:          name,
+	}
 	resp, err := s.client.GroupCreate(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
@@ -133,7 +181,13 @@ func (s *storeClient) groupCreate(uid, gid int64, name string) error {
 
 func (s *storeClient) group(uid, gid int64, operate meta.Relation, users []int64, msg string) error {
 	log.Debugf("store group delete, user:%v group:%v", uid, gid)
-	req := &meta.StoreGroupRequest{RequestHeader: meta.RequestHeader{User: uid}, ID: gid, Operate: operate, Users: users, Msg: msg}
+	req := &meta.StoreGroupRequest{
+		RequestHeader: meta.RequestHeader{User: uid},
+		ID:            gid,
+		Operate:       operate,
+		Users:         users,
+		Msg:           msg,
+	}
 	resp, err := s.client.Group(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
@@ -144,7 +198,10 @@ func (s *storeClient) group(uid, gid int64, operate meta.Relation, users []int64
 
 func (s *storeClient) groupDelete(uid, gid int64) error {
 	log.Debugf("store group delete, user:%v group:%v", uid, gid)
-	req := &meta.StoreGroupDeleteRequest{RequestHeader: meta.RequestHeader{User: uid}, ID: gid}
+	req := &meta.StoreGroupDeleteRequest{
+		RequestHeader: meta.RequestHeader{User: uid},
+		ID:            gid,
+	}
 	resp, err := s.client.GroupDelete(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
@@ -214,7 +271,10 @@ func (s *storeClient) downloadFile(userID int64, names []string) (map[string][]b
 func (s *storeClient) newMessage(id int64, msg meta.Message) error {
 	log.Debugf("store newMessage[%d]:%+v", msg.ID, msg)
 
-	req := &meta.StoreNewMessageRequest{RequestHeader: meta.RequestHeader{User: id}, Msg: msg}
+	req := &meta.StoreNewMessageRequest{
+		RequestHeader: meta.RequestHeader{User: id},
+		Msg:           msg,
+	}
 	resp, err := s.client.NewMessage(context.Background(), req)
 	if err != nil {
 		return errors.Trace(err)
@@ -226,7 +286,11 @@ func (s *storeClient) newMessage(id int64, msg meta.Message) error {
 
 func (s *storeClient) loadMessage(userID, id int64, reverse bool) ([]*meta.PushMessage, error) {
 	log.Debugf("store loadMessage")
-	req := &meta.StoreLoadMessageRequest{RequestHeader: meta.RequestHeader{User: userID}, ID: id, Reverse: reverse}
+	req := &meta.StoreLoadMessageRequest{
+		RequestHeader: meta.RequestHeader{User: userID},
+		ID:            id,
+		Reverse:       reverse,
+	}
 	resp, err := s.client.LoadMessage(context.Background(), req)
 	if err != nil {
 		return nil, errors.Trace(err)

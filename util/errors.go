@@ -65,6 +65,8 @@ const (
 	ErrorDownloadFile = 1050
 	// ErrorLoadMessage 加载消息列表失败
 	ErrorLoadMessage = 1051
+	// ErrorUpdateSignature 更新签名失败
+	ErrorUpdateSignature = 1052
 )
 
 var (
