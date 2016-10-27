@@ -9,6 +9,7 @@ import (
 
 func main() {
 	host := flag.String("p", "0.0.0.0:9001", "listen host")
+	etcd := flag.String("e", "", "etcd addrs, like `192.168.199.1:2379,192.168.199.2:2379,192.168.199.3:2379`")
 	version := flag.Bool("v", false, "print version")
 	flag.Parse()
 
@@ -17,8 +18,7 @@ func main() {
 		return
 	}
 
-	s := master.NewMasterServer(*host)
-	if err := s.Start(); err != nil {
+	if _, err := master.NewMaster(*host, util.Split(*etcd, ",")); err != nil {
 		println(err.Error())
 	}
 }

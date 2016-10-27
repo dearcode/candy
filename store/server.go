@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"github.com/juju/errors"
+	"github.com/syndtr/goleveldb/leveldb"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -23,8 +24,8 @@ type Store struct {
 	postman *postman
 	friend  *friendDB
 	file    *fileDB
-	notice  *util.Notice
-	master  *util.Master
+	notice  *util.NotiferClient
+	master  *util.MasterClient
 }
 
 // NewStore new Store server.
@@ -50,12 +51,12 @@ func (s *Store) Start(notice, master string) error {
 		return err
 	}
 
-	s.notice, err = util.NewNotice(notice)
+	s.notice, err = util.NewNotiferClient(notice)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	s.master, err = util.NewMaster(master)
+	s.master, err = util.NewMasterClient(master, nil)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -95,35 +96,67 @@ func (s *Store) Register(_ context.Context, req *meta.StoreRegisterRequest) (*me
 
 // UpdateUserInfo update user base info, ex: nickname, picurl and so on
 func (s *Store) UpdateUserInfo(_ context.Context, req *meta.StoreUpdateUserInfoRequest) (*meta.StoreUpdateUserInfoResponse, error) {
-	log.Debugf("Store UpdateInfo, user:%v niceName:%v", req.User, req.NickName)
-	id, err := s.user.updateUserInfo(req.User, req.NickName, req.Avatar)
-	if err != nil {
+	log.Debugf("%d Store UpdateInfo, user:%v niceName:%v", req.User, req.Name, req.NickName)
+	if req.NickName == "" && req.Avatar == "" {
+		return &meta.StoreUpdateUserInfoResponse{}, nil
+	}
+
+	if err := s.user.updateUserInfo(req.User, req.Name, req.NickName, req.Avatar); err != nil {
 		return &meta.StoreUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreUpdateUserInfoResponse{ID: id}, nil
+	return &meta.StoreUpdateUserInfoResponse{}, nil
+}
+
+// UpdateSignature update user Signature info
+func (s *Store) UpdateSignature(_ context.Context, req *meta.StoreUpdateSignatureRequest) (*meta.StoreUpdateSignatureResponse, error) {
+	if req.Signature == "" {
+		return &meta.StoreUpdateSignatureResponse{}, nil
+	}
+
+	if err := s.user.updateSignature(req.User, req.Name, req.Signature); err != nil {
+		return &meta.StoreUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreUpdateSignatureResponse{}, nil
 }
 
 // UpdateUserPassword update user password
 func (s *Store) UpdateUserPassword(_ context.Context, req *meta.StoreUpdateUserPasswordRequest) (*meta.StoreUpdateUserPasswordResponse, error) {
 	log.Debugf("Store UpdatePassword, user:")
-	id, err := s.user.updateUserPassword(req.User, req.Password)
-	if err != nil {
+	if req.NewPassword == "" {
+		return &meta.StoreUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "password is nil"}}, nil
+	}
+	if err := s.user.updateUserPassword(req.User, req.Name, req.Password, req.NewPassword); err != nil {
 		return &meta.StoreUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreUpdateUserPasswordResponse{ID: id}, nil
+	return &meta.StoreUpdateUserPasswordResponse{}, nil
 }
 
 // GetUserInfo get user base info
 func (s *Store) GetUserInfo(_ context.Context, req *meta.StoreGetUserInfoRequest) (*meta.StoreGetUserInfoResponse, error) {
-	log.Debugf("GetUserInfo, type:%v userName:%v userID:%v", req.Type, req.UserName, req.UserID)
-	a, err := s.user.getUserInfo(req.Type, req.UserName, req.UserID)
+	log.Debugf("begin %d findByName:%v name:%v id:%v", req.User, req.ByName, req.Name, req.ID)
+	var a *meta.UserInfo
+	var err error
+
+	if req.ByName {
+		a, err = s.user.getUserInfoByName(req.Name)
+	} else {
+		a, err = s.user.getUserInfoByID(req.ID)
+	}
 	if err != nil {
+		log.Infof("end %d findByName:%v name:%v, id:%v, error:%s", req.User, req.ByName, req.Name, req.ID, errors.ErrorStack(err))
 		return &meta.StoreGetUserInfoResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreGetUserInfoResponse{ID: a.ID, User: a.Name, NickName: a.NickName, Avatar: a.Avatar}, nil
+	return &meta.StoreGetUserInfoResponse{
+		ID:        a.ID,
+		User:      a.Name,
+		NickName:  a.NickName,
+		Avatar:    a.Avatar,
+		Signature: a.Signature,
+	}, nil
 }
 
 // Auth check password.
@@ -139,44 +172,61 @@ func (s *Store) Auth(_ context.Context, req *meta.StoreAuthRequest) (*meta.Store
 
 // FindUser 根据字符串的用户名模糊查询用户信息.
 func (s *Store) FindUser(_ context.Context, req *meta.StoreFindUserRequest) (*meta.StoreFindUserResponse, error) {
-	log.Debugf("Store FindUser, user:%v", req.User)
-	users, err := s.user.findUser(req.User)
+	log.Debugf("begin %d FindUser name:%v", req.User, req.Name)
+	users, err := s.user.findUser(req.Name)
 	if err != nil {
 		return &meta.StoreFindUserResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 	return &meta.StoreFindUserResponse{Users: users}, nil
 }
 
-// AddFriend 添加好友添加完后会返回当前好友关系状态.
-func (s *Store) AddFriend(_ context.Context, req *meta.StoreAddFriendRequest) (*meta.StoreAddFriendResponse, error) {
-	log.Debugf("Store AddFriend, from:%v to:%v State:%v", req.From, req.To, req.State)
-	state, err := s.user.friend.add(req.From, req.To, req.State, req.Msg)
-	if err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+// Friend 添加好友添加完后会返回当前好友关系状态.
+func (s *Store) Friend(_ context.Context, req *meta.StoreFriendRequest) (*meta.StoreFriendResponse, error) {
+	log.Debugf("Store Friend from:%v to:%v Operate:%v", req.From, req.To, req.Operate)
+	//这些事件都需要创建一个给对方的消息
+	var err error
+	switch req.Operate {
+	case meta.Relation_Add:
+		//1.存储一个添加对方为好友的消息
+		//2.要给对方一个请求添加好友的消息
+		err = s.user.friend.set(req.From, req.To, req.Operate, req.Msg)
+
+	case meta.Relation_Confirm:
+		//1.存储一个确认添加为好友的消息
+		//2.要给对方一个确认添加好友的消息
+		err = s.user.friend.set(req.From, req.To, req.Operate, req.Msg)
+		if err == nil {
+			err = s.user.friend.confirm(req.To, req.From)
+		}
+
+	case meta.Relation_Refuse:
+		//只需要给对方一个拒绝的消息就行
+
+	case meta.Relation_Del:
+		//只需要给对方发个通知
+		err = s.user.friend.remove(req.From, req.To)
 	}
 
-	// 主动的添加消息就不需要推送了
-	if req.State == meta.FriendRelation_Active {
-		return &meta.StoreAddFriendResponse{State: state}, nil
+	if err != nil {
+		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))
+		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
 	// 发个提示消息
 	id, err := s.master.NewID()
 	if err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))
+		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	msg := meta.Message{ID: id, Method: meta.Method_FRIEND_ADD, From: req.To, Body: req.Msg}
-	if state == meta.FriendRelation_Confirm {
-		msg.Method = meta.Method_FRIEND_CONFIRM
+	pm := meta.PushMessage{Event: meta.Event_Friend, Operate: req.Operate, Msg: meta.Message{ID: id, From: req.From, To: req.To, Body: req.Msg}, ToUser: true}
+	// 直接发送，如果失败会自动插入到重试队列中
+	if err := s.message.send(pm); err != nil {
+		log.Debugf("Store Friend from:%v to:%v Operate:%v, error:%v", req.From, req.To, req.Operate, errors.ErrorStack(err))
+		return &meta.StoreFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
 	}
 
-	// 保存消息，发通知
-	if err = s.message.add(msg); err != nil {
-		return &meta.StoreAddFriendResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
-	}
-
-	return &meta.StoreAddFriendResponse{State: state}, nil
+	return &meta.StoreFriendResponse{}, nil
 }
 
 // LoadFriendList load user's friend list
@@ -192,19 +242,16 @@ func (s *Store) LoadFriendList(_ context.Context, req *meta.StoreLoadFriendListR
 // NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) (*meta.StoreNewMessageResponse, error) {
 	log.Debugf("Store NewMessage, msg:%v", req.Msg)
-	// add消息到db
-	if err := s.message.add(*req.Msg); err != nil {
+	pm := meta.PushMessage{Msg: req.Msg}
+	if req.Msg.Group != 0 {
+		pm.ToUser = true
+	}
+	// 直接发送，如果失败会自动插入到重试队列中
+	if err := s.message.send(pm); err != nil {
 		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
+	log.Debugf("Store messate success")
 
-	log.Debugf("add message to db success")
-	// 再添加未推送消息队列
-	if err := s.message.addQueue(req.Msg.ID); err != nil {
-		return &meta.StoreNewMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
-	}
-
-	log.Debugf("add messate to queue success")
-	// 再调用推送
 	return &meta.StoreNewMessageResponse{}, nil
 }
 
@@ -267,50 +314,168 @@ func (s *Store) LoadMessage(_ context.Context, req *meta.StoreLoadMessageRequest
 	return &meta.StoreLoadMessageResponse{Msgs: msgs}, nil
 }
 
-// CreateGroup 创建群组
-func (s *Store) CreateGroup(_ context.Context, req *meta.StoreCreateGroupRequest) (*meta.StoreCreateGroupResponse, error) {
+// GroupCreate 创建群组
+func (s *Store) GroupCreate(_ context.Context, req *meta.StoreGroupCreateRequest) (*meta.StoreGroupCreateResponse, error) {
+	log.Debugf("begin group:%+v", req)
+
 	//创建群组
-	group := meta.Group{ID: req.GroupID, Name: req.GroupName}
-	err := s.group.newGroup(group)
+	err := s.group.newGroup(req.ID, req.User, req.Name)
 	if err != nil {
-		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		log.Debugf("end group:%+v, error:%s", req, errors.ErrorStack(err))
+		return &meta.StoreGroupCreateResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	//TODO 还需要考虑群主和管理员的处理
-	//向群组中添加用户
-	err = s.group.addUser(group.ID, req.UserID)
-	if err != nil {
-		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	//向群组中添加群主
+	if err = s.group.addMember(req.ID, req.User); err != nil {
+		log.Debugf("end group:%+v, error:%s", req, errors.ErrorStack(err))
+		return &meta.StoreGroupCreateResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
 	//在用户数据库记录群组信息
-	err = s.user.addGroup(req.UserID, req.GroupID)
+	err = s.user.addGroup(req.User, req.ID)
 	if err != nil {
-		return &meta.StoreCreateGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		log.Debugf("end group:%+v, error:%s", req, errors.ErrorStack(err))
+		return &meta.StoreGroupCreateResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	return &meta.StoreCreateGroupResponse{}, nil
+	log.Debugf("end group:%+v success", req)
+	return &meta.StoreGroupCreateResponse{}, nil
+}
+
+//Group 加群，退出，邀请，踢人
+func (s *Store) Group(_ context.Context, req *meta.StoreGroupRequest) (*meta.StoreGroupResponse, error) {
+	var err error
+	log.Debugf("begin group:%+v", req)
+
+	switch req.Operate {
+	case meta.Relation_Add:
+		if len(req.Users) != 0 {
+			//邀请用户加入
+			err = s.group.invites(req.ID, req.User, req.Msg, req.Users...)
+		} else {
+			err = s.group.apply(req.ID, req.User, req.Msg)
+		}
+
+	case meta.Relation_Confirm:
+		if len(req.Users) == 1 {
+			//管理员同意用户申请入群的请求
+			if err = s.group.agree(req.ID, req.User, req.Users[0]); err == nil {
+				//在用户数据库记录群组信息
+				err = s.user.addGroup(req.Users[0], req.ID)
+			}
+		} else {
+			if err = s.group.accept(req.ID, req.User); err == nil {
+				//在用户数据库记录群组信息
+				err = s.user.addGroup(req.User, req.ID)
+			}
+		}
+
+	case meta.Relation_Del:
+		if len(req.Users) != 0 {
+			//踢人操作
+			if err = s.group.delUsers(req.ID, req.User, req.Users...); err == nil {
+				err = s.user.delGroup(req.Users[0], req.ID)
+			}
+		} else {
+			//退群操作
+			if err = s.group.exit(req.ID, req.User); err == nil {
+				err = s.user.delGroup(req.User, req.ID)
+			}
+		}
+	}
+
+	if err != nil {
+		log.Errorf("end group:%+v, error:%s", req, errors.ErrorStack(err))
+		return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	id, err := s.master.NewID()
+	if err != nil {
+		log.Debugf("end group:%+v, new id error:%v", req, errors.ErrorStack(err))
+		return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+	}
+
+	pm := meta.PushMessage{Event: meta.Event_Group, Operate: req.Operate, Msg: meta.Message{ID: id, Group: req.ID, From: req.User, Body: req.Msg}}
+	if len(req.Users) != 0 {
+		for _, u := range req.Users {
+			pm.Msg.To = u
+			pm.ToUser = true
+			if err := s.message.send(pm); err != nil {
+				log.Debugf("end Group:%+v, send error:%v", req, errors.ErrorStack(err))
+				return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+			}
+		}
+	} else {
+		pm.Msg.Group = req.ID
+		if err := s.message.send(pm); err != nil {
+			log.Debugf("end Group:%+v, send error:%v", req, errors.ErrorStack(err))
+			return &meta.StoreGroupResponse{Header: &meta.ResponseHeader{Code: -1, Msg: errors.ErrorStack(err)}}, nil
+		}
+	}
+
+	return &meta.StoreGroupResponse{}, nil
+}
+
+// GroupDelete 解散群组, 先发通知，再删除群，如果先删除就发不了消息了
+func (s *Store) GroupDelete(_ context.Context, req *meta.StoreGroupDeleteRequest) (*meta.StoreGroupDeleteResponse, error) {
+	log.Debugf("begin group delete:%+v", req)
+	group, err := s.group.getGroup(req.ID)
+	if err != nil {
+		log.Debugf("end group delete:%+v, get group error:%v", req, errors.ErrorStack(err))
+		return &meta.StoreGroupDeleteResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	id, err := s.master.NewID()
+	if err != nil {
+		log.Debugf("end group delete:%+v, new id error:%v", req, errors.ErrorStack(err))
+		return &meta.StoreGroupDeleteResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	//给所有人发消息，告诉他们群没有了
+	pm := meta.PushMessage{Operate: meta.Relation_Del, Msg: meta.Message{ID: id, Group: req.ID, From: req.User, Body: "群没了"}}
+	if err := s.message.send(pm); err != nil {
+		log.Debugf("end Group delete:%+v, send error:%v", req, errors.ErrorStack(err))
+		return &meta.StoreGroupDeleteResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	for _, uid := range group.Member {
+		s.user.delGroup(uid, req.ID)
+	}
+
+	//删除群组
+	if err := s.group.delGroup(req.ID, req.User); err != nil {
+		return &meta.StoreGroupDeleteResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreGroupDeleteResponse{}, nil
 }
 
 // LoadGroupList 加载群组列表
 func (s *Store) LoadGroupList(_ context.Context, req *meta.StoreLoadGroupListRequest) (*meta.StoreLoadGroupListResponse, error) {
-
+	log.Debugf("begin loadGroupList:%v", req)
 	//获取群组id列表
 	gids, err := s.user.getGroups(req.User)
 	if err != nil {
+		log.Debugf("end loadGroupList:%v error:%s", req, errors.ErrorStack(err))
 		return &meta.StoreLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
-	var groups []*meta.Group
+	var groups []*meta.GroupInfo
 	//分别获取群组信息
 	for _, gid := range gids {
-		g, err := s.group.get(gid)
+		g, err := s.group.getGroup(gid)
 		if err != nil {
+			if errors.Cause(err) == leveldb.ErrNotFound {
+				//可能这个组不存在了
+				continue
+			}
+			log.Debugf("end loadGroupList:%v error:%s", req, errors.ErrorStack(err))
 			return &meta.StoreLoadGroupListResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 		}
 
 		groups = append(groups, &g)
 	}
 
+	log.Debugf("end loadGroupList:%v group:%v", req, groups)
 	return &meta.StoreLoadGroupListResponse{Groups: groups}, nil
 }

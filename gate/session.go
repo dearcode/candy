@@ -1,73 +1,59 @@
 package gate
 
 import (
-	"time"
+	"sync"
 
-	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
 )
 
-const (
-	stateOffline = iota
-	stateOnline
-)
-
 type session struct {
-	id     int64
-	state  int
-	last   int64
-	addr   string
-	stream meta.Gate_MessageStreamServer
+	user  int64         // 用户ID
+	conns []*connection // 来自不同设备的所有连接
+	sync.Mutex
 }
 
-func newSession(addr string) *session {
-	log.Debugf("addr:%s", addr)
-	return &session{addr: addr}
+func newSession(id int64, c *connection) *session {
+	return &session{user: id, conns: []*connection{c}}
 }
 
-func (s *session) addStream(stream meta.Gate_MessageStreamServer) {
-	s.stream = stream
+func (s *session) addConnection(conn *connection) {
+	log.Debugf("%d session:%v add conn:%+v", s.user, s, conn)
+	s.Lock()
+	s.conns = append(s.conns)
+	s.Unlock()
 }
 
-func (s *session) getStream() meta.Gate_MessageStreamServer {
-	if s.stream != nil {
-		return s.stream
+// delConnection 遍历session的conns，删除当前连接
+func (s *session) delConnection(conn *connection) bool {
+	log.Debugf("%d session:%v del conn:%+v", s.user, s, conn)
+	empty := false
+	s.Lock()
+	for i := 0; i < len(s.conns); {
+		if s.conns[i].getAddr() == conn.getAddr() {
+			copy(s.conns[i:], s.conns[i+1:])
+			s.conns = s.conns[:len(s.conns)-1]
+			continue
+		}
+		i++
 	}
-	return nil
+	if len(s.conns) == 0 {
+		empty = true
+	}
+	s.Unlock()
+
+	return empty
 }
 
-func (s *session) online(id int64) {
-	log.Debugf("id:%v", id)
-	s.state = stateOnline
-	s.id = id
-	s.last = time.Now().Unix()
-}
+//walkConnection 复制遍历
+func (s *session) walkConnection(call func(*connection) bool) {
+	log.Debugf("%d walkConnection", s.user)
+	s.Lock()
+	conns := append([]*connection{}, s.conns...)
+	s.Unlock()
 
-func (s *session) offline() {
-	log.Debugf("id:%v", s.id)
-	s.state = stateOffline
-}
-
-func (s *session) update() {
-	s.last = time.Now().Unix()
-	log.Debugf("last:%v", s.last)
-}
-
-func (s *session) getAddr() string {
-	log.Debugf("session getAddr addr:%v", s.addr)
-	return s.addr
-}
-
-func (s *session) getID() int64 {
-	log.Debugf("session getID id:%v", s.id)
-	return s.id
-}
-
-func (s *session) isOnline() bool {
-	log.Debugf("session isOnline flag:%v", s.state == stateOnline)
-	return s.state == stateOnline
-}
-
-func (s *session) heartbeat() {
-	s.last = time.Now().Unix()
+	for _, c := range conns {
+		if call(c) {
+			break
+		}
+	}
 }

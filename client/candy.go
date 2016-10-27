@@ -1,4 +1,4 @@
-package candy
+package client
 
 import (
 	"time"
@@ -9,35 +9,41 @@ import (
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
-	"github.com/dearcode/candy/util/log"
 )
 
 const (
 	networkTimeout = time.Second * 3
+	emptyString    = ""
 )
 
 // MessageHandler 接收服务器端推送来的消息
 type MessageHandler interface {
 	// OnRecv 这函数理论上是多线程调用，客户端需要注意下
-	OnRecv(id int64, method int, group int64, from int64, to int64, body string)
+	OnRecv(event int32, operate int32, ID int64, group int64, from int64, to int64, body string)
 
 	// OnError 连接被服务器断开，或其它错误
 	OnError(msg string)
+
+	// OnHealth 连接正常
+	OnHealth()
 
 	// OnUnHealth 连接异常
 	OnUnHealth(msg string)
 }
 
+// CandyClient 客户端提供和服务器交互的接口
 type CandyClient struct {
 	host    string
 	stop    bool
 	conn    *grpc.ClientConn
 	api     meta.GateClient
 	handler MessageHandler
-	stream  meta.Gate_MessageStreamClient
+	stream  meta.Gate_StreamClient
 	health  healthpb.HealthClient
+	bhealth bool
 }
 
+// NewCandyClient - create an new CandyClient
 func NewCandyClient(host string, handler MessageHandler) *CandyClient {
 	return &CandyClient{host: host, handler: handler}
 }
@@ -49,9 +55,11 @@ func (c *CandyClient) Start() (err error) {
 	}
 
 	c.api = meta.NewGateClient(c.conn)
-	if c.stream, err = c.api.MessageStream(context.Background()); err != nil {
+	if c.stream, err = c.api.Stream(context.Background(), &meta.Message{}); err != nil {
 		return
 	}
+
+	c.bhealth = true
 
 	go c.loopRecvMessage()
 
@@ -69,29 +77,66 @@ func (c *CandyClient) Stop() error {
 	return c.conn.Close()
 }
 
+// Register 用户注册接口
 func (c *CandyClient) Register(user, passwd string) (int64, error) {
+	if code, err := CheckUserName(user); err != nil {
+		return -1, NewError(code, err.Error())
+	}
+	if code, err := CheckUserPassword(passwd); err != nil {
+		return -1, NewError(code, err.Error())
+	}
+
 	req := &meta.GateRegisterRequest{User: user, Password: passwd}
 	resp, err := c.api.Register(context.Background(), req)
 	if err != nil {
 		return -1, err
 	}
 
-	return resp.ID, resp.Header.Error()
+	return resp.ID, resp.Header.JsonError()
 }
 
+// Login 用户登陆
 func (c *CandyClient) Login(user, passwd string) (int64, error) {
+	if code, err := CheckUserName(user); err != nil {
+		return -1, NewError(code, err.Error())
+	}
+
+	if code, err := CheckUserPassword(passwd); err != nil {
+		return -1, NewError(code, err.Error())
+	}
+
 	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
 	resp, err := c.api.Login(context.Background(), req)
 	if err != nil {
 		return -1, err
 	}
 
-	return resp.ID, resp.Header.Error()
+	return resp.ID, resp.Header.JsonError()
 }
 
-func (c *CandyClient) Logout(user string) error {
-	req := &meta.GateUserLogoutRequest{User: user}
+// Logout 注销登陆
+func (c *CandyClient) Logout() error {
+	req := &meta.GateUserLogoutRequest{}
 	resp, err := c.api.Logout(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	return resp.Header.JsonError()
+}
+
+// UpdateUserInfo 更新用户信息， 昵称/头像
+func (c *CandyClient) UpdateUserInfo(user, nickName, avatar string) error {
+	if code, err := CheckUserName(user); err != nil {
+		return NewError(code, err.Error())
+	}
+
+	if code, err := CheckNickName(nickName); err != nil {
+		return NewError(code, err.Error())
+	}
+
+	req := &meta.GateUpdateUserInfoRequest{Name: user, NickName: nickName, Avatar: avatar}
+	resp, err := c.api.UpdateUserInfo(context.Background(), req)
 	if err != nil {
 		return err
 	}
@@ -99,88 +144,164 @@ func (c *CandyClient) Logout(user string) error {
 	return resp.Header.Error()
 }
 
-func (c *CandyClient) UpdateUserInfo(user, nickName string, avatar []byte) (int64, error) {
-	req := &meta.GateUpdateUserInfoRequest{User: user, NickName: nickName, Avatar: avatar}
-	resp, err := c.api.UpdateUserInfo(context.Background(), req)
-	if err != nil {
-		return -1, err
+// UpdateUserSignature 更新用户签名
+func (c *CandyClient) UpdateUserSignature(name, signature string) error {
+	if code, err := CheckUserName(name); err != nil {
+		return NewError(code, err.Error())
 	}
 
-	return resp.ID, resp.Header.Error()
+	req := &meta.GateUpdateSignatureRequest{Name: name, Signature: signature}
+	resp, err := c.api.UpdateSignature(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	return resp.Header.Error()
 }
 
-func (c *CandyClient) UpdateUserPassword(user, passwd string) (int64, error) {
-	req := &meta.GateUpdateUserPasswordRequest{User: user, Password: passwd}
+// UpdateUserPassword 更新用户密码
+func (c *CandyClient) UpdateUserPassword(user, passwd string) error {
+	if code, err := CheckUserName(user); err != nil {
+		return NewError(code, err.Error())
+	}
+
+	if code, err := CheckUserPassword(passwd); err != nil {
+		return NewError(code, err.Error())
+	}
+
+	req := &meta.GateUpdateUserPasswordRequest{Name: user, Password: passwd}
 	resp, err := c.api.UpdateUserPassword(context.Background(), req)
 	if err != nil {
-		return -1, err
+		return err
 	}
 
-	return resp.ID, resp.Header.Error()
+	return resp.Header.Error()
 }
 
-func (c *CandyClient) GetUserInfoByName(user string) (*UserInfo, error) {
-	req := &meta.GateGetUserInfoRequest{Type: 0, UserName: user}
+// GetUserInfoByName 根据用户名获取用户信息
+//TODO 需要把返回字符串修改成对应的类型
+func (c *CandyClient) GetUserInfoByName(user string) (string, error) {
+	userInfo, err := c.getUserInfoByName(user)
+	if err != nil {
+		return emptyString, err
+	}
+
+	data, err := encodeJSON(userInfo)
+	if err != nil {
+		return emptyString, err
+	}
+
+	return string(data), nil
+}
+
+func (c *CandyClient) getUserInfoByName(user string) (*meta.UserInfo, error) {
+	if code, err := CheckUserName(user); err != nil {
+		return nil, NewError(code, err.Error())
+	}
+
+	req := &meta.GateGetUserInfoRequest{FindByName: true, UserName: user}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
 
-	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
+	userInfo := &meta.UserInfo{
+		ID:        resp.ID,
+		Name:      resp.User,
+		NickName:  resp.NickName,
+		Avatar:    resp.Avatar,
+		Signature: resp.Signature,
+	}
 	return userInfo, resp.Header.Error()
 }
 
-func (c *CandyClient) GetUserInfoByID(userID int64) (*UserInfo, error) {
-	req := &meta.GateGetUserInfoRequest{Type: 1, UserID: userID}
+// GetUserInfoByID 根据用户ID获取用户信息
+//TODO 需要把返回字符串修改成对应的类型
+func (c *CandyClient) GetUserInfoByID(userID int64) (string, error) {
+	userInfo, err := c.getUserInfoByID(userID)
+	if err != nil {
+		return emptyString, err
+	}
+
+	data, err := encodeJSON(userInfo)
+	if err != nil {
+		return emptyString, err
+	}
+
+	return string(data), nil
+}
+
+func (c *CandyClient) getUserInfoByID(userID int64) (*meta.UserInfo, error) {
+	req := &meta.GateGetUserInfoRequest{UserID: userID}
 	resp, err := c.api.GetUserInfo(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
 
-	userInfo := &UserInfo{ID: resp.ID, Name: resp.User, NickName: resp.NickName, Avatar: resp.Avatar}
+	userInfo := &meta.UserInfo{
+		ID:        resp.ID,
+		Name:      resp.User,
+		NickName:  resp.NickName,
+		Avatar:    resp.Avatar,
+		Signature: resp.Signature,
+	}
 	return userInfo, resp.Header.Error()
 }
 
-func (c *CandyClient) AddFriend(userID int64, confirm bool, msg string) (bool, error) {
-	req := &meta.GateAddFriendRequest{UserID: userID, Confirm: confirm, Msg: msg}
-	resp, err := c.api.AddFriend(context.Background(), req)
+// Friend 添加好友
+func (c *CandyClient) Friend(userID int64, operate int32, msg string) error {
+	req := &meta.GateFriendRequest{UserID: userID, Operate: meta.Relation(operate), Msg: msg}
+	resp, err := c.api.Friend(context.Background(), req)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return resp.Confirm, resp.Header.Error()
+	return resp.Header.Error()
 }
 
-func (c *CandyClient) LoadFriendList() (*FriendList, error) {
+// LoadFriendList 加载好友列表
+func (c *CandyClient) LoadFriendList() (string, error) {
 	req := &meta.GateLoadFriendListRequest{}
 	resp, err := c.api.LoadFriendList(context.Background(), req)
 	if err != nil {
-		return nil, err
+		return emptyString, err
 	}
 
-	return &FriendList{Users: resp.Users}, nil
+	friendList := &meta.FriendList{Users: resp.Users}
+	data, err := encodeJSON(friendList)
+	if err != nil {
+		return emptyString, err
+	}
+
+	return string(data), resp.Header.Error()
 }
 
-// 支持模糊查询，返回对应用户的列表
-func (c *CandyClient) FindUser(user string) (*UserList, error) {
+// FindUser 支持模糊查询，返回对应用户的列表
+func (c *CandyClient) FindUser(user string) (string, error) {
 	req := &meta.GateFindUserRequest{User: user}
 	resp, err := c.api.FindUser(context.Background(), req)
 	if err != nil {
-		return nil, err
+		return emptyString, err
 	}
 
-	users := make([]*UserInfo, 0)
+	var users []*meta.UserInfo
 	for _, matchUser := range resp.Users {
-		userInfo, err := c.GetUserInfoByName(matchUser)
-		if err != nil {
-			return nil, err
+		userInfo, e := c.getUserInfoByName(matchUser)
+		if e != nil {
+			return emptyString, e
 		}
 		users = append(users, userInfo)
 	}
+	userList := &meta.UserList{Users: users}
+	data, err := encodeJSON(userList)
+	if err != nil {
+		return emptyString, err
+	}
 
-	return &UserList{Users: users}, resp.Header.Error()
+	return string(data), resp.Header.Error()
 }
 
+// FileExist 判断文件是否存在
 func (c *CandyClient) FileExist(key string) (bool, error) {
 	req := &meta.GateCheckFileRequest{Names: []string{key}}
 	resp, err := c.api.CheckFile(context.Background(), req)
@@ -196,9 +317,10 @@ func (c *CandyClient) FileExist(key string) (bool, error) {
 		return true, nil
 	}
 
-	return false, nil
+	return false, resp.Header.Error()
 }
 
+// FileUpload 文件上传
 func (c *CandyClient) FileUpload(data []byte) (string, error) {
 	md5 := string(util.MD5(data))
 	exist, err := c.FileExist(md5)
@@ -219,6 +341,7 @@ func (c *CandyClient) FileUpload(data []byte) (string, error) {
 	return md5, resp.Header.Error()
 }
 
+// FileDownload 文件下载
 func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 	req := &meta.GateDownloadFileRequest{Names: []string{key}}
 	resp, err := c.api.DownloadFile(context.Background(), req)
@@ -230,31 +353,30 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 }
 
 // SendMessage 向服务器发送消息.
-func (c *CandyClient) SendMessage(from, group, user int64, body string) error {
-	msg := &meta.Message{From: from, Group: group, User: user, Body: body}
-	if err := c.stream.Send(msg); err != nil {
-		return err
+func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
+	req := &meta.GateSendMessageRequest{Msg: &meta.Message{Group: group, To: to, Body: body}}
+	resp, err := c.api.SendMessage(context.Background(), req)
+	if err != nil {
+		return 0, err
 	}
-	return nil
+	return resp.ID, resp.Header.Error()
 }
 
 // loopRecvMessage 一直接收服务器返回消息, 直到退出.
 func (c *CandyClient) loopRecvMessage() {
-	log.Debugf("start loopRecvMessage")
-
 	for !c.stop {
-		msg, err := c.stream.Recv()
-		log.Debugf("recv:%v, err:%v", msg, err)
+		pm, err := c.stream.Recv()
 		if err != nil {
 			// 这里不退出会死循环
 			c.handler.OnError(err.Error())
 			break
 		}
 
-		c.handler.OnRecv(msg.ID, int(msg.Method), msg.Group, msg.From, msg.User, msg.Body)
+		c.handler.OnRecv(int32(pm.Event), int32(pm.Operate), pm.Msg.ID, pm.Msg.Group, pm.Msg.From, pm.Msg.To, pm.Msg.Body)
 	}
 }
 
+// healthCheck 健康检查
 func (c *CandyClient) healthCheck() {
 	for !c.stop {
 		time.Sleep(time.Second)
@@ -264,7 +386,18 @@ func (c *CandyClient) healthCheck() {
 
 		_, err := c.health.Check(context.Background(), req)
 		if err != nil {
-			c.handler.OnUnHealth(err.Error())
+			//确保异常只会调用一次
+			if c.bhealth {
+				c.bhealth = false
+				c.handler.OnUnHealth(err.Error())
+			}
+			continue
+		}
+
+		//由异常到正常
+		if !c.bhealth {
+			c.bhealth = true
+			c.handler.OnHealth()
 		}
 	}
 }
@@ -282,27 +415,53 @@ func (c *CandyClient) Heartbeat() error {
 
 // CreateGroup 创建群组
 func (c *CandyClient) CreateGroup(name string) (int64, error) {
-	req := &meta.GateCreateGroupRequest{GroupName: name}
-	resp, err := c.api.CreateGroup(context.Background(), req)
+	req := &meta.GateGroupCreateRequest{Name: name}
+	resp, err := c.api.GroupCreate(context.Background(), req)
 	if err != nil {
 		return -1, err
 	}
 
-	return resp.ID, nil
+	return resp.ID, resp.Header.Error()
+}
+
+// Group 群操作
+func (c *CandyClient) Group(id int64, operate int32, users []int64, msg string) error {
+	req := &meta.GateGroupRequest{ID: id, Msg: msg, Operate: meta.Relation(operate), Users: users}
+	resp, err := c.api.Group(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	return resp.Header.Error()
+}
+
+// DeleteGroup 解散群组
+func (c *CandyClient) DeleteGroup(id int64) error {
+	req := &meta.GateGroupDeleteRequest{ID: id}
+	resp, err := c.api.GroupDelete(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	return resp.Header.Error()
 }
 
 // LoadGroupList 拉取群组列表
-func (c *CandyClient) LoadGroupList() (*GroupList, error) {
+func (c *CandyClient) LoadGroupList() (string, error) {
 	req := &meta.GateLoadGroupListRequest{}
 	resp, err := c.api.LoadGroupList(context.Background(), req)
 	if err != nil {
-		return nil, err
+		return emptyString, err
 	}
 
-	var groups []*GroupInfo
+	var groups []*meta.GroupInfo
 	for _, group := range resp.Groups {
-		groups = append(groups, &GroupInfo{ID: group.ID, Name: group.Name, Users: group.Users})
+		groups = append(groups, &meta.GroupInfo{ID: group.ID, Name: group.Name, Member: group.Member, Admins: group.Admins})
 	}
 
-	return &GroupList{Groups: groups}, nil
+	groupList := &meta.GroupList{Groups: groups}
+	data, err := encodeJSON(groupList)
+	if err != nil {
+		return emptyString, err
+	}
+
+	return string(data), resp.Header.Error()
 }

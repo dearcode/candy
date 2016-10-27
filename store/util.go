@@ -40,3 +40,31 @@ func UserFriendRange(id int64) ([]byte, []byte) {
 func UserUnionKey(id int64) []byte {
 	return util.EncodeKey(id, util.UserIDPrefix)
 }
+
+// GroupInviteKey 群邀请key
+func GroupInviteKey(group, user int64) []byte {
+	return util.EncodeKey(group, util.GroupInvitePrefix, user)
+}
+
+// GroupApplyKey 申请入群key
+func GroupApplyKey(group, user int64) []byte {
+	return util.EncodeKey(group, util.GroupApplyPrefix, user)
+}
+
+// GroupMemberKey 群成员key
+func GroupMemberKey(group, user int64) []byte {
+	return util.EncodeKey(group, util.GroupMemberPrefix, user)
+}
+
+// GroupAdminKey 群管理员key
+func GroupAdminKey(group, user int64) []byte {
+	return util.EncodeKey(group, util.GroupAdminPrefix, user)
+}
+
+// DecodeGroupKey 解析GroupKey.
+func DecodeGroupKey(key []byte) (group int64, option int64, user int64) {
+	group = util.DecodeInt64(key)
+	option = util.DecodeInt64(key[8:])
+	user = util.DecodeInt64(key[16:])
+	return
+}

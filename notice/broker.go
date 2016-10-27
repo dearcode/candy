@@ -3,116 +3,142 @@ package notice
 import (
 	"sync"
 
-	"github.com/juju/errors"
-	"golang.org/x/net/context"
-
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
 )
 
-type gateInfo struct {
-	addr string
+type pushRequest struct {
+	ids []meta.PushID
+	msg meta.PushMessage
 }
 
-type channel struct {
-	id    int64
-	gates map[string]gateInfo
-	sync.RWMutex
-}
-
-type message struct {
-	id   int64
-	addr string
-	meta.Message
+type device struct {
+	//cid 所在chan的ID
+	cid  int32
+	name string
 }
 
 type broker struct {
-	channels map[int64]channel
-	sync.RWMutex
+	mbox      chan pushRequest
+	chans     map[int32]chan pushRequest
+	chanIndex int32
+	chansLock sync.RWMutex
 
-	pusher chan message
-	gate   *gate
+	// users 存储用户ID对应的chan列表
+	users map[int64][]device
+	sync.RWMutex
 }
 
 const (
 	defaultPushChanSize = 1000
+	// 默认推送线程数量
+	defaultSenderNumber = 4
 )
 
 func newBroker() *broker {
-	return &broker{channels: make(map[int64]channel), pusher: make(chan message, defaultPushChanSize), gate: newGate()}
+	return &broker{users: make(map[int64][]device), chans: make(map[int32]chan pushRequest), mbox: make(chan pushRequest, defaultPushChanSize)}
 }
 
 // Start start service.
-func (b *broker) Start() error {
-	go func() {
-		for {
-			m := <-b.pusher
-			log.Debugf("sendMessage msg:%v", m)
-			b.sendMessage(m)
+func (b *broker) start() {
+	go b.run()
+}
+
+// split 按用户所在chan拆分请求
+func (b *broker) split(req pushRequest) map[int32][]meta.PushID {
+	pids := make(map[int32][]meta.PushID)
+	b.RLock()
+	for _, id := range req.ids {
+		devs, ok := b.users[id.User]
+		if !ok {
+			// 跳过未订阅的用户
+			continue
 		}
-	}()
-	return nil
+
+		for _, dev := range devs {
+			if ids, ok := pids[dev.cid]; ok {
+				ids = append(ids, id)
+				continue
+			}
+			pids[dev.cid] = []meta.PushID{id}
+		}
+	}
+	b.RUnlock()
+	return pids
 }
 
-func (b *broker) sendMessage(m message) error {
-	log.Debugf("broker message:%v, to gate:%s", m, m.addr)
-	g, err := b.gate.client(m.addr)
-	if err != nil {
-		log.Errorf("connect to %s error:%s", m.addr, err.Error())
-		return errors.Trace(err)
+// run 这里做拆分推送: 一个推送消息，可能推送到多个gate上用户的多个设备也可能用户不在线
+func (b *broker) run() {
+	for {
+		req := <-b.mbox
+		for cid, ids := range b.split(req) {
+			req := pushRequest{ids: ids, msg: req.msg}
+			b.chansLock.RLock()
+			if c, ok := b.chans[cid]; ok {
+				c <- req
+			}
+			b.chansLock.RUnlock()
+		}
 	}
-	req := &meta.GateNoticeRequest{ChannelID: m.id, Msg: &m.Message}
-	log.Debugf("begin call gate Notice")
-	resp, err := g.Notice(context.Background(), req)
-	log.Debugf("end call gate Notice err:%v, head:%v", err, resp.Header.Error())
-	if err != nil {
-		log.Errorf("Notice to gate:%s error:%s", m.addr, err.Error())
-		return errors.Trace(err)
-	}
-
-	return errors.Trace(err)
 }
 
-func (b *broker) Subscribe(id int64, addr string) {
+//addPushChan gate的连接上来要加，断开要减去
+func (b *broker) addPushChan(c chan pushRequest) int32 {
+	var cid int32
+	b.chansLock.Lock()
+	b.chanIndex++
+	cid = b.chanIndex
+	b.chans[cid] = c
+	b.chansLock.Unlock()
+	return cid
+}
+
+//delPushChan gate的连接上来要加，断开要减去
+func (b *broker) delPushChan(cid int32) {
+	b.chansLock.Lock()
+	delete(b.chans, cid)
+	b.chansLock.Unlock()
+}
+
+func (b *broker) subscribe(uid int64, dev string, cid int32) {
+	log.Debugf("Subscribe uid:%d, dev:%s, cid:%d", uid, dev, cid)
 	b.Lock()
-
-	c, ok := b.channels[id]
-	if !ok {
-		c = channel{id: id, gates: make(map[string]gateInfo)}
-		b.channels[id] = c
+	if devs, ok := b.users[uid]; ok {
+		for i := 0; i < len(devs); {
+			log.Debugf("dev[%d]:%s, devname:%s", i, devs[i].name, dev)
+			if devs[i].name == dev {
+				copy(devs[i:], devs[i+1:])
+				devs = devs[:len(devs)-1]
+				log.Debugf("new devs:%v", devs)
+				continue
+			}
+			i++
+		}
+		b.users[uid] = devs
 	}
-
-	if _, ok = c.gates[addr]; !ok {
-		c.gates[addr] = gateInfo{addr: addr}
-	}
-
+	b.users[uid] = append(b.users[uid], device{name: dev, cid: cid})
 	b.Unlock()
-
-	log.Debugf("Subscribe id:%d, addr:%s", id, addr)
 }
 
-func (b *broker) UnSubscribe(id int64, addr string) {
+func (b *broker) unSubscribe(uid int64, dev string) {
+	log.Debugf("UnSubscribe uid:%d, dev:%s", uid, dev)
 	b.Lock()
-	if c, ok := b.channels[id]; ok {
-		delete(c.gates, addr)
-		delete(b.channels, id)
-	}
-	b.Unlock()
-	log.Debugf("UnSubscribe id:%d, addr:%s", id, addr)
-}
-
-func (b *broker) Push(msg meta.Message, ids ...int64) {
-	log.Debugf("broker msg:%v ids:%v", msg, ids)
-	b.Lock()
-
-	for _, id := range ids {
-		if c, ok := b.channels[id]; ok {
-			for _, gate := range c.gates {
-				b.pusher <- message{id: id, addr: gate.addr, Message: msg}
-				log.Debugf("pusher msg, id:%v addr:%v msg:%v", id, gate.addr, msg)
+	if devs, ok := b.users[uid]; ok {
+		for i := 0; i < len(devs); {
+			if devs[i].name == dev {
+				copy(devs[i:], devs[i+1:])
+				devs = devs[:len(devs)-1]
 			}
 		}
-	}
 
+		if len(devs) == 0 {
+			delete(b.users, uid)
+		}
+	}
 	b.Unlock()
+}
+
+func (b *broker) push(msg meta.PushMessage, ids ...meta.PushID) {
+	log.Debugf("broker msg:%v ids:%v", msg, ids)
+	b.mbox <- pushRequest{ids: ids, msg: msg}
 }

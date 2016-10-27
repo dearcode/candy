@@ -8,23 +8,43 @@ import "common.proto";
 
 service Gate {
     rpc Register (GateRegisterRequest) returns (GateRegisterResponse);
+
+    // UpdateUserInfo 更新用户信息
     rpc UpdateUserInfo (GateUpdateUserInfoRequest) returns (GateUpdateUserInfoResponse);
+    
+    // UpdateSignature 更新用户签名
+    rpc UpdateSignature(GateUpdateSignatureRequest) returns (GateUpdateSignatureResponse);
+
+    // UpdateUserPassword 修改密码
     rpc UpdateUserPassword (GateUpdateUserPasswordRequest) returns (GateUpdateUserPasswordResponse);
+
+    // GetUserInfo 查询用户信息
     rpc GetUserInfo (GateGetUserInfoRequest) returns (GateGetUserInfoResponse);
 
     rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
     rpc Logout (GateUserLogoutRequest) returns (GateUserLogoutResponse);
 
-    rpc MessageStream (stream Message) returns (stream Message);
-
-    // AddFriend 添加好友或确认接受添加.
-    rpc AddFriend (GateAddFriendRequest) returns (GateAddFriendResponse);
     // FindUser 添加好友前先查找出来对应的ID.
     rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
+
+    // SendMessage 发送消息
+    rpc SendMessage(GateSendMessageRequest) returns (GateSendMessageResponse);
+
+    // Stream 连接成功后立刻调用Stream, 开启推送
+    rpc Stream(Message) returns (stream PushMessage);
+
+    // Friend 好友的添加，删除、确认、拒绝.
+    rpc Friend (GateFriendRequest) returns (GateFriendResponse);
     // 加载好友列表
     rpc LoadFriendList (GateLoadFriendListRequest) returns (GateLoadFriendListResponse);
 
-    rpc CreateGroup (GateCreateGroupRequest) returns (GateCreateGroupResponse);
+    // Group 添加，邀请，退出, 踢出
+    rpc Group (GateGroupRequest) returns (GateGroupResponse);
+
+    //GroupCreate 创建群
+    rpc GroupCreate (GateGroupCreateRequest) returns (GateGroupCreateResponse);
+    // GroupDelete 删除群，解散群
+    rpc GroupDelete (GateGroupDeleteRequest) returns (GateGroupDeleteResponse);
 
     // LoadGroupList 加载群组列表
     rpc LoadGroupList (GateLoadGroupListRequest) returns (GateLoadGroupListResponse);
@@ -43,8 +63,6 @@ service Gate {
     rpc LoadMessage (GateLoadMessageRequest) returns (GateLoadMessageResponse);
 
 
-    // Notice 服务端向客户端推送接口.
-    rpc Notice (GateNoticeRequest) returns (GateNoticeResponse);
 
 }
 
@@ -58,20 +76,20 @@ message GateFindUserResponse {
 
 }
 
-message GateAddFriendRequest {
-    int64 UserID = 1;
-    bool Confirm = 2;
-    string Msg = 3;
+message GateFriendRequest {
+    int64       UserID  = 1;
+    Relation    Operate = 2;
+    string      Msg     = 3;
 }
 
-message GateAddFriendResponse {
+message GateFriendResponse {
     ResponseHeader header = 1;
-    bool Confirm = 2;
 }
 
 message GateCreateGroupRequest {
     string GroupName = 1;
 }
+
 
 message GateCreateGroupResponse {
     ResponseHeader header = 1;
@@ -90,39 +108,38 @@ message GateRegisterResponse {
 }
 
 message GateUpdateUserInfoRequest {
-    string User = 1;
+    string Name     = 1;
     string NickName = 2;
-    bytes Avatar = 3;
+    string Avatar   = 3;
 }
 
 message GateUpdateUserInfoResponse {
     ResponseHeader header = 1;
-    int64 ID = 2;
 }
 
 message GateUpdateUserPasswordRequest {
-    string User = 1;
-    string Password = 2;
+    string Name         = 1;
+    string Password     = 2;
+    string NewPassword  = 3;
 }
 
 message GateUpdateUserPasswordResponse {
     ResponseHeader header = 1;
-    int64 ID = 2;
 }
 
 message GateGetUserInfoRequest {
-    //0:用户名称   1：用户ID
-    int32 type = 1;
-    string UserName = 2;
-    int64 UserID = 3;
+    bool    FindByName  = 1;
+    string  UserName    = 2;
+    int64   UserID      = 3;
 }
 
 message GateGetUserInfoResponse {
-    ResponseHeader header = 1;
-    int64 ID = 2;
-    string User = 3;
-    string NickName = 4;
-    bytes Avatar = 5;
+    ResponseHeader  header      = 1;
+    int64           ID          = 2;
+    string          User        = 3;
+    string          NickName    = 4;
+    string          Avatar      = 5;
+    string          Signature   = 6;
 }
 
 
@@ -131,8 +148,10 @@ message GateHeartbeatRequest { }
 message GateHeartbeatResponse {}
 
 message GateUserLoginRequest {
-    string User = 1;
+    string User     = 1;
     string Password = 2;
+    //设备号
+    string Device   = 3; 
 }
 
 message GateUserLoginResponse {
@@ -142,7 +161,6 @@ message GateUserLoginResponse {
 
 
 message GateUserLogoutRequest {
-    string User = 1;
 }
 
 message GateUserLogoutResponse {
@@ -178,16 +196,6 @@ message GateDownloadFileResponse {
 }
 
 
-message GateNoticeRequest {
-    int64 ChannelID = 1;
-    Message Msg = 2;
-}
-
-
-message GateNoticeResponse {
-    ResponseHeader header = 1;
-}
-
 
 message GateLoadMessageRequest {
     int64 ID = 1;
@@ -197,7 +205,7 @@ message GateLoadMessageRequest {
 
 message GateLoadMessageResponse {
     ResponseHeader header = 1;
-    repeated Message Msgs = 2;
+    repeated PushMessage Msgs = 2;
 }
 
 
@@ -205,8 +213,8 @@ message GateLoadGroupListRequest {
 }
 
 message GateLoadGroupListResponse {
-    ResponseHeader header = 1;
-    repeated Group groups = 2;
+    ResponseHeader      header = 1;
+    repeated GroupInfo  groups = 2;
 }
 
 message GateLoadFriendListRequest {
@@ -217,3 +225,74 @@ message GateLoadFriendListResponse {
     ResponseHeader header = 1;
     repeated int64 users = 2;
 }
+
+message GateSendMessageRequest {
+    Message Msg = 1;
+}
+
+message GateSendMessageResponse {
+    ResponseHeader header = 1;
+    int64 ID = 2;
+}
+
+
+
+/*
+   邀请用户加入, 可以批量邀请，附加邀请消息
+   ID Add Users[UID] Msg
+
+   用户申请加入群
+   ID Add nil Msg
+
+   管理员通过用户申请入群的请求
+   ID Confirm Users[UID]
+
+   用户同意入群的邀请
+   ID Confirm nil
+
+   用户退出群
+   ID Del nil
+
+   踢用户出群
+   ID Del Users[UID]
+ */
+message GateGroupRequest {
+    int64       ID      = 1;
+    Relation    Operate = 2;
+    string      Msg     = 3;
+    repeated    int64   Users  = 4;
+}
+
+message GateGroupResponse {
+    ResponseHeader header = 1;
+}
+
+//创建群
+message GateGroupCreateRequest {
+    string Name = 1;
+}
+
+message GateGroupCreateResponse {
+    ResponseHeader  header  = 1;
+    int64           ID      = 2;
+}
+
+//解散群
+message GateGroupDeleteRequest {
+    int64   ID  = 2;
+}
+
+message GateGroupDeleteResponse {
+    ResponseHeader  header  = 1;
+}
+
+//更新用户签名
+message GateUpdateSignatureRequest {
+    string Name             = 1;
+    string Signature        = 2;
+}
+
+message GateUpdateSignatureResponse {
+    ResponseHeader header = 1;
+}
+
