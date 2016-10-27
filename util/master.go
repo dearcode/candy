@@ -1,17 +1,14 @@
 package util
 
 import (
-	"math"
-	"math/rand"
 	"sync"
-	"time"
 
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
-	"github.com/ngaut/log"
+	"github.com/dearcode/candy/util/log"
 )
 
 // MasterClient 连接master服务.
@@ -44,63 +41,6 @@ func NewMasterClient(host string, etcdAddrs []string) (*MasterClient, error) {
 	}
 
 	return &MasterClient{conn: conn, client: meta.NewMasterClient(conn), host: host, etcd: etcd}, nil
-}
-
-const (
-	maxRetryTimes = 10
-)
-
-// BackOff Implements exponential backoff with full jitter.
-// Returns real back off time in microsecond.
-// See http://www.awsarchitectureblog.com/2015/03/backoff.html.
-func BackOff(attempts int) int {
-	upper := int(math.Min(float64(retryBackOffCap), float64(retryBackOffBase)*math.Pow(2.0, float64(attempts))))
-	sleep := time.Duration(rand.Intn(upper)) * time.Millisecond
-	time.Sleep(sleep)
-	return int(sleep)
-}
-
-var (
-	// Max retry count
-	maxRetryCnt int = 10
-	// retryBackOffBase is the initial duration
-	retryBackOffBase = float64(1)
-	// retryBackOffCap is the max amount of duration
-	retryBackOffCap = float64(100)
-)
-
-type Retry struct {
-	attempts   int
-	times      time.Duration
-	maxAttemps int
-	maxTime    time.Duration
-}
-
-func NewRetry() *Retry {
-	return &Retry{maxAttemps: 10}
-}
-
-func (r *Retry) Valid() bool {
-	if r.maxAttemps != 0 && r.attempts >= r.maxAttemps {
-		return false
-	}
-
-	if r.maxTime != 0 && r.times >= r.maxTime {
-		return false
-	}
-
-	return true
-}
-
-func (r *Retry) Attempts() int {
-	return r.attempts
-}
-func (r *Retry) Next() {
-	delta := math.Min(retryBackOffCap, retryBackOffBase*math.Pow(2.0, float64(r.attempts)))
-	sleep := time.Duration(rand.Float64()*delta) * time.Millisecond
-	time.Sleep(sleep)
-	r.times += sleep
-	r.attempts++
 }
 
 func (m *MasterClient) reconnectMaster() error {
