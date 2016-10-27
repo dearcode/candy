@@ -2,40 +2,112 @@ package master
 
 import (
 	"net"
+	"sync"
 
+	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
+	"github.com/dearcode/candy/util"
 	"github.com/dearcode/candy/util/log"
 )
 
 // Master process gate request.
 type Master struct {
-	host        string
-	idAllocator *idAllocator
+	serv      *grpc.Server
+	etcd      *util.EtcdClient
+	isLeader  bool
+	host      string
+	allocator *allocator
+
+	closer chan struct{}
+
+	sync.RWMutex
 }
 
 // NewMaster create new Master.
-func NewMaster(host string) *Master {
-	return &Master{host: host, idAllocator: newIDAllocator()}
-}
+func NewMaster(host string, etcdAddrs []string) (*Master, error) {
+	var etcd *util.EtcdClient
+	var err error
 
-// Start start Master
-func (g *Master) Start() error {
-	log.Debugf("Master Start...")
-	serv := grpc.NewServer()
-	meta.RegisterMasterServer(serv, g)
-
-	lis, err := net.Listen("tcp", g.host)
-	if err != nil {
-		return err
+	if len(etcdAddrs) != 0 {
+		if etcd, err = util.NewEtcdClient(etcdAddrs); err != nil {
+			return nil, errors.Trace(err)
+		}
 	}
 
-	return serv.Serve(lis)
+	l, err := net.Listen("tcp", host)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	m := &Master{host: host, etcd: etcd, closer: make(chan struct{}), serv: grpc.NewServer()}
+
+	meta.RegisterMasterServer(m.serv, m)
+
+	if etcd != nil {
+		go m.receiver()
+	} else {
+		m.allocator, _ = newAllocator(newMstore(), m.host)
+	}
+
+	return m, m.serv.Serve(l)
+}
+
+func (m *Master) service() error {
+	m.Lock()
+	if m.isLeader {
+		a, err := newAllocator(m.etcd, m.host)
+		if err != nil {
+			log.Errorf("newAllocator error:%s", errors.ErrorStack(err))
+			return errors.Trace(err)
+		}
+		m.allocator = a
+	} else {
+		if m.allocator != nil {
+			m.allocator.stop()
+			m.allocator = nil
+		}
+	}
+
+	m.Unlock()
+	return nil
+}
+
+func (m *Master) receiver() {
+	state, stop := m.etcd.CampaignLeader(util.EtcdMasterAddrKey, m.host)
+
+	for {
+		select {
+		case isLeader := <-state:
+			m.Lock()
+			m.isLeader = isLeader
+			m.Unlock()
+			log.Debugf("i am leader?:%v", isLeader)
+
+			if err := m.service(); err != nil {
+				panic(err.Error())
+			}
+
+		case <-m.closer:
+			log.Infof("stop service, stop campaign leader")
+			close(stop)
+			return
+		}
+	}
+
 }
 
 // NewID return an new id
-func (g *Master) NewID(_ context.Context, _ *meta.NewIDRequest) (*meta.NewIDResponse, error) {
-	return &meta.NewIDResponse{ID: g.idAllocator.newID()}, nil
+func (m *Master) NewID(_ context.Context, _ *meta.NewIDRequest) (*meta.NewIDResponse, error) {
+	m.RLock()
+	a := m.allocator
+	m.RUnlock()
+
+	if a == nil {
+		return &meta.NewIDResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "not leader"}}, nil
+	}
+
+	return &meta.NewIDResponse{ID: a.id()}, nil
 }

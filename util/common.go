@@ -3,6 +3,7 @@ package util
 import (
 	"crypto/md5"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/juju/errors"
@@ -112,4 +113,12 @@ func ContextAddr(ctx context.Context) (string, error) {
 	}
 
 	return addrs[0], nil
+}
+
+//Split strings里的split不判断s是不是空
+func Split(s, sep string) []string {
+	if len(s) == 0 {
+		return nil
+	}
+	return strings.Split(s, sep)
 }
