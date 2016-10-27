@@ -1,7 +1,11 @@
-all: lint client gate master notice store 
+all: fmt lint vet client gate master notice store 
 
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildTime=$(shell date)"
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildVersion=$(shell git rev-parse HEAD)"
+
+FILES := $$(find . -name '*.go' | grep -vE 'vendor') 
+PACKAGES  := $$(go list ./...)
+SOURCE_PATH := store master notice gate util
 
 golint:
 	go get github.com/golang/lint/golint  
@@ -17,27 +21,28 @@ meta:
 	@cd meta; make; cd ..; 
 
 lint: golint
-	golint gate/
-	golint store/
-	golint client/
-	golint master/
-	golint notice/
-	golint util/
+	@for path in $(SOURCE_PATH); do \
+		echo "golint $$path" ; \
+		golint $$path ; \
+	done;
 
 clean:
 	@rm -rf bin
 
-fmt:
-	gofmt -s -l -w .
-	goimports -l -w .
+fmt: 
+	@for path in $(SOURCE_PATH); do \
+		echo "gofmt -s -l -w $$path" ; \
+		gofmt -s -l -w $$path ; \
+		echo "goimports -l -w $$path" ; \
+		goimports -l -w $$path ; \
+	done;
 
 vet:
-	go tool vet . 2>&1
-	go tool vet --shadow . 2>&1
+	go tool vet $(FILES) 2>&1
+	go tool vet --shadow $(FILES) 2>&1
 
 
 gate: godep
-	@go tool vet ./gate/ 2>&1
 	@echo "make gate"
 	@godep go build -ldflags '$(LDFLAGS)' -o bin/gate ./cmd/gate/main.go
 
@@ -58,6 +63,9 @@ client: godep
 	@godep go build -ldflags '$(LDFLAGS)' -o bin/client ./candy.go
 
 test:
-	@go test ./notice/
-	@go test ./store/
+	@for path in $(SOURCE_PATH); do \
+		echo "go test ./$$path" ; \
+		go test "./"$$path ; \
+	done;
+
 

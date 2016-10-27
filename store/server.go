@@ -56,7 +56,7 @@ func (s *Store) Start(notice, master string) error {
 		return errors.Trace(err)
 	}
 
-	s.master, err = util.NewMasterClient(master)
+	s.master, err = util.NewMasterClient(master, nil)
 	if err != nil {
 		return errors.Trace(err)
 	}

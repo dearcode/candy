@@ -75,7 +75,7 @@ func (n *Notifer) Subscribe(stream meta.Push_SubscribeServer) error {
 			n.broker.delPushChan(cid)
 			close(pushChan)
 			log.Errorf("stream recv error:%s", err.Error())
-			return err
+			break
 		}
 		if req.Enable {
 			n.broker.subscribe(req.ID, req.Device, cid)

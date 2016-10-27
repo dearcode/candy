@@ -18,7 +18,7 @@ func main() {
 		return
 	}
 
-	if _, err := master.NewMaster(*host, util.Split(*etcd)); err != nil {
+	if _, err := master.NewMaster(*host, util.Split(*etcd, ",")); err != nil {
 		println(err.Error())
 	}
 }

@@ -42,7 +42,7 @@ func NewGate(host, master, notifer, store string) (*Gate, error) {
 		return nil, errors.Trace(err)
 	}
 
-	mc, err := util.NewMasterClient(master)
+	mc, err := util.NewMasterClient(master, nil)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}

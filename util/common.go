@@ -115,7 +115,7 @@ func ContextAddr(ctx context.Context) (string, error) {
 	return addrs[0], nil
 }
 
-//Split strings里的split不判断s是不是空
+//Split 如果s为空字符串返回空数组
 func Split(s, sep string) []string {
 	if len(s) == 0 {
 		return nil

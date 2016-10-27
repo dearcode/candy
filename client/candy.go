@@ -286,9 +286,9 @@ func (c *CandyClient) FindUser(user string) (string, error) {
 
 	var users []*meta.UserInfo
 	for _, matchUser := range resp.Users {
-		userInfo, err := c.getUserInfoByName(matchUser)
-		if err != nil {
-			return emptyString, err
+		userInfo, e := c.getUserInfoByName(matchUser)
+		if e != nil {
+			return emptyString, e
 		}
 		users = append(users, userInfo)
 	}

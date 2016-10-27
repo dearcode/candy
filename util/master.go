@@ -144,7 +144,6 @@ func (m *MasterClient) NewID() (int64, error) {
 			break
 		}
 		log.Errorf("call NewID error:%s, attempts:%d", e.Error(), r.Attempts())
-		break
 		err = e
 		if e := m.reconnectMaster(); e != nil {
 			log.Errorf("reconnectMaster error:%s", e.Error())
