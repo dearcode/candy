@@ -4,11 +4,11 @@ import (
 	"net"
 	"time"
 
+	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
-	"github.com/dearcode/candy/util"
 	"github.com/dearcode/candy/util/log"
 )
 
@@ -21,87 +21,55 @@ const (
 type Notifer struct {
 	host   string
 	broker *broker
+	gate   *gateClient
+	serv   *grpc.Server
+	ln     net.Listener
 }
 
 // NewNotifer new Notifer server.
-func NewNotifer(host string) *Notifer {
-	return &Notifer{host: host, broker: newBroker()}
-}
-
-// Start start service.
-func (n *Notifer) Start() error {
-	log.Debug("notice Start...")
-	serv := grpc.NewServer()
-
-	meta.RegisterPushServer(serv, n)
-
-	lis, err := net.Listen("tcp", n.host)
+func NewNotifer(host string) (*Notifer, error) {
+	ln, err := net.Listen("tcp", host)
 	if err != nil {
-		return err
+		return nil, errors.Trace(err)
 	}
 
-	n.broker.start()
+	gate := newGateClient()
 
-	return serv.Serve(lis)
+	n := &Notifer{
+		host:   host,
+		gate:   gate,
+		broker: newBroker(gate),
+		serv:   grpc.NewServer(),
+		ln:     ln,
+	}
+
+	meta.RegisterNotiferServer(n.serv, n)
+
+	return n, n.serv.Serve(ln)
 }
 
-// Subscribe add watch to chan or disable watch.
-func (n *Notifer) Subscribe(stream meta.Push_SubscribeServer) error {
-	addr, err := util.ContextAddr(stream.Context())
-	if err != nil {
-		return err
-	}
+// UnSubscribe 用户下线，取消在线推送
+func (n *Notifer) UnSubscribe(_ context.Context, req *meta.UnSubscribeRequest) (*meta.UnSubscribeResponse, error) {
+	n.broker.unSubscribe(req.ID, req.SID, req.Device)
 
-	pushChan := make(chan pushRequest, defaultChanSize)
-	cid := n.broker.addPushChan(pushChan)
-
-	log.Debugf("gate:%s, chanID:%d", addr, cid)
-
-	go func() {
-		for req, ok := <-pushChan; ok; req, ok = <-pushChan {
-			if err = stream.Send(&meta.PushRequest{ID: req.ids, Msg: req.msg}); err != nil {
-				log.Errorf("stream send:(%v) error:%s", req, err.Error())
-				//TODO 关闭stream
-				return
-			}
-		}
-		log.Errorf("pushChan close")
-	}()
-
-	for {
-		req, err := stream.Recv()
-		if err != nil {
-			//TODO 关闭stream
-			n.broker.delPushChan(cid)
-			close(pushChan)
-			log.Errorf("stream recv error:%s", err.Error())
-			break
-		}
-		if req.Enable {
-			n.broker.subscribe(req.ID, req.Device, cid)
-			log.Debugf("subscribe user:%d dev:%s cid:%d", req.ID, req.Device, cid)
-		} else {
-			n.broker.unSubscribe(req.ID, req.Device)
-			log.Debugf("unsubscribe user:%d dev:%s", req.ID, req.Device)
-		}
-	}
-
-	return nil
+	return &meta.UnSubscribeResponse{}, nil
 }
 
-// Push push a message to gate.
+// Subscribe 用户上线，接受在线推送
+func (n *Notifer) Subscribe(_ context.Context, req *meta.SubscribeRequest) (*meta.SubscribeResponse, error) {
+	sid := n.broker.subscribe(req.ID, req.Device, req.Host)
+	return &meta.SubscribeResponse{SID: sid}, nil
+}
+
+// Push store调用的接口.
 func (n *Notifer) Push(_ context.Context, req *meta.PushRequest) (*meta.PushResponse, error) {
 	log.Debugf("begin push message:%v, ids:%v", req.Msg, req.ID)
-	var ids []meta.PushID
-	for _, id := range req.ID {
-		ids = append(ids, id)
-	}
-	if len(ids) == 0 {
+	if len(req.ID) == 0 {
 		log.Errorf("end push ids is nil, ids:%v, msg:%v", req.ID, req.Msg)
 		return &meta.PushResponse{Header: &meta.ResponseHeader{Msg: "push ids is nil", Code: -1}}, nil
 	}
 
-	n.broker.push(req.Msg, ids...)
+	n.broker.push(req.Msg, req.ID...)
 	log.Debugf("end push message:%v, ids:%v", req.Msg, req.ID)
 
 	return &meta.PushResponse{}, nil

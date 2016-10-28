@@ -53,7 +53,7 @@ func NewGate(host, master, notifer, store string) (*Gate, error) {
 	}
 
 	g := &Gate{
-		manager:      newManager(nc),
+		manager:      newManager(nc, host),
 		store:        sc,
 		master:       mc,
 		healthServer: health.NewServer(),
@@ -434,4 +434,20 @@ func (g *Gate) LoadMessage(ctx context.Context, req *meta.GateLoadMessageRequest
 	}
 
 	return &meta.GateLoadMessageResponse{Msgs: msgs}, nil
+}
+
+// Push notifer 调用的接口, 如果用户不在，要返回错误.
+func (g *Gate) Push(ctx context.Context, req *meta.PushRequest) (*meta.PushResponse, error) {
+	addr, err := util.ContextAddr(ctx)
+	if err != nil {
+		log.Errorf("ContextAddr error:%s", errors.ErrorStack(err))
+		return &meta.PushResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+	if addr[:3] != "127" {
+		log.Errorf("refuse client:%s", addr)
+		return &meta.PushResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "ip refuse"}}, nil
+	}
+
+	g.manager.pushMessage(req)
+	return &meta.PushResponse{}, nil
 }

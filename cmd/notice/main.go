@@ -17,8 +17,8 @@ func main() {
 		return
 	}
 
-	s := notice.NewNotifer(*host)
-	if err := s.Start(); err != nil {
-		println(err.Error())
+	_, err := notice.NewNotifer(*host)
+	if err != nil {
+		panic(err.Error())
 	}
 }

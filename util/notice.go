@@ -9,52 +9,55 @@ import (
 	"github.com/dearcode/candy/util/log"
 )
 
-// NotiferClient 连接Push服务.
+// NotiferClient 连接Notifer服务.
 type NotiferClient struct {
-	conn   *grpc.ClientConn
-	client meta.PushClient
-	stream meta.Push_SubscribeClient
+	client meta.NotiferClient
 }
 
-// NewNotiferClient 返回Notifer client.
+// NewNotiferClient 返回NotiferClient client.
 func NewNotiferClient(host string) (*NotiferClient, error) {
+	log.Debugf("dial host:%v", host)
 	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
+	return &NotiferClient{client: meta.NewNotiferClient(conn)}, nil
+}
 
-	client := meta.NewPushClient(conn)
-
-	stream, err := client.Subscribe(context.Background())
+//Subscribe 为gate提供，调用Notifer订阅消息
+func (n *NotiferClient) Subscribe(id int64, device, host string) (int64, error) {
+	req := &meta.SubscribeRequest{ID: id, Device: device, Host: host}
+	ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
+	resp, err := n.client.Subscribe(ctx, req)
+	cancel()
 	if err != nil {
-		conn.Close()
-		return nil, errors.Trace(err)
+		return 0, errors.Trace(err)
 	}
 
-	return &NotiferClient{conn: conn, stream: stream, client: client}, nil
+	log.Debugf("resp:%v", resp)
+	return resp.SID, errors.Trace(resp.Header.Error())
 }
 
-// Recv 接收stream消息
-func (n *NotiferClient) Recv() (*meta.PushRequest, error) {
-	return n.stream.Recv()
+//UnSubscribe 为gate提供，调用Notifer取消订阅消息
+func (n *NotiferClient) UnSubscribe(id int64, device, host string, sid int64) error {
+	req := &meta.UnSubscribeRequest{ID: id, Device: device, Host: host, SID: sid}
+	ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
+	resp, err := n.client.UnSubscribe(ctx, req)
+	cancel()
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	log.Debugf("resp:%v", resp)
+	return errors.Trace(resp.Header.Error())
 }
 
-//Subscribe 订阅消息
-func (n *NotiferClient) Subscribe(id int64, device string) error {
-	req := &meta.SubscribeRequest{ID: id, Enable: true, Device: device}
-	return errors.Trace(n.stream.Send(req))
-}
-
-//UnSubscribe 取消订阅消息, 取消哪个渠道的推送
-func (n *NotiferClient) UnSubscribe(id int64, device string) error {
-	req := &meta.SubscribeRequest{ID: id, Enable: false, Device: device}
-	return errors.Trace(n.stream.Send(req))
-}
-
-//Push  调用Notifer发推送消息
+//Push 为store提供调用Notifer发推送消息
 func (n *NotiferClient) Push(msg meta.PushMessage, ids ...meta.PushID) error {
 	req := &meta.PushRequest{ID: ids, Msg: msg}
-	resp, err := n.client.Push(context.Background(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
+	resp, err := n.client.Push(ctx, req)
+	cancel()
 	if err != nil {
 		return errors.Trace(err)
 	}

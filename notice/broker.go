@@ -3,6 +3,8 @@ package notice
 import (
 	"sync"
 
+	"github.com/juju/errors"
+
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
 )
@@ -12,20 +14,11 @@ type pushRequest struct {
 	msg meta.PushMessage
 }
 
-type device struct {
-	//cid 所在chan的ID
-	cid  int32
-	name string
-}
-
 type broker struct {
-	mbox      chan pushRequest
-	chans     map[int32]chan pushRequest
-	chanIndex int32
-	chansLock sync.RWMutex
-
-	// users 存储用户ID对应的chan列表
-	users map[int64][]device
+	mbox   chan pushRequest
+	sid    int64
+	users  map[int64]devices
+	sender brokerSender
 	sync.RWMutex
 }
 
@@ -35,18 +28,21 @@ const (
 	defaultSenderNumber = 4
 )
 
-func newBroker() *broker {
-	return &broker{users: make(map[int64][]device), chans: make(map[int32]chan pushRequest), mbox: make(chan pushRequest, defaultPushChanSize)}
+type brokerSender interface {
+	push(addr string, req meta.PushRequest) error
 }
 
-// Start start service.
-func (b *broker) start() {
-	go b.run()
+func newBroker(sender brokerSender) *broker {
+	b := &broker{users: make(map[int64]devices), mbox: make(chan pushRequest, defaultPushChanSize), sender: sender}
+	for i := 0; i < defaultSenderNumber; i++ {
+		go b.loopSender()
+	}
+	return b
 }
 
 // split 按用户所在chan拆分请求
-func (b *broker) split(req pushRequest) map[int32][]meta.PushID {
-	pids := make(map[int32][]meta.PushID)
+func (b *broker) split(req pushRequest) map[string][]meta.PushID {
+	pids := make(map[string][]meta.PushID)
 	b.RLock()
 	for _, id := range req.ids {
 		devs, ok := b.users[id.User]
@@ -56,86 +52,58 @@ func (b *broker) split(req pushRequest) map[int32][]meta.PushID {
 		}
 
 		for _, dev := range devs {
-			if ids, ok := pids[dev.cid]; ok {
+			if ids, ok := pids[dev.host]; ok {
 				ids = append(ids, id)
 				continue
 			}
-			pids[dev.cid] = []meta.PushID{id}
+			pids[dev.host] = []meta.PushID{id}
 		}
 	}
 	b.RUnlock()
 	return pids
 }
 
-// run 这里做拆分推送: 一个推送消息，可能推送到多个gate上用户的多个设备也可能用户不在线
-func (b *broker) run() {
+// loopSender 这里做拆分推送: 一个推送消息，可能推送到多个gate上用户的多个设备也可能用户不在线
+func (b *broker) loopSender() {
 	for {
 		req := <-b.mbox
-		for cid, ids := range b.split(req) {
-			req := pushRequest{ids: ids, msg: req.msg}
-			b.chansLock.RLock()
-			if c, ok := b.chans[cid]; ok {
-				c <- req
+		for host, ids := range b.split(req) {
+			req := meta.PushRequest{ID: ids, Msg: req.msg}
+			if err := b.sender.push(host, req); err != nil {
+				log.Errorf("push %s req:%+v, err:%s", host, req, errors.ErrorStack(err))
 			}
-			b.chansLock.RUnlock()
 		}
 	}
 }
 
-//addPushChan gate的连接上来要加，断开要减去
-func (b *broker) addPushChan(c chan pushRequest) int32 {
-	var cid int32
-	b.chansLock.Lock()
-	b.chanIndex++
-	cid = b.chanIndex
-	b.chans[cid] = c
-	b.chansLock.Unlock()
-	return cid
-}
-
-//delPushChan gate的连接上来要加，断开要减去
-func (b *broker) delPushChan(cid int32) {
-	b.chansLock.Lock()
-	delete(b.chans, cid)
-	b.chansLock.Unlock()
-}
-
-func (b *broker) subscribe(uid int64, dev string, cid int32) {
-	log.Debugf("Subscribe uid:%d, dev:%s, cid:%d", uid, dev, cid)
+func (b *broker) subscribe(uid int64, dev, host string) int64 {
 	b.Lock()
-	if devs, ok := b.users[uid]; ok {
-		for i := 0; i < len(devs); {
-			log.Debugf("dev[%d]:%s, devname:%s", i, devs[i].name, dev)
-			if devs[i].name == dev {
-				copy(devs[i:], devs[i+1:])
-				devs = devs[:len(devs)-1]
-				log.Debugf("new devs:%v", devs)
-				continue
-			}
-			i++
-		}
+	defer b.Unlock()
+
+	b.sid++
+
+	devs, ok := b.users[uid]
+	if !ok {
+		devs = newDevices()
 		b.users[uid] = devs
 	}
-	b.users[uid] = append(b.users[uid], device{name: dev, cid: cid})
-	b.Unlock()
+
+	devs.put(dev, device{sid: b.sid, host: host})
+
+	log.Debugf("subscribe uid:%d, dev:%s, host:%s, sid:%d", uid, dev, host, b.sid)
+	return b.sid
 }
 
-func (b *broker) unSubscribe(uid int64, dev string) {
-	log.Debugf("UnSubscribe uid:%d, dev:%s", uid, dev)
+func (b *broker) unSubscribe(uid, sid int64, dev string) {
 	b.Lock()
 	if devs, ok := b.users[uid]; ok {
-		for i := 0; i < len(devs); {
-			if devs[i].name == dev {
-				copy(devs[i:], devs[i+1:])
-				devs = devs[:len(devs)-1]
-			}
-		}
-
-		if len(devs) == 0 {
+		devs.del(dev, sid)
+		if devs.empty() {
 			delete(b.users, uid)
 		}
 	}
 	b.Unlock()
+	log.Debugf("unSubscribe uid:%d, dev:%s, sid:%d", uid, dev, sid)
 }
 
 func (b *broker) push(msg meta.PushMessage, ids ...meta.PushID) {

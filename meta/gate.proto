@@ -11,7 +11,7 @@ service Gate {
 
     // UpdateUserInfo 更新用户信息
     rpc UpdateUserInfo (GateUpdateUserInfoRequest) returns (GateUpdateUserInfoResponse);
-    
+
     // UpdateSignature 更新用户签名
     rpc UpdateSignature(GateUpdateSignatureRequest) returns (GateUpdateSignatureResponse);
 
@@ -62,8 +62,8 @@ service Gate {
     // 如果ID为0，就逆序返回旧的100条消息
     rpc LoadMessage (GateLoadMessageRequest) returns (GateLoadMessageResponse);
 
-
-
+    //Push notifer 调用的接口, 如果用户不在，要返回错误.
+    rpc Push(PushRequest) returns (PushResponse);
 }
 
 message GateFindUserRequest {

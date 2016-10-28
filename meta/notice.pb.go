@@ -22,13 +22,11 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// SubscribeRequest 订阅消息, Device使用的设备，Host从哪台gate上来
 type SubscribeRequest struct {
-	// 用户ID
-	ID int64 `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	// 是要订阅，还是要取消
-	Enable bool `protobuf:"varint,2,opt,name=Enable,proto3" json:"Enable,omitempty"`
-	// 用来区分用户的设备，如同一设备多次从不同的gate登录上来，则只推送最新的gate连接
-	Device string `protobuf:"bytes,3,opt,name=Device,proto3" json:"Device,omitempty"`
+	ID     int64  `protobuf:"varint,1,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
+	Device string `protobuf:"bytes,2,opt,name=Device,json=device,proto3" json:"Device,omitempty"`
+	Host   string `protobuf:"bytes,3,opt,name=Host,json=host,proto3" json:"Host,omitempty"`
 }
 
 func (m *SubscribeRequest) Reset()                    { *m = SubscribeRequest{} }
@@ -36,41 +34,48 @@ func (m *SubscribeRequest) String() string            { return proto.CompactText
 func (*SubscribeRequest) ProtoMessage()               {}
 func (*SubscribeRequest) Descriptor() ([]byte, []int) { return fileDescriptorNotice, []int{0} }
 
-// PushRequest 推送的消息.
-type PushRequest struct {
-	ID  []PushID    `protobuf:"bytes,1,rep,name=ID" json:"ID"`
-	Msg PushMessage `protobuf:"bytes,2,opt,name=Msg" json:"Msg"`
+// SubscribeResponse 可能返回节点错误或其它错误信息, SID: 订阅流水号，UnSubscribe时要带上这个
+type SubscribeResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	SID    int64           `protobuf:"varint,2,opt,name=SID,json=sID,proto3" json:"SID,omitempty"`
 }
 
-func (m *PushRequest) Reset()                    { *m = PushRequest{} }
-func (m *PushRequest) String() string            { return proto.CompactTextString(m) }
-func (*PushRequest) ProtoMessage()               {}
-func (*PushRequest) Descriptor() ([]byte, []int) { return fileDescriptorNotice, []int{1} }
+func (m *SubscribeResponse) Reset()                    { *m = SubscribeResponse{} }
+func (m *SubscribeResponse) String() string            { return proto.CompactTextString(m) }
+func (*SubscribeResponse) ProtoMessage()               {}
+func (*SubscribeResponse) Descriptor() ([]byte, []int) { return fileDescriptorNotice, []int{1} }
 
-func (m *PushRequest) GetID() []PushID {
+func (m *SubscribeResponse) GetHeader() *ResponseHeader {
 	if m != nil {
-		return m.ID
+		return m.Header
 	}
 	return nil
 }
 
-func (m *PushRequest) GetMsg() PushMessage {
-	if m != nil {
-		return m.Msg
-	}
-	return PushMessage{}
+// UnSubscribeRequest 取消订阅, SID 订阅流水号，防止消息乱序,
+type UnSubscribeRequest struct {
+	ID     int64  `protobuf:"varint,1,opt,name=ID,json=iD,proto3" json:"ID,omitempty"`
+	Device string `protobuf:"bytes,2,opt,name=Device,json=device,proto3" json:"Device,omitempty"`
+	Host   string `protobuf:"bytes,3,opt,name=Host,json=host,proto3" json:"Host,omitempty"`
+	SID    int64  `protobuf:"varint,4,opt,name=SID,json=sID,proto3" json:"SID,omitempty"`
 }
 
-type PushResponse struct {
+func (m *UnSubscribeRequest) Reset()                    { *m = UnSubscribeRequest{} }
+func (m *UnSubscribeRequest) String() string            { return proto.CompactTextString(m) }
+func (*UnSubscribeRequest) ProtoMessage()               {}
+func (*UnSubscribeRequest) Descriptor() ([]byte, []int) { return fileDescriptorNotice, []int{2} }
+
+// UnSubscribeResponse 可能返回节点错误或其它错误信息
+type UnSubscribeResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *PushResponse) Reset()                    { *m = PushResponse{} }
-func (m *PushResponse) String() string            { return proto.CompactTextString(m) }
-func (*PushResponse) ProtoMessage()               {}
-func (*PushResponse) Descriptor() ([]byte, []int) { return fileDescriptorNotice, []int{2} }
+func (m *UnSubscribeResponse) Reset()                    { *m = UnSubscribeResponse{} }
+func (m *UnSubscribeResponse) String() string            { return proto.CompactTextString(m) }
+func (*UnSubscribeResponse) ProtoMessage()               {}
+func (*UnSubscribeResponse) Descriptor() ([]byte, []int) { return fileDescriptorNotice, []int{3} }
 
-func (m *PushResponse) GetHeader() *ResponseHeader {
+func (m *UnSubscribeResponse) GetHeader() *ResponseHeader {
 	if m != nil {
 		return m.Header
 	}
@@ -79,8 +84,9 @@ func (m *PushResponse) GetHeader() *ResponseHeader {
 
 func init() {
 	proto.RegisterType((*SubscribeRequest)(nil), "candy.meta.SubscribeRequest")
-	proto.RegisterType((*PushRequest)(nil), "candy.meta.PushRequest")
-	proto.RegisterType((*PushResponse)(nil), "candy.meta.PushResponse")
+	proto.RegisterType((*SubscribeResponse)(nil), "candy.meta.SubscribeResponse")
+	proto.RegisterType((*UnSubscribeRequest)(nil), "candy.meta.UnSubscribeRequest")
+	proto.RegisterType((*UnSubscribeResponse)(nil), "candy.meta.UnSubscribeResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -91,137 +97,139 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion3
 
-// Client API for Push service
+// Client API for Notifer service
 
-type PushClient interface {
-	// Subscribe 订阅，取消，接收消息接口.
-	Subscribe(ctx context.Context, opts ...grpc.CallOption) (Push_SubscribeClient, error)
+type NotiferClient interface {
+	// Subscribe 用户上线，接受在线推送
+	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error)
+	// UnSubscribe 用户下线，取消在线推送
+	UnSubscribe(ctx context.Context, in *UnSubscribeRequest, opts ...grpc.CallOption) (*UnSubscribeResponse, error)
 	// Push store调用的接口.
 	Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error)
 }
 
-type pushClient struct {
+type notiferClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewPushClient(cc *grpc.ClientConn) PushClient {
-	return &pushClient{cc}
+func NewNotiferClient(cc *grpc.ClientConn) NotiferClient {
+	return &notiferClient{cc}
 }
 
-func (c *pushClient) Subscribe(ctx context.Context, opts ...grpc.CallOption) (Push_SubscribeClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_Push_serviceDesc.Streams[0], c.cc, "/candy.meta.Push/Subscribe", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &pushSubscribeClient{stream}
-	return x, nil
-}
-
-type Push_SubscribeClient interface {
-	Send(*SubscribeRequest) error
-	Recv() (*PushRequest, error)
-	grpc.ClientStream
-}
-
-type pushSubscribeClient struct {
-	grpc.ClientStream
-}
-
-func (x *pushSubscribeClient) Send(m *SubscribeRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *pushSubscribeClient) Recv() (*PushRequest, error) {
-	m := new(PushRequest)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *pushClient) Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error) {
-	out := new(PushResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Push/Push", in, out, c.cc, opts...)
+func (c *notiferClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error) {
+	out := new(SubscribeResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Notifer/Subscribe", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for Push service
+func (c *notiferClient) UnSubscribe(ctx context.Context, in *UnSubscribeRequest, opts ...grpc.CallOption) (*UnSubscribeResponse, error) {
+	out := new(UnSubscribeResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Notifer/UnSubscribe", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
-type PushServer interface {
-	// Subscribe 订阅，取消，接收消息接口.
-	Subscribe(Push_SubscribeServer) error
+func (c *notiferClient) Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error) {
+	out := new(PushResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Notifer/Push", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Notifer service
+
+type NotiferServer interface {
+	// Subscribe 用户上线，接受在线推送
+	Subscribe(context.Context, *SubscribeRequest) (*SubscribeResponse, error)
+	// UnSubscribe 用户下线，取消在线推送
+	UnSubscribe(context.Context, *UnSubscribeRequest) (*UnSubscribeResponse, error)
 	// Push store调用的接口.
 	Push(context.Context, *PushRequest) (*PushResponse, error)
 }
 
-func RegisterPushServer(s *grpc.Server, srv PushServer) {
-	s.RegisterService(&_Push_serviceDesc, srv)
+func RegisterNotiferServer(s *grpc.Server, srv NotiferServer) {
+	s.RegisterService(&_Notifer_serviceDesc, srv)
 }
 
-func _Push_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(PushServer).Subscribe(&pushSubscribeServer{stream})
-}
-
-type Push_SubscribeServer interface {
-	Send(*PushRequest) error
-	Recv() (*SubscribeRequest, error)
-	grpc.ServerStream
-}
-
-type pushSubscribeServer struct {
-	grpc.ServerStream
-}
-
-func (x *pushSubscribeServer) Send(m *PushRequest) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *pushSubscribeServer) Recv() (*SubscribeRequest, error) {
-	m := new(SubscribeRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _Notifer_Subscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(NotiferServer).Subscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Notifer/Subscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotiferServer).Subscribe(ctx, req.(*SubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-func _Push_Push_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Notifer_UnSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnSubscribeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotiferServer).UnSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Notifer/UnSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotiferServer).UnSubscribe(ctx, req.(*UnSubscribeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Notifer_Push_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PushRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PushServer).Push(ctx, in)
+		return srv.(NotiferServer).Push(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/candy.meta.Push/Push",
+		FullMethod: "/candy.meta.Notifer/Push",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PushServer).Push(ctx, req.(*PushRequest))
+		return srv.(NotiferServer).Push(ctx, req.(*PushRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Push_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "candy.meta.Push",
-	HandlerType: (*PushServer)(nil),
+var _Notifer_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "candy.meta.Notifer",
+	HandlerType: (*NotiferServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Push",
-			Handler:    _Push_Push_Handler,
+			MethodName: "Subscribe",
+			Handler:    _Notifer_Subscribe_Handler,
 		},
-	},
-	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Subscribe",
-			Handler:       _Push_Subscribe_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
+			MethodName: "UnSubscribe",
+			Handler:    _Notifer_UnSubscribe_Handler,
+		},
+		{
+			MethodName: "Push",
+			Handler:    _Notifer_Push_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: fileDescriptorNotice,
 }
 
@@ -245,26 +253,22 @@ func (m *SubscribeRequest) MarshalTo(data []byte) (int, error) {
 		i++
 		i = encodeVarintNotice(data, i, uint64(m.ID))
 	}
-	if m.Enable {
-		data[i] = 0x10
-		i++
-		if m.Enable {
-			data[i] = 1
-		} else {
-			data[i] = 0
-		}
-		i++
-	}
 	if len(m.Device) > 0 {
-		data[i] = 0x1a
+		data[i] = 0x12
 		i++
 		i = encodeVarintNotice(data, i, uint64(len(m.Device)))
 		i += copy(data[i:], m.Device)
 	}
+	if len(m.Host) > 0 {
+		data[i] = 0x1a
+		i++
+		i = encodeVarintNotice(data, i, uint64(len(m.Host)))
+		i += copy(data[i:], m.Host)
+	}
 	return i, nil
 }
 
-func (m *PushRequest) Marshal() (data []byte, err error) {
+func (m *SubscribeResponse) Marshal() (data []byte, err error) {
 	size := m.Size()
 	data = make([]byte, size)
 	n, err := m.MarshalTo(data)
@@ -274,35 +278,30 @@ func (m *PushRequest) Marshal() (data []byte, err error) {
 	return data[:n], nil
 }
 
-func (m *PushRequest) MarshalTo(data []byte) (int, error) {
+func (m *SubscribeResponse) MarshalTo(data []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if len(m.ID) > 0 {
-		for _, msg := range m.ID {
-			data[i] = 0xa
-			i++
-			i = encodeVarintNotice(data, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(data[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
+	if m.Header != nil {
+		data[i] = 0xa
+		i++
+		i = encodeVarintNotice(data, i, uint64(m.Header.Size()))
+		n1, err := m.Header.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
 		}
+		i += n1
 	}
-	data[i] = 0x12
-	i++
-	i = encodeVarintNotice(data, i, uint64(m.Msg.Size()))
-	n1, err := m.Msg.MarshalTo(data[i:])
-	if err != nil {
-		return 0, err
+	if m.SID != 0 {
+		data[i] = 0x10
+		i++
+		i = encodeVarintNotice(data, i, uint64(m.SID))
 	}
-	i += n1
 	return i, nil
 }
 
-func (m *PushResponse) Marshal() (data []byte, err error) {
+func (m *UnSubscribeRequest) Marshal() (data []byte, err error) {
 	size := m.Size()
 	data = make([]byte, size)
 	n, err := m.MarshalTo(data)
@@ -312,7 +311,47 @@ func (m *PushResponse) Marshal() (data []byte, err error) {
 	return data[:n], nil
 }
 
-func (m *PushResponse) MarshalTo(data []byte) (int, error) {
+func (m *UnSubscribeRequest) MarshalTo(data []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.ID != 0 {
+		data[i] = 0x8
+		i++
+		i = encodeVarintNotice(data, i, uint64(m.ID))
+	}
+	if len(m.Device) > 0 {
+		data[i] = 0x12
+		i++
+		i = encodeVarintNotice(data, i, uint64(len(m.Device)))
+		i += copy(data[i:], m.Device)
+	}
+	if len(m.Host) > 0 {
+		data[i] = 0x1a
+		i++
+		i = encodeVarintNotice(data, i, uint64(len(m.Host)))
+		i += copy(data[i:], m.Host)
+	}
+	if m.SID != 0 {
+		data[i] = 0x20
+		i++
+		i = encodeVarintNotice(data, i, uint64(m.SID))
+	}
+	return i, nil
+}
+
+func (m *UnSubscribeResponse) Marshal() (data []byte, err error) {
+	size := m.Size()
+	data = make([]byte, size)
+	n, err := m.MarshalTo(data)
+	if err != nil {
+		return nil, err
+	}
+	return data[:n], nil
+}
+
+func (m *UnSubscribeResponse) MarshalTo(data []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -363,31 +402,51 @@ func (m *SubscribeRequest) Size() (n int) {
 	if m.ID != 0 {
 		n += 1 + sovNotice(uint64(m.ID))
 	}
-	if m.Enable {
-		n += 2
-	}
 	l = len(m.Device)
+	if l > 0 {
+		n += 1 + l + sovNotice(uint64(l))
+	}
+	l = len(m.Host)
 	if l > 0 {
 		n += 1 + l + sovNotice(uint64(l))
 	}
 	return n
 }
 
-func (m *PushRequest) Size() (n int) {
+func (m *SubscribeResponse) Size() (n int) {
 	var l int
 	_ = l
-	if len(m.ID) > 0 {
-		for _, e := range m.ID {
-			l = e.Size()
-			n += 1 + l + sovNotice(uint64(l))
-		}
+	if m.Header != nil {
+		l = m.Header.Size()
+		n += 1 + l + sovNotice(uint64(l))
 	}
-	l = m.Msg.Size()
-	n += 1 + l + sovNotice(uint64(l))
+	if m.SID != 0 {
+		n += 1 + sovNotice(uint64(m.SID))
+	}
 	return n
 }
 
-func (m *PushResponse) Size() (n int) {
+func (m *UnSubscribeRequest) Size() (n int) {
+	var l int
+	_ = l
+	if m.ID != 0 {
+		n += 1 + sovNotice(uint64(m.ID))
+	}
+	l = len(m.Device)
+	if l > 0 {
+		n += 1 + l + sovNotice(uint64(l))
+	}
+	l = len(m.Host)
+	if l > 0 {
+		n += 1 + l + sovNotice(uint64(l))
+	}
+	if m.SID != 0 {
+		n += 1 + sovNotice(uint64(m.SID))
+	}
+	return n
+}
+
+func (m *UnSubscribeResponse) Size() (n int) {
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -459,26 +518,6 @@ func (m *SubscribeRequest) Unmarshal(data []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Enable", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowNotice
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Enable = bool(v != 0)
-		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Device", wireType)
 			}
@@ -507,6 +546,35 @@ func (m *SubscribeRequest) Unmarshal(data []byte) error {
 			}
 			m.Device = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Host", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowNotice
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthNotice
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Host = string(data[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipNotice(data[iNdEx:])
@@ -528,7 +596,7 @@ func (m *SubscribeRequest) Unmarshal(data []byte) error {
 	}
 	return nil
 }
-func (m *PushRequest) Unmarshal(data []byte) error {
+func (m *SubscribeResponse) Unmarshal(data []byte) error {
 	l := len(data)
 	iNdEx := 0
 	for iNdEx < l {
@@ -551,15 +619,15 @@ func (m *PushRequest) Unmarshal(data []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: PushRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: SubscribeResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PushRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: SubscribeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -583,16 +651,18 @@ func (m *PushRequest) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ID = append(m.ID, PushID{})
-			if err := m.ID[len(m.ID)-1].Unmarshal(data[iNdEx:postIndex]); err != nil {
+			if m.Header == nil {
+				m.Header = &ResponseHeader{}
+			}
+			if err := m.Header.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Msg", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SID", wireType)
 			}
-			var msglen int
+			m.SID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowNotice
@@ -602,22 +672,11 @@ func (m *PushRequest) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				m.SID |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthNotice
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Msg.Unmarshal(data[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipNotice(data[iNdEx:])
@@ -639,7 +698,7 @@ func (m *PushRequest) Unmarshal(data []byte) error {
 	}
 	return nil
 }
-func (m *PushResponse) Unmarshal(data []byte) error {
+func (m *UnSubscribeRequest) Unmarshal(data []byte) error {
 	l := len(data)
 	iNdEx := 0
 	for iNdEx < l {
@@ -662,10 +721,156 @@ func (m *PushResponse) Unmarshal(data []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: PushResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: UnSubscribeRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PushResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UnSubscribeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			m.ID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowNotice
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				m.ID |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Device", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowNotice
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthNotice
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Device = string(data[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Host", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowNotice
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthNotice
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Host = string(data[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SID", wireType)
+			}
+			m.SID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowNotice
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				m.SID |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipNotice(data[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthNotice
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UnSubscribeResponse) Unmarshal(data []byte) error {
+	l := len(data)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowNotice
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := data[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UnSubscribeResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UnSubscribeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -830,25 +1035,25 @@ var (
 func init() { proto.RegisterFile("notice.proto", fileDescriptorNotice) }
 
 var fileDescriptorNotice = []byte{
-	// 311 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x74, 0x91, 0xc1, 0x4a, 0xf3, 0x40,
-	0x14, 0x85, 0x3b, 0x4d, 0x29, 0x7f, 0x27, 0xe5, 0x47, 0x06, 0xa9, 0x21, 0x48, 0x2c, 0x59, 0xcd,
-	0x2a, 0x95, 0xb8, 0x72, 0x1b, 0xa2, 0x98, 0x45, 0x41, 0xc6, 0x8d, 0xb8, 0x4b, 0xd2, 0x4b, 0x12,
-	0x30, 0x99, 0x9a, 0x49, 0x04, 0x1f, 0xc1, 0x9d, 0x8f, 0xd5, 0xa5, 0x4f, 0x20, 0x12, 0x5f, 0x44,
-	0x66, 0x32, 0xd5, 0xd2, 0xe2, 0x2e, 0xe7, 0xde, 0x2f, 0xe7, 0x1c, 0xee, 0xe0, 0x69, 0xc5, 0x9b,
-	0x22, 0x05, 0x6f, 0x5d, 0xf3, 0x86, 0x13, 0x9c, 0xc6, 0xd5, 0xea, 0xc5, 0x2b, 0xa1, 0x89, 0xed,
-	0xe3, 0x8c, 0x67, 0x5c, 0x8d, 0x17, 0xf2, 0xab, 0x27, 0xec, 0x69, 0xca, 0xcb, 0x92, 0x57, 0xbd,
-	0x72, 0x19, 0x3e, 0xba, 0x6b, 0x13, 0x91, 0xd6, 0x45, 0x02, 0x0c, 0x9e, 0x5a, 0x10, 0x0d, 0xf9,
-	0x8f, 0x87, 0x51, 0x68, 0xa1, 0x39, 0xa2, 0x06, 0x1b, 0x46, 0x21, 0x99, 0xe1, 0xf1, 0x55, 0x15,
-	0x27, 0x8f, 0x60, 0x0d, 0xe7, 0x88, 0xfe, 0x63, 0x5a, 0xc9, 0x79, 0x08, 0xcf, 0x45, 0x0a, 0x96,
-	0x31, 0x47, 0x74, 0xc2, 0xb4, 0x72, 0x73, 0x6c, 0xde, 0xb6, 0x22, 0xdf, 0xda, 0x51, 0x6d, 0x67,
-	0x50, 0xd3, 0x27, 0xde, 0x6f, 0x3f, 0x4f, 0x42, 0x51, 0x18, 0x8c, 0x36, 0x1f, 0x67, 0x03, 0x15,
-	0xb4, 0xc0, 0xc6, 0x52, 0x64, 0x2a, 0xc5, 0xf4, 0x4f, 0xf6, 0xd1, 0x25, 0x08, 0x11, 0x67, 0xa0,
-	0x79, 0x49, 0xba, 0x01, 0x9e, 0xf6, 0x49, 0x62, 0xcd, 0x2b, 0x01, 0xc4, 0xc7, 0xe3, 0x1c, 0xe2,
-	0x15, 0xd4, 0xaa, 0xbd, 0xe9, 0xdb, 0xbb, 0x1e, 0x5b, 0xea, 0x46, 0x11, 0x4c, 0x93, 0xfe, 0x2b,
-	0xc2, 0x23, 0x69, 0x42, 0xae, 0xf1, 0xe4, 0xe7, 0x14, 0xe4, 0x74, 0xf7, 0xcf, 0xfd, 0x0b, 0xd9,
-	0x07, 0xdd, 0xf4, 0x82, 0xa2, 0x73, 0x44, 0x2e, 0xb5, 0xdf, 0x5f, 0x90, 0x6d, 0x1d, 0x2e, 0xfa,
-	0x66, 0xc1, 0x6c, 0xd3, 0x39, 0xe8, 0xbd, 0x73, 0xd0, 0x67, 0xe7, 0xa0, 0xb7, 0x2f, 0x67, 0xf0,
-	0x30, 0x92, 0xd0, 0xfd, 0x20, 0x19, 0xab, 0xe7, 0xba, 0xf8, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x91,
-	0x6d, 0x83, 0xbd, 0xee, 0x01, 0x00, 0x00,
+	// 320 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x92, 0xcf, 0x4e, 0x83, 0x40,
+	0x10, 0xc6, 0xbb, 0x85, 0x60, 0x3a, 0x6d, 0x4c, 0x1d, 0x4d, 0x25, 0x44, 0xb1, 0xe9, 0xa9, 0x27,
+	0x4c, 0xea, 0xc9, 0xab, 0xe1, 0x50, 0x2e, 0x8d, 0xa1, 0x31, 0x51, 0x6f, 0xfc, 0x59, 0x0b, 0x07,
+	0xd8, 0xca, 0x2e, 0x26, 0xbe, 0x85, 0x8f, 0xe5, 0xd1, 0x27, 0x30, 0x06, 0x5f, 0xc4, 0xb0, 0x80,
+	0x45, 0x9b, 0x5e, 0x8c, 0x37, 0x66, 0xe6, 0x37, 0xdf, 0xf7, 0x0d, 0x59, 0x18, 0xa4, 0x4c, 0xc4,
+	0x01, 0xb5, 0xd6, 0x19, 0x13, 0x0c, 0x21, 0xf0, 0xd2, 0xf0, 0xd9, 0x4a, 0xa8, 0xf0, 0x8c, 0xa3,
+	0x15, 0x5b, 0x31, 0xd9, 0x3e, 0x2f, 0xbf, 0x2a, 0xc2, 0x18, 0x04, 0x2c, 0x49, 0x58, 0x5a, 0x55,
+	0x93, 0x05, 0x0c, 0x97, 0xb9, 0xcf, 0x83, 0x2c, 0xf6, 0xa9, 0x4b, 0x1f, 0x73, 0xca, 0x05, 0xee,
+	0x43, 0xd7, 0xb1, 0x75, 0x32, 0x26, 0x53, 0xc5, 0xed, 0xc6, 0x36, 0x8e, 0x40, 0xb3, 0xe9, 0x53,
+	0x1c, 0x50, 0xbd, 0x3b, 0x26, 0xd3, 0x9e, 0xab, 0x85, 0xb2, 0x42, 0x04, 0x75, 0xce, 0xb8, 0xd0,
+	0x15, 0xd9, 0x55, 0x23, 0xc6, 0xc5, 0xe4, 0x0e, 0x0e, 0x5a, 0x7a, 0x7c, 0xcd, 0x52, 0x4e, 0x71,
+	0x06, 0x5a, 0x44, 0xbd, 0x90, 0x66, 0x52, 0xb4, 0x3f, 0x33, 0xac, 0x4d, 0x4a, 0xab, 0xa1, 0xe6,
+	0x92, 0x70, 0x6b, 0x12, 0x87, 0xa0, 0x2c, 0x1d, 0x5b, 0x3a, 0x2a, 0xae, 0xc2, 0x1d, 0x7b, 0xe2,
+	0x03, 0xde, 0xa4, 0xff, 0x19, 0xb6, 0xf1, 0x50, 0x37, 0x1e, 0x0e, 0x1c, 0xfe, 0xf0, 0xf8, 0xfb,
+	0x01, 0xb3, 0x77, 0x02, 0x7b, 0x0b, 0x26, 0xe2, 0x07, 0x9a, 0xe1, 0x1c, 0x7a, 0xdf, 0xa2, 0x78,
+	0xd2, 0x5e, 0xfe, 0x7d, 0x8f, 0x71, 0xba, 0x63, 0x5a, 0x27, 0x59, 0x40, 0xbf, 0x15, 0x10, 0xcd,
+	0x36, 0xbd, 0xfd, 0x77, 0x8c, 0xb3, 0x9d, 0xf3, 0x5a, 0xef, 0x12, 0xd4, 0xeb, 0x9c, 0x47, 0x78,
+	0xdc, 0x06, 0xcb, 0x4e, 0xa3, 0xa0, 0x6f, 0x0f, 0xaa, 0xd5, 0xab, 0xd1, 0x6b, 0x61, 0x92, 0xb7,
+	0xc2, 0x24, 0x1f, 0x85, 0x49, 0x5e, 0x3e, 0xcd, 0xce, 0xbd, 0x5a, 0x42, 0xb7, 0x1d, 0x5f, 0x93,
+	0x6f, 0xeb, 0xe2, 0x2b, 0x00, 0x00, 0xff, 0xff, 0xf6, 0x9d, 0x25, 0x8b, 0x9b, 0x02, 0x00, 0x00,
 }

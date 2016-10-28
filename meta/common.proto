@@ -66,17 +66,17 @@ message Message {
 
 // UserInfo 用户信息
 message UserInfo {
-	int64   ID          = 1;
-	string  Name        = 2;
+    int64   ID          = 1;
+    string  Name        = 2;
     string  Password    = 3;
-	string  NickName    = 4;
-	string  Avatar      = 5;
-	string  Signature   = 6;
+    string  NickName    = 4;
+    string  Avatar      = 5;
+    string  Signature   = 6;
 }
 
 // UserList 用户列表
 message UserList {
-	repeated UserInfo Users = 1;
+    repeated UserInfo Users = 1;
 }
 
 
@@ -97,7 +97,7 @@ message GroupInfo {
 
 // GroupList 群组列表
 message GroupList {
-	repeated GroupInfo Groups = 1;
+    repeated GroupInfo Groups = 1;
 }
 
 // FriendList 好友列表
@@ -117,3 +117,14 @@ message PushMessage {
     bool        ToUser  = 4;
 }
 
+
+// PushRequest 推送的消息.
+message PushRequest {
+    repeated PushID ID = 1 [(gogoproto.nullable) = false];
+    PushMessage Msg = 2 [(gogoproto.nullable) = false];
+}
+
+// PushResponse 可能返回节点错误或其它错误信息
+message PushResponse {
+    ResponseHeader header = 1;
+}

@@ -1,11 +1,10 @@
-all: fmt lint vet cmd client
+all: fmt lint vet store master notice gate tool client 
 
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildTime=$(shell date -R)"
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildVersion=$(shell git rev-parse HEAD)"
 
 FILES := $$(find . -name '*.go' | grep -vE 'vendor') 
 SOURCE_PATH := store master notice gate util
-cmd := store master notice gate tool
 
 golint:
 	go get github.com/golang/lint/golint  
@@ -18,37 +17,37 @@ meta:
 	@cd meta; make; cd ..; 
 
 lint: golint
-	@for path in $(SOURCE_PATH); do \
-		echo "golint $$path" ; \
-		golint $$path ; \
-	done;
+	@for path in $(SOURCE_PATH); do echo "golint $$path"; golint $$path; done;
 
 clean:
 	@rm -rf bin
 
 fmt: 
-	@for path in $(SOURCE_PATH); do \
-		echo "gofmt -s -l -w $$path" ; \
-		gofmt -s -l -w $$path ; \
-	done;
+	@for path in $(SOURCE_PATH); do echo "gofmt -s -l -w $$path";  gofmt -s -l -w $$path;  done;
 
 vet:
 	go tool vet $(FILES) 2>&1
 	go tool vet --shadow $(FILES) 2>&1
 
-cmd:godep
-	@for cmd in $(cmd); do \
-		echo "godep go build -ldflags '$(LDFLAGS)' -o bin/$$cmd ./cmd/$$cmd/main.go" ; \
-		godep go build -ldflags '$(LDFLAGS)' -o bin/$$cmd ./cmd/$$cmd/main.go ; \
-	done;
+store:godep
+	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./cmd/$@/main.go
+
+gate:godep
+	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./cmd/$@/main.go
+
+master:godep
+	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./cmd/$@/main.go
+
+notice:godep
+	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./cmd/$@/main.go
 
 client: godep
-	godep go build -ldflags '$(LDFLAGS)' -o bin/client ./candy.go
+	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./candy.go
+
+tool: godep
+	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./candy.go
 
 test:
-	@for path in $(SOURCE_PATH); do \
-		echo "go test ./$$path" ; \
-		go test "./"$$path ; \
-	done;
+	@for path in $(SOURCE_PATH); do echo "go test ./$$path"; go test "./"$$path; done;
 
 

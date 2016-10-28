@@ -6,8 +6,10 @@ import (
 	"github.com/dearcode/candy/util/log"
 )
 
+// sid:Subscribe id.
 type session struct {
-	user  int64         // 用户ID
+	user  int64 // 用户ID
+	sid   int64
 	conns []*connection // 来自不同设备的所有连接
 	sync.Mutex
 }
@@ -56,4 +58,12 @@ func (s *session) walkConnection(call func(*connection) bool) {
 			break
 		}
 	}
+}
+
+func (s *session) setSubscribeID(sid int64) {
+	s.sid = sid
+}
+
+func (s *session) getSubscribeID() int64 {
+	return s.sid
 }

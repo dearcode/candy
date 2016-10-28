@@ -22,36 +22,50 @@ func TestMain(main *testing.M) {
 	os.Exit(main.Run())
 }
 
+type testGateSender struct {
+	err error
+	c   chan meta.PushRequest
+}
+
+func newTestGateSender(err error, c chan meta.PushRequest) *testGateSender {
+	return &testGateSender{err: err, c: c}
+}
+
+func (t *testGateSender) push(addr string, req meta.PushRequest) error {
+	if t.err != nil {
+		return t.err
+	}
+	t.c <- req
+	return nil
+}
+
+var (
+	uid  = int64(1111)
+	dev  = "android_xxxxxx"
+	c    = make(chan meta.PushRequest)
+	host = "127.0.0.1:9001"
+)
+
 func TestBrokerUnSubscribe(t *testing.T) {
-	b := newBroker()
-	b.start()
-	uid := int64(1111)
-	dev := "android_xxxxxx"
-	c := make(chan pushRequest)
-	cid := b.addPushChan(c)
+	b := newBroker(newTestGateSender(nil, nil))
 	//订阅
-	b.subscribe(uid, dev, cid)
+	sid := b.subscribe(uid, dev, host)
 
 	//取消之后应该是找不到这个用户的订阅
-	b.unSubscribe(uid, dev)
+	b.unSubscribe(uid, sid, dev)
 	if _, ok := b.users[uid]; ok {
 		t.Fatalf("UnSubscribe user:%d dev:%s error", uid, dev)
 	}
 }
 
 func TestBrokerSubscribe(t *testing.T) {
-	b := newBroker()
-	b.start()
-
-	uid := int64(1111)
-	dev := "android_xxxxxx"
-	c := make(chan pushRequest)
-	cid := b.addPushChan(c)
-	b.subscribe(uid, dev, cid)
-
+	b := newBroker(newTestGateSender(nil, nil))
+	//订阅
+	sid := b.subscribe(uid, dev, host)
 	if _, ok := b.users[uid]; !ok {
 		t.Fatalf("Subscribe user:%d, result not found", uid)
 	}
+	t.Logf("subscribe sid:%d", sid)
 
 	devs := b.users[uid]
 	if len(devs) != 1 {
@@ -59,7 +73,8 @@ func TestBrokerSubscribe(t *testing.T) {
 	}
 
 	//订阅两次也不应该有两条结果, 应该是覆盖的
-	b.subscribe(uid, dev, cid)
+	nsid := b.subscribe(uid, dev, host)
+	t.Logf("subscribe new sid:%d", nsid)
 
 	devs = b.users[uid]
 	if len(devs) != 1 {
@@ -69,15 +84,10 @@ func TestBrokerSubscribe(t *testing.T) {
 }
 
 func TestBrokerPush(t *testing.T) {
-	b := newBroker()
-	b.start()
-
-	uid := int64(1111)
-	dev := "android_xxxxxx"
-	c := make(chan pushRequest, 1000)
-
-	cid := b.addPushChan(c)
-	b.subscribe(uid, dev, cid)
+	b := newBroker(newTestGateSender(nil, c))
+	//订阅
+	sid := b.subscribe(uid, dev, host)
+	t.Logf("subscribe sid:%d", sid)
 
 	msg := meta.PushMessage{Msg: meta.Message{Body: "test"}}
 	pushID := meta.PushID{User: uid, Before: 2222}
@@ -88,32 +98,5 @@ func TestBrokerPush(t *testing.T) {
 		t.Logf("recv msg:%v", nm)
 	case <-time.After(time.Second):
 		log.Fatalf("not found message")
-	}
-}
-
-func TestBrokerDelPushChan(t *testing.T) {
-	b := newBroker()
-	b.start()
-	c := make(chan pushRequest)
-	cid := b.addPushChan(c)
-
-	b.delPushChan(cid)
-
-	if _, ok := b.chans[cid]; ok {
-		t.Fatalf("find delete's chan:%d", cid)
-	}
-
-}
-
-func TestBrokerAddPushChan(t *testing.T) {
-	b := newBroker()
-	b.start()
-	c := make(chan pushRequest)
-	cid := b.addPushChan(c)
-	if cid != 1 {
-		t.Fatalf("add first chan id must be 1, recv:%d", cid)
-	}
-	if _, ok := b.chans[cid]; !ok {
-		t.Fatalf("chan:%d not found", cid)
 	}
 }

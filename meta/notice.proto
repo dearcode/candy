@@ -4,15 +4,24 @@ package candy.meta;
 option go_package = "meta";
 
 import weak "gogoproto/gogo.proto";
-
 import "common.proto";
 
-//Push 推送 TODO
-// 在线推送：android, ios, web
-// 离线推送：apn,gcm
-service Push {
-    // Subscribe 订阅，取消，接收消息接口.
-    rpc Subscribe(stream SubscribeRequest) returns (stream PushRequest);
+/*
+   Notifer 通知服务
+   不合并到store上原因：
+   1.需要维护用户连入服务器信息（通常说的路由信息）
+   2.将来这里会开放更多功能,推送不同渠道
+
+   为什么用同步接口:
+   实现动态扩容，收缩需要外部感知内部状态
+ */
+service Notifer {
+    // Subscribe 用户上线，接受在线推送
+    rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
+
+    // UnSubscribe 用户下线，取消在线推送
+    rpc UnSubscribe(UnSubscribeRequest) returns (UnSubscribeResponse);
+
 
     //Push store调用的接口.
     rpc Push(PushRequest) returns (PushResponse);
@@ -20,22 +29,30 @@ service Push {
 
 
 
+//SubscribeRequest 订阅消息, Device使用的设备，Host从哪台gate上来
 message SubscribeRequest {
-    // 用户ID
     int64   ID      = 1; 
-    // 是要订阅，还是要取消
-    bool    Enable  = 2; 
-    // 用来区分用户的设备，如同一设备多次从不同的gate登录上来，则只推送最新的gate连接 
-    string  Device  = 3;
+    string  Device  = 2;
+    string  Host    = 3;
 }
 
-
-// PushRequest 推送的消息.
-message PushRequest {
-    repeated PushID ID = 1 [(gogoproto.nullable) = false];
-    PushMessage Msg = 2 [(gogoproto.nullable) = false];
+//SubscribeResponse 可能返回节点错误或其它错误信息, SID: 订阅流水号，UnSubscribe时要带上这个
+message SubscribeResponse {
+    ResponseHeader  header = 1;
+    int64           SID    = 2; 
 }
 
-message PushResponse {
+//UnSubscribeRequest 取消订阅, SID 订阅流水号，防止消息乱序,
+message UnSubscribeRequest {
+    int64   ID      = 1; 
+    string  Device  = 2;
+    string  Host    = 3;
+    int64   SID     = 4;
+}
+
+//UnSubscribeResponse 可能返回节点错误或其它错误信息
+message UnSubscribeResponse {
     ResponseHeader header = 1;
 }
+
+

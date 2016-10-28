@@ -14,6 +14,7 @@ import (
 // manager 管理所有session, connection.
 type manager struct {
 	stop     bool
+	host     string
 	notifer  *util.NotiferClient
 	conns    map[string]*connection // 所有的connection
 	sessions map[int64]*session     // 在线用户
@@ -21,15 +22,14 @@ type manager struct {
 	sync.RWMutex
 }
 
-func newManager(n *util.NotiferClient) *manager {
+func newManager(n *util.NotiferClient, host string) *manager {
 	m := &manager{
 		notifer:  n,
+		host:     host,
 		sessions: make(map[int64]*session),
 		conns:    make(map[string]*connection),
 		pushChan: make(chan meta.PushRequest, 1000),
 	}
-
-	go m.run()
 
 	return m
 }
@@ -54,16 +54,20 @@ func (m *manager) online(id int64, device string, c *connection) {
 	c.setUser(id)
 
 	//订阅消息
-	if err := m.notifer.Subscribe(id, device); err != nil {
+	sid, err := m.notifer.Subscribe(id, device, m.host)
+	if err != nil {
 		log.Errorf("%d dev:%s Subscribe error:%s", id, device, errors.ErrorStack(err))
+		return
 	}
+	s.setSubscribeID(sid)
 }
 
 func (m *manager) offline(id int64, c *connection) {
 	log.Debugf("user:%d, conn:%+v", id, c)
 
 	m.Lock()
-	if s, ok := m.sessions[id]; ok {
+	s, ok := m.sessions[id]
+	if ok {
 		s.delConnection(c)
 		delete(m.sessions, id)
 	}
@@ -73,7 +77,7 @@ func (m *manager) offline(id int64, c *connection) {
 	m.Unlock()
 
 	//消息订阅
-	if err := m.notifer.Subscribe(id, c.getDevice()); err != nil {
+	if err := m.notifer.UnSubscribe(id, c.getDevice(), m.host, s.getSubscribeID()); err != nil {
 		log.Errorf("UnSubscribe error:%s", errors.ErrorStack(err))
 	}
 }
@@ -124,22 +128,17 @@ func (m *manager) getSession(ctx context.Context) (*session, *connection, error)
 	return s, c, nil
 }
 
-func (m *manager) run() {
-	for !m.stop {
-		req, err := m.notifer.Recv()
-		if err != nil {
-			log.Errorf("recv push message error:%s", err)
+func (m *manager) pushMessage(req *meta.PushRequest) {
+	for _, id := range req.ID {
+		s := m.getUserSession(id.User)
+		if s == nil {
 			continue
 		}
-		for _, id := range req.ID {
-			s := m.getUserSession(id.User)
-			if s == nil {
-				continue
+		s.walkConnection(func(c *connection) bool {
+			if err := c.send(&req.Msg); err != nil {
+				log.Errorf("send Msg:%+v, to session:%+v, err:%s", req.Msg, s, errors.ErrorStack(err))
 			}
-			s.walkConnection(func(c *connection) bool {
-				c.send(&req.Msg)
-				return false
-			})
-		}
+			return false
+		})
 	}
 }
