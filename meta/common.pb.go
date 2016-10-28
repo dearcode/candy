@@ -39,8 +39,6 @@
 		GateUpdateUserPasswordResponse
 		GateGetUserInfoRequest
 		GateGetUserInfoResponse
-		GateHeartbeatRequest
-		GateHeartbeatResponse
 		GateUserLoginRequest
 		GateUserLoginResponse
 		GateUserLogoutRequest

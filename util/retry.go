@@ -8,17 +8,17 @@ const (
 	// defaultRetryAttemptMax Max retry attempts.
 	defaultRetryAttemptMax = 20
 	// defaultRetryDurationMin is the initial duration, 100 ms
-	defaultRetryDurationMin = 100
+	defaultRetryDurationMin = time.Millisecond * 100
 	// defaultRetryDurationMax is the max amount of duration, 2000 ms
-	defaultRetryDurationMax = 2000
+	defaultRetryDurationMax = time.Second * 2
 )
 
 //Retry 自带sleep的重试.
 type Retry struct {
 	attempts    int
 	attemptMax  int
-	durationMin int64
-	durationMax int64
+	durationMin time.Duration
+	durationMax time.Duration
 }
 
 // RetryOption retry option.
@@ -30,13 +30,13 @@ func RetryAttemptMax(v int) RetryOption {
 }
 
 //RetryDurationMin 最小间隔时间
-func RetryDurationMin(v int) RetryOption {
-	return func(r *Retry) { r.durationMin = int64(v) }
+func RetryDurationMin(v time.Duration) RetryOption {
+	return func(r *Retry) { r.durationMin = v }
 }
 
 //RetryDurationMax 最小间隔时间
-func RetryDurationMax(v int) RetryOption {
-	return func(r *Retry) { r.durationMax = int64(v) }
+func RetryDurationMax(v time.Duration) RetryOption {
+	return func(r *Retry) { r.durationMax = v }
 }
 
 // NewRetry new retry.
@@ -67,11 +67,11 @@ func (r *Retry) Attempts() int {
 
 // Next wait sleep.
 func (r *Retry) Next() {
-	dur := time.Now().UnixNano()%(r.durationMin<<uint32(r.attempts)) + r.durationMin
+	dur := time.Duration(time.Now().UnixNano())%(r.durationMin<<uint32(r.attempts)) + r.durationMin
 	if dur > r.durationMax {
 		dur = r.durationMax
 	}
-	sleep := time.Duration(dur) * time.Millisecond
+	sleep := time.Duration(dur)
 	time.Sleep(sleep)
 	r.attempts++
 }

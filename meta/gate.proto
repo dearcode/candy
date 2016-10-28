@@ -49,7 +49,6 @@ service Gate {
     // LoadGroupList 加载群组列表
     rpc LoadGroupList (GateLoadGroupListRequest) returns (GateLoadGroupListResponse);
 
-    rpc Heartbeat (GateHeartbeatRequest) returns (GateHeartbeatResponse);
 
     // UploadFile 客户端上传文件接口，一次一个图片.
     rpc UploadFile (GateUploadFileRequest) returns (GateUploadFileResponse);
@@ -143,9 +142,6 @@ message GateGetUserInfoResponse {
 }
 
 
-message GateHeartbeatRequest { }
-
-message GateHeartbeatResponse {}
 
 message GateUserLoginRequest {
     string User     = 1;

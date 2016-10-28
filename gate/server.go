@@ -2,6 +2,7 @@ package gate
 
 import (
 	"net"
+	"time"
 
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
@@ -61,14 +62,27 @@ func NewGate(host, master, notifer, store string) (*Gate, error) {
 	}
 	meta.RegisterGateServer(g.server, g)
 
-	healthpb.RegisterHealthServer(g.server, g.healthServer)
+	healthpb.RegisterHealthServer(g.server, g)
 
 	return g, g.server.Serve(l)
+}
+
+func (g *Gate) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
+	c, _, err := g.manager.getConnection(ctx)
+	if err != nil {
+		log.Errorf("getConnection error:%s", errors.ErrorStack(err))
+		return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_NOT_SERVING}, nil
+	}
+	//更新心跳信息
+	c.heartbeat()
+	log.Debugf("Check connect:%+v, req:%+v", c, req)
+	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
 }
 
 // Register user, passwd.
 func (g *Gate) Register(ctx context.Context, req *meta.GateRegisterRequest) (*meta.GateRegisterResponse, error) {
 	log.Debug("Gate Register")
+	time.Sleep(time.Second * 10)
 	_, _, err := g.manager.getConnection(ctx)
 	if err != nil {
 		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
@@ -227,25 +241,13 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 func (g *Gate) Stream(msg *meta.Message, stream meta.Gate_StreamServer) error {
 	c, _, err := g.manager.getConnection(stream.Context())
 	if err != nil {
+		log.Errorf("getConnection error:%s", errors.ErrorStack(err))
 		return errors.Trace(err)
 	}
 
 	c.waitClose(stream)
 
 	return nil
-}
-
-// Heartbeat nil.
-func (g *Gate) Heartbeat(ctx context.Context, req *meta.GateHeartbeatRequest) (*meta.GateHeartbeatResponse, error) {
-	_, c, err := g.manager.getSession(ctx)
-	if err != nil {
-		return &meta.GateHeartbeatResponse{}, nil
-	}
-
-	//更新心跳信息
-	c.heartbeat()
-
-	return &meta.GateHeartbeatResponse{}, nil
 }
 
 // Friend 添加好友或确认接受添加.

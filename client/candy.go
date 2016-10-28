@@ -1,18 +1,21 @@
 package client
 
 import (
+	"sync"
 	"time"
 
+	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
+	"github.com/dearcode/candy/util/log"
 )
 
 const (
-	networkTimeout = time.Second * 3
+	networkTimeout = time.Second * 5
 	emptyString    = ""
 )
 
@@ -34,13 +37,14 @@ type MessageHandler interface {
 // CandyClient 客户端提供和服务器交互的接口
 type CandyClient struct {
 	host    string
-	stop    bool
+	last    time.Time
 	conn    *grpc.ClientConn
 	api     meta.GateClient
 	handler MessageHandler
 	stream  meta.Gate_StreamClient
 	health  healthpb.HealthClient
 	bhealth bool
+	sync.RWMutex
 }
 
 // NewCandyClient - create an new CandyClient
@@ -49,32 +53,55 @@ func NewCandyClient(host string, handler MessageHandler) *CandyClient {
 }
 
 // Start 连接服务端.
-func (c *CandyClient) Start() (err error) {
-	if c.conn, err = grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout)); err != nil {
-		return
+func (c *CandyClient) Start() error {
+	conn, err := grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
+	if err != nil {
+		return errors.Trace(err)
 	}
 
-	c.api = meta.NewGateClient(c.conn)
-	if c.stream, err = c.api.Stream(context.Background(), &meta.Message{}); err != nil {
-		return
+	client := meta.NewGateClient(conn)
+	stream, err := client.Stream(context.Background(), &meta.Message{})
+	if err != nil {
+		return errors.Trace(err)
 	}
 
-	c.bhealth = true
+	c.conn = conn
+	c.stream = stream
+	c.api = client
 
-	go c.loopRecvMessage()
+	go c.loopRecvMessage(stream)
+	go c.healthCheck(healthpb.NewHealthClient(conn))
 
-	//健康检查
-	c.health = healthpb.NewHealthClient(c.conn)
-	go c.healthCheck()
-
-	return
+	return nil
 }
 
-// Stop 断开到服务器连接.
-func (c *CandyClient) Stop() error {
-	c.stop = true
-	c.stream.CloseSend()
-	return c.conn.Close()
+// service 调用服务器接口，如果调用直接返回error要原样返回，如果是response里的error自己就行了，这里主要处理网络问题
+func (c *CandyClient) service(call func(context.Context, meta.GateClient) error) error {
+	var err error
+
+	c.Lock()
+	defer c.Unlock()
+
+	for r := util.NewRetry(util.RetryDurationMax(networkTimeout)); r.Valid(); r.Next() {
+		log.Debugf("retry:%d", r.Attempts())
+		ctx, cancel := context.WithTimeout(context.Background(), networkTimeout)
+		e := call(ctx, c.api)
+		cancel()
+
+		if e != nil {
+			c.Stop()
+			err = e
+			if e = c.Start(); e != nil {
+				log.Errorf("start error:%s", errors.ErrorStack(e))
+				c.handler.OnError(e.Error())
+				err = e
+				continue
+			}
+		}
+		break
+	}
+
+	return err
 }
 
 // Register 用户注册接口
@@ -87,10 +114,18 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 	}
 
 	req := &meta.GateRegisterRequest{User: user, Password: passwd}
-	resp, err := c.api.Register(context.Background(), req)
+	var resp *meta.GateRegisterResponse
+	err := c.service(func(ctx context.Context, api meta.GateClient) error {
+		var err error
+		if resp, err = api.Register(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return -1, err
 	}
+	log.Debugf("resp:%+v", resp)
 
 	return resp.ID, resp.Header.JsonError()
 }
@@ -362,55 +397,40 @@ func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
+// Stop 停止接收消息及心跳
+func (c *CandyClient) Stop() {
+	c.conn.Close()
+	log.Debugf("close conn")
+}
+
 // loopRecvMessage 一直接收服务器返回消息, 直到退出.
-func (c *CandyClient) loopRecvMessage() {
-	for !c.stop {
-		pm, err := c.stream.Recv()
+func (c *CandyClient) loopRecvMessage(stream meta.Gate_StreamClient) {
+	for {
+		pm, err := stream.Recv()
 		if err != nil {
-			// 这里不退出会死循环
+			log.Errorf("loopRecvMessage error:%s", errors.ErrorStack(err))
 			c.handler.OnError(err.Error())
 			break
 		}
-
 		c.handler.OnRecv(int32(pm.Event), int32(pm.Operate), pm.Msg.ID, pm.Msg.Group, pm.Msg.From, pm.Msg.To, pm.Msg.Body)
 	}
+	c.Stop()
 }
 
 // healthCheck 健康检查
-func (c *CandyClient) healthCheck() {
-	for !c.stop {
-		time.Sleep(time.Second)
-		req := &healthpb.HealthCheckRequest{
-			Service: "",
-		}
-
-		_, err := c.health.Check(context.Background(), req)
+func (c *CandyClient) healthCheck(health healthpb.HealthClient) {
+	t := time.NewTicker(time.Second)
+	for {
+		<-t.C
+		_, err := health.Check(context.Background(), &healthpb.HealthCheckRequest{})
 		if err != nil {
-			//确保异常只会调用一次
-			if c.bhealth {
-				c.bhealth = false
-				c.handler.OnUnHealth(err.Error())
-			}
-			continue
-		}
-
-		//由异常到正常
-		if !c.bhealth {
-			c.bhealth = true
-			c.handler.OnHealth()
+			log.Errorf("healthCheck error:%s", errors.ErrorStack(err))
+			c.handler.OnError(err.Error())
+			break
 		}
 	}
-}
-
-// Heartbeat 向服务器发送心跳信息
-func (c *CandyClient) Heartbeat() error {
-	req := &meta.GateHeartbeatRequest{}
-	_, err := c.api.Heartbeat(context.Background(), req)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	t.Stop()
+	c.Stop()
 }
 
 // CreateGroup 创建群组
