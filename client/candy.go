@@ -66,12 +66,14 @@ func (c *CandyClient) Start() error {
 //TODO 这里需要重写
 func (c *CandyClient) connect() error {
 	var err error
+	log.Debugf("broken:%v", c.broken)
 
 	if !c.broken {
 		return nil
 	}
 
 	for r := util.NewRetry(util.RetryDurationMax(networkTimeout)); r.Valid(); r.Next() {
+		log.Debugf("retry:%d", r.Attempts())
 		conn, e := grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
 		if e != nil {
 			log.Errorf("dial:%s error:%s", c.host, e.Error())
@@ -88,18 +90,17 @@ func (c *CandyClient) connect() error {
 			continue
 		}
 
-		if c.conn != nil {
-			c.conn.Close()
-		}
-
 		c.conn = conn
 		c.gate = gate
 		c.stream = stream
+		err = nil
 
 		break
 	}
+	log.Debugf("connect for break")
 
 	if err != nil {
+		log.Debugf("connect error:%s", err.Error())
 		return err
 	}
 
@@ -550,9 +551,11 @@ func (c *CandyClient) loopRecvMessage() {
 		pm, err := stream.Recv()
 		if err != nil {
 			log.Errorf("loopRecvMessage error:%s", err)
-			c.onError(err.Error())
 			c.Lock()
-			c.connect()
+			if stream == c.stream {
+				c.onError(err.Error())
+				c.connect()
+			}
 			c.Unlock()
 			continue
 		}
@@ -561,29 +564,24 @@ func (c *CandyClient) loopRecvMessage() {
 }
 
 func (c *CandyClient) onError(msg string) {
-	c.Lock()
+	c.conn.Close()
 	c.last = time.Now().Add(-time.Minute)
 	if c.broken {
-		c.Unlock()
 		return
 	}
 
 	c.broken = true
 	c.handler.OnError(msg)
-	c.Unlock()
 }
 
 func (c *CandyClient) onHealth() {
-	c.Lock()
 	c.last = time.Now()
 	if !c.broken {
-		c.Unlock()
 		return
 	}
 
 	c.broken = false
 	c.handler.OnHealth()
-	c.Unlock()
 }
 
 // OnNetStateChange 移动端如果网络状态发生变化要通知这边
@@ -617,9 +615,9 @@ func (c *CandyClient) healthCheck() {
 			c.Unlock()
 			continue
 		}
-		c.Unlock()
 		log.Debugf("onHealth")
 		c.onHealth()
+		c.Unlock()
 	}
 }
 
