@@ -11,7 +11,7 @@ type session struct {
 	user  int64 // 用户ID
 	sid   int64
 	conns []*connection // 来自不同设备的所有连接
-	sync.Mutex
+	sync.RWMutex
 }
 
 func newSession(id int64, c *connection) *session {
@@ -19,7 +19,7 @@ func newSession(id int64, c *connection) *session {
 }
 
 func (s *session) addConnection(conn *connection) {
-	log.Debugf("%d session:%v add conn:%+v", s.user, s, conn)
+	log.Debugf("%d addr:%s, dev:%s", s.user, conn.getAddr(), conn.getDevice())
 	s.Lock()
 	s.conns = append(s.conns)
 	s.Unlock()
@@ -27,7 +27,7 @@ func (s *session) addConnection(conn *connection) {
 
 // delConnection 遍历session的conns，删除当前连接
 func (s *session) delConnection(conn *connection) bool {
-	log.Debugf("%d session:%v del conn:%+v", s.user, s, conn)
+	log.Debugf("%d addr:%s, dev:%s", s.user, conn.getAddr(), conn.getDevice())
 	empty := false
 	s.Lock()
 	for i := 0; i < len(s.conns); {
@@ -48,10 +48,9 @@ func (s *session) delConnection(conn *connection) bool {
 
 //walkConnection 复制遍历
 func (s *session) walkConnection(call func(*connection) bool) {
-	log.Debugf("%d walkConnection", s.user)
-	s.Lock()
+	s.RLock()
 	conns := append([]*connection{}, s.conns...)
-	s.Unlock()
+	s.RUnlock()
 
 	for _, c := range conns {
 		if call(c) {

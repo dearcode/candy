@@ -675,8 +675,8 @@ func (c *cmdClient) OnUnHealth(msg string) {
 }
 
 func main() {
-	//	c := candy.NewCandyClient("127.0.0.1:9000", &cmdClient{})
-	c := candy.NewCandyClient("candy.dearcode.net:9000", &cmdClient{})
+	c := candy.NewCandyClient("127.0.0.1:9000", &cmdClient{})
+	//c := candy.NewCandyClient("candy.dearcode.net:9000", &cmdClient{})
 	if err := c.Start(); err != nil {
 		log.Errorf("start client error:%s", err.Error())
 		return
@@ -688,7 +688,7 @@ func main() {
 		notice()
 		id, err := readID(reader)
 		if err != nil {
-			running = false
+			log.Errorf("read error:%s", err.Error())
 			continue
 		}
 		switch id {

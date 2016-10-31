@@ -6,7 +6,7 @@ import (
 
 const (
 	// defaultRetryAttemptMax Max retry attempts.
-	defaultRetryAttemptMax = 20
+	defaultRetryAttemptMax = 10
 	// defaultRetryDurationMin is the initial duration, 100 ms
 	defaultRetryDurationMin = time.Millisecond * 100
 	// defaultRetryDurationMax is the max amount of duration, 2000 ms
@@ -65,13 +65,17 @@ func (r *Retry) Attempts() int {
 	return r.attempts
 }
 
+// Reset attempts.
+func (r *Retry) Reset() {
+	r.attempts = 0
+}
+
 // Next wait sleep.
 func (r *Retry) Next() {
 	dur := time.Duration(time.Now().UnixNano())%(r.durationMin<<uint32(r.attempts)) + r.durationMin
 	if dur > r.durationMax {
 		dur = r.durationMax
 	}
-	sleep := time.Duration(dur)
-	time.Sleep(sleep)
+	time.Sleep(dur)
 	r.attempts++
 }

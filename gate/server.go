@@ -67,6 +67,7 @@ func NewGate(host, master, notifer, store string) (*Gate, error) {
 	return g, g.server.Serve(l)
 }
 
+// Check 心跳
 func (g *Gate) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
 	c, _, err := g.manager.getConnection(ctx)
 	if err != nil {
@@ -75,7 +76,6 @@ func (g *Gate) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*he
 	}
 	//更新心跳信息
 	c.heartbeat()
-	log.Debugf("Check connect:%+v, req:%+v", c, req)
 	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
 }
 
@@ -245,7 +245,15 @@ func (g *Gate) Stream(msg *meta.Message, stream meta.Gate_StreamServer) error {
 		return errors.Trace(err)
 	}
 
+	//如果这个函数返回了，说明连接断开了
 	c.waitClose(stream)
+
+	//如果有session就是登录过了，要清理资源
+	s, _, err := g.manager.getSession(stream.Context())
+	if err == nil {
+		log.Debugf("user:%d, addr:%s timeout, offline", s.user, c.addr)
+		g.manager.offline(s.user, c)
+	}
 
 	return nil
 }

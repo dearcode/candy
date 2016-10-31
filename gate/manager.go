@@ -35,7 +35,7 @@ func newManager(n *util.NotiferClient, host string) *manager {
 }
 
 func (m *manager) online(id int64, device string, c *connection) {
-	log.Debugf("user:%d, conn:%+v, device:%s", id, c, device)
+	log.Debugf("user:%d, addr:%s, device:%s", id, c.getAddr(), device)
 	c.setDevice(device)
 
 	m.Lock()
@@ -63,7 +63,7 @@ func (m *manager) online(id int64, device string, c *connection) {
 }
 
 func (m *manager) offline(id int64, c *connection) {
-	log.Debugf("user:%d, conn:%+v", id, c)
+	log.Debugf("user:%d, addr:%s, dev:%s", id, c.getAddr(), c.getDevice())
 
 	m.Lock()
 	s, ok := m.sessions[id]
@@ -88,12 +88,12 @@ func (m *manager) getConnection(ctx context.Context) (c *connection, ok bool, er
 	if addr, err = util.ContextAddr(ctx); err != nil {
 		return
 	}
-	log.Debugf("conn from:%s, conns:%+v", addr, m.conns)
 	m.Lock()
 	if c, ok = m.conns[addr]; !ok {
 		c = newConnection(addr)
 		m.conns[addr] = c
-		log.Debugf("conn from:%s, c:%+v", addr, c)
+		//如果这个context来查连接信息，说明有消息过来了，要更新heartbeta
+		c.heartbeat()
 	}
 	m.Unlock()
 	return
@@ -136,7 +136,8 @@ func (m *manager) pushMessage(req *meta.PushRequest) {
 		}
 		s.walkConnection(func(c *connection) bool {
 			if err := c.send(&req.Msg); err != nil {
-				log.Errorf("send Msg:%+v, to session:%+v, err:%s", req.Msg, s, errors.ErrorStack(err))
+				log.Infof("send Msg:%v, to:%d addr:%s, last:%v, err:%s", req.Msg.Msg.ID, id.User, c.getAddr(), c.last, errors.ErrorStack(err))
+				m.offline(id.User, c)
 			}
 			return false
 		})

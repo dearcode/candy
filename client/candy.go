@@ -4,7 +4,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -16,7 +15,6 @@ import (
 
 const (
 	networkTimeout = time.Second * 5
-	emptyString    = ""
 )
 
 // MessageHandler 接收服务器端推送来的消息
@@ -37,71 +35,106 @@ type MessageHandler interface {
 // CandyClient 客户端提供和服务器交互的接口
 type CandyClient struct {
 	host    string
+	broken  bool
 	last    time.Time
 	conn    *grpc.ClientConn
-	api     meta.GateClient
+	gate    meta.GateClient
 	handler MessageHandler
 	stream  meta.Gate_StreamClient
-	health  healthpb.HealthClient
-	bhealth bool
+	user    string
+	pass    string
+	device  string
 	sync.RWMutex
 }
 
 // NewCandyClient - create an new CandyClient
 func NewCandyClient(host string, handler MessageHandler) *CandyClient {
-	return &CandyClient{host: host, handler: handler}
+	return &CandyClient{host: host, handler: handler, broken: true}
 }
 
 // Start 连接服务端.
 func (c *CandyClient) Start() error {
-	conn, err := grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
-	if err != nil {
-		return errors.Trace(err)
+	if err := c.connect(); err != nil {
+		return err
+	}
+	go c.healthCheck()
+	go c.loopRecvMessage()
+
+	return nil
+}
+
+//TODO 这里需要重写
+func (c *CandyClient) connect() error {
+	var err error
+
+	if !c.broken {
+		return nil
 	}
 
-	client := meta.NewGateClient(conn)
-	stream, err := client.Stream(context.Background(), &meta.Message{})
-	if err != nil {
-		return errors.Trace(err)
+	for r := util.NewRetry(util.RetryDurationMax(networkTimeout)); r.Valid(); r.Next() {
+		conn, e := grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
+		if e != nil {
+			log.Errorf("dial:%s error:%s", c.host, e.Error())
+			err = e
+			continue
+		}
+
+		gate := meta.NewGateClient(conn)
+		stream, e := gate.Stream(context.Background(), &meta.Message{})
+		if e != nil {
+			conn.Close()
+			log.Errorf("get stream error:%s", e.Error())
+			err = e
+			continue
+		}
+
+		if c.conn != nil {
+			c.conn.Close()
+		}
+
+		c.conn = conn
+		c.gate = gate
+		c.stream = stream
+
+		break
 	}
 
-	c.conn = conn
-	c.stream = stream
-	c.api = client
+	if err != nil {
+		return err
+	}
 
-	go c.loopRecvMessage(stream)
-	go c.healthCheck(healthpb.NewHealthClient(conn))
+	c.last = time.Now()
+	c.broken = false
+
+	if c.user != "" && c.pass != "" {
+		log.Debugf("will auto login")
+		req := meta.GateUserLoginRequest{User: c.user, Password: c.pass, Device: c.device}
+		ctx, cancel := context.WithTimeout(context.Background(), networkTimeout)
+		c.gate.Login(ctx, &req)
+		cancel()
+	}
+	log.Debugf("connect %s success", c.host)
 
 	return nil
 }
 
 // service 调用服务器接口，如果调用直接返回error要原样返回，如果是response里的error自己就行了，这里主要处理网络问题
-func (c *CandyClient) service(call func(context.Context, meta.GateClient) error) error {
-	var err error
-
-	c.Lock()
-	defer c.Unlock()
-
+func (c *CandyClient) service(call func(context.Context, meta.GateClient) error) {
 	for r := util.NewRetry(util.RetryDurationMax(networkTimeout)); r.Valid(); r.Next() {
-		log.Debugf("retry:%d", r.Attempts())
 		ctx, cancel := context.WithTimeout(context.Background(), networkTimeout)
-		e := call(ctx, c.api)
+		c.Lock()
+		err := call(ctx, c.gate)
 		cancel()
-
-		if e != nil {
-			c.Stop()
-			err = e
-			if e = c.Start(); e != nil {
-				log.Errorf("start error:%s", errors.ErrorStack(e))
-				c.handler.OnError(e.Error())
-				err = e
-				continue
-			}
+		if err == nil {
+			c.last = time.Now()
+			c.Unlock()
+			break
 		}
-		break
-	}
+		c.connect()
+		c.Unlock()
 
-	return err
+		log.Debugf("attempt:%d error:%s", r.Attempts(), err.Error())
+	}
 }
 
 // Register 用户注册接口
@@ -115,8 +148,8 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 
 	req := &meta.GateRegisterRequest{User: user, Password: passwd}
 	var resp *meta.GateRegisterResponse
-	err := c.service(func(ctx context.Context, api meta.GateClient) error {
-		var err error
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
 		if resp, err = api.Register(ctx, req); err != nil {
 			return err
 		}
@@ -141,18 +174,38 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 	}
 
 	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
-	resp, err := c.api.Login(context.Background(), req)
+	var resp *meta.GateUserLoginResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.Login(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return -1, err
 	}
+
+	c.user = user
+	c.pass = passwd
 
 	return resp.ID, resp.Header.JsonError()
 }
 
 // Logout 注销登陆
 func (c *CandyClient) Logout() error {
+	c.user = ""
+	c.pass = ""
+
 	req := &meta.GateUserLogoutRequest{}
-	resp, err := c.api.Logout(context.Background(), req)
+	var resp *meta.GateUserLogoutResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.Logout(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
@@ -171,7 +224,14 @@ func (c *CandyClient) UpdateUserInfo(user, nickName, avatar string) error {
 	}
 
 	req := &meta.GateUpdateUserInfoRequest{Name: user, NickName: nickName, Avatar: avatar}
-	resp, err := c.api.UpdateUserInfo(context.Background(), req)
+	var resp *meta.GateUpdateUserInfoResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.UpdateUserInfo(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
@@ -186,7 +246,14 @@ func (c *CandyClient) UpdateUserSignature(name, signature string) error {
 	}
 
 	req := &meta.GateUpdateSignatureRequest{Name: name, Signature: signature}
-	resp, err := c.api.UpdateSignature(context.Background(), req)
+	var resp *meta.GateUpdateSignatureResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.UpdateSignature(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
@@ -205,7 +272,14 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) error {
 	}
 
 	req := &meta.GateUpdateUserPasswordRequest{Name: user, Password: passwd}
-	resp, err := c.api.UpdateUserPassword(context.Background(), req)
+	var resp *meta.GateUpdateUserPasswordResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.UpdateUserPassword(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
@@ -218,12 +292,12 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) error {
 func (c *CandyClient) GetUserInfoByName(user string) (string, error) {
 	userInfo, err := c.getUserInfoByName(user)
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	data, err := encodeJSON(userInfo)
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	return string(data), nil
@@ -235,7 +309,14 @@ func (c *CandyClient) getUserInfoByName(user string) (*meta.UserInfo, error) {
 	}
 
 	req := &meta.GateGetUserInfoRequest{FindByName: true, UserName: user}
-	resp, err := c.api.GetUserInfo(context.Background(), req)
+	var resp *meta.GateGetUserInfoResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.GetUserInfo(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -255,12 +336,12 @@ func (c *CandyClient) getUserInfoByName(user string) (*meta.UserInfo, error) {
 func (c *CandyClient) GetUserInfoByID(userID int64) (string, error) {
 	userInfo, err := c.getUserInfoByID(userID)
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	data, err := encodeJSON(userInfo)
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	return string(data), nil
@@ -268,7 +349,14 @@ func (c *CandyClient) GetUserInfoByID(userID int64) (string, error) {
 
 func (c *CandyClient) getUserInfoByID(userID int64) (*meta.UserInfo, error) {
 	req := &meta.GateGetUserInfoRequest{UserID: userID}
-	resp, err := c.api.GetUserInfo(context.Background(), req)
+	var resp *meta.GateGetUserInfoResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.GetUserInfo(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -286,7 +374,14 @@ func (c *CandyClient) getUserInfoByID(userID int64) (*meta.UserInfo, error) {
 // Friend 添加好友
 func (c *CandyClient) Friend(userID int64, operate int32, msg string) error {
 	req := &meta.GateFriendRequest{UserID: userID, Operate: meta.Relation(operate), Msg: msg}
-	resp, err := c.api.Friend(context.Background(), req)
+	var resp *meta.GateFriendResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.Friend(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
@@ -297,15 +392,22 @@ func (c *CandyClient) Friend(userID int64, operate int32, msg string) error {
 // LoadFriendList 加载好友列表
 func (c *CandyClient) LoadFriendList() (string, error) {
 	req := &meta.GateLoadFriendListRequest{}
-	resp, err := c.api.LoadFriendList(context.Background(), req)
+	var resp *meta.GateLoadFriendListResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.LoadFriendList(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	friendList := &meta.FriendList{Users: resp.Users}
 	data, err := encodeJSON(friendList)
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	return string(data), resp.Header.Error()
@@ -314,23 +416,30 @@ func (c *CandyClient) LoadFriendList() (string, error) {
 // FindUser 支持模糊查询，返回对应用户的列表
 func (c *CandyClient) FindUser(user string) (string, error) {
 	req := &meta.GateFindUserRequest{User: user}
-	resp, err := c.api.FindUser(context.Background(), req)
+	var resp *meta.GateFindUserResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.FindUser(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	var users []*meta.UserInfo
 	for _, matchUser := range resp.Users {
 		userInfo, e := c.getUserInfoByName(matchUser)
 		if e != nil {
-			return emptyString, e
+			return "", e
 		}
 		users = append(users, userInfo)
 	}
 	userList := &meta.UserList{Users: users}
 	data, err := encodeJSON(userList)
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	return string(data), resp.Header.Error()
@@ -339,7 +448,14 @@ func (c *CandyClient) FindUser(user string) (string, error) {
 // FileExist 判断文件是否存在
 func (c *CandyClient) FileExist(key string) (bool, error) {
 	req := &meta.GateCheckFileRequest{Names: []string{key}}
-	resp, err := c.api.CheckFile(context.Background(), req)
+	var resp *meta.GateCheckFileResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.CheckFile(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return false, err
 	}
@@ -368,7 +484,13 @@ func (c *CandyClient) FileUpload(data []byte) (string, error) {
 	}
 
 	req := &meta.GateUploadFileRequest{File: data}
-	resp, err := c.api.UploadFile(context.Background(), req)
+	var resp *meta.GateUploadFileResponse
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.UploadFile(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return md5, err
 	}
@@ -379,7 +501,14 @@ func (c *CandyClient) FileUpload(data []byte) (string, error) {
 // FileDownload 文件下载
 func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 	req := &meta.GateDownloadFileRequest{Names: []string{key}}
-	resp, err := c.api.DownloadFile(context.Background(), req)
+	var resp *meta.GateDownloadFileResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.DownloadFile(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -390,53 +519,121 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 // SendMessage 向服务器发送消息.
 func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
 	req := &meta.GateSendMessageRequest{Msg: &meta.Message{Group: group, To: to, Body: body}}
-	resp, err := c.api.SendMessage(context.Background(), req)
+	var resp *meta.GateSendMessageResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.SendMessage(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return 0, err
 	}
 	return resp.ID, resp.Header.Error()
 }
 
-// Stop 停止接收消息及心跳
-func (c *CandyClient) Stop() {
-	c.conn.Close()
-	log.Debugf("close conn")
-}
-
-// loopRecvMessage 一直接收服务器返回消息, 直到退出.
-func (c *CandyClient) loopRecvMessage(stream meta.Gate_StreamClient) {
+// loopRecvMessage 一直接收服务器返回消息, 直到出错.
+func (c *CandyClient) loopRecvMessage() {
 	for {
+		c.RLock()
+		stream := c.stream
+		c.RUnlock()
+
+		if stream == nil {
+			c.Lock()
+			c.connect()
+			c.Unlock()
+			continue
+		}
+
 		pm, err := stream.Recv()
 		if err != nil {
-			log.Errorf("loopRecvMessage error:%s", errors.ErrorStack(err))
-			c.handler.OnError(err.Error())
-			break
+			log.Errorf("loopRecvMessage error:%s", err)
+			c.onError(err.Error())
+			c.Lock()
+			c.connect()
+			c.Unlock()
+			continue
 		}
 		c.handler.OnRecv(int32(pm.Event), int32(pm.Operate), pm.Msg.ID, pm.Msg.Group, pm.Msg.From, pm.Msg.To, pm.Msg.Body)
 	}
-	c.Stop()
 }
 
-// healthCheck 健康检查
-func (c *CandyClient) healthCheck(health healthpb.HealthClient) {
-	t := time.NewTicker(time.Second)
+func (c *CandyClient) onError(msg string) {
+	c.Lock()
+	c.last = time.Now().Add(-time.Minute)
+	if c.broken {
+		c.Unlock()
+		return
+	}
+
+	c.broken = true
+	c.handler.OnError(msg)
+	c.Unlock()
+}
+
+func (c *CandyClient) onHealth() {
+	c.Lock()
+	c.last = time.Now()
+	if !c.broken {
+		c.Unlock()
+		return
+	}
+
+	c.broken = false
+	c.handler.OnHealth()
+	c.Unlock()
+}
+
+// OnNetStateChange 移动端如果网络状态发生变化要通知这边
+func (c *CandyClient) OnNetStateChange() {
+	//TODO 细分
+	c.Lock()
+	c.last = time.Now().Add(-time.Minute)
+	c.Unlock()
+}
+
+// healthCheck 健康检查,一分钟发一次, 目前服务器清理超过2分钟的
+func (c *CandyClient) healthCheck() {
+	t := time.NewTicker(networkTimeout)
+	defer t.Stop()
+
 	for {
 		<-t.C
-		_, err := health.Check(context.Background(), &healthpb.HealthCheckRequest{})
-		if err != nil {
-			log.Errorf("healthCheck error:%s", errors.ErrorStack(err))
-			c.handler.OnError(err.Error())
-			break
+		c.RLock()
+		if time.Now().Sub(c.last) < time.Minute {
+			c.RUnlock()
+			continue
 		}
+		c.RUnlock()
+
+		c.Lock()
+		_, err := healthpb.NewHealthClient(c.conn).Check(context.Background(), &healthpb.HealthCheckRequest{})
+		if err != nil {
+			log.Errorf("healthCheck error:%v", err)
+			c.onError(err.Error())
+			c.connect()
+			c.Unlock()
+			continue
+		}
+		c.Unlock()
+		log.Debugf("onHealth")
+		c.onHealth()
 	}
-	t.Stop()
-	c.Stop()
 }
 
 // CreateGroup 创建群组
 func (c *CandyClient) CreateGroup(name string) (int64, error) {
 	req := &meta.GateGroupCreateRequest{Name: name}
-	resp, err := c.api.GroupCreate(context.Background(), req)
+	var resp *meta.GateGroupCreateResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.GroupCreate(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return -1, err
 	}
@@ -447,7 +644,14 @@ func (c *CandyClient) CreateGroup(name string) (int64, error) {
 // Group 群操作
 func (c *CandyClient) Group(id int64, operate int32, users []int64, msg string) error {
 	req := &meta.GateGroupRequest{ID: id, Msg: msg, Operate: meta.Relation(operate), Users: users}
-	resp, err := c.api.Group(context.Background(), req)
+	var resp *meta.GateGroupResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.Group(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
@@ -457,7 +661,14 @@ func (c *CandyClient) Group(id int64, operate int32, users []int64, msg string) 
 // DeleteGroup 解散群组
 func (c *CandyClient) DeleteGroup(id int64) error {
 	req := &meta.GateGroupDeleteRequest{ID: id}
-	resp, err := c.api.GroupDelete(context.Background(), req)
+	var resp *meta.GateGroupDeleteResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.GroupDelete(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
@@ -467,9 +678,16 @@ func (c *CandyClient) DeleteGroup(id int64) error {
 // LoadGroupList 拉取群组列表
 func (c *CandyClient) LoadGroupList() (string, error) {
 	req := &meta.GateLoadGroupListRequest{}
-	resp, err := c.api.LoadGroupList(context.Background(), req)
+	var resp *meta.GateLoadGroupListResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.LoadGroupList(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	var groups []*meta.GroupInfo
@@ -480,7 +698,7 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 	groupList := &meta.GroupList{Groups: groups}
 	data, err := encodeJSON(groupList)
 	if err != nil {
-		return emptyString, err
+		return "", err
 	}
 
 	return string(data), resp.Header.Error()
