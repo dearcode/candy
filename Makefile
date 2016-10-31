@@ -45,7 +45,7 @@ client: godep
 	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./candy.go
 
 tool: godep
-	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./candy.go
+	godep go build -ldflags '$(LDFLAGS)' -o bin/$@ ./cmd/$@/main.go
 
 test:
 	@for path in $(SOURCE_PATH); do echo "go test ./$$path"; go test "./"$$path; done;
