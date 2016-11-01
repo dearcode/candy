@@ -352,6 +352,8 @@ func (s *Server) Serve(lis net.Listener) error {
 			s.mu.Unlock()
 			return err
 		}
+		tcp, _ := rawConn.(*net.TCPConn)
+		tcp.SetKeepAlive(true)
 		// Start a new goroutine to deal with rawConn
 		// so we don't stall this Accept loop goroutine.
 		go s.handleRawConn(rawConn)

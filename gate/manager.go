@@ -84,6 +84,7 @@ func (m *manager) offline(id int64, c *connection) {
 
 func (m *manager) getConnection(ctx context.Context) (c *connection, ok bool, err error) {
 	var addr string
+	ctx.Value("token")
 
 	if addr, err = util.ContextAddr(ctx); err != nil {
 		return

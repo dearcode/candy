@@ -186,16 +186,16 @@ func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest
 
 // Login user,passwd.
 func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta.GateUserLoginResponse, error) {
-	log.Debug("Gate Login")
-	c, _, err := g.manager.getConnection(ctx)
-	if err != nil {
-		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
-	}
-
 	log.Debugf("Login user:%v password:%v", req.User, req.Password)
 	id, err := g.store.auth(req.User, req.Password)
 	if err != nil {
 		log.Errorf("auth error:%v", err)
+		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorAuth, Msg: err.Error()}}, nil
+	}
+
+	token, err = g.master.NewID()
+	if err != nil {
+		log.Errorf("create token error:%v", err)
 		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorAuth, Msg: err.Error()}}, nil
 	}
 
@@ -238,12 +238,29 @@ func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest
 }
 
 // Stream 连接成功后立刻调用Stream, 开启推送
-func (g *Gate) Stream(msg *meta.Message, stream meta.Gate_StreamServer) error {
-	c, _, err := g.manager.getConnection(stream.Context())
+func (g *Gate) Stream(stream meta.Gate_StreamServer) error {
+	req, err := stream.Recv()
 	if err != nil {
-		log.Errorf("getConnection error:%s", errors.ErrorStack(err))
-		return errors.Trace(err)
+		log.Errorf("stream Recv error:%s", err.Error())
+		return err
 	}
+
+	log.Debugf("Login user:%v password:%v", req.User, req.Password)
+	id, err := g.store.auth(req.User, req.Password)
+	if err != nil {
+		log.Errorf("auth error:%v", err)
+		return err
+	}
+
+	token, err = g.master.NewID()
+	if err != nil {
+		log.Errorf("create token error:%v", err)
+		return err
+	}
+
+    pm := meta.PushMessage{ToUser:true, }
+
+	g.manager.online(id, req.Device, c)
 
 	//如果这个函数返回了，说明连接断开了
 	c.waitClose(stream)

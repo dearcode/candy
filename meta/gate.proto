@@ -21,9 +21,6 @@ service Gate {
     // GetUserInfo 查询用户信息
     rpc GetUserInfo (GateGetUserInfoRequest) returns (GateGetUserInfoResponse);
 
-    rpc Login (GateUserLoginRequest) returns (GateUserLoginResponse);
-    rpc Logout (GateUserLogoutRequest) returns (GateUserLogoutResponse);
-
     // FindUser 添加好友前先查找出来对应的ID.
     rpc FindUser (GateFindUserRequest) returns (GateFindUserResponse);
 
@@ -31,7 +28,7 @@ service Gate {
     rpc SendMessage(GateSendMessageRequest) returns (GateSendMessageResponse);
 
     // Stream 连接成功后立刻调用Stream, 开启推送
-    rpc Stream(Message) returns (stream PushMessage);
+    rpc Stream(stream GateUserLoginRequest) returns (stream PushMessage);
 
     // Friend 好友的添加，删除、确认、拒绝.
     rpc Friend (GateFriendRequest) returns (GateFriendResponse);
@@ -151,8 +148,9 @@ message GateUserLoginRequest {
 }
 
 message GateUserLoginResponse {
-    ResponseHeader header = 1;
-    int64 ID = 2;
+    ResponseHeader  header  = 1;
+    int64           ID      = 2;
+    int64           Token   = 3;
 }
 
 

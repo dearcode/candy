@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -41,6 +42,7 @@ type CandyClient struct {
 	gate    meta.GateClient
 	handler MessageHandler
 	stream  meta.Gate_StreamClient
+	token   string
 	user    string
 	pass    string
 	device  string
@@ -54,88 +56,32 @@ func NewCandyClient(host string, handler MessageHandler) *CandyClient {
 
 // Start 连接服务端.
 func (c *CandyClient) Start() error {
-	if err := c.connect(); err != nil {
-		return err
-	}
-	go c.healthCheck()
-	go c.loopRecvMessage()
-
-	return nil
-}
-
-//TODO 这里需要重写
-func (c *CandyClient) connect() error {
 	var err error
-	log.Debugf("broken:%v", c.broken)
 
-	if !c.broken {
-		return nil
-	}
-
-	for r := util.NewRetry(util.RetryDurationMax(networkTimeout)); r.Valid(); r.Next() {
-		log.Debugf("retry:%d", r.Attempts())
-		conn, e := grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
-		if e != nil {
-			log.Errorf("dial:%s error:%s", c.host, e.Error())
-			err = e
-			continue
-		}
-
-		gate := meta.NewGateClient(conn)
-		stream, e := gate.Stream(context.Background(), &meta.Message{})
-		if e != nil {
-			conn.Close()
-			log.Errorf("get stream error:%s", e.Error())
-			err = e
-			continue
-		}
-
-		c.conn = conn
-		c.gate = gate
-		c.stream = stream
-		err = nil
-
-		break
-	}
-	log.Debugf("connect for break")
-
+	c.conn, err = grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
 	if err != nil {
-		log.Debugf("connect error:%s", err.Error())
+		log.Errorf("dial:%s error:%s", c.host, err.Error())
 		return err
 	}
 
+	c.gate = meta.NewGateClient(c.conn)
 	c.last = time.Now()
-	c.broken = false
 
-	if c.user != "" && c.pass != "" {
-		log.Debugf("will auto login")
-		req := meta.GateUserLoginRequest{User: c.user, Password: c.pass, Device: c.device}
-		ctx, cancel := context.WithTimeout(context.Background(), networkTimeout)
-		c.gate.Login(ctx, &req)
-		cancel()
-	}
-	log.Debugf("connect %s success", c.host)
+	go c.healthCheck()
 
 	return nil
 }
 
-// service 调用服务器接口，如果调用直接返回error要原样返回，如果是response里的error自己就行了，这里主要处理网络问题
+// service 调用服务器接口, 带上token
 func (c *CandyClient) service(call func(context.Context, meta.GateClient) error) {
-	for r := util.NewRetry(util.RetryDurationMax(networkTimeout)); r.Valid(); r.Next() {
-		ctx, cancel := context.WithTimeout(context.Background(), networkTimeout)
-		c.Lock()
-		err := call(ctx, c.gate)
-		cancel()
-		if err == nil {
-			c.last = time.Now()
-			c.Unlock()
-			break
-		}
-		c.connect()
-		c.Unlock()
-
-		log.Debugf("attempt:%d error:%s", r.Attempts(), err.Error())
+	ctx := context.WithValue(context.Background(), "token", c.token)
+	if err := call(ctx, c.gate); err != nil {
+		log.Infof("call:%s error:%s", c.host, err.Error())
+		return
 	}
+	c.Lock()
+	c.last = time.Now()
+	c.Unlock()
 }
 
 // Register 用户注册接口
@@ -164,7 +110,7 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 	return resp.ID, resp.Header.JsonError()
 }
 
-// Login 用户登陆
+// Login 用户登陆, 如果发生连接断开，一定要重新登录
 func (c *CandyClient) Login(user, passwd string) (int64, error) {
 	if code, err := CheckUserName(user); err != nil {
 		return -1, NewError(code, err.Error())
@@ -174,44 +120,46 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 		return -1, NewError(code, err.Error())
 	}
 
-	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
-	var resp *meta.GateUserLoginResponse
-	var err error
-	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.Login(ctx, req); err != nil {
-			return err
-		}
-		return nil
-	})
+	stream, err := c.gate.Stream(context.Background())
 	if err != nil {
-		return -1, err
+		return -1, NewError(util.ErrorAuth, err.Error())
 	}
 
+	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
+	if err = stream.Send(req); err != nil {
+		log.Errorf("stream Send error:%s", err.Error())
+		return -1, NewError(util.ErrorAuth, err.Error())
+	}
+
+	pm, err := stream.Recv()
+	if err != nil {
+		log.Errorf("stream Recv error:%s", err.Error())
+		return -1, NewError(util.ErrorAuth, err.Error())
+	}
+	// pm.Msg.ID用户id
+    // pm.Msg.Bodytoken
+	c.token = pm.Msg.Body
 	c.user = user
 	c.pass = passwd
 
-	return resp.ID, resp.Header.JsonError()
+	c.Lock()
+	if c.stream != nil {
+		c.stream.CloseSend()
+	}
+	c.stream = stream
+	c.Unlock()
+
+	go c.loopRecvMessage(stream)
+
+	return pm.Msg.ID, nil
 }
 
 // Logout 注销登陆
 func (c *CandyClient) Logout() error {
 	c.user = ""
 	c.pass = ""
-
-	req := &meta.GateUserLogoutRequest{}
-	var resp *meta.GateUserLogoutResponse
-	var err error
-	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.Logout(ctx, req); err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-
-	return resp.Header.JsonError()
+	c.token = ""
+	return c.stream.CloseSend()
 }
 
 // UpdateUserInfo 更新用户信息， 昵称/头像
@@ -535,52 +483,40 @@ func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
 }
 
 // loopRecvMessage 一直接收服务器返回消息, 直到出错.
-func (c *CandyClient) loopRecvMessage() {
+func (c *CandyClient) loopRecvMessage(stream meta.Gate_StreamClient) {
 	for {
-		c.RLock()
-		stream := c.stream
-		c.RUnlock()
-
-		if stream == nil {
-			c.Lock()
-			c.connect()
-			c.Unlock()
-			continue
-		}
-
 		pm, err := stream.Recv()
 		if err != nil {
 			log.Errorf("loopRecvMessage error:%s", err)
-			c.Lock()
-			if stream == c.stream {
-				c.onError(err.Error())
-				c.connect()
-			}
-			c.Unlock()
-			continue
+			c.onError(err.Error())
+			break
 		}
 		c.handler.OnRecv(int32(pm.Event), int32(pm.Operate), pm.Msg.ID, pm.Msg.Group, pm.Msg.From, pm.Msg.To, pm.Msg.Body)
 	}
 }
 
 func (c *CandyClient) onError(msg string) {
-	c.conn.Close()
+	c.Lock()
+	defer c.Unlock()
+
 	c.last = time.Now().Add(-time.Minute)
 	if c.broken {
 		return
 	}
-
 	c.broken = true
 	c.handler.OnError(msg)
 }
 
 func (c *CandyClient) onHealth() {
+	c.Lock()
+	defer c.Unlock()
+
 	c.last = time.Now()
 	if !c.broken {
 		return
 	}
-
 	c.broken = false
+	c.Login(c.user, c.pass)
 	c.handler.OnHealth()
 }
 
@@ -592,7 +528,7 @@ func (c *CandyClient) OnNetStateChange() {
 	c.Unlock()
 }
 
-// healthCheck 健康检查,一分钟发一次, 目前服务器清理超过2分钟的
+// healthCheck 健康检查,60秒发一次, 目前服务器超过90秒会发探活
 func (c *CandyClient) healthCheck() {
 	t := time.NewTicker(networkTimeout)
 	defer t.Stop()
@@ -606,18 +542,14 @@ func (c *CandyClient) healthCheck() {
 		}
 		c.RUnlock()
 
-		c.Lock()
 		_, err := healthpb.NewHealthClient(c.conn).Check(context.Background(), &healthpb.HealthCheckRequest{})
 		if err != nil {
 			log.Errorf("healthCheck error:%v", err)
 			c.onError(err.Error())
-			c.connect()
-			c.Unlock()
 			continue
 		}
 		log.Debugf("onHealth")
 		c.onHealth()
-		c.Unlock()
 	}
 }
 
