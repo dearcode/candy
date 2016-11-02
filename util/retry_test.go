@@ -8,7 +8,7 @@ import (
 func TestRetry(t *testing.T) {
 
 	b := time.Now()
-	for r := NewRetry(RetryAttemptMax(1), RetryDurationMin(20)); r.Valid(); r.Next() {
+	for r := NewRetry(RetryAttemptMax(1), RetryDurationMin(time.Millisecond*20)); r.Valid(); r.Next() {
 	}
 	e := time.Now()
 
@@ -17,7 +17,7 @@ func TestRetry(t *testing.T) {
 	}
 
 	b = time.Now()
-	for r := NewRetry(RetryAttemptMax(1), RetryDurationMin(10), RetryDurationMax(50)); r.Valid(); r.Next() {
+	for r := NewRetry(RetryAttemptMax(1), RetryDurationMin(time.Millisecond*10), RetryDurationMax(time.Millisecond*50)); r.Valid(); r.Next() {
 	}
 	e = time.Now()
 
@@ -30,7 +30,7 @@ func TestRetry(t *testing.T) {
 	}
 
 	i := 0
-	for r := NewRetry(RetryAttemptMax(1), RetryDurationMin(10), RetryDurationMax(50)); r.Valid(); r.Next() {
+	for r := NewRetry(RetryAttemptMax(1), RetryDurationMin(time.Millisecond*10), RetryDurationMax(time.Millisecond*50)); r.Valid(); r.Next() {
 		i++
 	}
 
@@ -39,7 +39,7 @@ func TestRetry(t *testing.T) {
 	}
 
 	i = 0
-	for r := NewRetry(RetryAttemptMax(3), RetryDurationMin(10), RetryDurationMax(50)); r.Valid(); r.Next() {
+	for r := NewRetry(RetryAttemptMax(3), RetryDurationMin(time.Millisecond*10), RetryDurationMax(time.Millisecond*50)); r.Valid(); r.Next() {
 		i++
 	}
 

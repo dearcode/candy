@@ -2,7 +2,6 @@ package gate
 
 import (
 	"net"
-	"time"
 
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
