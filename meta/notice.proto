@@ -34,20 +34,20 @@ message SubscribeRequest {
     int64   ID      = 1; 
     string  Device  = 2;
     string  Host    = 3;
+    int64   Token   = 4;
 }
 
-//SubscribeResponse 可能返回节点错误或其它错误信息, SID: 订阅流水号，UnSubscribe时要带上这个
+//SubscribeResponse 可能返回节点错误或其它错误信息
 message SubscribeResponse {
     ResponseHeader  header = 1;
-    int64           SID    = 2; 
 }
 
-//UnSubscribeRequest 取消订阅, SID 订阅流水号，防止消息乱序,
+//UnSubscribeRequest 取消订阅
 message UnSubscribeRequest {
     int64   ID      = 1; 
     string  Device  = 2;
     string  Host    = 3;
-    int64   SID     = 4;
+    int64   Token   = 4;
 }
 
 //UnSubscribeResponse 可能返回节点错误或其它错误信息

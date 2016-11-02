@@ -40,19 +40,20 @@ func (t *testGateSender) push(addr string, req meta.PushRequest) error {
 }
 
 var (
-	uid  = int64(1111)
-	dev  = "android_xxxxxx"
-	c    = make(chan meta.PushRequest)
-	host = "127.0.0.1:9001"
+	uid   = int64(1111)
+	dev   = "android_xxxxxx"
+	token = int64(222222222222)
+	c     = make(chan meta.PushRequest)
+	host  = "127.0.0.1:9001"
 )
 
 func TestBrokerUnSubscribe(t *testing.T) {
 	b := newBroker(newTestGateSender(nil, nil))
 	//订阅
-	sid := b.subscribe(uid, dev, host)
+	b.subscribe(uid, token, dev, host)
 
 	//取消之后应该是找不到这个用户的订阅
-	b.unSubscribe(uid, sid, dev)
+	b.unSubscribe(uid, token, dev)
 	if _, ok := b.users[uid]; ok {
 		t.Fatalf("UnSubscribe user:%d dev:%s error", uid, dev)
 	}
@@ -61,11 +62,10 @@ func TestBrokerUnSubscribe(t *testing.T) {
 func TestBrokerSubscribe(t *testing.T) {
 	b := newBroker(newTestGateSender(nil, nil))
 	//订阅
-	sid := b.subscribe(uid, dev, host)
+	b.subscribe(uid, token, dev, host)
 	if _, ok := b.users[uid]; !ok {
 		t.Fatalf("Subscribe user:%d, result not found", uid)
 	}
-	t.Logf("subscribe sid:%d", sid)
 
 	devs := b.users[uid]
 	if len(devs) != 1 {
@@ -73,9 +73,7 @@ func TestBrokerSubscribe(t *testing.T) {
 	}
 
 	//订阅两次也不应该有两条结果, 应该是覆盖的
-	nsid := b.subscribe(uid, dev, host)
-	t.Logf("subscribe new sid:%d", nsid)
-
+	b.subscribe(uid, token, dev, host)
 	devs = b.users[uid]
 	if len(devs) != 1 {
 		t.Fatalf("ReSubscribe user:%d dev:%s, find result len:%d", uid, dev, len(devs))
@@ -86,8 +84,7 @@ func TestBrokerSubscribe(t *testing.T) {
 func TestBrokerPush(t *testing.T) {
 	b := newBroker(newTestGateSender(nil, c))
 	//订阅
-	sid := b.subscribe(uid, dev, host)
-	t.Logf("subscribe sid:%d", sid)
+	b.subscribe(uid, token, dev, host)
 
 	msg := meta.PushMessage{Msg: meta.Message{Body: "test"}}
 	pushID := meta.PushID{User: uid, Before: 2222}

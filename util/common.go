@@ -96,23 +96,33 @@ func MD5(data []byte) []byte {
 	return hash.Sum(nil)
 }
 
-// ContextAddr 获取当前会话的client地址，这个要配合grpc修改（添加remote变量)
-func ContextAddr(ctx context.Context) (string, error) {
+// ContextGet get value from context's metadata.
+func ContextGet(ctx context.Context, key string) (string, error) {
 	md, ok := metadata.FromContext(ctx)
 	if !ok {
 		return "", errors.Trace(ErrInvalidContext)
 	}
 
-	addrs, ok := md["remote"]
+	vals, ok := md[key]
 	if !ok {
 		return "", errors.Trace(ErrInvalidContext)
 	}
 
-	if len(addrs) != 1 {
+	if len(vals) != 1 {
 		return "", errors.Trace(ErrInvalidContext)
 	}
 
-	return addrs[0], nil
+	return vals[0], nil
+}
+
+// ContextSet set value to context's metadata.
+func ContextSet(ctx context.Context, key, val string) context.Context {
+	md, ok := metadata.FromContext(ctx)
+	if !ok {
+		return metadata.NewContext(ctx, metadata.Pairs(key, val))
+	}
+	md[key] = []string{val}
+	return ctx
 }
 
 //Split 如果s为空字符串返回空数组

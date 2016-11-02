@@ -1,8 +1,8 @@
 package notice
 
 type device struct {
-	sid  int64
-	host string
+	token int64
+	host  string
 }
 
 type devices map[string]device
@@ -22,9 +22,9 @@ func (d devices) get(dev string) (device, bool) {
 	return device{}, false
 }
 
-func (d devices) del(dev string, sid int64) {
+func (d devices) del(dev string, token int64) {
 	if v, ok := d[dev]; ok {
-		if v.sid == sid {
+		if v.token == token {
 			delete(d, dev)
 		}
 	}

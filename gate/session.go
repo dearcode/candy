@@ -18,8 +18,12 @@ func newSession(id int64, c *connection) *session {
 	return &session{user: id, conns: []*connection{c}}
 }
 
+func (s *session) getUser() int64 {
+	return s.user
+}
+
 func (s *session) addConnection(conn *connection) {
-	log.Debugf("%d addr:%s, dev:%s", s.user, conn.getAddr(), conn.getDevice())
+	log.Debugf("%d token:%d, dev:%s", s.user, conn.getToken(), conn.getDevice())
 	s.Lock()
 	s.conns = append(s.conns)
 	s.Unlock()
@@ -27,11 +31,11 @@ func (s *session) addConnection(conn *connection) {
 
 // delConnection 遍历session的conns，删除当前连接
 func (s *session) delConnection(conn *connection) bool {
-	log.Debugf("%d addr:%s, dev:%s", s.user, conn.getAddr(), conn.getDevice())
+	log.Debugf("%d addr:%s, dev:%s", s.user, conn.getToken(), conn.getDevice())
 	empty := false
 	s.Lock()
 	for i := 0; i < len(s.conns); {
-		if s.conns[i].getAddr() == conn.getAddr() {
+		if s.conns[i].getToken() == conn.getToken() {
 			copy(s.conns[i:], s.conns[i+1:])
 			s.conns = s.conns[:len(s.conns)-1]
 			continue
@@ -57,12 +61,4 @@ func (s *session) walkConnection(call func(*connection) bool) {
 			break
 		}
 	}
-}
-
-func (s *session) setSubscribeID(sid int64) {
-	s.sid = sid
-}
-
-func (s *session) getSubscribeID() int64 {
-	return s.sid
 }

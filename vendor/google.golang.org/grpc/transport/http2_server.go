@@ -186,7 +186,6 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 	s.ctx = newContextWithStream(s.ctx, s)
 	// Attach the received metadata to the context.
 	if len(state.mdata) > 0 {
-		state.mdata["remote"] = []string{t.RemoteAddr().String()}
 		s.ctx = metadata.NewContext(s.ctx, state.mdata)
 	}
 
@@ -406,6 +405,9 @@ func (t *http2Server) handleSettings(f *http2.SettingsFrame) {
 }
 
 func (t *http2Server) handlePing(f *http2.PingFrame) {
+	if f.IsAck() { // Do nothing.
+		return
+	}
 	pingAck := &ping{ack: true}
 	copy(pingAck.data[:], f.Data[:])
 	t.controlBuf.put(pingAck)

@@ -2,7 +2,6 @@ package gate
 
 import (
 	"net"
-	"time"
 
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
@@ -69,25 +68,15 @@ func NewGate(host, master, notifer, store string) (*Gate, error) {
 
 // Check 心跳
 func (g *Gate) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
-	c, _, err := g.manager.getConnection(ctx)
-	if err != nil {
-		log.Errorf("getConnection error:%s", errors.ErrorStack(err))
-		return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_NOT_SERVING}, nil
+	if c := g.manager.getConnection(ctx); c != nil {
+		//更新心跳信息
+		c.onHeartbeat()
 	}
-	//更新心跳信息
-	c.heartbeat()
 	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
 }
 
 // Register user, passwd.
 func (g *Gate) Register(ctx context.Context, req *meta.GateRegisterRequest) (*meta.GateRegisterResponse, error) {
-	log.Debug("Gate Register")
-	time.Sleep(time.Second * 10)
-	_, _, err := g.manager.getConnection(ctx)
-	if err != nil {
-		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
-	}
-
 	id, err := g.master.NewID()
 	if err != nil {
 		return &meta.GateRegisterResponse{Header: &meta.ResponseHeader{Code: util.ErrorMasterNewID, Msg: err.Error()}}, nil
@@ -104,18 +93,19 @@ func (g *Gate) Register(ctx context.Context, req *meta.GateRegisterRequest) (*me
 
 // UpdateUserInfo nickname, avatar.
 func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.GateUpdateUserInfoRequest) (*meta.GateUpdateUserInfoResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
-	log.Debug("%d name:%v nickname:%v avatar:%v", s.user, req.Name, req.NickName, req.Avatar)
+
+	log.Debug("%d name:%v nickname:%v avatar:%v", c.getUser(), req.Name, req.NickName, req.Avatar)
 
 	if req.NickName == "" && req.Avatar == "" {
-		log.Errorf("%d name:%v nickname:%v avatar:%v", s.user, req.Name, req.NickName, req.Avatar)
-		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserInfo, Msg: err.Error()}}, nil
+		log.Errorf("%d name:%v nickname:%v avatar:%v", c.getUser(), req.Name, req.NickName, req.Avatar)
+		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserInfo, Msg: "nothing to update"}}, nil
 	}
 
-	if err = g.store.updateUserInfo(s.user, req.Name, req.NickName, req.Avatar); err != nil {
+	if err := g.store.updateUserInfo(c.getUser(), req.Name, req.NickName, req.Avatar); err != nil {
 		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserInfo, Msg: err.Error()}}, nil
 	}
 
@@ -124,17 +114,17 @@ func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.GateUpdateUserInfoR
 
 // UpdateSignature update user Signature
 func (g *Gate) UpdateSignature(ctx context.Context, req *meta.GateUpdateSignatureRequest) (*meta.GateUpdateSignatureResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
 	if req.Signature == "" {
-		log.Errorf("%d name:%v signature:%v", s.user, req.Name, req.Signature)
-		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateSignature, Msg: err.Error()}}, nil
+		log.Errorf("%d name:%v signature:%v", c.getUser(), req.Name, req.Signature)
+		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateSignature, Msg: "nothing to update"}}, nil
 	}
 
-	if err = g.store.updateSignature(s.user, req.Name, req.Signature); err != nil {
+	if err := g.store.updateSignature(c.getUser(), req.Name, req.Signature); err != nil {
 		return &meta.GateUpdateSignatureResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateSignature, Msg: err.Error()}}, nil
 	}
 
@@ -143,17 +133,17 @@ func (g *Gate) UpdateSignature(ctx context.Context, req *meta.GateUpdateSignatur
 
 // UpdateUserPassword update user password
 func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserPasswordRequest) (*meta.GateUpdateUserPasswordResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c != nil {
+		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
-	log.Debug("%d name:%v passwd old:%v new:%v", s.user, req.Name, req.Password, req.NewPassword)
+	log.Debug("%d name:%v passwd old:%v new:%v", c.getUser(), req.Name, req.Password, req.NewPassword)
 	if req.NewPassword == "" {
 		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserPasswd, Msg: "new password is nil"}}, nil
 	}
 
-	if err = g.store.updateUserPassword(s.user, req.Name, req.Password, req.NewPassword); err != nil {
+	if err := g.store.updateUserPassword(c.getUser(), req.Name, req.Password, req.NewPassword); err != nil {
 		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserPasswd, Msg: err.Error()}}, nil
 	}
 
@@ -162,18 +152,18 @@ func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserP
 
 // GetUserInfo get user base info
 func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest) (*meta.GateGetUserInfoResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c != nil {
+		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
-	log.Debugf("%d get UserInfo byName:%v userName:%v userID:%v", s.user, req.FindByName, req.UserName, req.UserID)
+	log.Debugf("%d get UserInfo byName:%v userName:%v userID:%v", c.getUser(), req.FindByName, req.UserName, req.UserID)
 
-	userInfo, err := g.store.getUserInfo(s.user, req.FindByName, req.UserName, req.UserID)
+	userInfo, err := g.store.getUserInfo(c.getUser(), req.FindByName, req.UserName, req.UserID)
 	if err != nil {
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetUserInfo, Msg: err.Error()}}, nil
 	}
-	log.Debugf("%d get UserInfo ByName:%v userName:%v userID:%v, name:%v, nickname:%v", s.user, req.FindByName, req.UserName, req.UserID, userInfo.Name, userInfo.NickName)
+	log.Debugf("%d get UserInfo ByName:%v userName:%v userID:%v, name:%v, nickname:%v", c.getUser(), req.FindByName, req.UserName, req.UserID, userInfo.Name, userInfo.NickName)
 
 	return &meta.GateGetUserInfoResponse{
 		ID:        userInfo.ID,
@@ -186,95 +176,94 @@ func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest
 
 // Login user,passwd.
 func (g *Gate) Login(ctx context.Context, req *meta.GateUserLoginRequest) (*meta.GateUserLoginResponse, error) {
-	log.Debug("Gate Login")
-	c, _, err := g.manager.getConnection(ctx)
-	if err != nil {
-		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
-	}
-
-	log.Debugf("Login user:%v password:%v", req.User, req.Password)
+	log.Debugf("begin Login user:%v password:%v", req.User, req.Password)
 	id, err := g.store.auth(req.User, req.Password)
 	if err != nil {
-		log.Errorf("auth error:%v", err)
+		log.Errorf("end login error:%v", err)
 		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorAuth, Msg: err.Error()}}, nil
 	}
 
-	g.manager.online(id, req.Device, c)
+	token, err := g.master.NewID()
+	if err != nil {
+		log.Errorf("end new id error:%v", err)
+		return &meta.GateUserLoginResponse{Header: &meta.ResponseHeader{Code: util.ErrorFailure, Msg: err.Error()}}, nil
+	}
 
-	return &meta.GateUserLoginResponse{ID: id}, nil
+	g.manager.online(id, req.Device, token)
+
+	return &meta.GateUserLoginResponse{ID: id, Token: token}, nil
 }
 
 // Logout nil.
 func (g *Gate) Logout(ctx context.Context, req *meta.GateUserLogoutRequest) (*meta.GateUserLogoutResponse, error) {
-	s, c, err := g.manager.getSession(ctx)
-	if err != nil {
-		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateUserLogoutResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
-	g.manager.offline(s.user, c)
+	g.manager.offline(c)
 
 	return &meta.GateUserLogoutResponse{}, nil
 }
 
 // SendMessage 发送消息
 func (g *Gate) SendMessage(ctx context.Context, req *meta.GateSendMessageRequest) (*meta.GateSendMessageResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
-	if req.Msg.ID, err = g.master.NewID(); err != nil {
+	id, err := g.master.NewID()
+	if err != nil {
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
 	}
 
+	req.Msg.ID = id
 	//防止乱写
-	req.Msg.From = s.user
+	req.Msg.From = c.user
 
-	if err = g.store.newMessage(s.user, *req.Msg); err != nil {
+	if err = g.store.newMessage(c.user, *req.Msg); err != nil {
 		return &meta.GateSendMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorNewMessage, Msg: err.Error()}}, nil
 	}
 
 	return &meta.GateSendMessageResponse{ID: req.Msg.ID}, nil
 }
 
-// Stream 连接成功后立刻调用Stream, 开启推送
-func (g *Gate) Stream(msg *meta.Message, stream meta.Gate_StreamServer) error {
-	c, _, err := g.manager.getConnection(stream.Context())
-	if err != nil {
-		log.Errorf("getConnection error:%s", errors.ErrorStack(err))
-		return errors.Trace(err)
+// Stream 客户端登录后调用这个接口，接收下推消息
+func (g *Gate) Stream(req *meta.GateStreamRequest, stream meta.Gate_StreamServer) error {
+	c := g.manager.getConnByToken(req.Token)
+	if c == nil {
+		log.Errorf("not found connection, token:%d", req.Token)
+		return ErrInvalidState
 	}
 
 	//如果这个函数返回了，说明连接断开了
 	c.waitClose(stream)
 
 	//如果有session就是登录过了，要清理资源
-	s, _, err := g.manager.getSession(stream.Context())
-	if err == nil {
-		log.Debugf("user:%d, addr:%s timeout, offline", s.user, c.addr)
-		g.manager.offline(s.user, c)
-	}
+	g.manager.offline(c)
 
-	return nil
+	log.Debugf("user:%d, token:%d timeout, offline", c.getUser(), c.getToken())
+
+	return ErrInvalidState
 }
 
 // Friend 添加好友或确认接受添加.
 func (g *Gate) Friend(ctx context.Context, req *meta.GateFriendRequest) (*meta.GateFriendResponse, error) {
 	log.Debugf("begin Friend req:%v", req)
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Infof("get session error:%s", errors.ErrorStack(err))
-		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
 	//自己要把自己添加成好友
-	if req.UserID == s.user {
-		log.Infof("%d add friend id:%d", s.user, req.UserID)
+	if req.UserID == c.getUser() {
+		log.Infof("%d add friend id:%d", c.getUser(), req.UserID)
 		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorFriendSelf, Msg: "Friend ID must not be Self ID"}}, nil
 	}
 
-	if err = g.store.friend(s.user, req.UserID, req.Operate, req.Msg); err != nil {
-		log.Errorf("%d friend:%d operate:%d erorr:%s", s.user, req.UserID, req.Operate, errors.ErrorStack(err))
+	if err := g.store.friend(c.getUser(), req.UserID, req.Operate, req.Msg); err != nil {
+		log.Errorf("%d friend:%d operate:%d erorr:%s", c.getUser(), req.UserID, req.Operate, errors.ErrorStack(err))
 		return &meta.GateFriendResponse{Header: &meta.ResponseHeader{Code: util.ErrorAddFriend, Msg: err.Error()}}, nil
 	}
 
@@ -284,30 +273,28 @@ func (g *Gate) Friend(ctx context.Context, req *meta.GateFriendRequest) (*meta.G
 
 // LoadFriendList 加载好友列表
 func (g *Gate) LoadFriendList(ctx context.Context, req *meta.GateLoadFriendListRequest) (*meta.GateLoadFriendListResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	log.Debugf("%d begin loadFriendList", s.user)
-	ids, err := g.store.loadFriendList(s.user)
+	log.Debugf("%d begin loadFriendList", c.getUser())
+	ids, err := g.store.loadFriendList(c.getUser())
 	if err != nil {
 		return &meta.GateLoadFriendListResponse{Header: &meta.ResponseHeader{Code: util.ErrorLoadFriendList, Msg: err.Error()}}, nil
 	}
-	log.Debugf("%d end loadFriendList:%v", s.user, ids)
+	log.Debugf("%d end loadFriendList:%v", c.getUser(), ids)
 
 	return &meta.GateLoadFriendListResponse{Users: ids}, nil
 }
 
 // FindUser 添加好友前先查找,模糊查找
 func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*meta.GateFindUserResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
-	users, err := g.store.findUser(s.user, req.User)
+	users, err := g.store.findUser(c.getUser(), req.User)
 	if err != nil {
 		return &meta.GateFindUserResponse{Header: &meta.ResponseHeader{Code: util.ErrorFindUser, Msg: err.Error()}}, nil
 	}
@@ -316,10 +303,9 @@ func (g *Gate) FindUser(ctx context.Context, req *meta.GateFindUserRequest) (*me
 
 // GroupCreate 用户创建一个聊天组.
 func (g *Gate) GroupCreate(ctx context.Context, req *meta.GateGroupCreateRequest) (*meta.GateGroupCreateResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateGroupCreateResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateGroupCreateResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
 	gid, err := g.master.NewID()
@@ -327,55 +313,52 @@ func (g *Gate) GroupCreate(ctx context.Context, req *meta.GateGroupCreateRequest
 		return &meta.GateGroupCreateResponse{Header: &meta.ResponseHeader{Code: util.ErrorMasterNewID, Msg: err.Error()}}, nil
 	}
 
-	if err = g.store.groupCreate(s.user, gid, req.Name); err != nil {
+	if err = g.store.groupCreate(c.getUser(), gid, req.Name); err != nil {
 		return &meta.GateGroupCreateResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
 	}
 
-	log.Debugf("user:%d, create group:%d", s.user, gid)
+	log.Debugf("user:%d, create group:%d", c.getUser(), gid)
 	return &meta.GateGroupCreateResponse{ID: gid}, nil
 }
 
 // GroupDelete 解散一个群.
 func (g *Gate) GroupDelete(ctx context.Context, req *meta.GateGroupDeleteRequest) (*meta.GateGroupDeleteResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateGroupDeleteResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateGroupDeleteResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	if err = g.store.groupDelete(s.user, req.ID); err != nil {
+	if err := g.store.groupDelete(c.getUser(), req.ID); err != nil {
 		return &meta.GateGroupDeleteResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
 	}
 
-	log.Debugf("user:%d, delete group:%d", s.user, req.ID)
+	log.Debugf("user:%d, delete group:%d", c.getUser(), req.ID)
 	return &meta.GateGroupDeleteResponse{}, nil
 }
 
 // Group 添加，邀请，退出, 踢出
 func (g *Gate) Group(ctx context.Context, req *meta.GateGroupRequest) (*meta.GateGroupResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	if err = g.store.group(s.user, req.ID, req.Operate, req.Users, req.Msg); err != nil {
+	if err := g.store.group(c.getUser(), req.ID, req.Operate, req.Users, req.Msg); err != nil {
 		return &meta.GateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
 	}
 
-	log.Debugf("%d group:%d operate:%v, users:%v, msg:%v", s.user, req.ID, req.Operate, req.Users, req.Msg)
+	log.Debugf("%d group:%d operate:%v, users:%v, msg:%v", c.getUser(), req.ID, req.Operate, req.Users, req.Msg)
 	return &meta.GateGroupResponse{}, nil
 }
 
 // LoadGroupList 加载群组列表
 func (g *Gate) LoadGroupList(ctx context.Context, req *meta.GateLoadGroupListRequest) (*meta.GateLoadGroupListResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	groups, err := g.store.loadGroupList(s.user)
+	groups, err := g.store.loadGroupList(c.user)
 	if err != nil {
 		return &meta.GateLoadGroupListResponse{Header: &meta.ResponseHeader{Code: util.ErrorLoadGroup, Msg: err.Error()}}, nil
 	}
@@ -385,13 +368,12 @@ func (g *Gate) LoadGroupList(ctx context.Context, req *meta.GateLoadGroupListReq
 
 // UploadFile 客户端上传文件接口，一次一个文件.
 func (g *Gate) UploadFile(ctx context.Context, req *meta.GateUploadFileRequest) (*meta.GateUploadFileResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	if err = g.store.uploadFile(s.user, req.File); err != nil {
+	if err := g.store.uploadFile(c.user, req.File); err != nil {
 		return &meta.GateUploadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorUploadFile, Msg: err.Error()}}, nil
 	}
 
@@ -400,13 +382,12 @@ func (g *Gate) UploadFile(ctx context.Context, req *meta.GateUploadFileRequest) 
 
 // CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
 func (g *Gate) CheckFile(ctx context.Context, req *meta.GateCheckFileRequest) (*meta.GateCheckFileResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	names, err := g.store.checkFile(s.user, req.Names)
+	names, err := g.store.checkFile(c.user, req.Names)
 	if err != nil {
 		return &meta.GateCheckFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorCheckFile, Msg: err.Error()}}, nil
 	}
@@ -416,13 +397,12 @@ func (g *Gate) CheckFile(ctx context.Context, req *meta.GateCheckFileRequest) (*
 
 // DownloadFile 客户端下载文件，传入ID，返回具体文件内容.
 func (g *Gate) DownloadFile(ctx context.Context, req *meta.GateDownloadFileRequest) (*meta.GateDownloadFileResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	files, err := g.store.downloadFile(s.user, req.Names)
+	files, err := g.store.downloadFile(c.user, req.Names)
 	if err != nil {
 		return &meta.GateDownloadFileResponse{Header: &meta.ResponseHeader{Code: util.ErrorDownloadFile, Msg: err.Error()}}, nil
 	}
@@ -432,14 +412,13 @@ func (g *Gate) DownloadFile(ctx context.Context, req *meta.GateDownloadFileReque
 
 // LoadMessage 客户端同步离线消息，每次可逆序(旧消息)或正序(新消息)接收100条
 func (g *Gate) LoadMessage(ctx context.Context, req *meta.GateLoadMessageRequest) (*meta.GateLoadMessageResponse, error) {
-	s, _, err := g.manager.getSession(ctx)
-	if err != nil {
-		log.Errorf("getSession error:%s", errors.ErrorStack(err))
-		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: err.Error()}}, nil
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
-	msgs, err := g.store.loadMessage(s.user, req.ID, req.Reverse)
+	msgs, err := g.store.loadMessage(c.user, req.ID, req.Reverse)
 	if err != nil {
-		log.Errorf("%d loadMessage error:%s", s.user, errors.ErrorStack(err))
+		log.Errorf("%d loadMessage error:%s", c.user, errors.ErrorStack(err))
 		return &meta.GateLoadMessageResponse{Header: &meta.ResponseHeader{Code: util.ErrorLoadMessage, Msg: err.Error()}}, nil
 	}
 
@@ -448,13 +427,26 @@ func (g *Gate) LoadMessage(ctx context.Context, req *meta.GateLoadMessageRequest
 
 // Push notifer 调用的接口, 如果用户不在，要返回错误.
 func (g *Gate) Push(ctx context.Context, req *meta.PushRequest) (*meta.PushResponse, error) {
-	addr, err := util.ContextAddr(ctx)
+	token, err := util.ContextGet(ctx, "token")
 	if err != nil {
-		log.Errorf("ContextAddr error:%s", errors.ErrorStack(err))
-		return &meta.PushResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		log.Errorf("refuse token error:%s", err.Error())
+		return &meta.PushResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "ip refuse"}}, nil
 	}
-	if addr[:3] != "127" {
-		log.Errorf("refuse client:%s", addr)
+
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		panic("Error : " + err.Error())
+	}
+
+	refuse := true
+	for _, i := range interfaces {
+		if i.HardwareAddr != nil && i.HardwareAddr.String() == token {
+			refuse = false
+		}
+	}
+
+	if refuse {
+		log.Errorf("refuse token:%s", token)
 		return &meta.PushResponse{Header: &meta.ResponseHeader{Code: -1, Msg: "ip refuse"}}, nil
 	}
 
