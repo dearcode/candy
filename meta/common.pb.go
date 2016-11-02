@@ -25,6 +25,7 @@
 		PushMessage
 		PushRequest
 		PushResponse
+		GateStreamRequest
 		GateFindUserRequest
 		GateFindUserResponse
 		GateFriendRequest
