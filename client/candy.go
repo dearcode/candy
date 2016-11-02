@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -42,7 +43,8 @@ type CandyClient struct {
 	gate    meta.GateClient
 	handler MessageHandler
 	stream  meta.Gate_StreamClient
-	token   string
+	id      int64
+	token   int64
 	user    string
 	pass    string
 	device  string
@@ -74,7 +76,8 @@ func (c *CandyClient) Start() error {
 
 // service 调用服务器接口, 带上token
 func (c *CandyClient) service(call func(context.Context, meta.GateClient) error) {
-	ctx := context.WithValue(context.Background(), "token", c.token)
+	ctx := util.ContextSet(context.Background(), "token", fmt.Sprintf("%d", c.token))
+	ctx = util.ContextSet(ctx, "id", fmt.Sprintf("%d", c.id))
 	if err := call(ctx, c.gate); err != nil {
 		log.Infof("call:%s error:%s", c.host, err.Error())
 		return
@@ -120,46 +123,56 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 		return -1, NewError(code, err.Error())
 	}
 
-	stream, err := c.gate.Stream(context.Background())
-	if err != nil {
-		return -1, NewError(util.ErrorAuth, err.Error())
-	}
-
 	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
-	if err = stream.Send(req); err != nil {
-		log.Errorf("stream Send error:%s", err.Error())
-		return -1, NewError(util.ErrorAuth, err.Error())
+	var resp *meta.GateUserLoginResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.Login(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return -1, err
 	}
 
-	pm, err := stream.Recv()
-	if err != nil {
-		log.Errorf("stream Recv error:%s", err.Error())
-		return -1, NewError(util.ErrorAuth, err.Error())
-	}
-	// pm.Msg.ID用户id
-    // pm.Msg.Bodytoken
-	c.token = pm.Msg.Body
+	c.token = resp.Token
+	c.id = resp.ID
 	c.user = user
 	c.pass = passwd
 
-	c.Lock()
-	if c.stream != nil {
-		c.stream.CloseSend()
+	stream, err := c.openStream()
+	if err != nil {
+		return -1, err
 	}
-	c.stream = stream
-	c.Unlock()
 
-	go c.loopRecvMessage(stream)
+	go c.receiver(stream)
 
-	return pm.Msg.ID, nil
+	return resp.ID, nil
 }
 
 // Logout 注销登陆
 func (c *CandyClient) Logout() error {
 	c.user = ""
 	c.pass = ""
-	c.token = ""
-	return c.stream.CloseSend()
+	c.token = 0
+	c.id = 0
+
+	req := &meta.GateUserLogoutRequest{}
+	var resp *meta.GateUserLogoutResponse
+	var err error
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.Logout(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return resp.Header.JsonError()
+
 }
 
 // UpdateUserInfo 更新用户信息， 昵称/头像
@@ -482,12 +495,23 @@ func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
 	return resp.ID, resp.Header.Error()
 }
 
-// loopRecvMessage 一直接收服务器返回消息, 直到出错.
-func (c *CandyClient) loopRecvMessage(stream meta.Gate_StreamClient) {
+func (c *CandyClient) openStream() (resp meta.Gate_StreamClient, err error) {
+	req := &meta.GateStreamRequest{Token: c.token, ID: c.id}
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		if resp, err = api.Stream(ctx, req); err != nil {
+			return err
+		}
+		return nil
+	})
+	return
+}
+
+// receiver 一直接收服务器返回消息, 直到出错.
+func (c *CandyClient) receiver(stream meta.Gate_StreamClient) {
 	for {
 		pm, err := stream.Recv()
 		if err != nil {
-			log.Errorf("loopRecvMessage error:%s", err)
+			log.Errorf("recv error:%s", err)
 			c.onError(err.Error())
 			break
 		}
@@ -497,27 +521,44 @@ func (c *CandyClient) loopRecvMessage(stream meta.Gate_StreamClient) {
 
 func (c *CandyClient) onError(msg string) {
 	c.Lock()
-	defer c.Unlock()
-
 	c.last = time.Now().Add(-time.Minute)
 	if c.broken {
+		c.Unlock()
 		return
 	}
 	c.broken = true
+	c.Unlock()
+
+	if strings.Contains(msg, "invalid context") && c.user != "" && c.pass != "" {
+		c.Login(c.user, c.pass)
+	}
+
 	c.handler.OnError(msg)
 }
 
+//onHealth 如果网络正常了，要尝试启动Push Stream
 func (c *CandyClient) onHealth() {
 	c.Lock()
-	defer c.Unlock()
-
 	c.last = time.Now()
 	if !c.broken {
+		c.Unlock()
 		return
 	}
 	c.broken = false
-	c.Login(c.user, c.pass)
+	c.Unlock()
+
 	c.handler.OnHealth()
+
+	if c.token != 0 && c.id != 0 {
+		stream, err := c.openStream()
+		if err != nil {
+			c.onError(err.Error())
+		}
+
+		go c.receiver(stream)
+
+	}
+
 }
 
 // OnNetStateChange 移动端如果网络状态发生变化要通知这边

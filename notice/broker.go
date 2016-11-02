@@ -16,7 +16,6 @@ type pushRequest struct {
 
 type broker struct {
 	mbox   chan pushRequest
-	sid    int64
 	users  map[int64]devices
 	sender brokerSender
 	sync.RWMutex
@@ -76,11 +75,9 @@ func (b *broker) loopSender() {
 	}
 }
 
-func (b *broker) subscribe(uid int64, dev, host string) int64 {
+func (b *broker) subscribe(uid, token int64, dev, host string) {
 	b.Lock()
 	defer b.Unlock()
-
-	b.sid++
 
 	devs, ok := b.users[uid]
 	if !ok {
@@ -88,22 +85,21 @@ func (b *broker) subscribe(uid int64, dev, host string) int64 {
 		b.users[uid] = devs
 	}
 
-	devs.put(dev, device{sid: b.sid, host: host})
+	devs.put(dev, device{token: token, host: host})
 
-	log.Debugf("subscribe uid:%d, dev:%s, host:%s, sid:%d", uid, dev, host, b.sid)
-	return b.sid
+	log.Debugf("subscribe uid:%d, dev:%s, host:%s, token:%d", uid, dev, host, token)
 }
 
-func (b *broker) unSubscribe(uid, sid int64, dev string) {
+func (b *broker) unSubscribe(uid, token int64, dev string) {
 	b.Lock()
 	if devs, ok := b.users[uid]; ok {
-		devs.del(dev, sid)
+		devs.del(dev, token)
 		if devs.empty() {
 			delete(b.users, uid)
 		}
 	}
 	b.Unlock()
-	log.Debugf("unSubscribe uid:%d, dev:%s, sid:%d", uid, dev, sid)
+	log.Debugf("unSubscribe uid:%d, dev:%s, token:%d", uid, dev, token)
 }
 
 func (b *broker) push(msg meta.PushMessage, ids ...meta.PushID) {

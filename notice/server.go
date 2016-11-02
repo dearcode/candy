@@ -50,15 +50,15 @@ func NewNotifer(host string) (*Notifer, error) {
 
 // UnSubscribe 用户下线，取消在线推送
 func (n *Notifer) UnSubscribe(_ context.Context, req *meta.UnSubscribeRequest) (*meta.UnSubscribeResponse, error) {
-	n.broker.unSubscribe(req.ID, req.SID, req.Device)
+	n.broker.unSubscribe(req.ID, req.Token, req.Device)
 
 	return &meta.UnSubscribeResponse{}, nil
 }
 
 // Subscribe 用户上线，接受在线推送
 func (n *Notifer) Subscribe(_ context.Context, req *meta.SubscribeRequest) (*meta.SubscribeResponse, error) {
-	sid := n.broker.subscribe(req.ID, req.Device, req.Host)
-	return &meta.SubscribeResponse{SID: sid}, nil
+	n.broker.subscribe(req.ID, req.Token, req.Device, req.Host)
+	return &meta.SubscribeResponse{}, nil
 }
 
 // Push store调用的接口.

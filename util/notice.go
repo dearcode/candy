@@ -25,22 +25,22 @@ func NewNotiferClient(host string) (*NotiferClient, error) {
 }
 
 //Subscribe 为gate提供，调用Notifer订阅消息
-func (n *NotiferClient) Subscribe(id int64, device, host string) (int64, error) {
-	req := &meta.SubscribeRequest{ID: id, Device: device, Host: host}
+func (n *NotiferClient) Subscribe(id int64, device string, token int64, host string) error {
+	req := &meta.SubscribeRequest{ID: id, Device: device, Host: host, Token: token}
 	ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
 	resp, err := n.client.Subscribe(ctx, req)
 	cancel()
 	if err != nil {
-		return 0, errors.Trace(err)
+		return errors.Trace(err)
 	}
 
 	log.Debugf("resp:%v", resp)
-	return resp.SID, errors.Trace(resp.Header.Error())
+	return errors.Trace(resp.Header.Error())
 }
 
 //UnSubscribe 为gate提供，调用Notifer取消订阅消息
 func (n *NotiferClient) UnSubscribe(id int64, device, host string, sid int64) error {
-	req := &meta.UnSubscribeRequest{ID: id, Device: device, Host: host, SID: sid}
+	req := &meta.UnSubscribeRequest{ID: id, Device: device, Host: host, Token: sid}
 	ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
 	resp, err := n.client.UnSubscribe(ctx, req)
 	cancel()

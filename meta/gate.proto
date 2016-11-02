@@ -65,10 +65,10 @@ service Gate {
     rpc Push(PushRequest) returns (PushResponse);
 }
 
-// GateStreamRequest UID userID, SID sessionID
+// GateStreamRequest ID userID, token sessionID
 message GateStreamRequest {
-    int64 UID = 1;
-    int64 SID = 2;
+    int64   ID      = 1;
+    int64   Token   = 2;
 }
 
 message GateFindUserRequest {
@@ -156,13 +156,18 @@ message GateUserLoginRequest {
     string Device   = 3; 
 }
 
+//GateUserLoginResponse ID userID, Token sessionID.
 message GateUserLoginResponse {
     ResponseHeader header = 1;
-    int64 ID = 2;
+    int64   ID      = 2;
+    int64   Token   = 3;
 }
 
 
+//GateUserLogoutRequest ID userID, Token sessionID.
 message GateUserLogoutRequest {
+    int64 ID    = 1;
+    int64 Token = 2;
 }
 
 message GateUserLogoutResponse {

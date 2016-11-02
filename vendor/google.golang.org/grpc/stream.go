@@ -78,9 +78,6 @@ type Stream interface {
 	// any other error, it aborts the stream and returns an RPC status. On
 	// server side, it simply returns the error to the caller.
 	RecvMsg(m interface{}) error
-
-    // Close stream.
-    Close() error
 }
 
 // ClientStream defines the interface a client stream has to satisfy.
@@ -249,11 +246,6 @@ type clientStream struct {
 	// trInfo.tr is set when the clientStream is created (if EnableTracing is true),
 	// and is set to nil when the clientStream's finish method is called.
 	trInfo traceInfo
-}
-
-// Close 关闭
-func (cs *clientStream) Close() error {
-	return cs.t.Close()
 }
 
 func (cs *clientStream) Context() context.Context {
@@ -450,11 +442,6 @@ type serverStream struct {
 	trInfo     *traceInfo
 
 	mu sync.Mutex // protects trInfo.tr after the service handler runs.
-}
-
-// Close 关闭连接
-func (ss *serverStream) Close() error {
-	return ss.t.Close()
 }
 
 func (ss *serverStream) Context() context.Context {
