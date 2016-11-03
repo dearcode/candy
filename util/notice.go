@@ -17,7 +17,7 @@ type NotiferClient struct {
 // NewNotiferClient 返回NotiferClient client.
 func NewNotiferClient(host string) (*NotiferClient, error) {
 	log.Debugf("dial host:%v", host)
-	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))
+	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout), grpc.WithBackoffMaxDelay(NetworkTimeout))
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
