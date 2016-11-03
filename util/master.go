@@ -35,7 +35,7 @@ func NewMasterClient(host string, etcdAddrs []string) (*MasterClient, error) {
 		}
 	}
 
-	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))
+	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout), grpc.WithBackoffMaxDelay(NetworkTimeout))
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -58,7 +58,7 @@ func (m *MasterClient) reconnectMaster() error {
 		host = m.host
 	}
 
-	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout))
+	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(NetworkTimeout), grpc.WithBackoffMaxDelay(NetworkTimeout))
 	if err != nil {
 		return errors.Trace(err)
 	}

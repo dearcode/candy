@@ -49,7 +49,7 @@ func (g *gateClient) getClient(addr string) (meta.GateClient, error) {
 		return c, nil
 	}
 
-	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
+	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout), grpc.WithBackoffMaxDelay(util.NetworkTimeout))
 	if err != nil {
 		return nil, errors.Trace(err)
 	}

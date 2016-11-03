@@ -60,7 +60,7 @@ func NewCandyClient(host string, handler MessageHandler) *CandyClient {
 func (c *CandyClient) Start() error {
 	var err error
 
-	c.conn, err = grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout))
+	c.conn, err = grpc.Dial(c.host, grpc.WithInsecure(), grpc.WithTimeout(networkTimeout), grpc.WithBackoffMaxDelay(networkTimeout))
 	if err != nil {
 		log.Errorf("dial:%s error:%s", c.host, err.Error())
 		return err

@@ -15,7 +15,7 @@ type storeClient struct {
 }
 
 func newStoreClient(host string) (*storeClient, error) {
-	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout))
+	conn, err := grpc.Dial(host, grpc.WithInsecure(), grpc.WithTimeout(util.NetworkTimeout), grpc.WithBackoffMaxDelay(util.NetworkTimeout))
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
