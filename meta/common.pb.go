@@ -68,6 +68,10 @@
 		GateUpdateSignatureResponse
 		NewIDRequest
 		NewIDResponse
+		RegionGetRequest
+		RegionGetResponse
+		RegionSetRequest
+		RegionSetResponse
 		SubscribeRequest
 		SubscribeResponse
 		UnSubscribeRequest

@@ -106,7 +106,7 @@ func (e *EtcdClient) WaitKeyDelete(key string) {
 	e.watch(key, mvccpb.DELETE)
 }
 
-//WaitKeyPut 等待Key被删除
+//WaitKeyPut 等待Key被修改
 func (e *EtcdClient) WaitKeyPut(key string) {
 	e.watch(key, mvccpb.PUT)
 }

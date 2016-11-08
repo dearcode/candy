@@ -45,9 +45,38 @@ func (m *NewIDResponse) GetHeader() *ResponseHeader {
 	return nil
 }
 
+type RegionGetRequest struct {
+	Host string `protobuf:"bytes,1,opt,name=Host,json=host,proto3" json:"Host,omitempty"`
+}
+
+func (m *RegionGetRequest) Reset()                    { *m = RegionGetRequest{} }
+func (m *RegionGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*RegionGetRequest) ProtoMessage()               {}
+func (*RegionGetRequest) Descriptor() ([]byte, []int) { return fileDescriptorMaster, []int{2} }
+
+type RegionGetResponse struct {
+	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Begin  int32           `protobuf:"varint,2,opt,name=begin,proto3" json:"begin,omitempty"`
+	End    int32           `protobuf:"varint,3,opt,name=end,proto3" json:"end,omitempty"`
+}
+
+func (m *RegionGetResponse) Reset()                    { *m = RegionGetResponse{} }
+func (m *RegionGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*RegionGetResponse) ProtoMessage()               {}
+func (*RegionGetResponse) Descriptor() ([]byte, []int) { return fileDescriptorMaster, []int{3} }
+
+func (m *RegionGetResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*NewIDRequest)(nil), "candy.meta.NewIDRequest")
 	proto.RegisterType((*NewIDResponse)(nil), "candy.meta.NewIDResponse")
+	proto.RegisterType((*RegionGetRequest)(nil), "candy.meta.RegionGetRequest")
+	proto.RegisterType((*RegionGetResponse)(nil), "candy.meta.RegionGetResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -62,6 +91,7 @@ const _ = grpc.SupportPackageIsVersion3
 
 type MasterClient interface {
 	NewID(ctx context.Context, in *NewIDRequest, opts ...grpc.CallOption) (*NewIDResponse, error)
+	RegionGet(ctx context.Context, in *RegionGetRequest, opts ...grpc.CallOption) (*RegionGetResponse, error)
 }
 
 type masterClient struct {
@@ -81,10 +111,20 @@ func (c *masterClient) NewID(ctx context.Context, in *NewIDRequest, opts ...grpc
 	return out, nil
 }
 
+func (c *masterClient) RegionGet(ctx context.Context, in *RegionGetRequest, opts ...grpc.CallOption) (*RegionGetResponse, error) {
+	out := new(RegionGetResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Master/RegionGet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Master service
 
 type MasterServer interface {
 	NewID(context.Context, *NewIDRequest) (*NewIDResponse, error)
+	RegionGet(context.Context, *RegionGetRequest) (*RegionGetResponse, error)
 }
 
 func RegisterMasterServer(s *grpc.Server, srv MasterServer) {
@@ -109,6 +149,24 @@ func _Master_NewID_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Master_RegionGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegionGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MasterServer).RegionGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Master/RegionGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MasterServer).RegionGet(ctx, req.(*RegionGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Master_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "candy.meta.Master",
 	HandlerType: (*MasterServer)(nil),
@@ -116,6 +174,10 @@ var _Master_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NewID",
 			Handler:    _Master_NewID_Handler,
+		},
+		{
+			MethodName: "RegionGet",
+			Handler:    _Master_RegionGet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -173,6 +235,68 @@ func (m *NewIDResponse) MarshalTo(data []byte) (int, error) {
 	return i, nil
 }
 
+func (m *RegionGetRequest) Marshal() (data []byte, err error) {
+	size := m.Size()
+	data = make([]byte, size)
+	n, err := m.MarshalTo(data)
+	if err != nil {
+		return nil, err
+	}
+	return data[:n], nil
+}
+
+func (m *RegionGetRequest) MarshalTo(data []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Host) > 0 {
+		data[i] = 0xa
+		i++
+		i = encodeVarintMaster(data, i, uint64(len(m.Host)))
+		i += copy(data[i:], m.Host)
+	}
+	return i, nil
+}
+
+func (m *RegionGetResponse) Marshal() (data []byte, err error) {
+	size := m.Size()
+	data = make([]byte, size)
+	n, err := m.MarshalTo(data)
+	if err != nil {
+		return nil, err
+	}
+	return data[:n], nil
+}
+
+func (m *RegionGetResponse) MarshalTo(data []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Header != nil {
+		data[i] = 0xa
+		i++
+		i = encodeVarintMaster(data, i, uint64(m.Header.Size()))
+		n2, err := m.Header.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	if m.Begin != 0 {
+		data[i] = 0x10
+		i++
+		i = encodeVarintMaster(data, i, uint64(m.Begin))
+	}
+	if m.End != 0 {
+		data[i] = 0x18
+		i++
+		i = encodeVarintMaster(data, i, uint64(m.End))
+	}
+	return i, nil
+}
+
 func encodeFixed64Master(data []byte, offset int, v uint64) int {
 	data[offset] = uint8(v)
 	data[offset+1] = uint8(v >> 8)
@@ -215,6 +339,32 @@ func (m *NewIDResponse) Size() (n int) {
 	}
 	if m.ID != 0 {
 		n += 1 + sovMaster(uint64(m.ID))
+	}
+	return n
+}
+
+func (m *RegionGetRequest) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Host)
+	if l > 0 {
+		n += 1 + l + sovMaster(uint64(l))
+	}
+	return n
+}
+
+func (m *RegionGetResponse) Size() (n int) {
+	var l int
+	_ = l
+	if m.Header != nil {
+		l = m.Header.Size()
+		n += 1 + l + sovMaster(uint64(l))
+	}
+	if m.Begin != 0 {
+		n += 1 + sovMaster(uint64(m.Begin))
+	}
+	if m.End != 0 {
+		n += 1 + sovMaster(uint64(m.End))
 	}
 	return n
 }
@@ -384,6 +534,206 @@ func (m *NewIDResponse) Unmarshal(data []byte) error {
 	}
 	return nil
 }
+func (m *RegionGetRequest) Unmarshal(data []byte) error {
+	l := len(data)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMaster
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := data[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RegionGetRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RegionGetRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Host", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMaster
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMaster
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Host = string(data[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMaster(data[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMaster
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RegionGetResponse) Unmarshal(data []byte) error {
+	l := len(data)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMaster
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := data[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RegionGetResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RegionGetResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMaster
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMaster
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Header == nil {
+				m.Header = &ResponseHeader{}
+			}
+			if err := m.Header.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Begin", wireType)
+			}
+			m.Begin = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMaster
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				m.Begin |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field End", wireType)
+			}
+			m.End = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMaster
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				m.End |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMaster(data[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMaster
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipMaster(data []byte) (n int, err error) {
 	l := len(data)
 	iNdEx := 0
@@ -492,7 +842,7 @@ var (
 func init() { proto.RegisterFile("master.proto", fileDescriptorMaster) }
 
 var fileDescriptorMaster = []byte{
-	// 188 bytes of a gzipped FileDescriptorProto
+	// 276 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0xc9, 0x4d, 0x2c, 0x2e,
 	0x49, 0x2d, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x4a, 0x4e, 0xcc, 0x4b, 0xa9, 0xd4,
 	0xcb, 0x4d, 0x2d, 0x49, 0x94, 0xe2, 0x49, 0xce, 0xcf, 0xcd, 0xcd, 0xcf, 0x83, 0xc8, 0x28, 0xf1,
@@ -500,9 +850,15 @@ var fileDescriptorMaster = []byte{
 	0x73, 0xf1, 0x42, 0xf9, 0xc5, 0x05, 0xf9, 0x79, 0xc5, 0xa9, 0x42, 0x46, 0x5c, 0x6c, 0x19, 0xa9,
 	0x89, 0x29, 0xa9, 0x45, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0xdc, 0x46, 0x52, 0x7a, 0x08, 0xb3, 0xf4,
 	0x60, 0xaa, 0x3c, 0xc0, 0x2a, 0x82, 0xa0, 0x2a, 0x85, 0xf8, 0xb8, 0x98, 0x3c, 0x5d, 0x24, 0x98,
-	0x14, 0x18, 0x35, 0x98, 0x83, 0x98, 0x32, 0x5d, 0x8c, 0xdc, 0xb8, 0xd8, 0x7c, 0xc1, 0xce, 0x11,
-	0xb2, 0xe1, 0x62, 0x05, 0x1b, 0x2f, 0x24, 0x81, 0x6c, 0x0c, 0xb2, 0x0b, 0xa4, 0x24, 0xb1, 0xc8,
-	0x40, 0x6c, 0x71, 0x12, 0x3b, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4,
-	0x18, 0x27, 0x3c, 0x96, 0x63, 0x88, 0x62, 0x01, 0xa9, 0x4a, 0x62, 0x03, 0xfb, 0xc5, 0x18, 0x10,
-	0x00, 0x00, 0xff, 0xff, 0x7d, 0x45, 0x0d, 0xa7, 0xf5, 0x00, 0x00, 0x00,
+	0x14, 0x18, 0x35, 0x98, 0x83, 0x98, 0x32, 0x5d, 0x94, 0xd4, 0xb8, 0x04, 0x82, 0x52, 0xd3, 0x33,
+	0xf3, 0xf3, 0xdc, 0x53, 0x4b, 0xa0, 0x16, 0x09, 0x09, 0x71, 0xb1, 0x78, 0xe4, 0x17, 0x97, 0x80,
+	0x4d, 0xe5, 0x0c, 0x62, 0xc9, 0xc8, 0x2f, 0x2e, 0x51, 0xca, 0xe7, 0x12, 0x44, 0x52, 0x47, 0x81,
+	0x03, 0x44, 0xb8, 0x58, 0x93, 0x52, 0xd3, 0x33, 0xf3, 0xc0, 0x6e, 0x60, 0x0d, 0x82, 0x70, 0x84,
+	0x04, 0xb8, 0x98, 0x53, 0xf3, 0x52, 0x24, 0x98, 0xc1, 0x62, 0x20, 0xa6, 0xd1, 0x04, 0x46, 0x2e,
+	0x36, 0x5f, 0x70, 0x40, 0x09, 0xd9, 0x70, 0xb1, 0x82, 0x3d, 0x2e, 0x24, 0x81, 0x6c, 0x3e, 0x72,
+	0xd8, 0x48, 0x49, 0x62, 0x91, 0x81, 0x3a, 0xd2, 0x83, 0x8b, 0x13, 0xee, 0x72, 0x21, 0x19, 0x54,
+	0x17, 0xa2, 0x7a, 0x5c, 0x4a, 0x16, 0x87, 0x2c, 0xc4, 0x24, 0x27, 0xb1, 0x13, 0x8f, 0xe4, 0x18,
+	0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86, 0x28, 0x16, 0x90,
+	0xca, 0x24, 0x36, 0x70, 0x7c, 0x19, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xf3, 0x71, 0x1d, 0xf7,
+	0xd9, 0x01, 0x00, 0x00,
 }
