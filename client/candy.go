@@ -77,7 +77,6 @@ func (c *CandyClient) Start() error {
 func (c *CandyClient) service(call func(context.Context, meta.GateClient) error) {
 	ctx := util.ContextSet(context.Background(), "token", fmt.Sprintf("%d", c.token))
 	ctx = util.ContextSet(ctx, "id", fmt.Sprintf("%d", c.id))
-	log.Debugf("ctx:%+v", ctx)
 	if err := call(ctx, c.gate); err != nil {
 		log.Infof("call:%s error:%s", c.host, err.Error())
 		return
