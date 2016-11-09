@@ -61,8 +61,9 @@
 #### 编译命令:   
   gomobile bind -v -target=ios github.com/dearcode/candy/client   
 
-## 备注  
-  目前没有文档，架构就在心中,我们不需要指导，我们需要时间，谢谢    
+## 架构图
+![candy server](https://raw.githubusercontent.com/dearcode/doc/master/candy_server.jpg "Candy Server")  
+  如果代码与图片不致就算了
 
 
 技术讨论QQ群：[![Circle CI](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=d43cad7db88d71f70da81523c02b2fe59343111e1d0a9d5f5ac2a198ee047279) 29996599    
