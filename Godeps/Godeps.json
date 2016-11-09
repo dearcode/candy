@@ -7,6 +7,10 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/biogo/store/llrb",
+			"Rev": "913427a1d5e89604e50ea1db0f28f34966d61602"
+		},
+		{
 			"ImportPath": "github.com/cloudfoundry-incubator/candiedyaml",
 			"Rev": "99c3df83b51532e3615f851d8c2dbb638f5313bf"
 		},
