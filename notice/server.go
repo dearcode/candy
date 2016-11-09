@@ -23,17 +23,28 @@ const (
 type Notifer struct {
 	host   string
 	broker *broker
+	master *util.MasterClient
 	gate   *gateClient
 	serv   *grpc.Server
-	region util.Region
+	region meta.Region
 	ln     net.Listener
 
 	sync.RWMutex
 }
 
-// NewNotifer new Notifer server.
-func NewNotifer(host string) (*Notifer, error) {
+// NewServer new Notifer server.
+func NewServer(host, master, etcd string) (*Notifer, error) {
 	ln, err := net.Listen("tcp", host)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	m, err := util.NewMasterClient(master, util.Split(etcd, ","))
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	rs, err := m.RegionGet(host)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
@@ -43,6 +54,8 @@ func NewNotifer(host string) (*Notifer, error) {
 	n := &Notifer{
 		host:   host,
 		gate:   gate,
+		master: m,
+		region: rs[0],
 		broker: newBroker(gate),
 		serv:   grpc.NewServer(),
 		ln:     ln,
@@ -94,8 +107,8 @@ func (n *Notifer) Push(_ context.Context, req *meta.PushRequest) (*meta.PushResp
 // RegionSet 修改当前region的范围
 func (n *Notifer) RegionSet(_ context.Context, req *meta.RegionSetRequest) (*meta.RegionSetResponse, error) {
 	n.Lock()
-	n.region.Begin = int(req.Begin)
-	n.region.End = int(req.End)
+	n.region.Begin = req.Begin
+	n.region.End = req.End
 	n.Unlock()
 
 	return &meta.RegionSetResponse{}, nil

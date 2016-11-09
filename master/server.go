@@ -126,5 +126,17 @@ func (m *Master) NewID(_ context.Context, _ *meta.NewIDRequest) (*meta.NewIDResp
 
 // RegionGet 获取自己节点的region
 func (m *Master) RegionGet(_ context.Context, req *meta.RegionGetRequest) (*meta.RegionGetResponse, error) {
-	return &meta.RegionGetResponse{}, nil
+	if m.cluster == nil {
+		return &meta.RegionGetResponse{Regions: []meta.Region{{0, meta.MaxRegionEnd, ""}}}, nil
+	}
+
+	if req.Host != "" {
+		r, err := m.cluster.get(req.Host)
+		if err != nil {
+			return &meta.RegionGetResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		return &meta.RegionGetResponse{Regions: []meta.Region{r}}, nil
+	}
+
+	return &meta.RegionGetResponse{Regions: m.cluster.getRegions()}, nil
 }

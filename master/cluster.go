@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
 	"github.com/dearcode/candy/util/log"
 )
@@ -52,18 +53,22 @@ func (c *cluster) onHealth(host string) {
 	c.Unlock()
 }
 
-func (c *cluster) get(host string) (util.Region, error) {
+func (c *cluster) get(host string) (meta.Region, error) {
 	r, err := c.regions.GetByHost(host)
 	if err == nil {
 		return r, nil
 	}
 
 	if err != util.ErrRegionNotFound {
-		return util.Region{}, err
+		return meta.Region{}, err
 	}
 
 	//添加节点
 	return c.onNodeArrived(host)
+}
+
+func (c *cluster) getRegions() []meta.Region {
+	return c.regions.Dump()
 }
 
 func (c *cluster) check() {
@@ -126,7 +131,7 @@ func (c *cluster) onNodeExpired(host string) error {
 		return err
 	}
 
-	if err = c.etcd.CAS(util.EtcdMasterAddrKey, c.host, regionKey, val); err != nil {
+	if err = c.etcd.CAS(util.EtcdMasterAddrKey, c.host, regionKey, string(val)); err != nil {
 		return err
 	}
 
@@ -138,7 +143,7 @@ func (c *cluster) onNodeExpired(host string) error {
 }
 
 //onNodeArrive 新节点上线, 失败不需要处理, 让客户端重试
-func (c *cluster) onNodeArrived(host string) (util.Region, error) {
+func (c *cluster) onNodeArrived(host string) (meta.Region, error) {
 	r, err := c.regions.Max()
 	if err == util.ErrRegionNotFound {
 		return c.regions.Split("", host)
@@ -147,27 +152,27 @@ func (c *cluster) onNodeArrived(host string) (util.Region, error) {
 	notifer, err := util.NewNotiferClient(r.Host)
 	if err != nil {
 		log.Errorf("connect notifer error:%s", err.Error())
-		return util.Region{}, err
+		return meta.Region{}, err
 	}
 	defer notifer.Stop()
 
 	//通知原节点，修改范围
 	if err = notifer.RegionSet(r.Begin, r.End/2); err != nil {
-		return util.Region{}, err
+		return meta.Region{}, err
 	}
 
 	n, err := c.regions.Split(r.Host, host)
 	if err != nil {
-		return util.Region{}, err
+		return meta.Region{}, err
 	}
 
 	val, err := c.regions.Marshal()
 	if err != nil {
-		return util.Region{}, err
+		return meta.Region{}, err
 	}
 
-	if err = c.etcd.CAS(util.EtcdMasterAddrKey, c.host, regionKey, val); err != nil {
-		return util.Region{}, err
+	if err = c.etcd.CAS(util.EtcdMasterAddrKey, c.host, regionKey, string(val)); err != nil {
+		return meta.Region{}, err
 	}
 
 	c.Lock()
@@ -175,4 +180,13 @@ func (c *cluster) onNodeArrived(host string) (util.Region, error) {
 	c.Unlock()
 
 	return n, nil
+}
+
+func (c *cluster) marshal() (string, error) {
+	buf, err := c.regions.Marshal()
+	if err != nil {
+		return "", err
+	}
+
+	return string(buf), nil
 }

@@ -31,7 +31,7 @@ func (s *session) addConnection(conn *connection) {
 
 // delConnection 遍历session的conns，删除当前连接
 func (s *session) delConnection(conn *connection) bool {
-	log.Debugf("%d addr:%s, dev:%s", s.user, conn.getToken(), conn.getDevice())
+	log.Debugf("%d token:%d dev:%s", s.user, conn.getToken(), conn.getDevice())
 	empty := false
 	s.Lock()
 	for i := 0; i < len(s.conns); {

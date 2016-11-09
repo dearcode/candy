@@ -7,11 +7,8 @@ import (
 	"github.com/biogo/store/llrb"
 	"github.com/juju/errors"
 
+	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util/log"
-)
-
-const (
-	maxRegionEnd = 9973
 )
 
 var (
@@ -19,41 +16,16 @@ var (
 	ErrRegionNotFound = errors.New("region not found")
 )
 
-//Region 用户ID区间begin~end
-type Region struct {
-	Begin int
-	End   int
-	Host  string
-}
-
-//Compare for llrb.
-func (r Region) Compare(c llrb.Comparable) int {
-	b := c.(*Region)
-	if b.Begin == r.Begin {
-		return 0
-	}
-
-	if b.Begin < r.Begin && r.Begin < b.End {
-		return 0
-	}
-
-	return b.Begin - r.Begin
-}
-
-func newRegion(host string, begin, end int) *Region {
-	return &Region{Begin: begin, End: end, Host: host}
-}
-
 //Regions 保存region的路由信息.
 type Regions struct {
 	mu    sync.RWMutex
 	tree  *llrb.Tree
-	hosts map[string]*Region
+	hosts map[string]*meta.Region
 }
 
 //NewRegions 初始化llrb，map.
 func NewRegions(ops ...RegionsOption) (*Regions, error) {
-	r := &Regions{tree: &llrb.Tree{}, hosts: make(map[string]*Region)}
+	r := &Regions{tree: &llrb.Tree{}, hosts: make(map[string]*meta.Region)}
 	for _, op := range ops {
 		if err := op(r); err != nil {
 			return nil, err
@@ -79,40 +51,19 @@ func RegionsWithHosts(hosts string) RegionsOption {
 	}
 }
 
-//span 区间的跨度
-func (r *Region) span() int {
-	return r.End - r.Begin
-}
-
-//Max 两个Region最大范围
-func (r *Region) Max(c Region) (b int, e int) {
-	b = r.Begin
-	e = r.End
-
-	if b > c.Begin {
-		b = c.Begin
-	}
-
-	if e < c.End {
-		e = c.End
-	}
-
-	return
-}
-
 //Max 当前跨度最大的节点
-func (r *Regions) Max() (Region, error) {
+func (r *Regions) Max() (meta.Region, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
 	if r.tree.Len() == 0 {
-		return Region{}, ErrRegionNotFound
+		return meta.Region{}, ErrRegionNotFound
 	}
 
-	var o *Region
+	var o *meta.Region
 	r.tree.Do(func(c llrb.Comparable) (done bool) {
-		n := c.(*Region)
-		if o == nil || n.span()-o.span() >= o.span()/2 {
+		n := c.(*meta.Region)
+		if o == nil || n.Span()-o.Span() >= o.Span()/2 {
 			o = n
 		}
 		return
@@ -120,22 +71,13 @@ func (r *Regions) Max() (Region, error) {
 	return *o, nil
 }
 
-//Match 用户与region匹配
-func (r *Region) Match(id int64) bool {
-	i := int(id % maxRegionEnd)
-	if i >= r.Begin && i < r.End {
-		return true
-	}
-	return false
-}
-
 //Split 添加一个节点并分割相对大的节点.
-func (r *Regions) Split(from, to string) (Region, error) {
+func (r *Regions) Split(from, to string) (meta.Region, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	if r.tree.Len() == 0 {
-		n := newRegion(to, 0, maxRegionEnd)
+		n := meta.NewRegion(to, 0, meta.MaxRegionEnd)
 		r.tree.Insert(n)
 		r.hosts[to] = n
 		return *n, nil
@@ -144,7 +86,7 @@ func (r *Regions) Split(from, to string) (Region, error) {
 	f, ok := r.hosts[from]
 	if !ok {
 		log.Infof("from %s not found", from)
-		return Region{}, ErrRegionNotFound
+		return meta.Region{}, ErrRegionNotFound
 	}
 
 	t, ok := r.hosts[to]
@@ -155,7 +97,7 @@ func (r *Regions) Split(from, to string) (Region, error) {
 
 	delta := (f.End - f.Begin) / 2
 
-	t = newRegion(to, f.End-delta, f.End)
+	t = meta.NewRegion(to, f.End-delta, f.End)
 
 	r.tree.Delete(f)
 	f.End -= delta
@@ -169,33 +111,33 @@ func (r *Regions) Split(from, to string) (Region, error) {
 }
 
 //Get 根据ID获取对应的region信息
-func (r *Regions) Get(id int64) (Region, bool) {
-	b := int(id % maxRegionEnd)
+func (r *Regions) Get(id int64) (meta.Region, bool) {
+	b := int32(id % meta.MaxRegionEnd)
 	r.mu.RLock()
-	c := r.tree.Get(&Region{Begin: b})
+	c := r.tree.Get(&meta.Region{Begin: b})
 	if c == nil {
-		return Region{}, false
+		return meta.Region{}, false
 	}
-	src := c.(*Region)
+	src := c.(*meta.Region)
 	r.mu.RUnlock()
 
 	return *src, true
 }
 
 //GetByHost 根据host获取对应的region信息.
-func (r *Regions) GetByHost(host string) (Region, error) {
+func (r *Regions) GetByHost(host string) (meta.Region, error) {
 	r.mu.RLock()
 	if src, ok := r.hosts[host]; ok {
 		r.mu.RUnlock()
-		return *src, ErrRegionNotFound
+		return *src, nil
 	}
 	r.mu.RUnlock()
 
-	return Region{}, nil
+	return meta.Region{}, ErrRegionNotFound
 }
 
 // Next 返回当前节点的下一个节点
-func (r *Regions) Next(host string) (self Region, next Region, err error) {
+func (r *Regions) Next(host string) (self meta.Region, next meta.Region, err error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -213,11 +155,11 @@ func (r *Regions) Next(host string) (self Region, next Region, err error) {
 	}
 
 	begin := f.End
-	if begin == maxRegionEnd {
+	if begin == meta.MaxRegionEnd {
 		begin = f.Begin - 1
 	}
 
-	c := r.tree.Get(&Region{Begin: begin})
+	c := r.tree.Get(&meta.Region{Begin: begin})
 	if c == nil {
 		log.Infof("region begin:%d not found", begin)
 		err = ErrRegionNotFound
@@ -225,7 +167,7 @@ func (r *Regions) Next(host string) (self Region, next Region, err error) {
 	}
 
 	self = *f
-	next = *c.(*Region)
+	next = *c.(*meta.Region)
 
 	return
 }
@@ -258,13 +200,20 @@ func (r *Regions) Merge(from, to string) error {
 }
 
 //Marshal 导出json格式数据
-func (r *Regions) Marshal() (string, error) {
+func (r *Regions) Marshal() (b []byte, e error) {
 	r.mu.RLock()
-	buf, err := json.Marshal(r.hosts)
+	b, e = json.Marshal(r.hosts)
 	r.mu.RUnlock()
-	if err != nil {
-		return "", err
-	}
+	return
+}
 
-	return string(buf), nil
+//Dump 导出region
+func (r *Regions) Dump() []meta.Region {
+	var l []meta.Region
+	r.mu.RLock()
+	for _, v := range r.hosts {
+		l = append(l, *v)
+	}
+	r.mu.RUnlock()
+	return l
 }

@@ -6,8 +6,6 @@ import (
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
@@ -23,11 +21,10 @@ var (
 
 // Gate recv client request.
 type Gate struct {
-	store        *storeClient
-	manager      *manager
-	master       *util.MasterClient
-	healthServer *health.Server // nil means disabled
-	server       *grpc.Server
+	store   *storeClient
+	manager *manager
+	master  *util.MasterClient
+	server  *grpc.Server
 }
 
 // NewGate new gate server.
@@ -53,26 +50,26 @@ func NewGate(host, master, notifer, store string) (*Gate, error) {
 	}
 
 	g := &Gate{
-		manager:      newManager(nc, host),
-		store:        sc,
-		master:       mc,
-		healthServer: health.NewServer(),
-		server:       grpc.NewServer(),
+		manager: newManager(nc, host),
+		store:   sc,
+		master:  mc,
+		server:  grpc.NewServer(),
 	}
 	meta.RegisterGateServer(g.server, g)
-
-	healthpb.RegisterHealthServer(g.server, g)
 
 	return g, g.server.Serve(l)
 }
 
-// Check 心跳
-func (g *Gate) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
-	if c := g.manager.getConnection(ctx); c != nil {
-		//更新心跳信息
-		c.onHeartbeat()
+// Heartbeat 心跳，重写这个主要是方便附加消息
+func (g *Gate) Heartbeat(ctx context.Context, req *meta.HeartbeatRequest) (*meta.HeartbeatResponse, error) {
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.HeartbeatResponse{Header: &meta.ResponseHeader{Code: util.ErrorFailure, Msg: "login first"}}, nil
 	}
-	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
+
+	//更新心跳信息
+	c.onHeartbeat()
+	return &meta.HeartbeatResponse{}, nil
 }
 
 // Register user, passwd.

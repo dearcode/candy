@@ -54,7 +54,7 @@ func TestRegion(t *testing.T) {
 			t.Fatalf("find id:%d, host:%v, expect host:%s\n", res.id, region.Host, res.host)
 		}
 
-		if region, ok = r.GetByHost(res.host); !ok {
+		if _, err := r.GetByHost(res.host); err != nil {
 			t.Fatalf("host:%s not found", res.host)
 		}
 
@@ -125,7 +125,7 @@ func TestRegionHostsInit(t *testing.T) {
 		}
 	}
 
-	_, err := r.Marshal()
+	_, err := r.Marshal("")
 	if err != nil {
 		t.Fatalf("Marshal error")
 	}
@@ -138,7 +138,7 @@ func TestRegionHostsInit(t *testing.T) {
 	}
 
 	for _, h := range hosts {
-		if _, ok := r.GetByHost(h); !ok {
+		if _, err := r.GetByHost(h); err != nil {
 			t.Fatalf("can't find host:%s", h)
 		}
 	}

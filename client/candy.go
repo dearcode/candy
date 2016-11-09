@@ -8,7 +8,6 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
@@ -78,6 +77,7 @@ func (c *CandyClient) Start() error {
 func (c *CandyClient) service(call func(context.Context, meta.GateClient) error) {
 	ctx := util.ContextSet(context.Background(), "token", fmt.Sprintf("%d", c.token))
 	ctx = util.ContextSet(ctx, "id", fmt.Sprintf("%d", c.id))
+	log.Debugf("ctx:%+v", ctx)
 	if err := call(ctx, c.gate); err != nil {
 		log.Infof("call:%s error:%s", c.host, err.Error())
 		return
@@ -141,23 +141,13 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 	c.user = user
 	c.pass = passwd
 
-	stream, err := c.openStream()
-	if err != nil {
-		return -1, err
-	}
-
-	go c.receiver(stream)
+	c.startReceiver()
 
 	return resp.ID, nil
 }
 
 // Logout 注销登陆
 func (c *CandyClient) Logout() error {
-	c.user = ""
-	c.pass = ""
-	c.token = 0
-	c.id = 0
-
 	req := &meta.GateUserLogoutRequest{}
 	var resp *meta.GateUserLogoutResponse
 	var err error
@@ -170,6 +160,11 @@ func (c *CandyClient) Logout() error {
 	if err != nil {
 		return err
 	}
+
+	c.user = ""
+	c.pass = ""
+	c.token = 0
+	c.id = 0
 
 	return resp.Header.JsonError()
 
@@ -536,6 +531,18 @@ func (c *CandyClient) onError(msg string) {
 	c.handler.OnError(msg)
 }
 
+func (c *CandyClient) startReceiver() {
+	if c.token != 0 && c.id != 0 {
+		stream, err := c.openStream()
+		if err != nil {
+			c.onError(err.Error())
+		}
+
+		go c.receiver(stream)
+
+	}
+}
+
 //onHealth 如果网络正常了，要尝试启动Push Stream
 func (c *CandyClient) onHealth() {
 	c.Lock()
@@ -549,15 +556,7 @@ func (c *CandyClient) onHealth() {
 
 	c.handler.OnHealth()
 
-	if c.token != 0 && c.id != 0 {
-		stream, err := c.openStream()
-		if err != nil {
-			c.onError(err.Error())
-		}
-
-		go c.receiver(stream)
-
-	}
+	c.startReceiver()
 
 }
 
@@ -574,6 +573,10 @@ func (c *CandyClient) healthCheck() {
 	t := time.NewTicker(networkTimeout)
 	defer t.Stop()
 
+	req := &meta.HeartbeatRequest{}
+	var resp *meta.HeartbeatResponse
+	var err error
+
 	for {
 		<-t.C
 		c.RLock()
@@ -583,12 +586,25 @@ func (c *CandyClient) healthCheck() {
 		}
 		c.RUnlock()
 
-		_, err := healthpb.NewHealthClient(c.conn).Check(context.Background(), &healthpb.HealthCheckRequest{})
+		c.service(func(ctx context.Context, client meta.GateClient) error {
+			resp, err = client.Heartbeat(ctx, req)
+			return err
+		})
+
 		if err != nil {
-			log.Errorf("healthCheck error:%v", err)
+			log.Errorf("Heartbeat error:%v", err)
 			c.onError(err.Error())
 			continue
 		}
+
+		if resp.Header.Error() != nil {
+			log.Errorf("Heartbeat response error:%v", resp.Header.Error())
+			if c.user != "" && c.pass != "" {
+				c.Login(c.user, c.pass)
+			}
+			continue
+		}
+
 		log.Debugf("onHealth")
 		c.onHealth()
 	}

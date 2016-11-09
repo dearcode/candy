@@ -104,6 +104,7 @@ func (m *manager) getConnection(ctx context.Context) *connection {
 		log.Errorf("ParseInt token:%s error:%s", t, err.Error())
 		return nil
 	}
+	log.Debugf("context token:%d", token)
 	return m.getConnByToken(token)
 }
 

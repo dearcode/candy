@@ -68,8 +68,8 @@ func (n *NotiferClient) Push(msg meta.PushMessage, ids ...meta.PushID) error {
 }
 
 //RegionSet 为master提供，调用Notifer修改所负责的region
-func (n *NotiferClient) RegionSet(begin, end int) error {
-	req := &meta.RegionSetRequest{Begin: int32(begin), End: int32(end)}
+func (n *NotiferClient) RegionSet(begin, end int32) error {
+	req := &meta.RegionSetRequest{Begin: begin, End: end}
 	ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
 	resp, err := n.client.RegionSet(ctx, req)
 	cancel()

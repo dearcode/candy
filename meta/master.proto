@@ -3,10 +3,12 @@ package candy.meta;
 
 option go_package = "meta";
 
+import weak "gogoproto/gogo.proto";
 import "common.proto";
 
 service Master {
     rpc NewID (NewIDRequest) returns (NewIDResponse);
+    //RegionGet 获取region，如果host传空，返回所有region
     rpc RegionGet (RegionGetRequest) returns (RegionGetResponse);
 }
 
@@ -23,8 +25,7 @@ message RegionGetRequest {
 
 message RegionGetResponse{
     ResponseHeader  header  = 1;
-    int32           begin   = 2;
-    int32           end     = 3;
+    repeated Region Regions = 2[(gogoproto.nullable) = false];
 }
 
 

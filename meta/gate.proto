@@ -63,6 +63,14 @@ service Gate {
 
     //Push notifer 调用的接口, 如果用户不在，要返回错误.
     rpc Push(PushRequest) returns (PushResponse);
+
+    //Heartbeat 重写这个主要是方便附加消息
+    rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+}
+
+message HeartbeatRequest {}
+message HeartbeatResponse {
+    ResponseHeader header = 1;
 }
 
 // GateStreamRequest ID userID, token sessionID
