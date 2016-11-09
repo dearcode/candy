@@ -125,7 +125,7 @@ func TestRegionHostsInit(t *testing.T) {
 		}
 	}
 
-	_, err := r.Marshal("")
+	_, err := r.Marshal()
 	if err != nil {
 		t.Fatalf("Marshal error")
 	}
