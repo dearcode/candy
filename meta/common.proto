@@ -128,3 +128,11 @@ message PushRequest {
 message PushResponse {
     ResponseHeader header = 1;
 }
+
+//Region 用户ID区间begin~end
+message Region {
+    int32   Begin   = 1;
+    int32   End     = 2;
+    string  Host    = 3;
+}
+

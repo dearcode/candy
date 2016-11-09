@@ -11,6 +11,7 @@ import (
 
 // NotiferClient 连接Notifer服务.
 type NotiferClient struct {
+	conn   *grpc.ClientConn
 	client meta.NotiferClient
 }
 
@@ -21,7 +22,7 @@ func NewNotiferClient(host string) (*NotiferClient, error) {
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
-	return &NotiferClient{client: meta.NewNotiferClient(conn)}, nil
+	return &NotiferClient{conn: conn, client: meta.NewNotiferClient(conn)}, nil
 }
 
 //Subscribe 为gate提供，调用Notifer订阅消息
@@ -64,4 +65,23 @@ func (n *NotiferClient) Push(msg meta.PushMessage, ids ...meta.PushID) error {
 
 	log.Debugf("resp:%v", resp)
 	return errors.Trace(resp.Header.Error())
+}
+
+//RegionSet 为master提供，调用Notifer修改所负责的region
+func (n *NotiferClient) RegionSet(begin, end int32) error {
+	req := &meta.RegionSetRequest{Begin: begin, End: end}
+	ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
+	resp, err := n.client.RegionSet(ctx, req)
+	cancel()
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	log.Debugf("resp:%v", resp)
+	return errors.Trace(resp.Header.Error())
+}
+
+//Stop 关闭连接
+func (n *NotiferClient) Stop() {
+	n.conn.Close()
 }

@@ -20,6 +20,7 @@ type Master struct {
 	isLeader  bool
 	host      string
 	allocator *allocator
+	cluster   *cluster
 
 	closer chan struct{}
 
@@ -47,7 +48,7 @@ func NewMaster(host string, etcdAddrs []string) (*Master, error) {
 	meta.RegisterMasterServer(m.serv, m)
 
 	if etcd != nil {
-		go m.receiver()
+		go m.runWithLeader()
 	} else {
 		m.allocator, _ = newAllocator(newMstore(), m.host)
 	}
@@ -63,11 +64,22 @@ func (m *Master) service() error {
 			log.Errorf("newAllocator error:%s", errors.ErrorStack(err))
 			return errors.Trace(err)
 		}
+		c, err := newCluster(m.etcd, m.host)
+		if err != nil {
+			log.Errorf("newCluster error:%s", errors.ErrorStack(err))
+			return errors.Trace(err)
+		}
+
+		m.cluster = c
 		m.allocator = a
 	} else {
 		if m.allocator != nil {
 			m.allocator.stop()
 			m.allocator = nil
+		}
+		if m.cluster != nil {
+			m.cluster.stop()
+			m.cluster = nil
 		}
 	}
 
@@ -75,7 +87,7 @@ func (m *Master) service() error {
 	return nil
 }
 
-func (m *Master) receiver() {
+func (m *Master) runWithLeader() {
 	state, stop := m.etcd.CampaignLeader(util.EtcdMasterAddrKey, m.host)
 
 	for {
@@ -110,4 +122,21 @@ func (m *Master) NewID(_ context.Context, _ *meta.NewIDRequest) (*meta.NewIDResp
 	}
 
 	return &meta.NewIDResponse{ID: a.id()}, nil
+}
+
+// RegionGet 获取自己节点的region
+func (m *Master) RegionGet(_ context.Context, req *meta.RegionGetRequest) (*meta.RegionGetResponse, error) {
+	if m.cluster == nil {
+		return &meta.RegionGetResponse{Regions: []meta.Region{{0, meta.MaxRegionEnd, ""}}}, nil
+	}
+
+	if req.Host != "" {
+		r, err := m.cluster.get(req.Host)
+		if err != nil {
+			return &meta.RegionGetResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+		}
+		return &meta.RegionGetResponse{Regions: []meta.Region{r}}, nil
+	}
+
+	return &meta.RegionGetResponse{Regions: m.cluster.getRegions()}, nil
 }

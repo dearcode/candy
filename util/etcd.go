@@ -82,8 +82,7 @@ func (e *EtcdClient) CAS(cmpKey, cmpValue, key, value string) error {
 	return nil
 }
 
-//watch 等待Key被删除
-func (e *EtcdClient) watch(key string) {
+func (e *EtcdClient) watch(key string, event mvccpb.Event_EventType) {
 	watcher := clientv3.NewWatcher(e.client)
 	defer watcher.Close()
 
@@ -94,12 +93,22 @@ func (e *EtcdClient) watch(key string) {
 				return
 			}
 			for _, ev := range resp.Events {
-				if ev.Type == mvccpb.DELETE {
+				if ev.Type == event {
 					return
 				}
 			}
 		}
 	}
+}
+
+//WaitKeyDelete 等待Key被删除
+func (e *EtcdClient) WaitKeyDelete(key string) {
+	e.watch(key, mvccpb.DELETE)
+}
+
+//WaitKeyPut 等待Key被修改
+func (e *EtcdClient) WaitKeyPut(key string) {
+	e.watch(key, mvccpb.PUT)
 }
 
 // campaign 竞争leader，只有contxt关闭才会返回nil
@@ -156,7 +165,7 @@ func (e *EtcdClient) CampaignLeader(key, value string) (<-chan bool, chan<- stru
 		state <- false
 		for err := e.campaign(key, value, state, stop); err != nil; err = e.campaign(key, value, state, stop) {
 			log.Errorf("campaignLeader error:%s, key:%s", errors.ErrorStack(err), key)
-			e.watch(key)
+			e.WaitKeyDelete(key)
 		}
 		close(state)
 		log.Debugf("CampaignLeader over")

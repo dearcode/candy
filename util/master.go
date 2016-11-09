@@ -43,7 +43,7 @@ func NewMasterClient(host string, etcdAddrs []string) (*MasterClient, error) {
 	return &MasterClient{conn: conn, client: meta.NewMasterClient(conn), host: host, etcd: etcd}, nil
 }
 
-func (m *MasterClient) reconnectMaster() error {
+func (m *MasterClient) reconnect() error {
 	log.Debugf("close old connect:%+v, from:%s", m.conn, m.host)
 	m.conn.Close()
 
@@ -70,28 +70,53 @@ func (m *MasterClient) reconnectMaster() error {
 	return nil
 }
 
-// NewID 生成新ID.
-func (m *MasterClient) NewID() (int64, error) {
-	var id int64
-	var err error
-
+//service 带重连的
+func (m *MasterClient) service(call func(context.Context, meta.MasterClient) error) {
 	m.Lock()
 	for r := NewRetry(); r.Valid(); r.Next() {
-		resp, e := m.client.NewID(context.Background(), &meta.NewIDRequest{})
-		if e == nil {
-			id = resp.ID
-			err = resp.Header.Error()
+		ctx, cancel := context.WithTimeout(context.Background(), NetworkTimeout)
+		err := call(ctx, m.client)
+		cancel()
+		if err == nil {
 			break
 		}
-		log.Errorf("call NewID error:%s, attempts:%d", e.Error(), r.Attempts())
-		err = e
-		if e := m.reconnectMaster(); e != nil {
-			log.Errorf("reconnectMaster error:%s", e.Error())
-			err = e
+
+		if err = m.reconnect(); err != nil {
+			log.Errorf("reconnect error:%s", err.Error())
 		}
 	}
-
 	m.Unlock()
+}
 
-	return id, err
+// NewID 生成新ID.
+func (m *MasterClient) NewID() (int64, error) {
+	var err error
+	req := &meta.NewIDRequest{}
+	var resp *meta.NewIDResponse
+
+	m.service(func(ctx context.Context, client meta.MasterClient) error {
+		resp, err = client.NewID(ctx, req)
+		return err
+	})
+	if err != nil {
+		return 0, err
+	}
+	return resp.ID, err
+}
+
+// RegionGet 根据host获取region
+func (m *MasterClient) RegionGet(host string) ([]meta.Region, error) {
+	var resp *meta.RegionGetResponse
+	var err error
+	req := &meta.RegionGetRequest{Host: host}
+
+	m.service(func(ctx context.Context, client meta.MasterClient) error {
+		resp, err = client.RegionGet(ctx, req)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Regions, err
 }

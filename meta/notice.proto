@@ -22,11 +22,21 @@ service Notifer {
     // UnSubscribe 用户下线，取消在线推送
     rpc UnSubscribe(UnSubscribeRequest) returns (UnSubscribeResponse);
 
+    // RegionSet 修改当前region的范围
+    rpc RegionSet(RegionSetRequest) returns (RegionSetResponse);
 
     //Push store调用的接口.
     rpc Push(PushRequest) returns (PushResponse);
 }
 
+message RegionSetRequest {
+    int32 Begin = 1;
+    int32 End   = 2;
+}
+
+message RegionSetResponse {
+    ResponseHeader  header = 1;
+}
 
 
 //SubscribeRequest 订阅消息, Device使用的设备，Host从哪台gate上来

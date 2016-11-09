@@ -8,7 +8,9 @@ import (
 )
 
 func main() {
-	host := flag.String("p", "0.0.0.0:9003", "listen host")
+	host := flag.String("h", "0.0.0.0:9003", "bind host")
+	master := flag.String("m", "0.0.0.0:9001", "master host")
+	etcd := flag.String("e", "", "etcd addrs, like `192.168.199.1:2379,192.168.199.2:2379,192.168.199.3:2379`")
 	version := flag.Bool("v", false, "print version")
 	flag.Parse()
 
@@ -17,8 +19,7 @@ func main() {
 		return
 	}
 
-	_, err := notice.NewNotifer(*host)
-	if err != nil {
+	if _, err := notice.NewServer(*host, *master, *etcd); err != nil {
 		panic(err.Error())
 	}
 }
