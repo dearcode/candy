@@ -687,3 +687,29 @@ func (c *CandyClient) LoadRecentContact() (string, error) {
 
 	return string(data), nil
 }
+
+// LoadMessage 加载离线消息
+func (c *CandyClient) LoadMessage(id int64) (string, error) {
+	req := &meta.GateLoadMessageRequest{ID: id}
+	var resp *meta.GateLoadMessageResponse
+	var err error
+
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		resp, err = api.LoadMessage(ctx, req)
+		return err
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if resp.Header.Error() != nil {
+		return "", resp.Header.Error()
+	}
+
+	data, err := encodeJSON(resp.Msgs)
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
+}

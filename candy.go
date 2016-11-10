@@ -42,6 +42,7 @@ const (
 	CmdLoadRecentContact
 
 	CmdSendMessage
+	CmdLoadMessage
 
 	CmdLoadGroupList
 	CmdGroupCreate
@@ -80,6 +81,7 @@ func notice() {
 		{CmdLoadRecentContact, "加载最近联系人"},
 
 		{CmdSendMessage, "发送消息"},
+		{CmdLoadMessage, "加载离线消息"},
 
 		{CmdLoadGroupList, "加载群列表"},
 		{CmdGroupCreate, "创建群"},
@@ -342,6 +344,7 @@ func confirmFriend(c *candy.CandyClient, reader *bufio.Reader) {
 
 	log.Debugf("confirmFriend userID:%v", userID)
 }
+
 func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 	startSection("发送消息")
 	defer endSection()
@@ -376,6 +379,31 @@ func newMessage(c *candy.CandyClient, reader *bufio.Reader) {
 
 		log.Debugf("send msg[%d] success, userID:%v", id, userID)
 	}
+}
+
+func loadMessage(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("加载离线消息")
+	defer endSection()
+
+	color.Yellow("请输入接收用户ID:")
+	data, _, _ := reader.ReadLine()
+	userID := string(data)
+
+	user, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Parse int code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	msgs, err := c.LoadMessage(user)
+	if err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("load message code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	log.Debugf("load success, userID:%v msgs:%v", userID, msgs)
 }
 
 func createGroup(c *candy.CandyClient, reader *bufio.Reader) {
@@ -631,7 +659,7 @@ func loadRecentContact(c *candy.CandyClient, reader *bufio.Reader) {
 	}
 
 	for i, c := range cl.Contacts {
-        log.Debugf("Contact[%v] {Contact:%v Last:%v IsGroup:%v}", i, c.Contact, time.Unix(c.Last, 0).Format(time.ANSIC), c.IsGroup)
+		log.Debugf("Contact[%v] {Contact:%v Last:%v IsGroup:%v}", i, c.Contact, time.Unix(c.Last, 0).Format(time.ANSIC), c.IsGroup)
 	}
 
 	log.Debugf("loadContact success")
@@ -756,7 +784,8 @@ func main() {
 
 		case CmdSendMessage:
 			newMessage(c, reader)
-
+		case CmdLoadMessage:
+			loadMessage(c, reader)
 		case CmdLoadGroupList:
 			loadGroupList(c, reader)
 		case CmdGroupCreate:
