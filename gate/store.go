@@ -299,3 +299,15 @@ func (s *storeClient) loadMessage(userID, id int64, reverse bool) ([]*meta.PushM
 	log.Debugf("send message success, resp:%v", resp)
 	return resp.Msgs, errors.Trace(resp.Header.Error())
 }
+
+func (s *storeClient) loadRecentContact(user int64) ([]meta.RecentContact, error) {
+	log.Debugf("store loadRecentContact")
+	req := &meta.StoreRecentContactRequest{meta.RequestHeader{user}}
+	resp, err := s.client.LoadRecentContact(context.Background(), req)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	log.Debugf("store loadRecentContact success, resp:%v", resp)
+	return resp.Contacts, errors.Trace(resp.Header.Error())
+}

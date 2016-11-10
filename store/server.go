@@ -243,7 +243,7 @@ func (s *Store) LoadFriendList(_ context.Context, req *meta.StoreLoadFriendListR
 func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) (*meta.StoreNewMessageResponse, error) {
 	log.Debugf("Store NewMessage, msg:%v", req.Msg)
 	pm := meta.PushMessage{Msg: req.Msg}
-	if req.Msg.Group != 0 {
+	if req.Msg.Group == 0 {
 		pm.ToUser = true
 	}
 	// 直接发送，如果失败会自动插入到重试队列中
@@ -478,4 +478,15 @@ func (s *Store) LoadGroupList(_ context.Context, req *meta.StoreLoadGroupListReq
 
 	log.Debugf("end loadGroupList:%v group:%v", req, groups)
 	return &meta.StoreLoadGroupListResponse{Groups: groups}, nil
+}
+
+// LoadRecentContact 最近联系人列表
+func (s *Store) LoadRecentContact(_ context.Context, req *meta.StoreRecentContactRequest) (*meta.StoreRecentContactResponse, error) {
+	log.Debugf("begin loadGroupList:%v", req)
+	rcs, err := s.user.getRecentContacts(req.User)
+	if err != nil {
+		return &meta.StoreRecentContactResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
+	}
+
+	return &meta.StoreRecentContactResponse{Contacts: rcs}, nil
 }

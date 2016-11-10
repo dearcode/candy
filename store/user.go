@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 
 	"github.com/juju/errors"
@@ -446,4 +447,59 @@ func (u *userDB) getGroups(userID int64) ([]int64, error) {
 	it.Release()
 
 	return ids, nil
+}
+
+// updateRecentContact 更新最近联系人列表
+func (u *userDB) updateRecentContact(uid, cid, last int64, isGroup bool) error {
+	key := UserRecentContactKey(uid, cid)
+	rc := meta.RecentContact{Contact: cid, Last: last, IsGroup: isGroup}
+
+	buf, err := json.Marshal(&rc)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	if err = u.db.Put(key, buf, nil); err != nil {
+		return errors.Trace(err)
+	}
+
+	return nil
+}
+
+type recentContacts []meta.RecentContact
+
+//Len sort interface.
+func (r recentContacts) Len() int {
+	return len(r)
+}
+
+//Less 这里反着来，按时间最新的在最前面
+func (r recentContacts) Less(i, j int) bool {
+	return r[i].Last > r[j].Last
+}
+
+//Swap sort interface.
+func (r recentContacts) Swap(i, j int) {
+	r[i], r[j] = r[j], r[i]
+}
+
+// getRecentContacts 获取用户最近联系人列表
+func (u *userDB) getRecentContacts(uid int64) ([]meta.RecentContact, error) {
+	var rc meta.RecentContact
+	var rcs recentContacts
+
+	start, end := UserRecentContactRange(uid)
+	it := u.db.NewIterator(&lu.Range{Start: start, Limit: end}, nil)
+
+	for it.Next(); it.Valid(); it.Next() {
+		if err := json.Unmarshal(it.Value(), &rc); err != nil {
+			return nil, errors.Trace(err)
+		}
+
+		rcs = append(rcs, rc)
+	}
+
+	sort.Sort(rcs)
+
+	return rcs, nil
 }

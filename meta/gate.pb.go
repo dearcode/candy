@@ -8,6 +8,8 @@ import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+// skipping weak import gogoproto "gogoproto"
+
 import (
 	context "golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
@@ -20,13 +22,45 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+type GateRecentContactRequest struct {
+}
+
+func (m *GateRecentContactRequest) Reset()                    { *m = GateRecentContactRequest{} }
+func (m *GateRecentContactRequest) String() string            { return proto.CompactTextString(m) }
+func (*GateRecentContactRequest) ProtoMessage()               {}
+func (*GateRecentContactRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{0} }
+
+type GateRecentContactResponse struct {
+	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
+	Contacts []RecentContact `protobuf:"bytes,2,rep,name=Contacts,json=contacts" json:"Contacts"`
+}
+
+func (m *GateRecentContactResponse) Reset()                    { *m = GateRecentContactResponse{} }
+func (m *GateRecentContactResponse) String() string            { return proto.CompactTextString(m) }
+func (*GateRecentContactResponse) ProtoMessage()               {}
+func (*GateRecentContactResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{1} }
+
+func (m *GateRecentContactResponse) GetHeader() *ResponseHeader {
+	if m != nil {
+		return m.Header
+	}
+	return nil
+}
+
+func (m *GateRecentContactResponse) GetContacts() []RecentContact {
+	if m != nil {
+		return m.Contacts
+	}
+	return nil
+}
+
 type HeartbeatRequest struct {
 }
 
 func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{0} }
+func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{2} }
 
 type HeartbeatResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -35,7 +69,7 @@ type HeartbeatResponse struct {
 func (m *HeartbeatResponse) Reset()                    { *m = HeartbeatResponse{} }
 func (m *HeartbeatResponse) String() string            { return proto.CompactTextString(m) }
 func (*HeartbeatResponse) ProtoMessage()               {}
-func (*HeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{1} }
+func (*HeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{3} }
 
 func (m *HeartbeatResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -53,7 +87,7 @@ type GateStreamRequest struct {
 func (m *GateStreamRequest) Reset()                    { *m = GateStreamRequest{} }
 func (m *GateStreamRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateStreamRequest) ProtoMessage()               {}
-func (*GateStreamRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{2} }
+func (*GateStreamRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{4} }
 
 type GateFindUserRequest struct {
 	User string `protobuf:"bytes,1,opt,name=User,json=user,proto3" json:"User,omitempty"`
@@ -62,7 +96,7 @@ type GateFindUserRequest struct {
 func (m *GateFindUserRequest) Reset()                    { *m = GateFindUserRequest{} }
 func (m *GateFindUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateFindUserRequest) ProtoMessage()               {}
-func (*GateFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{3} }
+func (*GateFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{5} }
 
 type GateFindUserResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -72,7 +106,7 @@ type GateFindUserResponse struct {
 func (m *GateFindUserResponse) Reset()                    { *m = GateFindUserResponse{} }
 func (m *GateFindUserResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateFindUserResponse) ProtoMessage()               {}
-func (*GateFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{4} }
+func (*GateFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{6} }
 
 func (m *GateFindUserResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -90,7 +124,7 @@ type GateFriendRequest struct {
 func (m *GateFriendRequest) Reset()                    { *m = GateFriendRequest{} }
 func (m *GateFriendRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateFriendRequest) ProtoMessage()               {}
-func (*GateFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{5} }
+func (*GateFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{7} }
 
 type GateFriendResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -99,7 +133,7 @@ type GateFriendResponse struct {
 func (m *GateFriendResponse) Reset()                    { *m = GateFriendResponse{} }
 func (m *GateFriendResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateFriendResponse) ProtoMessage()               {}
-func (*GateFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{6} }
+func (*GateFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{8} }
 
 func (m *GateFriendResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -115,7 +149,7 @@ type GateCreateGroupRequest struct {
 func (m *GateCreateGroupRequest) Reset()                    { *m = GateCreateGroupRequest{} }
 func (m *GateCreateGroupRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateCreateGroupRequest) ProtoMessage()               {}
-func (*GateCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{7} }
+func (*GateCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{9} }
 
 type GateCreateGroupResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -125,7 +159,7 @@ type GateCreateGroupResponse struct {
 func (m *GateCreateGroupResponse) Reset()                    { *m = GateCreateGroupResponse{} }
 func (m *GateCreateGroupResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateCreateGroupResponse) ProtoMessage()               {}
-func (*GateCreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{8} }
+func (*GateCreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{10} }
 
 func (m *GateCreateGroupResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -142,7 +176,7 @@ type GateRegisterRequest struct {
 func (m *GateRegisterRequest) Reset()                    { *m = GateRegisterRequest{} }
 func (m *GateRegisterRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateRegisterRequest) ProtoMessage()               {}
-func (*GateRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{9} }
+func (*GateRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{11} }
 
 type GateRegisterResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -152,7 +186,7 @@ type GateRegisterResponse struct {
 func (m *GateRegisterResponse) Reset()                    { *m = GateRegisterResponse{} }
 func (m *GateRegisterResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateRegisterResponse) ProtoMessage()               {}
-func (*GateRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{10} }
+func (*GateRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{12} }
 
 func (m *GateRegisterResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -170,7 +204,7 @@ type GateUpdateUserInfoRequest struct {
 func (m *GateUpdateUserInfoRequest) Reset()                    { *m = GateUpdateUserInfoRequest{} }
 func (m *GateUpdateUserInfoRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateUpdateUserInfoRequest) ProtoMessage()               {}
-func (*GateUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{11} }
+func (*GateUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{13} }
 
 type GateUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -179,7 +213,7 @@ type GateUpdateUserInfoResponse struct {
 func (m *GateUpdateUserInfoResponse) Reset()                    { *m = GateUpdateUserInfoResponse{} }
 func (m *GateUpdateUserInfoResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateUpdateUserInfoResponse) ProtoMessage()               {}
-func (*GateUpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{12} }
+func (*GateUpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{14} }
 
 func (m *GateUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -198,7 +232,7 @@ func (m *GateUpdateUserPasswordRequest) Reset()         { *m = GateUpdateUserPas
 func (m *GateUpdateUserPasswordRequest) String() string { return proto.CompactTextString(m) }
 func (*GateUpdateUserPasswordRequest) ProtoMessage()    {}
 func (*GateUpdateUserPasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptorGate, []int{13}
+	return fileDescriptorGate, []int{15}
 }
 
 type GateUpdateUserPasswordResponse struct {
@@ -209,7 +243,7 @@ func (m *GateUpdateUserPasswordResponse) Reset()         { *m = GateUpdateUserPa
 func (m *GateUpdateUserPasswordResponse) String() string { return proto.CompactTextString(m) }
 func (*GateUpdateUserPasswordResponse) ProtoMessage()    {}
 func (*GateUpdateUserPasswordResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptorGate, []int{14}
+	return fileDescriptorGate, []int{16}
 }
 
 func (m *GateUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
@@ -228,7 +262,7 @@ type GateGetUserInfoRequest struct {
 func (m *GateGetUserInfoRequest) Reset()                    { *m = GateGetUserInfoRequest{} }
 func (m *GateGetUserInfoRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateGetUserInfoRequest) ProtoMessage()               {}
-func (*GateGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{15} }
+func (*GateGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{17} }
 
 type GateGetUserInfoResponse struct {
 	Header    *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -242,7 +276,7 @@ type GateGetUserInfoResponse struct {
 func (m *GateGetUserInfoResponse) Reset()                    { *m = GateGetUserInfoResponse{} }
 func (m *GateGetUserInfoResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateGetUserInfoResponse) ProtoMessage()               {}
-func (*GateGetUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{16} }
+func (*GateGetUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{18} }
 
 func (m *GateGetUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -261,7 +295,7 @@ type GateUserLoginRequest struct {
 func (m *GateUserLoginRequest) Reset()                    { *m = GateUserLoginRequest{} }
 func (m *GateUserLoginRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateUserLoginRequest) ProtoMessage()               {}
-func (*GateUserLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{17} }
+func (*GateUserLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{19} }
 
 // GateUserLoginResponse ID userID, Token sessionID.
 type GateUserLoginResponse struct {
@@ -273,7 +307,7 @@ type GateUserLoginResponse struct {
 func (m *GateUserLoginResponse) Reset()                    { *m = GateUserLoginResponse{} }
 func (m *GateUserLoginResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateUserLoginResponse) ProtoMessage()               {}
-func (*GateUserLoginResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{18} }
+func (*GateUserLoginResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{20} }
 
 func (m *GateUserLoginResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -291,7 +325,7 @@ type GateUserLogoutRequest struct {
 func (m *GateUserLogoutRequest) Reset()                    { *m = GateUserLogoutRequest{} }
 func (m *GateUserLogoutRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateUserLogoutRequest) ProtoMessage()               {}
-func (*GateUserLogoutRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{19} }
+func (*GateUserLogoutRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{21} }
 
 type GateUserLogoutResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -300,7 +334,7 @@ type GateUserLogoutResponse struct {
 func (m *GateUserLogoutResponse) Reset()                    { *m = GateUserLogoutResponse{} }
 func (m *GateUserLogoutResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateUserLogoutResponse) ProtoMessage()               {}
-func (*GateUserLogoutResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{20} }
+func (*GateUserLogoutResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{22} }
 
 func (m *GateUserLogoutResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -316,7 +350,7 @@ type GateUploadFileRequest struct {
 func (m *GateUploadFileRequest) Reset()                    { *m = GateUploadFileRequest{} }
 func (m *GateUploadFileRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateUploadFileRequest) ProtoMessage()               {}
-func (*GateUploadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{21} }
+func (*GateUploadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{23} }
 
 type GateUploadFileResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -325,7 +359,7 @@ type GateUploadFileResponse struct {
 func (m *GateUploadFileResponse) Reset()                    { *m = GateUploadFileResponse{} }
 func (m *GateUploadFileResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateUploadFileResponse) ProtoMessage()               {}
-func (*GateUploadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{22} }
+func (*GateUploadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{24} }
 
 func (m *GateUploadFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -341,7 +375,7 @@ type GateCheckFileRequest struct {
 func (m *GateCheckFileRequest) Reset()                    { *m = GateCheckFileRequest{} }
 func (m *GateCheckFileRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateCheckFileRequest) ProtoMessage()               {}
-func (*GateCheckFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{23} }
+func (*GateCheckFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{25} }
 
 type GateCheckFileResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=Header,json=header" json:"Header,omitempty"`
@@ -351,7 +385,7 @@ type GateCheckFileResponse struct {
 func (m *GateCheckFileResponse) Reset()                    { *m = GateCheckFileResponse{} }
 func (m *GateCheckFileResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateCheckFileResponse) ProtoMessage()               {}
-func (*GateCheckFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{24} }
+func (*GateCheckFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{26} }
 
 func (m *GateCheckFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -367,7 +401,7 @@ type GateDownloadFileRequest struct {
 func (m *GateDownloadFileRequest) Reset()                    { *m = GateDownloadFileRequest{} }
 func (m *GateDownloadFileRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateDownloadFileRequest) ProtoMessage()               {}
-func (*GateDownloadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{25} }
+func (*GateDownloadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{27} }
 
 type GateDownloadFileResponse struct {
 	Header *ResponseHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -377,7 +411,7 @@ type GateDownloadFileResponse struct {
 func (m *GateDownloadFileResponse) Reset()                    { *m = GateDownloadFileResponse{} }
 func (m *GateDownloadFileResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateDownloadFileResponse) ProtoMessage()               {}
-func (*GateDownloadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{26} }
+func (*GateDownloadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{28} }
 
 func (m *GateDownloadFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -401,7 +435,7 @@ type GateLoadMessageRequest struct {
 func (m *GateLoadMessageRequest) Reset()                    { *m = GateLoadMessageRequest{} }
 func (m *GateLoadMessageRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateLoadMessageRequest) ProtoMessage()               {}
-func (*GateLoadMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{27} }
+func (*GateLoadMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{29} }
 
 type GateLoadMessageResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -411,7 +445,7 @@ type GateLoadMessageResponse struct {
 func (m *GateLoadMessageResponse) Reset()                    { *m = GateLoadMessageResponse{} }
 func (m *GateLoadMessageResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateLoadMessageResponse) ProtoMessage()               {}
-func (*GateLoadMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{28} }
+func (*GateLoadMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{30} }
 
 func (m *GateLoadMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -433,7 +467,7 @@ type GateLoadGroupListRequest struct {
 func (m *GateLoadGroupListRequest) Reset()                    { *m = GateLoadGroupListRequest{} }
 func (m *GateLoadGroupListRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateLoadGroupListRequest) ProtoMessage()               {}
-func (*GateLoadGroupListRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{29} }
+func (*GateLoadGroupListRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{31} }
 
 type GateLoadGroupListResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -443,7 +477,7 @@ type GateLoadGroupListResponse struct {
 func (m *GateLoadGroupListResponse) Reset()                    { *m = GateLoadGroupListResponse{} }
 func (m *GateLoadGroupListResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateLoadGroupListResponse) ProtoMessage()               {}
-func (*GateLoadGroupListResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{30} }
+func (*GateLoadGroupListResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{32} }
 
 func (m *GateLoadGroupListResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -465,7 +499,7 @@ type GateLoadFriendListRequest struct {
 func (m *GateLoadFriendListRequest) Reset()                    { *m = GateLoadFriendListRequest{} }
 func (m *GateLoadFriendListRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateLoadFriendListRequest) ProtoMessage()               {}
-func (*GateLoadFriendListRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{31} }
+func (*GateLoadFriendListRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{33} }
 
 type GateLoadFriendListResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -475,7 +509,7 @@ type GateLoadFriendListResponse struct {
 func (m *GateLoadFriendListResponse) Reset()                    { *m = GateLoadFriendListResponse{} }
 func (m *GateLoadFriendListResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateLoadFriendListResponse) ProtoMessage()               {}
-func (*GateLoadFriendListResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{32} }
+func (*GateLoadFriendListResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{34} }
 
 func (m *GateLoadFriendListResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -491,7 +525,7 @@ type GateSendMessageRequest struct {
 func (m *GateSendMessageRequest) Reset()                    { *m = GateSendMessageRequest{} }
 func (m *GateSendMessageRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateSendMessageRequest) ProtoMessage()               {}
-func (*GateSendMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{33} }
+func (*GateSendMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{35} }
 
 func (m *GateSendMessageRequest) GetMsg() *Message {
 	if m != nil {
@@ -508,7 +542,7 @@ type GateSendMessageResponse struct {
 func (m *GateSendMessageResponse) Reset()                    { *m = GateSendMessageResponse{} }
 func (m *GateSendMessageResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateSendMessageResponse) ProtoMessage()               {}
-func (*GateSendMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{34} }
+func (*GateSendMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{36} }
 
 func (m *GateSendMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -545,7 +579,7 @@ type GateGroupRequest struct {
 func (m *GateGroupRequest) Reset()                    { *m = GateGroupRequest{} }
 func (m *GateGroupRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateGroupRequest) ProtoMessage()               {}
-func (*GateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{35} }
+func (*GateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{37} }
 
 type GateGroupResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -554,7 +588,7 @@ type GateGroupResponse struct {
 func (m *GateGroupResponse) Reset()                    { *m = GateGroupResponse{} }
 func (m *GateGroupResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateGroupResponse) ProtoMessage()               {}
-func (*GateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{36} }
+func (*GateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{38} }
 
 func (m *GateGroupResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -571,7 +605,7 @@ type GateGroupCreateRequest struct {
 func (m *GateGroupCreateRequest) Reset()                    { *m = GateGroupCreateRequest{} }
 func (m *GateGroupCreateRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateGroupCreateRequest) ProtoMessage()               {}
-func (*GateGroupCreateRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{37} }
+func (*GateGroupCreateRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{39} }
 
 type GateGroupCreateResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -581,7 +615,7 @@ type GateGroupCreateResponse struct {
 func (m *GateGroupCreateResponse) Reset()                    { *m = GateGroupCreateResponse{} }
 func (m *GateGroupCreateResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateGroupCreateResponse) ProtoMessage()               {}
-func (*GateGroupCreateResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{38} }
+func (*GateGroupCreateResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{40} }
 
 func (m *GateGroupCreateResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -598,7 +632,7 @@ type GateGroupDeleteRequest struct {
 func (m *GateGroupDeleteRequest) Reset()                    { *m = GateGroupDeleteRequest{} }
 func (m *GateGroupDeleteRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateGroupDeleteRequest) ProtoMessage()               {}
-func (*GateGroupDeleteRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{39} }
+func (*GateGroupDeleteRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{41} }
 
 type GateGroupDeleteResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -607,7 +641,7 @@ type GateGroupDeleteResponse struct {
 func (m *GateGroupDeleteResponse) Reset()                    { *m = GateGroupDeleteResponse{} }
 func (m *GateGroupDeleteResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateGroupDeleteResponse) ProtoMessage()               {}
-func (*GateGroupDeleteResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{40} }
+func (*GateGroupDeleteResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{42} }
 
 func (m *GateGroupDeleteResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -625,7 +659,7 @@ type GateUpdateSignatureRequest struct {
 func (m *GateUpdateSignatureRequest) Reset()                    { *m = GateUpdateSignatureRequest{} }
 func (m *GateUpdateSignatureRequest) String() string            { return proto.CompactTextString(m) }
 func (*GateUpdateSignatureRequest) ProtoMessage()               {}
-func (*GateUpdateSignatureRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{41} }
+func (*GateUpdateSignatureRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{43} }
 
 type GateUpdateSignatureResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -634,7 +668,7 @@ type GateUpdateSignatureResponse struct {
 func (m *GateUpdateSignatureResponse) Reset()                    { *m = GateUpdateSignatureResponse{} }
 func (m *GateUpdateSignatureResponse) String() string            { return proto.CompactTextString(m) }
 func (*GateUpdateSignatureResponse) ProtoMessage()               {}
-func (*GateUpdateSignatureResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{42} }
+func (*GateUpdateSignatureResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{44} }
 
 func (m *GateUpdateSignatureResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -644,6 +678,8 @@ func (m *GateUpdateSignatureResponse) GetHeader() *ResponseHeader {
 }
 
 func init() {
+	proto.RegisterType((*GateRecentContactRequest)(nil), "candy.meta.GateRecentContactRequest")
+	proto.RegisterType((*GateRecentContactResponse)(nil), "candy.meta.GateRecentContactResponse")
 	proto.RegisterType((*HeartbeatRequest)(nil), "candy.meta.HeartbeatRequest")
 	proto.RegisterType((*HeartbeatResponse)(nil), "candy.meta.HeartbeatResponse")
 	proto.RegisterType((*GateStreamRequest)(nil), "candy.meta.GateStreamRequest")
@@ -729,6 +765,8 @@ type GateClient interface {
 	GroupDelete(ctx context.Context, in *GateGroupDeleteRequest, opts ...grpc.CallOption) (*GateGroupDeleteResponse, error)
 	// LoadGroupList 加载群组列表
 	LoadGroupList(ctx context.Context, in *GateLoadGroupListRequest, opts ...grpc.CallOption) (*GateLoadGroupListResponse, error)
+	// LoadRecentContact 最近联系人列表
+	LoadRecentContact(ctx context.Context, in *GateRecentContactRequest, opts ...grpc.CallOption) (*GateRecentContactResponse, error)
 	// UploadFile 客户端上传文件接口，一次一个图片.
 	UploadFile(ctx context.Context, in *GateUploadFileRequest, opts ...grpc.CallOption) (*GateUploadFileResponse, error)
 	// CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
@@ -919,6 +957,15 @@ func (c *gateClient) LoadGroupList(ctx context.Context, in *GateLoadGroupListReq
 	return out, nil
 }
 
+func (c *gateClient) LoadRecentContact(ctx context.Context, in *GateRecentContactRequest, opts ...grpc.CallOption) (*GateRecentContactResponse, error) {
+	out := new(GateRecentContactResponse)
+	err := grpc.Invoke(ctx, "/candy.meta.Gate/LoadRecentContact", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gateClient) UploadFile(ctx context.Context, in *GateUploadFileRequest, opts ...grpc.CallOption) (*GateUploadFileResponse, error) {
 	out := new(GateUploadFileResponse)
 	err := grpc.Invoke(ctx, "/candy.meta.Gate/UploadFile", in, out, c.cc, opts...)
@@ -1005,6 +1052,8 @@ type GateServer interface {
 	GroupDelete(context.Context, *GateGroupDeleteRequest) (*GateGroupDeleteResponse, error)
 	// LoadGroupList 加载群组列表
 	LoadGroupList(context.Context, *GateLoadGroupListRequest) (*GateLoadGroupListResponse, error)
+	// LoadRecentContact 最近联系人列表
+	LoadRecentContact(context.Context, *GateRecentContactRequest) (*GateRecentContactResponse, error)
 	// UploadFile 客户端上传文件接口，一次一个图片.
 	UploadFile(context.Context, *GateUploadFileRequest) (*GateUploadFileResponse, error)
 	// CheckFile 客户端检测文件是否存在，文件的临时ID和md5, 服务器返回不存在的文件ID.
@@ -1315,6 +1364,24 @@ func _Gate_LoadGroupList_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gate_LoadRecentContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GateRecentContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GateServer).LoadRecentContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/candy.meta.Gate/LoadRecentContact",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GateServer).LoadRecentContact(ctx, req.(*GateRecentContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Gate_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GateUploadFileRequest)
 	if err := dec(in); err != nil {
@@ -1488,6 +1555,10 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Gate_LoadGroupList_Handler,
 		},
 		{
+			MethodName: "LoadRecentContact",
+			Handler:    _Gate_LoadRecentContact_Handler,
+		},
+		{
 			MethodName: "UploadFile",
 			Handler:    _Gate_UploadFile_Handler,
 		},
@@ -1520,6 +1591,64 @@ var _Gate_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Metadata: fileDescriptorGate,
+}
+
+func (m *GateRecentContactRequest) Marshal() (data []byte, err error) {
+	size := m.Size()
+	data = make([]byte, size)
+	n, err := m.MarshalTo(data)
+	if err != nil {
+		return nil, err
+	}
+	return data[:n], nil
+}
+
+func (m *GateRecentContactRequest) MarshalTo(data []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	return i, nil
+}
+
+func (m *GateRecentContactResponse) Marshal() (data []byte, err error) {
+	size := m.Size()
+	data = make([]byte, size)
+	n, err := m.MarshalTo(data)
+	if err != nil {
+		return nil, err
+	}
+	return data[:n], nil
+}
+
+func (m *GateRecentContactResponse) MarshalTo(data []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Header != nil {
+		data[i] = 0xa
+		i++
+		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
+		n1, err := m.Header.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n1
+	}
+	if len(m.Contacts) > 0 {
+		for _, msg := range m.Contacts {
+			data[i] = 0x12
+			i++
+			i = encodeVarintGate(data, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(data[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
 }
 
 func (m *HeartbeatRequest) Marshal() (data []byte, err error) {
@@ -1559,11 +1688,11 @@ func (m *HeartbeatResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n1, err := m.Header.MarshalTo(data[i:])
+		n2, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n1
+		i += n2
 	}
 	return i, nil
 }
@@ -1639,11 +1768,11 @@ func (m *GateFindUserResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n2, err := m.Header.MarshalTo(data[i:])
+		n3, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n2
+		i += n3
 	}
 	if len(m.Users) > 0 {
 		for _, s := range m.Users {
@@ -1716,11 +1845,11 @@ func (m *GateFriendResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n3, err := m.Header.MarshalTo(data[i:])
+		n4, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n3
+		i += n4
 	}
 	return i, nil
 }
@@ -1768,11 +1897,11 @@ func (m *GateCreateGroupResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n4, err := m.Header.MarshalTo(data[i:])
+		n5, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n4
+		i += n5
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -1831,11 +1960,11 @@ func (m *GateRegisterResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n5, err := m.Header.MarshalTo(data[i:])
+		n6, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n5
+		i += n6
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -1900,11 +2029,11 @@ func (m *GateUpdateUserInfoResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n6, err := m.Header.MarshalTo(data[i:])
+		n7, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n7
 	}
 	return i, nil
 }
@@ -1964,11 +2093,11 @@ func (m *GateUpdateUserPasswordResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n7, err := m.Header.MarshalTo(data[i:])
+		n8, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n8
 	}
 	return i, nil
 }
@@ -2031,11 +2160,11 @@ func (m *GateGetUserInfoResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n8, err := m.Header.MarshalTo(data[i:])
+		n9, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n8
+		i += n9
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -2124,11 +2253,11 @@ func (m *GateUserLoginResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n9, err := m.Header.MarshalTo(data[i:])
+		n10, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n9
+		i += n10
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -2190,11 +2319,11 @@ func (m *GateUserLogoutResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n10, err := m.Header.MarshalTo(data[i:])
+		n11, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n11
 	}
 	return i, nil
 }
@@ -2242,11 +2371,11 @@ func (m *GateUploadFileResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n11, err := m.Header.MarshalTo(data[i:])
+		n12, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n11
+		i += n12
 	}
 	return i, nil
 }
@@ -2303,11 +2432,11 @@ func (m *GateCheckFileResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n12, err := m.Header.MarshalTo(data[i:])
+		n13, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n12
+		i += n13
 	}
 	if len(m.Names) > 0 {
 		for _, s := range m.Names {
@@ -2379,11 +2508,11 @@ func (m *GateDownloadFileResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n13, err := m.Header.MarshalTo(data[i:])
+		n14, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n13
+		i += n14
 	}
 	if len(m.Files) > 0 {
 		for k, _ := range m.Files {
@@ -2463,11 +2592,11 @@ func (m *GateLoadMessageResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n14, err := m.Header.MarshalTo(data[i:])
+		n15, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n14
+		i += n15
 	}
 	if len(m.Msgs) > 0 {
 		for _, msg := range m.Msgs {
@@ -2521,11 +2650,11 @@ func (m *GateLoadGroupListResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n15, err := m.Header.MarshalTo(data[i:])
+		n16, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n15
+		i += n16
 	}
 	if len(m.Groups) > 0 {
 		for _, msg := range m.Groups {
@@ -2579,29 +2708,29 @@ func (m *GateLoadFriendListResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n16, err := m.Header.MarshalTo(data[i:])
+		n17, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n16
+		i += n17
 	}
 	if len(m.Users) > 0 {
-		data18 := make([]byte, len(m.Users)*10)
-		var j17 int
+		data19 := make([]byte, len(m.Users)*10)
+		var j18 int
 		for _, num1 := range m.Users {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				data18[j17] = uint8(uint64(num)&0x7f | 0x80)
+				data19[j18] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j17++
+				j18++
 			}
-			data18[j17] = uint8(num)
-			j17++
+			data19[j18] = uint8(num)
+			j18++
 		}
 		data[i] = 0x12
 		i++
-		i = encodeVarintGate(data, i, uint64(j17))
-		i += copy(data[i:], data18[:j17])
+		i = encodeVarintGate(data, i, uint64(j18))
+		i += copy(data[i:], data19[:j18])
 	}
 	return i, nil
 }
@@ -2625,11 +2754,11 @@ func (m *GateSendMessageRequest) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Msg.Size()))
-		n19, err := m.Msg.MarshalTo(data[i:])
+		n20, err := m.Msg.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n19
+		i += n20
 	}
 	return i, nil
 }
@@ -2653,11 +2782,11 @@ func (m *GateSendMessageResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n20, err := m.Header.MarshalTo(data[i:])
+		n21, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n20
+		i += n21
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -2699,22 +2828,22 @@ func (m *GateGroupRequest) MarshalTo(data []byte) (int, error) {
 		i += copy(data[i:], m.Msg)
 	}
 	if len(m.Users) > 0 {
-		data22 := make([]byte, len(m.Users)*10)
-		var j21 int
+		data23 := make([]byte, len(m.Users)*10)
+		var j22 int
 		for _, num1 := range m.Users {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				data22[j21] = uint8(uint64(num)&0x7f | 0x80)
+				data23[j22] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j21++
+				j22++
 			}
-			data22[j21] = uint8(num)
-			j21++
+			data23[j22] = uint8(num)
+			j22++
 		}
 		data[i] = 0x22
 		i++
-		i = encodeVarintGate(data, i, uint64(j21))
-		i += copy(data[i:], data22[:j21])
+		i = encodeVarintGate(data, i, uint64(j22))
+		i += copy(data[i:], data23[:j22])
 	}
 	return i, nil
 }
@@ -2738,11 +2867,11 @@ func (m *GateGroupResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n23, err := m.Header.MarshalTo(data[i:])
+		n24, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n23
+		i += n24
 	}
 	return i, nil
 }
@@ -2790,11 +2919,11 @@ func (m *GateGroupCreateResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n24, err := m.Header.MarshalTo(data[i:])
+		n25, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n24
+		i += n25
 	}
 	if m.ID != 0 {
 		data[i] = 0x10
@@ -2846,11 +2975,11 @@ func (m *GateGroupDeleteResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n25, err := m.Header.MarshalTo(data[i:])
+		n26, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n25
+		i += n26
 	}
 	return i, nil
 }
@@ -2904,11 +3033,11 @@ func (m *GateUpdateSignatureResponse) MarshalTo(data []byte) (int, error) {
 		data[i] = 0xa
 		i++
 		i = encodeVarintGate(data, i, uint64(m.Header.Size()))
-		n26, err := m.Header.MarshalTo(data[i:])
+		n27, err := m.Header.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n26
+		i += n27
 	}
 	return i, nil
 }
@@ -2940,6 +3069,28 @@ func encodeVarintGate(data []byte, offset int, v uint64) int {
 	data[offset] = uint8(v)
 	return offset + 1
 }
+func (m *GateRecentContactRequest) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
+func (m *GateRecentContactResponse) Size() (n int) {
+	var l int
+	_ = l
+	if m.Header != nil {
+		l = m.Header.Size()
+		n += 1 + l + sovGate(uint64(l))
+	}
+	if len(m.Contacts) > 0 {
+		for _, e := range m.Contacts {
+			l = e.Size()
+			n += 1 + l + sovGate(uint64(l))
+		}
+	}
+	return n
+}
+
 func (m *HeartbeatRequest) Size() (n int) {
 	var l int
 	_ = l
@@ -3516,6 +3667,170 @@ func sovGate(x uint64) (n int) {
 }
 func sozGate(x uint64) (n int) {
 	return sovGate(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *GateRecentContactRequest) Unmarshal(data []byte) error {
+	l := len(data)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := data[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GateRecentContactRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GateRecentContactRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGate(data[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GateRecentContactResponse) Unmarshal(data []byte) error {
+	l := len(data)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := data[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GateRecentContactResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GateRecentContactResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGate
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Header == nil {
+				m.Header = &ResponseHeader{}
+			}
+			if err := m.Header.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Contacts", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGate
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Contacts = append(m.Contacts, RecentContact{})
+			if err := m.Contacts[len(m.Contacts)-1].Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGate(data[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *HeartbeatRequest) Unmarshal(data []byte) error {
 	l := len(data)
@@ -8000,90 +8315,95 @@ var (
 func init() { proto.RegisterFile("gate.proto", fileDescriptorGate) }
 
 var fileDescriptorGate = []byte{
-	// 1347 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x58, 0xdd, 0x6e, 0xdb, 0x36,
-	0x14, 0x9e, 0x7f, 0x63, 0x1f, 0x67, 0x59, 0xcb, 0xa6, 0xa9, 0xa7, 0x36, 0x5e, 0xc6, 0x36, 0x5b,
-	0xba, 0x76, 0xee, 0x90, 0x01, 0x43, 0x3b, 0x60, 0x18, 0x96, 0x3a, 0x71, 0x06, 0xc4, 0x69, 0xa6,
-	0x34, 0x05, 0x56, 0xec, 0x8f, 0xb1, 0x19, 0x47, 0x88, 0x2d, 0x39, 0xa2, 0x9c, 0x20, 0xbd, 0xd8,
-	0x33, 0xec, 0x9d, 0x06, 0x0c, 0xbb, 0xdb, 0x1e, 0x61, 0xc8, 0x5e, 0x64, 0xa0, 0x28, 0xc9, 0x14,
-	0x29, 0x39, 0x5d, 0xe4, 0x1b, 0xc3, 0x24, 0x0f, 0xbf, 0x73, 0x78, 0x7e, 0x78, 0x3e, 0x11, 0xa0,
-	0x4f, 0x3c, 0xda, 0x1c, 0xb9, 0x8e, 0xe7, 0x20, 0xe8, 0x12, 0xbb, 0x77, 0xd1, 0x1c, 0x52, 0x8f,
-	0x18, 0xf3, 0x5d, 0x67, 0x38, 0x74, 0x6c, 0xb1, 0x82, 0x11, 0xdc, 0xd8, 0xa6, 0xc4, 0xf5, 0x0e,
-	0x29, 0xf1, 0x4c, 0x7a, 0x3a, 0xa6, 0xcc, 0xc3, 0x6d, 0xb8, 0x29, 0xcd, 0xb1, 0x91, 0x63, 0x33,
-	0x8a, 0xd6, 0xa1, 0x7c, 0x4c, 0x49, 0x8f, 0xba, 0xf5, 0xdc, 0x4a, 0x6e, 0xad, 0xb6, 0x6e, 0x34,
-	0x27, 0x98, 0xcd, 0x50, 0x6a, 0xdb, 0x97, 0x30, 0x03, 0x49, 0xfc, 0x0c, 0x6e, 0xb6, 0x89, 0x47,
-	0xf7, 0x3d, 0x97, 0x92, 0x61, 0x80, 0x8e, 0x16, 0x20, 0xff, 0x6d, 0xcb, 0x07, 0x29, 0x98, 0x79,
-	0xab, 0x85, 0x16, 0xa1, 0xf4, 0xd2, 0x39, 0xa1, 0x76, 0x3d, 0xef, 0x4f, 0x95, 0x3c, 0x3e, 0xc0,
-	0x0f, 0xe1, 0x16, 0xdf, 0xba, 0x65, 0xd9, 0xbd, 0x03, 0x46, 0xdd, 0x70, 0x33, 0x82, 0x22, 0x1f,
-	0xfa, 0xdb, 0xab, 0x66, 0x71, 0xcc, 0xa8, 0x8b, 0x7f, 0x81, 0xc5, 0xb8, 0xe8, 0xf5, 0x2d, 0xe6,
-	0xc6, 0x70, 0x4c, 0x56, 0xcf, 0xaf, 0x14, 0xd6, 0xaa, 0xa6, 0x18, 0xe0, 0xa1, 0x38, 0xc7, 0x96,
-	0x6b, 0x51, 0xbb, 0x17, 0x9a, 0xb2, 0x04, 0x65, 0xae, 0x2e, 0x3a, 0x4b, 0x79, 0xec, 0x8f, 0x50,
-	0x13, 0xe6, 0x5e, 0x8c, 0xa8, 0x4b, 0x3c, 0xea, 0x9f, 0x68, 0x61, 0x7d, 0x31, 0xae, 0x77, 0x40,
-	0x3c, 0xcb, 0xb1, 0xcd, 0x39, 0x47, 0x08, 0xa1, 0x1b, 0x50, 0xe8, 0xb0, 0x7e, 0xbd, 0xe0, 0x9f,
-	0xa8, 0x30, 0x64, 0x7d, 0xbc, 0x0d, 0x48, 0x56, 0x97, 0x21, 0x00, 0x5f, 0xc0, 0x12, 0x47, 0x7a,
-	0xee, 0x52, 0xe2, 0xd1, 0xb6, 0xeb, 0x8c, 0x47, 0xa1, 0xf5, 0xf7, 0xa0, 0xea, 0x8f, 0x77, 0xc9,
-	0x90, 0x06, 0xde, 0xac, 0xf6, 0xc3, 0x09, 0xfc, 0x23, 0xdc, 0xd1, 0xf6, 0x65, 0xf0, 0xaa, 0x08,
-	0x79, 0x3e, 0x0c, 0x39, 0xde, 0x14, 0xc1, 0x35, 0x69, 0xdf, 0x62, 0xde, 0xd4, 0xe0, 0x22, 0x03,
-	0x2a, 0x7b, 0x84, 0xb1, 0x73, 0xc7, 0xed, 0xf9, 0x00, 0x55, 0xb3, 0x32, 0x0a, 0xc6, 0xf8, 0xb5,
-	0x08, 0xfc, 0x04, 0x66, 0x86, 0x26, 0x76, 0xe1, 0x7d, 0x8e, 0x7d, 0x30, 0xea, 0xf1, 0x5f, 0x1e,
-	0x59, 0xfb, 0xc8, 0x91, 0x0c, 0x95, 0xfc, 0x56, 0xb4, 0xc9, 0x90, 0x72, 0x43, 0x77, 0xad, 0xee,
-	0x89, 0x3f, 0x1f, 0x18, 0x6a, 0x07, 0x63, 0x9e, 0x2a, 0xdf, 0x9c, 0x11, 0x8f, 0xb8, 0x41, 0x94,
-	0xcb, 0xc4, 0x1f, 0xe1, 0x3d, 0x30, 0x92, 0x94, 0x64, 0x08, 0xf8, 0x29, 0x2c, 0xc7, 0x11, 0x43,
-	0xe7, 0x5d, 0x61, 0x7a, 0x9a, 0x8f, 0xd1, 0x0a, 0xd4, 0x76, 0xe9, 0x79, 0xb4, 0x2c, 0xec, 0xaf,
-	0xd9, 0x93, 0x29, 0xfc, 0x12, 0x1a, 0x69, 0x2a, 0x33, 0x1c, 0x64, 0x20, 0x32, 0xb7, 0x4d, 0x3d,
-	0xd5, 0xf9, 0x0d, 0x00, 0x5e, 0xea, 0x1b, 0x17, 0xd1, 0x39, 0x2a, 0x26, 0x1c, 0x45, 0x33, 0xfc,
-	0x34, 0x7c, 0x8b, 0x1c, 0x88, 0x71, 0x30, 0x96, 0x6a, 0xb6, 0x20, 0xd7, 0x2c, 0xfe, 0x3d, 0x27,
-	0x12, 0x3e, 0xa6, 0x6e, 0x76, 0xd9, 0x14, 0x65, 0x76, 0x21, 0x9e, 0xd9, 0x51, 0xc2, 0x14, 0x53,
-	0x13, 0xa6, 0x24, 0x27, 0x0c, 0xaf, 0xda, 0x7d, 0xab, 0x6f, 0x13, 0x6f, 0xec, 0xd2, 0x7a, 0x59,
-	0x54, 0x2d, 0x0b, 0x27, 0xf0, 0x4f, 0xa2, 0x1e, 0xb8, 0xa6, 0x1d, 0xa7, 0x6f, 0xd9, 0xd7, 0xac,
-	0x2b, 0xae, 0xbd, 0x45, 0xcf, 0xac, 0x2e, 0x0d, 0xd3, 0xb5, 0xe7, 0x8f, 0xf0, 0x29, 0xdc, 0x56,
-	0xf0, 0x67, 0xe8, 0xa2, 0xa8, 0x0d, 0x14, 0xe4, 0x36, 0xf0, 0x55, 0x4c, 0xa5, 0x33, 0xf6, 0xfe,
-	0x5f, 0x17, 0xd9, 0x11, 0x59, 0x24, 0x6f, 0xcf, 0x90, 0x93, 0x8f, 0x02, 0x63, 0x46, 0x03, 0x87,
-	0xf4, 0xb6, 0xac, 0x01, 0x95, 0x1c, 0xcc, 0x87, 0x3e, 0xd4, 0xbc, 0x59, 0x3c, 0xb2, 0x06, 0x34,
-	0x52, 0x2d, 0x09, 0x67, 0x50, 0xfd, 0x58, 0x84, 0xf6, 0xf9, 0x31, 0xed, 0x9e, 0xc8, 0x9a, 0x17,
-	0xa1, 0xc4, 0x13, 0x86, 0xd5, 0x73, 0xa2, 0x5f, 0xf1, 0x7a, 0x66, 0x98, 0x08, 0x43, 0x25, 0xe9,
-	0x89, 0xea, 0xed, 0x6b, 0xb4, 0x44, 0xa1, 0x22, 0x2f, 0xab, 0x78, 0x22, 0x0a, 0xa6, 0xe5, 0x9c,
-	0xdb, 0xaa, 0x37, 0x92, 0x6d, 0xfa, 0x2b, 0x07, 0x75, 0x7d, 0x47, 0x86, 0x04, 0xda, 0x84, 0x12,
-	0xc7, 0x10, 0x76, 0xd5, 0xd6, 0x9f, 0xc8, 0x5b, 0xd2, 0x14, 0x35, 0xfd, 0x1d, 0x9b, 0xb6, 0xe7,
-	0x5e, 0x98, 0x25, 0x1e, 0x26, 0x66, 0x3c, 0xe5, 0xd7, 0x49, 0x38, 0xc9, 0x9b, 0xf1, 0x09, 0xbd,
-	0x08, 0x2a, 0x85, 0xff, 0xe5, 0xa7, 0x39, 0x23, 0x83, 0xb1, 0xb8, 0x4b, 0xe6, 0x4d, 0x31, 0xf8,
-	0x32, 0xff, 0x34, 0x87, 0x37, 0x44, 0x84, 0x77, 0x1c, 0xd2, 0xeb, 0x50, 0xc6, 0x48, 0x9f, 0xa6,
-	0x25, 0x67, 0x1d, 0xe6, 0x4c, 0x7a, 0x46, 0x5d, 0x26, 0x50, 0x2a, 0xe6, 0x9c, 0x2b, 0x86, 0xf8,
-	0x8d, 0x70, 0x63, 0x0c, 0x23, 0x83, 0x4f, 0x1e, 0x41, 0xb1, 0xc3, 0xfa, 0xa1, 0x4b, 0xee, 0xc8,
-	0x3b, 0xf6, 0xc6, 0xec, 0x38, 0x54, 0x51, 0x1c, 0xb2, 0x3e, 0xc3, 0x86, 0x08, 0x08, 0xd7, 0xed,
-	0xb7, 0xf8, 0x1d, 0x8b, 0x45, 0x14, 0xf0, 0x57, 0xd1, 0xfe, 0x94, 0xb5, 0x0c, 0x96, 0x7d, 0x0a,
-	0x65, 0x9f, 0x5e, 0x84, 0xb6, 0xdd, 0x8e, 0x85, 0x8b, 0xaf, 0xf8, 0x97, 0x6e, 0x20, 0x84, 0xef,
-	0x4e, 0xf4, 0x0b, 0x1a, 0x24, 0x1b, 0x77, 0x24, 0xda, 0xa6, 0xba, 0x38, 0x2b, 0xda, 0x57, 0x08,
-	0x69, 0xdf, 0xd7, 0x22, 0xc0, 0xfb, 0xd4, 0x56, 0x03, 0xbc, 0x2a, 0x38, 0x9b, 0x50, 0x70, 0x4b,
-	0x56, 0x10, 0x0a, 0xfa, 0x44, 0x2e, 0xa0, 0x51, 0x31, 0x80, 0x19, 0x72, 0x94, 0x37, 0x70, 0xa3,
-	0xad, 0xf2, 0x3a, 0x35, 0xf5, 0x32, 0xb3, 0x51, 0xee, 0x9b, 0x03, 0xdf, 0x37, 0x45, 0xd9, 0x37,
-	0x6d, 0x41, 0x89, 0x33, 0x73, 0x43, 0xfc, 0x38, 0x68, 0xf4, 0x1c, 0x48, 0xf0, 0xcd, 0x29, 0x54,
-	0x25, 0xf4, 0x68, 0x4c, 0x7a, 0x86, 0x1e, 0x5d, 0x93, 0x8c, 0x69, 0xd1, 0x01, 0xf5, 0x94, 0x92,
-	0x9e, 0x48, 0x76, 0x24, 0x43, 0x42, 0xc9, 0x0c, 0x5e, 0xd8, 0x95, 0x99, 0x60, 0xd4, 0xe2, 0xa7,
-	0x91, 0xb6, 0x18, 0x15, 0xc8, 0xab, 0x54, 0xe0, 0x3b, 0xb8, 0x9b, 0x88, 0x77, 0x7d, 0x13, 0xd7,
-	0xff, 0x58, 0x80, 0x22, 0xc7, 0x44, 0x1d, 0xa8, 0x84, 0x94, 0x1b, 0x7d, 0xa0, 0xde, 0xba, 0x0a,
-	0xa7, 0x37, 0x56, 0xd2, 0x05, 0x02, 0x5b, 0x7e, 0x86, 0x85, 0x38, 0x01, 0x46, 0xab, 0xea, 0x9e,
-	0x44, 0x16, 0x6e, 0x7c, 0x74, 0x95, 0x58, 0xa0, 0xe0, 0x10, 0xde, 0x53, 0xfc, 0x80, 0x52, 0xb6,
-	0xaa, 0x8e, 0x37, 0x3e, 0xbe, 0x52, 0x2e, 0xd0, 0x71, 0x02, 0x48, 0x27, 0xc0, 0xe8, 0x61, 0xba,
-	0x85, 0x0a, 0x2f, 0x37, 0x3e, 0x79, 0x1b, 0xd1, 0x40, 0xd9, 0x2b, 0xa8, 0x49, 0x44, 0x15, 0x61,
-	0x75, 0xab, 0x4e, 0x9a, 0x8d, 0xfb, 0x53, 0x65, 0x02, 0xdc, 0x1d, 0x28, 0xf9, 0xbc, 0x0e, 0x69,
-	0x41, 0x53, 0x29, 0xa5, 0xf1, 0xe1, 0x14, 0x89, 0x00, 0xed, 0x05, 0x94, 0x05, 0xe7, 0x42, 0x69,
-	0xc2, 0x13, 0x3a, 0x67, 0xe0, 0x69, 0x22, 0x01, 0x60, 0x07, 0x2a, 0xe1, 0x37, 0xbe, 0x9e, 0x77,
-	0xca, 0x43, 0x81, 0x9e, 0x77, 0xda, 0xf3, 0xc0, 0x2b, 0xa8, 0x49, 0x17, 0xb3, 0xee, 0x45, 0xfd,
-	0xda, 0xd7, 0xbd, 0x98, 0x74, 0xb3, 0x6f, 0x40, 0x59, 0x3c, 0x78, 0xa0, 0x65, 0x4d, 0x5c, 0x7e,
-	0x08, 0x31, 0xd2, 0xda, 0xf3, 0x67, 0x39, 0xd4, 0x86, 0xb2, 0xe8, 0x6c, 0x3a, 0x46, 0xec, 0x11,
-	0xc2, 0x68, 0xa4, 0x2d, 0x4f, 0x8a, 0x2b, 0xde, 0x26, 0xf5, 0xe2, 0x4a, 0xec, 0xb1, 0x7a, 0x71,
-	0xa5, 0x74, 0xdb, 0x16, 0x94, 0xfc, 0x3b, 0x10, 0xdd, 0xd3, 0x32, 0x4c, 0x6a, 0x4b, 0xc6, 0x72,
-	0xca, 0xaa, 0x94, 0xd1, 0x93, 0x2b, 0x3d, 0x21, 0xa3, 0xb5, 0xee, 0x90, 0x90, 0xd1, 0x09, 0x3d,
-	0x21, 0xc4, 0x15, 0x37, 0x74, 0x0a, 0x6e, 0xec, 0xa2, 0x4f, 0xc1, 0x55, 0xae, 0xf8, 0x1f, 0xe0,
-	0xdd, 0x18, 0x35, 0x42, 0x0f, 0x92, 0xdc, 0xa5, 0xb2, 0x2a, 0x63, 0xf5, 0x0a, 0xa9, 0x00, 0x7d,
-	0x1f, 0x60, 0xf2, 0xd9, 0x90, 0x50, 0x3d, 0xea, 0xf7, 0x47, 0x42, 0xf5, 0xe8, 0x5f, 0x1d, 0x7b,
-	0x50, 0x8d, 0xbe, 0x07, 0xf4, 0x02, 0x57, 0x3f, 0x2c, 0xf4, 0x02, 0xd7, 0x3f, 0x26, 0xbe, 0x87,
-	0x79, 0x99, 0x63, 0xa3, 0xfb, 0xd3, 0x19, 0xb8, 0xc0, 0x7d, 0xf0, 0x36, 0x34, 0x9d, 0xc7, 0x4d,
-	0xa2, 0xc4, 0x7a, 0xdc, 0x74, 0xce, 0xad, 0xc7, 0x2d, 0x89, 0x53, 0x3f, 0x83, 0x22, 0x2f, 0x34,
-	0xa4, 0x95, 0x5e, 0x88, 0x52, 0xd7, 0x17, 0x82, 0xad, 0xdb, 0x50, 0x8d, 0x1e, 0x45, 0xe3, 0xc9,
-	0xae, 0xbe, 0x9f, 0xc6, 0x93, 0x5d, 0x7b, 0x49, 0xdd, 0x58, 0xfa, 0xf3, 0xb2, 0x91, 0xfb, 0xfb,
-	0xb2, 0x91, 0xfb, 0xe7, 0xb2, 0x91, 0xfb, 0xed, 0xdf, 0xc6, 0x3b, 0xaf, 0x8b, 0x5c, 0xf2, 0xb0,
-	0xec, 0xbf, 0xc8, 0x7e, 0xfe, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc7, 0x72, 0xfc, 0x43, 0xb9,
-	0x15, 0x00, 0x00,
+	// 1428 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x58, 0xdb, 0x72, 0xd3, 0x46,
+	0x18, 0xc6, 0xb6, 0xec, 0xd8, 0xbf, 0x53, 0x0e, 0x8b, 0x01, 0x23, 0xc0, 0xa4, 0x02, 0x5a, 0x28,
+	0xd4, 0x74, 0xd2, 0x99, 0x0e, 0xb4, 0xd3, 0xe9, 0x34, 0x18, 0x9c, 0xce, 0xc4, 0x21, 0x55, 0x08,
+	0xd3, 0x32, 0x3d, 0xb0, 0xb1, 0x37, 0x8a, 0x26, 0xb6, 0xe4, 0x48, 0x72, 0x32, 0xe1, 0xa2, 0x4f,
+	0xd0, 0x8b, 0x3e, 0x46, 0xdf, 0xa3, 0x37, 0xdc, 0xb5, 0x4f, 0xd0, 0xe9, 0xa4, 0x2f, 0xd2, 0x59,
+	0xed, 0x4a, 0x5e, 0xed, 0x4a, 0x0e, 0x8d, 0x7c, 0xe3, 0xf1, 0xee, 0xfe, 0xa7, 0xfd, 0x8f, 0x9f,
+	0x16, 0xc0, 0xc2, 0x01, 0x69, 0x8f, 0x3d, 0x37, 0x70, 0x11, 0xf4, 0xb1, 0x33, 0x38, 0x6a, 0x8f,
+	0x48, 0x80, 0xf5, 0x86, 0xe5, 0x5a, 0x6e, 0xb8, 0xfd, 0x90, 0xfe, 0x63, 0x14, 0xfa, 0x62, 0xdf,
+	0x1d, 0x8d, 0x5c, 0x87, 0xad, 0x0c, 0x1d, 0x9a, 0x5d, 0x1c, 0x10, 0x93, 0xf4, 0x89, 0x13, 0x3c,
+	0x71, 0x9d, 0x00, 0xf7, 0x03, 0x93, 0xec, 0x4f, 0x88, 0x1f, 0x18, 0xbf, 0x16, 0xe0, 0x6a, 0xca,
+	0xa1, 0x3f, 0x76, 0x1d, 0x9f, 0xa0, 0x65, 0xa8, 0xec, 0x12, 0x3c, 0x20, 0x5e, 0xb3, 0xb0, 0x54,
+	0xb8, 0x5b, 0x5f, 0xd6, 0xdb, 0x53, 0xd5, 0xed, 0x88, 0x6a, 0x35, 0xa4, 0x30, 0x39, 0x25, 0xfa,
+	0x02, 0xaa, 0x5c, 0x8c, 0xdf, 0x2c, 0x2e, 0x95, 0xee, 0xd6, 0x97, 0xaf, 0x26, 0xb9, 0x04, 0x45,
+	0x2b, 0xda, 0xdb, 0xbf, 0x6f, 0x9e, 0x31, 0xab, 0x7d, 0xce, 0x60, 0x20, 0x38, 0xbf, 0x4a, 0xb0,
+	0x17, 0x6c, 0x13, 0x1c, 0x9b, 0xd8, 0x85, 0x0b, 0xc2, 0xde, 0xe9, 0x2d, 0x33, 0x1e, 0xc3, 0x05,
+	0x7a, 0xd5, 0xcd, 0xc0, 0x23, 0x78, 0xc4, 0xa5, 0xa3, 0xb3, 0x50, 0xfc, 0xa6, 0x13, 0x0a, 0x29,
+	0x99, 0x45, 0xbb, 0x83, 0x1a, 0x50, 0x7e, 0xe1, 0xee, 0x11, 0xa7, 0x59, 0x0c, 0xb7, 0xca, 0x01,
+	0x5d, 0x18, 0xf7, 0xe0, 0x22, 0x65, 0x7d, 0x66, 0x3b, 0x83, 0x2d, 0x9f, 0x78, 0x11, 0x33, 0x02,
+	0x8d, 0x2e, 0x43, 0xf6, 0x9a, 0xa9, 0x4d, 0x7c, 0xe2, 0x19, 0xaf, 0xa1, 0x91, 0x24, 0xcd, 0xe1,
+	0xcb, 0x06, 0x94, 0xa9, 0x4c, 0xe6, 0xc8, 0x9a, 0xc9, 0x16, 0xc6, 0x88, 0xdd, 0xe3, 0x99, 0x67,
+	0x13, 0x67, 0x10, 0x99, 0x72, 0x19, 0x2a, 0x54, 0x5d, 0x7c, 0x97, 0xca, 0x24, 0x5c, 0xa1, 0x36,
+	0x2c, 0x3c, 0x1f, 0x13, 0x0f, 0x07, 0x24, 0xbc, 0xd1, 0xd9, 0xe5, 0x46, 0x52, 0xef, 0x10, 0x07,
+	0xb6, 0xeb, 0x98, 0x0b, 0x2e, 0x23, 0x42, 0xe7, 0xa1, 0xd4, 0xf3, 0xad, 0x66, 0x29, 0xbc, 0x51,
+	0x69, 0xe4, 0x5b, 0xc6, 0x2a, 0x20, 0x51, 0x5d, 0x8e, 0x00, 0x7c, 0x06, 0x97, 0xa9, 0xa4, 0x27,
+	0x1e, 0xc1, 0x01, 0xe9, 0x7a, 0xee, 0x64, 0x1c, 0x59, 0x7f, 0x1d, 0x6a, 0xe1, 0x7a, 0x1d, 0x8f,
+	0x08, 0xf7, 0x66, 0xcd, 0x8a, 0x36, 0x8c, 0x1f, 0xe1, 0x8a, 0xc2, 0x97, 0xc3, 0xab, 0x2c, 0xe4,
+	0xc5, 0x28, 0xe4, 0xc6, 0x53, 0x16, 0x5c, 0x93, 0x58, 0xb6, 0x1f, 0xcc, 0x0c, 0x2e, 0xd2, 0xa1,
+	0xba, 0x81, 0x7d, 0xff, 0xd0, 0xf5, 0x06, 0xa1, 0x80, 0x9a, 0x59, 0x1d, 0xf3, 0xb5, 0xf1, 0x8a,
+	0x05, 0x7e, 0x2a, 0x66, 0x8e, 0x26, 0xf6, 0x59, 0x95, 0x6e, 0x8d, 0x07, 0xf4, 0x97, 0x46, 0xd6,
+	0xd9, 0x71, 0x05, 0x43, 0x05, 0xbf, 0x69, 0x0e, 0x1e, 0x11, 0x6a, 0xe8, 0xba, 0xdd, 0xdf, 0x0b,
+	0xf7, 0xb9, 0xa1, 0x0e, 0x5f, 0xd3, 0x54, 0xf9, 0xfa, 0x00, 0x07, 0xd8, 0xe3, 0x51, 0xae, 0xe0,
+	0x70, 0x65, 0x6c, 0x80, 0x9e, 0xa6, 0x24, 0x47, 0xc0, 0xf7, 0xe1, 0x46, 0x52, 0x62, 0xe4, 0xbc,
+	0x13, 0x4c, 0xcf, 0xf2, 0x31, 0x5a, 0x82, 0xfa, 0x3a, 0x39, 0x8c, 0x8f, 0x99, 0xfd, 0x75, 0x67,
+	0xba, 0x65, 0xbc, 0x80, 0x56, 0x96, 0xca, 0x1c, 0x17, 0x19, 0xb2, 0xcc, 0xed, 0x92, 0x40, 0x76,
+	0x7e, 0x0b, 0x80, 0x96, 0xfa, 0xca, 0x51, 0x7c, 0x8f, 0xaa, 0x09, 0x3b, 0xf1, 0x0e, 0xbd, 0x0d,
+	0x65, 0x11, 0x03, 0x31, 0xe1, 0x6b, 0xa1, 0x66, 0x4b, 0x62, 0xcd, 0x1a, 0x7f, 0x14, 0x58, 0xc2,
+	0x27, 0xd4, 0xcd, 0x2f, 0x9b, 0xe2, 0xcc, 0x2e, 0x25, 0x33, 0x3b, 0x4e, 0x18, 0x2d, 0x33, 0x61,
+	0xca, 0x62, 0xc2, 0xd0, 0xaa, 0xdd, 0xb4, 0x2d, 0x07, 0x07, 0x13, 0x8f, 0x34, 0x2b, 0xac, 0x6a,
+	0xfd, 0x68, 0xc3, 0xf8, 0x89, 0xd5, 0x03, 0xd5, 0xb4, 0xe6, 0x5a, 0xb6, 0x73, 0xca, 0xba, 0xa2,
+	0xda, 0x3b, 0xe4, 0xc0, 0xee, 0x93, 0x28, 0x5d, 0x07, 0xe1, 0xca, 0xd8, 0x87, 0x4b, 0x92, 0xfc,
+	0x39, 0xba, 0x28, 0x1e, 0x03, 0x25, 0x71, 0x0c, 0x7c, 0x99, 0x50, 0xe9, 0x4e, 0x82, 0xff, 0x37,
+	0x45, 0xd6, 0x58, 0x16, 0x89, 0xec, 0x39, 0x72, 0xf2, 0x3e, 0x37, 0x66, 0x3c, 0x74, 0xf1, 0xe0,
+	0x99, 0x3d, 0x24, 0x82, 0x83, 0xe9, 0x32, 0x14, 0xb5, 0x68, 0x6a, 0x3b, 0xf6, 0x90, 0xc4, 0xaa,
+	0x05, 0xe2, 0x1c, 0xaa, 0x1f, 0xb0, 0xd0, 0x3e, 0xd9, 0x25, 0xfd, 0x3d, 0x51, 0x73, 0x03, 0xca,
+	0x34, 0x61, 0xfc, 0x66, 0x81, 0xcd, 0x2b, 0x5a, 0xcf, 0xbe, 0x81, 0x99, 0xa1, 0x02, 0xf5, 0x54,
+	0xf5, 0xea, 0x29, 0x46, 0x22, 0x53, 0x51, 0x14, 0x55, 0x3c, 0x64, 0x05, 0xd3, 0x71, 0x0f, 0x1d,
+	0xd9, 0x1b, 0xe9, 0x36, 0xfd, 0x59, 0x60, 0xa0, 0x28, 0xc9, 0x91, 0x23, 0x81, 0x9e, 0x42, 0x99,
+	0xca, 0x88, 0x30, 0xcf, 0x43, 0x91, 0x25, 0x4b, 0x51, 0x3b, 0xe4, 0x78, 0xea, 0x04, 0xde, 0x91,
+	0x59, 0xa6, 0x61, 0xf2, 0xf5, 0x47, 0xb4, 0x9d, 0x44, 0x9b, 0x74, 0x18, 0xef, 0x91, 0x23, 0x5e,
+	0x29, 0xf4, 0x2f, 0xbd, 0xcd, 0x01, 0x1e, 0x4e, 0x58, 0x2f, 0x59, 0x34, 0xd9, 0xe2, 0xf3, 0xe2,
+	0xa3, 0x82, 0xb1, 0xc2, 0x22, 0xbc, 0xe6, 0xe2, 0x41, 0x8f, 0xf8, 0x3e, 0xb6, 0x48, 0x56, 0x72,
+	0x36, 0x61, 0xc1, 0x24, 0x07, 0xc4, 0xf3, 0x99, 0x94, 0xaa, 0xb9, 0xe0, 0xb1, 0xa5, 0xf1, 0x86,
+	0xb9, 0x31, 0x21, 0x23, 0x87, 0x4f, 0xee, 0x83, 0xd6, 0xf3, 0xad, 0xc8, 0x25, 0x57, 0x44, 0x8e,
+	0x8d, 0x89, 0xbf, 0x1b, 0xa9, 0xd0, 0x46, 0xbe, 0xe5, 0x47, 0x28, 0x95, 0xea, 0x0e, 0x47, 0xfc,
+	0x9a, 0xed, 0xc7, 0x10, 0xf0, 0x17, 0x36, 0xfe, 0xa4, 0xb3, 0x1c, 0x96, 0x7d, 0x0c, 0x95, 0x10,
+	0x5e, 0x44, 0xb6, 0x5d, 0x4a, 0x84, 0x8b, 0x9e, 0x84, 0x4d, 0x97, 0x13, 0x19, 0xd7, 0xa6, 0xfa,
+	0x19, 0x0c, 0x12, 0x8d, 0xdb, 0x61, 0x63, 0x53, 0x3e, 0x9c, 0x17, 0xec, 0x2b, 0x45, 0xb0, 0xef,
+	0x2b, 0x16, 0xe0, 0x4d, 0xe2, 0xc8, 0x01, 0xbe, 0xc3, 0x30, 0x1b, 0x53, 0x70, 0x51, 0x54, 0x10,
+	0x11, 0x86, 0x40, 0x8e, 0xc3, 0xa8, 0x84, 0x80, 0x39, 0x62, 0x94, 0x37, 0x70, 0xbe, 0x2b, 0xe3,
+	0x3a, 0x39, 0xf5, 0x72, 0xa3, 0x51, 0xea, 0x9b, 0xad, 0xd0, 0x37, 0x9a, 0xe8, 0x9b, 0x2e, 0x83,
+	0xc4, 0xb9, 0xb1, 0xa1, 0xf1, 0x80, 0x0f, 0x7a, 0x2a, 0x88, 0xe1, 0xcd, 0x19, 0x50, 0x25, 0xf2,
+	0x68, 0x82, 0x7a, 0x8e, 0x1e, 0xbd, 0x2b, 0x18, 0xd3, 0x21, 0x43, 0x12, 0x48, 0x25, 0x3d, 0xa5,
+	0xec, 0x09, 0x86, 0x44, 0x94, 0x39, 0xbc, 0xb0, 0x2e, 0x22, 0xc1, 0x78, 0xc4, 0xcf, 0x02, 0x6d,
+	0x09, 0x28, 0x50, 0x94, 0xa1, 0xc0, 0xb7, 0x70, 0x2d, 0x55, 0xde, 0xe9, 0x4d, 0x5c, 0xfe, 0xfd,
+	0x1c, 0x68, 0x54, 0x26, 0xea, 0x41, 0x35, 0x82, 0xdc, 0xe8, 0xa6, 0xdc, 0x75, 0x25, 0x4c, 0xaf,
+	0x2f, 0x65, 0x13, 0x70, 0x5b, 0x7e, 0x86, 0xb3, 0x49, 0x00, 0x8c, 0xee, 0xc8, 0x3c, 0xa9, 0x28,
+	0x5c, 0xff, 0xe0, 0x24, 0x32, 0xae, 0x60, 0x1b, 0xce, 0x49, 0x7e, 0x40, 0x19, 0xac, 0xb2, 0xe3,
+	0xf5, 0x0f, 0x4f, 0xa4, 0xe3, 0x3a, 0xf6, 0x00, 0xa9, 0x00, 0x18, 0xdd, 0xcb, 0xb6, 0x50, 0xc2,
+	0xe5, 0xfa, 0x47, 0xef, 0x42, 0xca, 0x95, 0xbd, 0x84, 0xba, 0x00, 0x54, 0x91, 0x21, 0xb3, 0xaa,
+	0xa0, 0x59, 0xbf, 0x35, 0x93, 0x86, 0xcb, 0x5d, 0x83, 0x72, 0x88, 0xeb, 0x90, 0x12, 0x34, 0x19,
+	0x52, 0xea, 0xef, 0xcf, 0xa0, 0xe0, 0xd2, 0x9e, 0x43, 0x85, 0x61, 0x2e, 0x94, 0x45, 0x3c, 0x85,
+	0x73, 0xba, 0x31, 0x8b, 0x84, 0x0b, 0xec, 0x41, 0x35, 0xfa, 0xc6, 0x57, 0xf3, 0x4e, 0x7a, 0x28,
+	0x50, 0xf3, 0x4e, 0x79, 0x1e, 0x78, 0x09, 0x75, 0xa1, 0x31, 0xab, 0x5e, 0x54, 0xdb, 0xbe, 0xea,
+	0xc5, 0xb4, 0xce, 0xbe, 0x02, 0x15, 0xf6, 0xe0, 0x81, 0x6e, 0x28, 0xe4, 0xe2, 0x43, 0x88, 0x9e,
+	0x35, 0x9e, 0x3f, 0x29, 0xa0, 0x2e, 0x54, 0xd8, 0x64, 0x53, 0x65, 0x24, 0x1e, 0x21, 0xf4, 0x56,
+	0xd6, 0xf1, 0xb4, 0xb8, 0x92, 0x63, 0x52, 0x2d, 0xae, 0xd4, 0x19, 0xab, 0x16, 0x57, 0xc6, 0xb4,
+	0xed, 0x40, 0x39, 0xec, 0x81, 0xe8, 0xba, 0x92, 0x61, 0xc2, 0x58, 0xd2, 0x6f, 0x64, 0x9c, 0x0a,
+	0x19, 0x3d, 0x6d, 0xe9, 0x29, 0x19, 0xad, 0x4c, 0x87, 0x94, 0x8c, 0x4e, 0x99, 0x09, 0x91, 0x5c,
+	0xd6, 0xa1, 0x33, 0xe4, 0x26, 0x1a, 0x7d, 0x86, 0x5c, 0xa9, 0xc5, 0xff, 0x00, 0xef, 0x25, 0xa0,
+	0x11, 0xba, 0x9d, 0xe6, 0x2e, 0x19, 0x55, 0xe9, 0x77, 0x4e, 0xa0, 0xe2, 0xd2, 0x5f, 0xc3, 0x05,
+	0x7a, 0x90, 0x78, 0xb8, 0x53, 0x35, 0xa4, 0xbd, 0x2e, 0xaa, 0x1a, 0xd2, 0x9f, 0x19, 0x37, 0x01,
+	0xa6, 0x1f, 0x26, 0x29, 0xf5, 0x29, 0x7f, 0xe1, 0xa4, 0xd4, 0xa7, 0xfa, 0x5d, 0xb3, 0x01, 0xb5,
+	0xf8, 0x8b, 0x43, 0x6d, 0x21, 0xf2, 0xa7, 0x8b, 0xda, 0x42, 0xd4, 0xcf, 0x95, 0xef, 0x61, 0x51,
+	0x44, 0xf1, 0xe8, 0xd6, 0x6c, 0x8c, 0xcf, 0xe4, 0xde, 0x7e, 0x97, 0x0f, 0x01, 0x9a, 0x19, 0x02,
+	0xe8, 0x56, 0x33, 0x43, 0x45, 0xf5, 0x6a, 0x66, 0xa4, 0xa1, 0xf6, 0xc7, 0xa0, 0xd1, 0x52, 0x46,
+	0x4a, 0x71, 0x47, 0x52, 0x9a, 0xea, 0x01, 0x67, 0x5d, 0x85, 0x5a, 0xfc, 0xec, 0x9a, 0x2c, 0x27,
+	0xf9, 0x85, 0x36, 0x59, 0x4e, 0xca, 0x5b, 0xed, 0xca, 0xe5, 0xb7, 0xc7, 0xad, 0xc2, 0x5f, 0xc7,
+	0xad, 0xc2, 0x3f, 0xc7, 0xad, 0xc2, 0x6f, 0xff, 0xb6, 0xce, 0xbc, 0xd2, 0x28, 0xe5, 0x77, 0x67,
+	0xb6, 0x2b, 0xe1, 0x03, 0xf5, 0xa7, 0xff, 0x05, 0x00, 0x00, 0xff, 0xff, 0xb7, 0x83, 0x3f, 0xd7,
+	0xde, 0x16, 0x00, 0x00,
 }

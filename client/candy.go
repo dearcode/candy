@@ -52,8 +52,8 @@ type CandyClient struct {
 }
 
 // NewCandyClient - create an new CandyClient
-func NewCandyClient(host string, handler MessageHandler) *CandyClient {
-	return &CandyClient{host: host, handler: handler, broken: true, closer: make(chan struct{})}
+func NewCandyClient(dev, host string, handler MessageHandler) *CandyClient {
+	return &CandyClient{device: dev, host: host, handler: handler, broken: true, closer: make(chan struct{})}
 }
 
 // Start 连接服务端.
@@ -68,6 +68,7 @@ func (c *CandyClient) Start() error {
 
 	c.gate = meta.NewGateClient(c.conn)
 	c.last = time.Now()
+	c.broken = false
 
 	go c.healthCheck()
 
@@ -100,10 +101,8 @@ func (c *CandyClient) Register(user, passwd string) (int64, error) {
 	var resp *meta.GateRegisterResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.Register(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.Register(ctx, req)
+		return err
 	})
 	if err != nil {
 		return -1, err
@@ -123,14 +122,12 @@ func (c *CandyClient) Login(user, passwd string) (int64, error) {
 		return -1, NewError(code, err.Error())
 	}
 
-	req := &meta.GateUserLoginRequest{User: user, Password: passwd}
+	req := &meta.GateUserLoginRequest{User: user, Password: passwd, Device: c.device}
 	var resp *meta.GateUserLoginResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.Login(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.Login(ctx, req)
+		return err
 	})
 	if err != nil {
 		return -1, err
@@ -152,10 +149,8 @@ func (c *CandyClient) Logout() error {
 	var resp *meta.GateUserLogoutResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.Logout(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.Logout(ctx, req)
+		return err
 	})
 	if err != nil {
 		return err
@@ -184,10 +179,8 @@ func (c *CandyClient) UpdateUserInfo(user, nickName, avatar string) error {
 	var resp *meta.GateUpdateUserInfoResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.UpdateUserInfo(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.UpdateUserInfo(ctx, req)
+		return err
 	})
 	if err != nil {
 		return err
@@ -206,10 +199,8 @@ func (c *CandyClient) UpdateUserSignature(name, signature string) error {
 	var resp *meta.GateUpdateSignatureResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.UpdateSignature(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.UpdateSignature(ctx, req)
+		return err
 	})
 	if err != nil {
 		return err
@@ -232,10 +223,8 @@ func (c *CandyClient) UpdateUserPassword(user, passwd string) error {
 	var resp *meta.GateUpdateUserPasswordResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.UpdateUserPassword(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.UpdateUserPassword(ctx, req)
+		return err
 	})
 	if err != nil {
 		return err
@@ -269,10 +258,8 @@ func (c *CandyClient) getUserInfoByName(user string) (*meta.UserInfo, error) {
 	var resp *meta.GateGetUserInfoResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.GetUserInfo(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.GetUserInfo(ctx, req)
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -309,10 +296,8 @@ func (c *CandyClient) getUserInfoByID(userID int64) (*meta.UserInfo, error) {
 	var resp *meta.GateGetUserInfoResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.GetUserInfo(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.GetUserInfo(ctx, req)
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -334,10 +319,8 @@ func (c *CandyClient) Friend(userID int64, operate int32, msg string) error {
 	var resp *meta.GateFriendResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.Friend(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.Friend(ctx, req)
+		return err
 	})
 	if err != nil {
 		return err
@@ -352,10 +335,8 @@ func (c *CandyClient) LoadFriendList() (string, error) {
 	var resp *meta.GateLoadFriendListResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.LoadFriendList(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.LoadFriendList(ctx, req)
+		return err
 	})
 	if err != nil {
 		return "", err
@@ -376,10 +357,8 @@ func (c *CandyClient) FindUser(user string) (string, error) {
 	var resp *meta.GateFindUserResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.FindUser(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.FindUser(ctx, req)
+		return err
 	})
 	if err != nil {
 		return "", err
@@ -408,10 +387,8 @@ func (c *CandyClient) FileExist(key string) (bool, error) {
 	var resp *meta.GateCheckFileResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.CheckFile(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.CheckFile(ctx, req)
+		return err
 	})
 	if err != nil {
 		return false, err
@@ -443,10 +420,8 @@ func (c *CandyClient) FileUpload(data []byte) (string, error) {
 	req := &meta.GateUploadFileRequest{File: data}
 	var resp *meta.GateUploadFileResponse
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.UploadFile(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.UploadFile(ctx, req)
+		return err
 	})
 	if err != nil {
 		return md5, err
@@ -461,10 +436,8 @@ func (c *CandyClient) FileDownload(key string) ([]byte, error) {
 	var resp *meta.GateDownloadFileResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.DownloadFile(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.DownloadFile(ctx, req)
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -479,10 +452,8 @@ func (c *CandyClient) SendMessage(group, to int64, body string) (int64, error) {
 	var resp *meta.GateSendMessageResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.SendMessage(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.SendMessage(ctx, req)
+		return err
 	})
 	if err != nil {
 		return 0, err
@@ -528,6 +499,7 @@ func (c *CandyClient) onError(msg string) {
 		c.Login(c.user, c.pass)
 	}
 
+	log.Errorf("heartbeat error:%v", msg)
 	c.handler.OnError(msg)
 }
 
@@ -558,6 +530,7 @@ func (c *CandyClient) onHealth() {
 
 	c.startReceiver()
 
+	log.Debugf("heartbeat ok")
 }
 
 // OnNetStateChange 移动端如果网络状态发生变化要通知这边
@@ -585,7 +558,7 @@ func (c *CandyClient) healthCheck() {
 		case <-t.C:
 		}
 		c.RLock()
-		if time.Now().Sub(c.last) < time.Minute {
+		if c.token == 0 || time.Now().Sub(c.last) < time.Minute {
 			c.RUnlock()
 			continue
 		}
@@ -597,7 +570,6 @@ func (c *CandyClient) healthCheck() {
 		})
 
 		if err != nil {
-			log.Errorf("Heartbeat error:%v", err)
 			c.onError(err.Error())
 			continue
 		}
@@ -610,7 +582,6 @@ func (c *CandyClient) healthCheck() {
 			continue
 		}
 
-		log.Debugf("onHealth")
 		c.onHealth()
 	}
 }
@@ -621,10 +592,8 @@ func (c *CandyClient) CreateGroup(name string) (int64, error) {
 	var resp *meta.GateGroupCreateResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.GroupCreate(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.GroupCreate(ctx, req)
+		return err
 	})
 	if err != nil {
 		return -1, err
@@ -639,10 +608,8 @@ func (c *CandyClient) Group(id int64, operate int32, users []int64, msg string) 
 	var resp *meta.GateGroupResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.Group(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.Group(ctx, req)
+		return err
 	})
 	if err != nil {
 		return err
@@ -656,10 +623,8 @@ func (c *CandyClient) DeleteGroup(id int64) error {
 	var resp *meta.GateGroupDeleteResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.GroupDelete(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.GroupDelete(ctx, req)
+		return err
 	})
 	if err != nil {
 		return err
@@ -672,27 +637,19 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 	req := &meta.GateLoadGroupListRequest{}
 	var resp *meta.GateLoadGroupListResponse
 	var err error
+
 	c.service(func(ctx context.Context, api meta.GateClient) error {
-		if resp, err = api.LoadGroupList(ctx, req); err != nil {
-			return err
-		}
-		return nil
+		resp, err = api.LoadGroupList(ctx, req)
+		return err
 	})
 	if err != nil {
 		return "", err
 	}
 
-	var groups []*meta.GroupInfo
-	for _, group := range resp.Groups {
-		groups = append(groups, &meta.GroupInfo{ID: group.ID, Name: group.Name, Member: group.Member, Admins: group.Admins})
-	}
-
-	groupList := &meta.GroupList{Groups: groups}
-	data, err := encodeJSON(groupList)
+	data, err := encodeJSON(meta.GroupList{Groups: resp.Groups})
 	if err != nil {
 		return "", err
 	}
-
 	return string(data), resp.Header.Error()
 }
 
@@ -703,4 +660,30 @@ func (c *CandyClient) Stop() {
 	}
 	c.conn.Close()
 	close(c.closer)
+}
+
+// LoadRecentContact 加载最近联系人列表
+func (c *CandyClient) LoadRecentContact() (string, error) {
+	req := &meta.GateRecentContactRequest{}
+	var resp *meta.GateRecentContactResponse
+	var err error
+
+	c.service(func(ctx context.Context, api meta.GateClient) error {
+		resp, err = api.LoadRecentContact(ctx, req)
+		return err
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if resp.Header.Error() != nil {
+		return "", resp.Header.Error()
+	}
+
+	data, err := encodeJSON(meta.ContactList{resp.Contacts})
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
 }

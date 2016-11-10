@@ -31,6 +31,16 @@ func UserFriendKey(user int64, friend int64) []byte {
 	return util.EncodeKey(user, util.UserFriendPrefix, friend)
 }
 
+// UserRecentContactKey create user recent contact key.
+func UserRecentContactKey(user int64, contact int64) []byte {
+	return util.EncodeKey(user, util.UserRecentContactPrefix, contact)
+}
+
+// UserRecentContactRange create user recent contact key range.
+func UserRecentContactRange(user int64) ([]byte, []byte) {
+	return util.EncodeKey(user, util.UserRecentContactPrefix, int64(0)), util.EncodeKey(user, util.UserRecentContactPrefix, math.MaxInt64)
+}
+
 // UserFriendRange create user friend key range.
 func UserFriendRange(id int64) ([]byte, []byte) {
 	return util.EncodeKey(id, util.UserFriendPrefix, int64(0)), util.EncodeKey(id, util.UserFriendPrefix, math.MaxInt64)

@@ -54,6 +54,8 @@ const (
 	UserFriendPrefix = int64(3)
 	// UserIDPrefix 用户前缀.
 	UserIDPrefix = int64(4)
+	// UserRecentContactPrefix 最近联系人或群前缀.
+	UserRecentContactPrefix = int64(5)
 
 	// NetworkTimeout 超时.
 	NetworkTimeout = time.Second * 3

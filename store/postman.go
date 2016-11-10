@@ -34,6 +34,14 @@ func (p *postman) sendToUser(pm meta.PushMessage) error {
 		}
 	}
 
+	if err := p.user.updateRecentContact(pm.Msg.To, pm.Msg.From, pm.Msg.ID>>32, false); err != nil {
+		log.Errorf("%d updateRecentContact error:%v", pm.Msg.To, errors.ErrorStack(err))
+	}
+
+	if err := p.user.updateRecentContact(pm.Msg.From, pm.Msg.To, pm.Msg.ID>>32, false); err != nil {
+		log.Errorf("%d updateRecentContact error:%v", pm.Msg.To, errors.ErrorStack(err))
+	}
+
 	before, err := p.user.addMessage(pm.Msg.To, pm.Msg.ID)
 	if err != nil {
 		return errors.Trace(err)
@@ -63,6 +71,9 @@ func (p *postman) sendToGroup(pm meta.PushMessage) error {
 
 	//向组中每个人添加消息
 	for _, uid := range group.Member {
+		if err := p.user.updateRecentContact(uid, pm.Msg.Group, pm.Msg.ID>>32, true); err != nil {
+			log.Errorf("%d updateRecentContact error:%v", pm.Msg.To, errors.ErrorStack(err))
+		}
 		before, err := p.user.addMessage(uid, pm.Msg.ID)
 		if err != nil {
 			return errors.Trace(err)

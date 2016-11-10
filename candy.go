@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/fatih/color"
 
@@ -37,6 +38,8 @@ const (
 	CmdFriendAdd
 	CmdFriendAccept
 	CmdFriendDel
+
+	CmdLoadRecentContact
 
 	CmdSendMessage
 
@@ -73,6 +76,8 @@ func notice() {
 		{CmdFriendAdd, "添加好友"},
 		{CmdFriendAccept, "接受好友请求"},
 		{CmdFriendDel, "删除好友"},
+
+		{CmdLoadRecentContact, "加载最近联系人"},
 
 		{CmdSendMessage, "发送消息"},
 
@@ -607,6 +612,31 @@ func loadGroupList(c *candy.CandyClient, reader *bufio.Reader) {
 	log.Debugf("loadGroupList success")
 }
 
+func loadRecentContact(c *candy.CandyClient, reader *bufio.Reader) {
+	startSection("加载群组列表")
+	defer endSection()
+
+	data, err := c.LoadRecentContact()
+	if err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("loadRecentContact code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	cl, err := candy.DecodeContactList([]byte(data))
+	if err != nil {
+		e := candy.ErrorParse(err.Error())
+		log.Errorf("Decode GroupList code:%v error:%v", e.Code, e.Msg)
+		return
+	}
+
+	for i, c := range cl.Contacts {
+        log.Debugf("Contact[%v] {Contact:%v Last:%v IsGroup:%v}", i, c.Contact, time.Unix(c.Last, 0).Format(time.ANSIC), c.IsGroup)
+	}
+
+	log.Debugf("loadContact success")
+}
+
 func loadFriendList(c *candy.CandyClient, reader *bufio.Reader) {
 	startSection("加载好友列表")
 	defer endSection()
@@ -675,7 +705,7 @@ func (c *cmdClient) OnUnHealth(msg string) {
 }
 
 func main() {
-	c := candy.NewCandyClient("127.0.0.1:9000", &cmdClient{})
+	c := candy.NewCandyClient("CLI", "127.0.0.1:9000", &cmdClient{})
 	//c := candy.NewCandyClient("candy.dearcode.net:9000", &cmdClient{})
 	if err := c.Start(); err != nil {
 		log.Errorf("start client error:%s", err.Error())
@@ -747,6 +777,9 @@ func main() {
 			groupKickUser(c, reader)
 		case CmdGroupExit:
 			groupUserExit(c, reader)
+
+		case CmdLoadRecentContact:
+			loadRecentContact(c, reader)
 
 		default:
 			log.Errorf("未知命令")

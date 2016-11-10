@@ -105,6 +105,11 @@ message FriendList {
     repeated int64 Users = 1;
 }
 
+// ContactList 联系人列表（好友，群）
+message ContactList {
+    repeated RecentContact Contacts = 1 [(gogoproto.nullable) = false];
+}
+
 // 下推的消息，有系统消息(加群，加好友，上线通知啥的)，正常聊天消息
 message PushMessage {
     //消息类型，如好友，群，通知， 上线，下线之类的操作
@@ -136,3 +141,9 @@ message Region {
     string  Host    = 3;
 }
 
+//RecentContact 最近联系人
+message RecentContact {
+    int64   Contact = 1;
+    int64   Last    = 2;
+    bool    IsGroup = 3;
+}

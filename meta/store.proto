@@ -53,8 +53,18 @@ service Store {
     // 如果ID为0，就逆序返回旧的100条消息
     rpc LoadMessage (StoreLoadMessageRequest) returns (StoreLoadMessageResponse);
 
+    // LoadRecentContact 最近联系人列表
+    rpc LoadRecentContact (StoreRecentContactRequest) returns (StoreRecentContactResponse);
 }
 
+message StoreRecentContactRequest {
+    RequestHeader   header  = 1 [(gogoproto.nullable) = false, (gogoproto.embed) = true];
+}
+
+message StoreRecentContactResponse {
+    ResponseHeader          header = 1;
+    repeated RecentContact  Contacts = 2 [(gogoproto.nullable) = false];
+}
 
 message StoreFindUserRequest {
     RequestHeader   header  = 1 [(gogoproto.nullable) = false, (gogoproto.embed) = true];

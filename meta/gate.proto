@@ -3,6 +3,8 @@ package candy.meta;
 
 option go_package = "meta";
 
+import weak "gogoproto/gogo.proto";
+
 import "common.proto";
 
 
@@ -49,6 +51,8 @@ service Gate {
     // LoadGroupList 加载群组列表
     rpc LoadGroupList (GateLoadGroupListRequest) returns (GateLoadGroupListResponse);
 
+    // LoadRecentContact 最近联系人列表
+    rpc LoadRecentContact (GateRecentContactRequest) returns (GateRecentContactResponse);
 
     // UploadFile 客户端上传文件接口，一次一个图片.
     rpc UploadFile (GateUploadFileRequest) returns (GateUploadFileResponse);
@@ -66,6 +70,12 @@ service Gate {
 
     //Heartbeat 重写这个主要是方便附加消息
     rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+}
+
+message GateRecentContactRequest {}
+message GateRecentContactResponse {
+    ResponseHeader          header = 1;
+    repeated RecentContact  Contacts = 2 [(gogoproto.nullable) = false];
 }
 
 message HeartbeatRequest {}

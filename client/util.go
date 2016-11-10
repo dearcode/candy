@@ -79,20 +79,28 @@ func DecodeUserList(data []byte) (*meta.UserList, error) {
 
 // DecodeFriendList 把json数据解析成FriendList
 func DecodeFriendList(data []byte) (*meta.FriendList, error) {
-	friendList := &meta.FriendList{}
-	if err := json.Unmarshal(data, &friendList); err != nil {
+	fl := &meta.FriendList{}
+	if err := json.Unmarshal(data, fl); err != nil {
 		return nil, fmt.Errorf("Decode FriendList error:%v", err.Error())
 	}
-	return friendList, nil
+	return fl, nil
 }
 
 // DecodeGroupList 把json数据解析成GroupList
 func DecodeGroupList(data []byte) (*meta.GroupList, error) {
-	groupList := &meta.GroupList{}
-	if err := json.Unmarshal(data, &groupList); err != nil {
+	gl := &meta.GroupList{}
+	if err := json.Unmarshal(data, gl); err != nil {
 		return nil, fmt.Errorf("Decode GroupList error:%v", err.Error())
 	}
-	return groupList, nil
+	return gl, nil
+}
+
+func DecodeContactList(data []byte) (*meta.ContactList, error) {
+	cl := &meta.ContactList{}
+	if err := json.Unmarshal(data, cl); err != nil {
+		return nil, fmt.Errorf("Decode ContactList error:%v", err.Error())
+	}
+	return cl, nil
 }
 
 // CheckUserName - 用户名校验， 用户名目前只支持邮箱, 长度至少6位

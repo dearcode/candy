@@ -424,6 +424,7 @@ func (g *Gate) LoadMessage(ctx context.Context, req *meta.GateLoadMessageRequest
 
 // Push notifer 调用的接口, 如果用户不在，要返回错误.
 func (g *Gate) Push(ctx context.Context, req *meta.PushRequest) (*meta.PushResponse, error) {
+	//TODO 这里只在本机测试，所以绑定mac地址
 	token, err := util.ContextGet(ctx, "token")
 	if err != nil {
 		log.Errorf("refuse token error:%s", err.Error())
@@ -449,4 +450,19 @@ func (g *Gate) Push(ctx context.Context, req *meta.PushRequest) (*meta.PushRespo
 
 	g.manager.pushMessage(req)
 	return &meta.PushResponse{}, nil
+}
+
+// LoadRecentContact 最近联系人列表
+func (g *Gate) LoadRecentContact(ctx context.Context, req *meta.GateRecentContactRequest) (*meta.GateRecentContactResponse, error) {
+	c := g.manager.getConnection(ctx)
+	if c == nil {
+		return &meta.GateRecentContactResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
+	}
+
+	rcs, err := g.store.loadRecentContact(c.user)
+	if err != nil {
+		return &meta.GateRecentContactResponse{Header: &meta.ResponseHeader{Code: util.ErrorFailure, Msg: err.Error()}}, nil
+	}
+
+	return &meta.GateRecentContactResponse{Contacts: rcs}, nil
 }

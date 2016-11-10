@@ -141,3 +141,47 @@ func TestUserMessageReverse(t *testing.T) {
 		}
 	}
 }
+
+func TestUserRecentContacts(t *testing.T) {
+	u := newUserDB(testUserDBPath)
+	if err := u.start(); err != nil {
+		t.Fatalf("start error:%s", err.Error())
+	}
+	defer u.db.Close()
+
+	input := []struct {
+		cid  int64
+		last int64
+	}{
+		{1, 3},
+		{2, 8},
+		{3, 10},
+		{4, 7},
+		{5, 1},
+	}
+
+	output := []int64{10, 8, 7, 3, 1}
+
+	uid := int64(1111111)
+	// write id to last
+	for _, i := range input {
+		u.updateRecentContact(uid, i.cid, i.cid, true)
+	}
+
+	//reset
+	for _, i := range input {
+		u.updateRecentContact(uid, i.cid, i.last, true)
+	}
+
+	rcs, err := u.getRecentContacts(uid)
+	if err != nil {
+		t.Fatalf("getRecentContacts error:%v", err)
+	}
+
+	for i, r := range rcs {
+		if output[i] != r.Last {
+			t.Fatalf("getRecentContacts result[%d]:%d, expect:%d", i, r.Last, output[i])
+		}
+	}
+
+}
