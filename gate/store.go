@@ -179,14 +179,16 @@ func (s *storeClient) groupCreate(uid, gid int64, name string) error {
 	return errors.Trace(resp.Header.Error())
 }
 
-func (s *storeClient) group(uid, gid int64, operate meta.Relation, users []int64, msg string) error {
+func (s *storeClient) group(uid, gid int64, operate meta.Relation, user int64, msg string) error {
 	log.Debugf("store group delete, user:%v group:%v", uid, gid)
 	req := &meta.StoreGroupRequest{
 		RequestHeader: meta.RequestHeader{User: uid},
 		ID:            gid,
 		Operate:       operate,
-		Users:         users,
 		Msg:           msg,
+	}
+	if user != 0 {
+		req.Users = []int64{user}
 	}
 	resp, err := s.client.Group(context.Background(), req)
 	if err != nil {
