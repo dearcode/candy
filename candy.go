@@ -425,7 +425,7 @@ func groupInviteUser(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Group(gid, int32(meta.Relation_Add), []int64{uid}, "邀请你加群"); err != nil {
+	if err = c.Group(gid, int32(meta.Relation_Add), uid, "邀请你加群"); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
 		return
@@ -448,7 +448,7 @@ func groupUserApply(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Group(gid, int32(meta.Relation_Add), nil, "我要加你的群"); err != nil {
+	if err = c.Group(gid, int32(meta.Relation_Add), 0, "我要加你的群"); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
 		return
@@ -478,7 +478,7 @@ func groupAgreeUser(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Group(gid, int32(meta.Relation_Confirm), []int64{uid}, "同意你入群了"); err != nil {
+	if err = c.Group(gid, int32(meta.Relation_Confirm), uid, "同意你入群了"); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
 		return
@@ -501,7 +501,7 @@ func groupUserAccept(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Group(gid, int32(meta.Relation_Confirm), nil, "我同意进你的群了"); err != nil {
+	if err = c.Group(gid, int32(meta.Relation_Confirm), 0, "我同意进你的群了"); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
 		return
@@ -531,7 +531,7 @@ func groupKickUser(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Group(gid, int32(meta.Relation_Del), []int64{uid}, "你被踢出群了"); err != nil {
+	if err = c.Group(gid, int32(meta.Relation_Del), uid, "你被踢出群了"); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
 		return
@@ -554,7 +554,7 @@ func groupUserExit(c *candy.CandyClient, reader *bufio.Reader) {
 		return
 	}
 
-	if err = c.Group(gid, int32(meta.Relation_Del), nil, "我退群了"); err != nil {
+	if err = c.Group(gid, int32(meta.Relation_Del), 0, "我退群了"); err != nil {
 		e := candy.ErrorParse(err.Error())
 		log.Errorf("group code:%v error:%v", e.Code, e.Msg)
 		return

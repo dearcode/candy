@@ -264,13 +264,13 @@ message GateSendMessageResponse {
 
 /*
    邀请用户加入, 可以批量邀请，附加邀请消息
-   ID Add Users[UID] Msg
+   ID Add User Msg
 
    用户申请加入群
    ID Add nil Msg
 
    管理员通过用户申请入群的请求
-   ID Confirm Users[UID]
+   ID Confirm User
 
    用户同意入群的邀请
    ID Confirm nil
@@ -279,13 +279,13 @@ message GateSendMessageResponse {
    ID Del nil
 
    踢用户出群
-   ID Del Users[UID]
+   ID Del Users
  */
 message GateGroupRequest {
     int64       ID      = 1;
     Relation    Operate = 2;
     string      Msg     = 3;
-    repeated    int64   Users  = 4;
+    int64       User    = 4;
 }
 
 message GateGroupResponse {

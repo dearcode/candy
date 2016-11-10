@@ -48,7 +48,7 @@ type CandyClient struct {
 	pass    string
 	device  string
 	closer  chan struct{}
-	sync.RWMutex
+	mu      sync.RWMutex
 }
 
 // NewCandyClient - create an new CandyClient
@@ -83,9 +83,9 @@ func (c *CandyClient) service(call func(context.Context, meta.GateClient) error)
 		log.Infof("call:%s error:%s", c.host, err.Error())
 		return
 	}
-	c.Lock()
+	c.mu.Lock()
 	c.last = time.Now()
-	c.Unlock()
+	c.mu.Unlock()
 }
 
 // Register 用户注册接口
@@ -486,14 +486,14 @@ func (c *CandyClient) receiver(stream meta.Gate_StreamClient) {
 }
 
 func (c *CandyClient) onError(msg string) {
-	c.Lock()
+	c.mu.Lock()
 	c.last = time.Now().Add(-time.Minute)
 	if c.broken {
-		c.Unlock()
+		c.mu.Unlock()
 		return
 	}
 	c.broken = true
-	c.Unlock()
+	c.mu.Unlock()
 
 	if strings.Contains(msg, "invalid context") && c.user != "" && c.pass != "" {
 		c.Login(c.user, c.pass)
@@ -517,14 +517,14 @@ func (c *CandyClient) startReceiver() {
 
 //onHealth 如果网络正常了，要尝试启动Push Stream
 func (c *CandyClient) onHealth() {
-	c.Lock()
+	c.mu.Lock()
 	c.last = time.Now()
 	if !c.broken {
-		c.Unlock()
+		c.mu.Unlock()
 		return
 	}
 	c.broken = false
-	c.Unlock()
+	c.mu.Unlock()
 
 	c.handler.OnHealth()
 
@@ -536,9 +536,9 @@ func (c *CandyClient) onHealth() {
 // OnNetStateChange 移动端如果网络状态发生变化要通知这边
 func (c *CandyClient) OnNetStateChange() {
 	//TODO 细分
-	c.Lock()
+	c.mu.Lock()
 	c.last = time.Now().Add(-time.Minute)
-	c.Unlock()
+	c.mu.Unlock()
 }
 
 // healthCheck 健康检查,60秒发一次, 目前服务器超过90秒会发探活
@@ -557,12 +557,12 @@ func (c *CandyClient) healthCheck() {
 			return
 		case <-t.C:
 		}
-		c.RLock()
+		c.mu.RLock()
 		if c.token == 0 || time.Now().Sub(c.last) < time.Minute {
-			c.RUnlock()
+			c.mu.RUnlock()
 			continue
 		}
-		c.RUnlock()
+		c.mu.RUnlock()
 
 		c.service(func(ctx context.Context, client meta.GateClient) error {
 			resp, err = client.Heartbeat(ctx, req)
@@ -603,8 +603,8 @@ func (c *CandyClient) CreateGroup(name string) (int64, error) {
 }
 
 // Group 群操作
-func (c *CandyClient) Group(id int64, operate int32, users []int64, msg string) error {
-	req := &meta.GateGroupRequest{ID: id, Msg: msg, Operate: meta.Relation(operate), Users: users}
+func (c *CandyClient) Group(id int64, operate int32, user int64, msg string) error {
+	req := &meta.GateGroupRequest{ID: id, Msg: msg, Operate: meta.Relation(operate), User: user}
 	var resp *meta.GateGroupResponse
 	var err error
 	c.service(func(ctx context.Context, api meta.GateClient) error {

@@ -340,11 +340,11 @@ func (g *Gate) Group(ctx context.Context, req *meta.GateGroupRequest) (*meta.Gat
 		return &meta.GateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetOnlineSession, Msg: "login first"}}, nil
 	}
 
-	if err := g.store.group(c.getUser(), req.ID, req.Operate, req.Users, req.Msg); err != nil {
+	if err := g.store.group(c.getUser(), req.ID, req.Operate, req.User, req.Msg); err != nil {
 		return &meta.GateGroupResponse{Header: &meta.ResponseHeader{Code: util.ErrorCreateGroup, Msg: err.Error()}}, nil
 	}
 
-	log.Debugf("%d group:%d operate:%v, users:%v, msg:%v", c.getUser(), req.ID, req.Operate, req.Users, req.Msg)
+	log.Debugf("%d group:%d operate:%v, user:%v, msg:%v", c.getUser(), req.ID, req.Operate, req.User, req.Msg)
 	return &meta.GateGroupResponse{}, nil
 }
 
