@@ -131,7 +131,7 @@ func (g *Gate) UpdateSignature(ctx context.Context, req *meta.GateUpdateSignatur
 // UpdateUserPassword update user password
 func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserPasswordRequest) (*meta.GateUpdateUserPasswordResponse, error) {
 	c := g.manager.getConnection(ctx)
-	if c != nil {
+	if c == nil {
 		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
@@ -150,7 +150,7 @@ func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserP
 // GetUserInfo get user base info
 func (g *Gate) GetUserInfo(ctx context.Context, req *meta.GateGetUserInfoRequest) (*meta.GateGetUserInfoResponse, error) {
 	c := g.manager.getConnection(ctx)
-	if c != nil {
+	if c == nil {
 		return &meta.GateGetUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
