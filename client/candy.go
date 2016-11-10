@@ -47,6 +47,7 @@ type CandyClient struct {
 	user    string
 	pass    string
 	device  string
+	closer  chan struct{}
 	sync.RWMutex
 }
 
@@ -577,7 +578,12 @@ func (c *CandyClient) healthCheck() {
 	var err error
 
 	for {
-		<-t.C
+		select {
+		case <-c.closer:
+			t.Stop()
+			return
+		case <-t.C:
+		}
 		c.RLock()
 		if time.Now().Sub(c.last) < time.Minute {
 			c.RUnlock()
@@ -688,4 +694,13 @@ func (c *CandyClient) LoadGroupList() (string, error) {
 	}
 
 	return string(data), resp.Header.Error()
+}
+
+//Stop 关连接，退出
+func (c *CandyClient) Stop() {
+	if c.id != 0 && c.token != 0 {
+		c.Logout()
+	}
+	c.conn.Close()
+	close(c.closer)
 }
