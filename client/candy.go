@@ -53,7 +53,7 @@ type CandyClient struct {
 
 // NewCandyClient - create an new CandyClient
 func NewCandyClient(host string, handler MessageHandler) *CandyClient {
-	return &CandyClient{host: host, handler: handler, broken: true}
+	return &CandyClient{host: host, handler: handler, broken: true, closer: make(chan struct{})}
 }
 
 // Start 连接服务端.
