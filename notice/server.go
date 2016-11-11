@@ -91,15 +91,21 @@ func (n *Notifer) Push(_ context.Context, req *meta.PushRequest) (*meta.PushResp
 		return &meta.PushResponse{Header: &meta.ResponseHeader{Msg: "push ids is nil", Code: -1}}, nil
 	}
 
-	for _, id := range req.ID {
-		if !n.region.Match(id.User) {
-			log.Errorf("does not match id:%d, region:%+v", id.User, n.region)
-			return &meta.PushResponse{Header: &meta.ResponseHeader{Msg: "does not match", Code: -2}}, nil
-		}
-	}
+	ids := n.broker.send(req.Msg, req.ID)
 
-	n.broker.push(req.Msg, req.ID...)
-	log.Debugf("end push message:%v, ids:%v", req.Msg, req.ID)
+	n.RLock()
+	for i := 0; i < len(ids); {
+		if !n.region.Match(ids[i].User) {
+			log.Errorf("does not match id:%d, region:%+v", ids[i].User, n.region)
+			copy(ids[i:], ids[i+1:])
+			ids = ids[:len(ids)-1]
+			continue
+		}
+		i++
+	}
+	n.RUnlock()
+
+	log.Debugf("end push message:%+v, failed:%v", req.Msg, ids)
 
 	return &meta.PushResponse{}, nil
 }

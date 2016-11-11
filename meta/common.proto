@@ -129,9 +129,10 @@ message PushRequest {
     PushMessage Msg = 2 [(gogoproto.nullable) = false];
 }
 
-// PushResponse 可能返回节点错误或其它错误信息
+// PushResponse
 message PushResponse {
-    ResponseHeader header = 1;
+    ResponseHeader  header  = 1;
+    repeated PushID ID      = 2 [(gogoproto.nullable) = false];
 }
 
 //Region 用户ID区间begin~end

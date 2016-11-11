@@ -88,7 +88,9 @@ func TestBrokerPush(t *testing.T) {
 
 	msg := meta.PushMessage{Msg: meta.Message{Body: "test"}}
 	pushID := meta.PushID{User: uid, Before: 2222}
-	b.push(msg, pushID)
+	go func() {
+		b.send(msg, []meta.PushID{pushID})
+	}()
 
 	select {
 	case nm := <-c:

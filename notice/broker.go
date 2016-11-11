@@ -15,64 +15,39 @@ type pushRequest struct {
 }
 
 type broker struct {
-	mbox   chan pushRequest
 	users  map[int64]devices
 	sender brokerSender
 	sync.RWMutex
 }
-
-const (
-	defaultPushChanSize = 1000
-	// 默认推送线程数量
-	defaultSenderNumber = 4
-)
 
 type brokerSender interface {
 	push(addr string, req meta.PushRequest) error
 }
 
 func newBroker(sender brokerSender) *broker {
-	b := &broker{users: make(map[int64]devices), mbox: make(chan pushRequest, defaultPushChanSize), sender: sender}
-	for i := 0; i < defaultSenderNumber; i++ {
-		go b.loopSender()
-	}
-	return b
+	return &broker{users: make(map[int64]devices), sender: sender}
 }
 
-// split 按用户所在chan拆分请求
-func (b *broker) split(req pushRequest) map[string][]meta.PushID {
-	pids := make(map[string][]meta.PushID)
+// classify 按用户所在Gate地址拆分PushID
+func (b *broker) classify(pids []meta.PushID) map[string][]meta.PushID {
+	hosts := make(map[string][]meta.PushID)
 	b.RLock()
-	for _, id := range req.ids {
+	for _, id := range pids {
 		devs, ok := b.users[id.User]
 		if !ok {
-			// 跳过未订阅的用户
 			continue
 		}
 
 		for _, dev := range devs {
-			if ids, ok := pids[dev.host]; ok {
+			if ids, ok := hosts[dev.host]; ok {
 				ids = append(ids, id)
 				continue
 			}
-			pids[dev.host] = []meta.PushID{id}
+			hosts[dev.host] = []meta.PushID{id}
 		}
 	}
 	b.RUnlock()
-	return pids
-}
-
-// loopSender 这里做拆分推送: 一个推送消息，可能推送到多个gate上用户的多个设备也可能用户不在线
-func (b *broker) loopSender() {
-	for {
-		req := <-b.mbox
-		for host, ids := range b.split(req) {
-			req := meta.PushRequest{ID: ids, Msg: req.msg}
-			if err := b.sender.push(host, req); err != nil {
-				log.Errorf("push %s req:%+v, err:%s", host, req, errors.ErrorStack(err))
-			}
-		}
-	}
+	return hosts
 }
 
 func (b *broker) subscribe(uid, token int64, dev, host string) {
@@ -102,7 +77,29 @@ func (b *broker) unSubscribe(uid, token int64, dev string) {
 	log.Debugf("unSubscribe uid:%d, dev:%s, token:%d", uid, dev, token)
 }
 
-func (b *broker) push(msg meta.PushMessage, ids ...meta.PushID) {
-	log.Debugf("broker msg:%v ids:%v", msg, ids)
-	b.mbox <- pushRequest{ids: ids, msg: msg}
+// send 这里做拆分推送: 一个推送消息，可能推送到多个gate上用户的多个设备也可能用户不在线
+func (b *broker) send(msg meta.PushMessage, pids []meta.PushID) []meta.PushID {
+	log.Debugf("send msg:%v pids:%v", msg, pids)
+	s := make(map[int64]struct{})
+
+	for host, pi := range b.classify(pids) {
+		req := meta.PushRequest{ID: pi, Msg: msg}
+		if err := b.sender.push(host, req); err != nil {
+			log.Errorf("push %s req:%+v, err:%s", host, req, errors.ErrorStack(err))
+			continue
+		}
+
+		for _, id := range pi {
+			s[id.User] = struct{}{}
+		}
+	}
+
+	var eps []meta.PushID
+	for _, pi := range pids {
+		if _, ok := s[pi.User]; !ok {
+			eps = append(eps, pi)
+		}
+	}
+
+	return eps
 }
