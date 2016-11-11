@@ -1,10 +1,10 @@
-all: fmt lint vet store master notice gate tool client 
+all: fmt lint vet store master notifer gate tool client 
 
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildTime=$(shell date -R)"
 LDFLAGS += -X "github.com/dearcode/candy/util.BuildVersion=$(shell git rev-parse HEAD)"
 
 FILES := $$(find . -name '*.go' | grep -vE 'vendor') 
-SOURCE_PATH := store master notice gate util
+SOURCE_PATH := store master notifer gate util
 
 golint:
 	go get github.com/golang/lint/golint  
@@ -38,7 +38,7 @@ gate:godep
 master:godep	     		                       			
 	godep go build -o bin/$@ -ldflags '$(LDFLAGS)' cmd/$@/main.go 
 				     		                       			
-notice:godep	     		                       			
+notifer:godep
 	godep go build -o bin/$@ -ldflags '$(LDFLAGS)' cmd/$@/main.go 
 
 client: godep

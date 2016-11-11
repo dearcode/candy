@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/dearcode/candy/notice"
+	"github.com/dearcode/candy/notifer"
 	"github.com/dearcode/candy/util"
 )
 
