@@ -242,7 +242,7 @@ func (s *Store) LoadFriendList(_ context.Context, req *meta.StoreLoadFriendListR
 // NewMessage save message to leveldb,
 func (s *Store) NewMessage(_ context.Context, req *meta.StoreNewMessageRequest) (*meta.StoreNewMessageResponse, error) {
 	log.Debugf("Store NewMessage, msg:%v", req.Msg)
-	pm := meta.PushMessage{Msg: req.Msg}
+	pm := meta.PushMessage{Event: meta.Event_None, Msg: req.Msg}
 	if req.Msg.Group == 0 {
 		pm.ToUser = true
 	}
@@ -432,7 +432,7 @@ func (s *Store) GroupDelete(_ context.Context, req *meta.StoreGroupDeleteRequest
 	}
 
 	//给所有人发消息，告诉他们群没有了
-	pm := meta.PushMessage{Operate: meta.Relation_Del, Msg: meta.Message{ID: id, Group: req.ID, From: req.User, Body: "群没了"}}
+	pm := meta.PushMessage{Event: meta.Event_None, Operate: meta.Relation_Del, Msg: meta.Message{ID: id, Group: req.ID, From: req.User, Body: "群没了"}}
 	if err := s.message.send(pm); err != nil {
 		log.Debugf("end Group delete:%+v, send error:%v", req, errors.ErrorStack(err))
 		return &meta.StoreGroupDeleteResponse{Header: &meta.ResponseHeader{Code: -1, Msg: err.Error()}}, nil
