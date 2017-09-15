@@ -100,7 +100,7 @@ func MD5(data []byte) []byte {
 
 // ContextGet get value from context's metadata.
 func ContextGet(ctx context.Context, key string) (string, error) {
-	md, ok := metadata.FromContext(ctx)
+	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", errors.Trace(ErrInvalidContext)
 	}
@@ -119,9 +119,9 @@ func ContextGet(ctx context.Context, key string) (string, error) {
 
 // ContextSet set value to context's metadata.
 func ContextSet(ctx context.Context, key, val string) context.Context {
-	md, ok := metadata.FromContext(ctx)
+	md, ok := metadata.FromOutgoingContext(ctx)
 	if !ok {
-		return metadata.NewContext(ctx, metadata.Pairs(key, val))
+		return metadata.NewOutgoingContext(ctx, metadata.Pairs(key, val))
 	}
 	md[key] = []string{val}
 	return ctx

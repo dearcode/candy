@@ -15,12 +15,13 @@
 package clientv3
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"github.com/coreos/etcd/auth/authpb"
 	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"golang.org/x/net/context"
+
 	"google.golang.org/grpc"
 )
 
@@ -100,19 +101,11 @@ type Auth interface {
 }
 
 type auth struct {
-	c *Client
-
-	conn   *grpc.ClientConn // conn in-use
 	remote pb.AuthClient
 }
 
 func NewAuth(c *Client) Auth {
-	conn := c.ActiveConnection()
-	return &auth{
-		conn:   c.ActiveConnection(),
-		remote: pb.NewAuthClient(conn),
-		c:      c,
-	}
+	return &auth{remote: pb.NewAuthClient(c.ActiveConnection())}
 }
 
 func (auth *auth) AuthEnable(ctx context.Context) (*AuthEnableResponse, error) {
