@@ -59,7 +59,7 @@ func (c *connection) onHeartbeat() {
 func (c *connection) send(msg *meta.PushMessage) error {
 	log.Debugf("%d msg:%v", c.token, msg)
 	if c.stream == nil {
-		log.Errorf("%s stream is nil", c.token)
+		log.Errorf("%v stream is nil", c.token)
 		return nil
 	}
 	return c.stream.Send(msg)

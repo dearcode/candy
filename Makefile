@@ -26,8 +26,7 @@ fmt:
 	@for path in $(SOURCE_PATH); do echo "gofmt -s -l -w $$path";  gofmt -s -l -w $$path;  done;
 
 vet:
-	go tool vet $(FILES) 2>&1
-	go tool vet --shadow $(FILES) 2>&1
+	@for path in $(SOURCE_PATH); do echo "go tool vet $$path"; go tool vet $$path; done;
 
 store:godep
 	godep go build -o bin/$@ -ldflags '$(LDFLAGS)' cmd/$@/main.go 
