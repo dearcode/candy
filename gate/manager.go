@@ -1,11 +1,11 @@
 package gate
 
 import (
+	"context"
 	"strconv"
 	"sync"
 
 	"github.com/juju/errors"
-	"golang.org/x/net/context"
 
 	"github.com/dearcode/candy/meta"
 	"github.com/dearcode/candy/util"
@@ -14,7 +14,6 @@ import (
 
 // manager 管理所有session, connection.
 type manager struct {
-	stop     bool
 	host     string
 	notifer  *util.NotiferClient
 	conns    map[int64]*connection // 根据token索引
@@ -119,6 +118,7 @@ func (m *manager) getUserSession(id int64) *session {
 	return s
 }
 
+/*
 //getSessionByToken 据int64的token获取对应的session.
 func (m *manager) getSessionByToken(token int64) *session {
 	c := m.getConnByToken(token)
@@ -137,6 +137,7 @@ func (m *manager) getSession(ctx context.Context) *session {
 
 	return m.getUserSession(c.getUser())
 }
+*/
 
 func (m *manager) pushMessage(req *meta.PushRequest) {
 	for _, id := range req.ID {
@@ -146,7 +147,7 @@ func (m *manager) pushMessage(req *meta.PushRequest) {
 		}
 		s.walkConnection(func(c *connection) bool {
 			if err := c.send(&req.Msg); err != nil {
-				log.Infof("send Msg:%v, to:%d addr:%s, last:%v, err:%s", req.Msg.Msg.ID, id.User, c.getToken(), c.last, errors.ErrorStack(err))
+				log.Infof("send Msg:%v, to:%d token:%v, last:%v, err:%s", req.Msg.Msg.ID, id.User, c.getToken(), c.last, errors.ErrorStack(err))
 				m.offline(c)
 			}
 			return false

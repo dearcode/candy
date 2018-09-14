@@ -3,6 +3,7 @@ package store
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"sync"
 	"syscall"
@@ -35,8 +36,7 @@ type cacheFile struct {
 }
 
 type fileDB struct {
-	root     string
-	filePath string
+	root string
 
 	cache  map[string]*cacheFile
 	db     *leveldb.DB // 所有消息都存在这里
@@ -157,7 +157,7 @@ func (f *fileDB) add(key []byte, data []byte) error {
 		}
 	}
 
-	offset, err := f.master.file.Seek(0, os.SEEK_END)
+	offset, err := f.master.file.Seek(0, io.SeekEnd)
 	if err != nil {
 		return errors.Trace(err)
 	}

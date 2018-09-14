@@ -159,11 +159,13 @@ func (m *messageDB) send(pm meta.PushMessage) error {
 	return nil
 }
 
+/*
 func (m *messageDB) delQueue(id int64) {
 	log.Debugf("id:%v", id)
 	key := util.EncodeInt64(id)
 	m.queue.Delete(key, nil)
 }
+*/
 
 func (m *messageDB) get(ids ...int64) ([]*meta.PushMessage, error) {
 	log.Debugf("ids:%v", ids)

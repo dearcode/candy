@@ -7,7 +7,7 @@ import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
-// skipping weak import gogoproto "gogoproto"
+// skipping weak import gogoproto "github.com/gogo/protobuf/gogoproto"
 
 import (
 	context "golang.org/x/net/context"
@@ -21,23 +21,85 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 type NewIDRequest struct {
 }
 
-func (m *NewIDRequest) Reset()                    { *m = NewIDRequest{} }
-func (m *NewIDRequest) String() string            { return proto.CompactTextString(m) }
-func (*NewIDRequest) ProtoMessage()               {}
-func (*NewIDRequest) Descriptor() ([]byte, []int) { return fileDescriptorMaster, []int{0} }
+func (m *NewIDRequest) Reset()         { *m = NewIDRequest{} }
+func (m *NewIDRequest) String() string { return proto.CompactTextString(m) }
+func (*NewIDRequest) ProtoMessage()    {}
+func (*NewIDRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_master_8eb205d2eebfc678, []int{0}
+}
+func (m *NewIDRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *NewIDRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_NewIDRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *NewIDRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NewIDRequest.Merge(dst, src)
+}
+func (m *NewIDRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *NewIDRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_NewIDRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NewIDRequest proto.InternalMessageInfo
 
 type NewIDResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	ID     int64           `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *NewIDResponse) Reset()                    { *m = NewIDResponse{} }
-func (m *NewIDResponse) String() string            { return proto.CompactTextString(m) }
-func (*NewIDResponse) ProtoMessage()               {}
-func (*NewIDResponse) Descriptor() ([]byte, []int) { return fileDescriptorMaster, []int{1} }
+func (m *NewIDResponse) Reset()         { *m = NewIDResponse{} }
+func (m *NewIDResponse) String() string { return proto.CompactTextString(m) }
+func (*NewIDResponse) ProtoMessage()    {}
+func (*NewIDResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_master_8eb205d2eebfc678, []int{1}
+}
+func (m *NewIDResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *NewIDResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_NewIDResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *NewIDResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NewIDResponse.Merge(dst, src)
+}
+func (m *NewIDResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *NewIDResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_NewIDResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NewIDResponse proto.InternalMessageInfo
 
 func (m *NewIDResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -57,10 +119,38 @@ type RegionGetRequest struct {
 	Host string `protobuf:"bytes,1,opt,name=Host,proto3" json:"Host,omitempty"`
 }
 
-func (m *RegionGetRequest) Reset()                    { *m = RegionGetRequest{} }
-func (m *RegionGetRequest) String() string            { return proto.CompactTextString(m) }
-func (*RegionGetRequest) ProtoMessage()               {}
-func (*RegionGetRequest) Descriptor() ([]byte, []int) { return fileDescriptorMaster, []int{2} }
+func (m *RegionGetRequest) Reset()         { *m = RegionGetRequest{} }
+func (m *RegionGetRequest) String() string { return proto.CompactTextString(m) }
+func (*RegionGetRequest) ProtoMessage()    {}
+func (*RegionGetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_master_8eb205d2eebfc678, []int{2}
+}
+func (m *RegionGetRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RegionGetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RegionGetRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *RegionGetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegionGetRequest.Merge(dst, src)
+}
+func (m *RegionGetRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *RegionGetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegionGetRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegionGetRequest proto.InternalMessageInfo
 
 func (m *RegionGetRequest) GetHost() string {
 	if m != nil {
@@ -74,10 +164,38 @@ type RegionGetResponse struct {
 	Regions []Region        `protobuf:"bytes,2,rep,name=Regions" json:"Regions"`
 }
 
-func (m *RegionGetResponse) Reset()                    { *m = RegionGetResponse{} }
-func (m *RegionGetResponse) String() string            { return proto.CompactTextString(m) }
-func (*RegionGetResponse) ProtoMessage()               {}
-func (*RegionGetResponse) Descriptor() ([]byte, []int) { return fileDescriptorMaster, []int{3} }
+func (m *RegionGetResponse) Reset()         { *m = RegionGetResponse{} }
+func (m *RegionGetResponse) String() string { return proto.CompactTextString(m) }
+func (*RegionGetResponse) ProtoMessage()    {}
+func (*RegionGetResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_master_8eb205d2eebfc678, []int{3}
+}
+func (m *RegionGetResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RegionGetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RegionGetResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *RegionGetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegionGetResponse.Merge(dst, src)
+}
+func (m *RegionGetResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *RegionGetResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegionGetResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegionGetResponse proto.InternalMessageInfo
 
 func (m *RegionGetResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -108,8 +226,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for Master service
-
+// MasterClient is the client API for Master service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MasterClient interface {
 	NewID(ctx context.Context, in *NewIDRequest, opts ...grpc.CallOption) (*NewIDResponse, error)
 	// RegionGet 获取region，如果host传空，返回所有region
@@ -126,7 +245,7 @@ func NewMasterClient(cc *grpc.ClientConn) MasterClient {
 
 func (c *masterClient) NewID(ctx context.Context, in *NewIDRequest, opts ...grpc.CallOption) (*NewIDResponse, error) {
 	out := new(NewIDResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Master/NewID", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Master/NewID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -135,15 +254,14 @@ func (c *masterClient) NewID(ctx context.Context, in *NewIDRequest, opts ...grpc
 
 func (c *masterClient) RegionGet(ctx context.Context, in *RegionGetRequest, opts ...grpc.CallOption) (*RegionGetResponse, error) {
 	out := new(RegionGetResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Master/RegionGet", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Master/RegionGet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for Master service
-
+// MasterServer is the server API for Master service.
 type MasterServer interface {
 	NewID(context.Context, *NewIDRequest) (*NewIDResponse, error)
 	// RegionGet 获取region，如果host传空，返回所有region
@@ -322,24 +440,6 @@ func (m *RegionGetResponse) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func encodeFixed64Master(dAtA []byte, offset int, v uint64) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	dAtA[offset+4] = uint8(v >> 32)
-	dAtA[offset+5] = uint8(v >> 40)
-	dAtA[offset+6] = uint8(v >> 48)
-	dAtA[offset+7] = uint8(v >> 56)
-	return offset + 8
-}
-func encodeFixed32Master(dAtA []byte, offset int, v uint32) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	return offset + 4
-}
 func encodeVarintMaster(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -350,12 +450,18 @@ func encodeVarintMaster(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *NewIDRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	return n
 }
 
 func (m *NewIDResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -369,6 +475,9 @@ func (m *NewIDResponse) Size() (n int) {
 }
 
 func (m *RegionGetRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Host)
@@ -379,6 +488,9 @@ func (m *RegionGetRequest) Size() (n int) {
 }
 
 func (m *RegionGetResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -857,10 +969,10 @@ var (
 	ErrIntOverflowMaster   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("master.proto", fileDescriptorMaster) }
+func init() { proto.RegisterFile("master.proto", fileDescriptor_master_8eb205d2eebfc678) }
 
-var fileDescriptorMaster = []byte{
-	// 288 bytes of a gzipped FileDescriptorProto
+var fileDescriptor_master_8eb205d2eebfc678 = []byte{
+	// 296 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xc9, 0x4d, 0x2c, 0x2e,
 	0x49, 0x2d, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x4a, 0x4e, 0xcc, 0x4b, 0xa9, 0xd4,
 	0xcb, 0x4d, 0x2d, 0x49, 0x94, 0x12, 0x49, 0xcf, 0x4f, 0xcf, 0x07, 0x0b, 0xeb, 0x83, 0x58, 0x10,
@@ -876,7 +988,8 @@ var fileDescriptorMaster = []byte{
 	0x9e, 0x3c, 0x43, 0x10, 0x4c, 0xa1, 0xd1, 0x04, 0x46, 0x2e, 0x36, 0x5f, 0x70, 0x50, 0x0a, 0xd9,
 	0x70, 0xb1, 0x82, 0x03, 0x41, 0x48, 0x02, 0x59, 0x1b, 0x72, 0x38, 0x49, 0x49, 0x62, 0x91, 0x81,
 	0x3a, 0xd8, 0x83, 0x8b, 0x13, 0xee, 0x0b, 0x21, 0x19, 0x4c, 0x8b, 0x11, 0x81, 0x20, 0x25, 0x8b,
-	0x43, 0x16, 0x62, 0x92, 0x93, 0xd8, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78,
-	0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0x43, 0x14, 0x0b, 0x48, 0x65, 0x04, 0x43, 0x12, 0x1b, 0x38,
-	0xf6, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0xc6, 0xb2, 0xf6, 0x8e, 0xfd, 0x01, 0x00, 0x00,
+	0x43, 0x16, 0x62, 0x92, 0x93, 0xdc, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78,
+	0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44,
+	0xb1, 0x80, 0x74, 0x44, 0x30, 0x24, 0xb1, 0x81, 0x63, 0xd1, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff,
+	0x07, 0x45, 0xfd, 0x6f, 0x05, 0x02, 0x00, 0x00,
 }

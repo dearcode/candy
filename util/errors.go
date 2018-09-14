@@ -6,7 +6,7 @@ import (
 
 const (
 	// ErrorOK 成功
-	ErrorOK int32 = 0
+	ErrorOK = 0
 	// ErrorFailure 未知错误
 	ErrorFailure = 1
 	// ErrorUserNameFormat 用户名格式错误

@@ -159,6 +159,10 @@ func (l *logger) SetHighlighting(highlighting bool) {
 	l.highlighting = highlighting
 }
 
+func (l *logger) SetFlags(flags int) {
+	l._log.SetFlags(flags)
+}
+
 func (l *logger) SetLevel(level LogLevel) {
 	l.level = level
 }

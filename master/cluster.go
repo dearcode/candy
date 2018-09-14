@@ -45,6 +45,7 @@ func newCluster(etcd *util.EtcdClient, host string) (*cluster, error) {
 	return c, nil
 }
 
+/*
 func (c *cluster) onHealth(host string) {
 	c.Lock()
 	if n, ok := c.nodes[host]; ok {
@@ -52,6 +53,7 @@ func (c *cluster) onHealth(host string) {
 	}
 	c.Unlock()
 }
+*/
 
 func (c *cluster) get(host string) (meta.Region, error) {
 	r, err := c.regions.GetByHost(host)
@@ -84,7 +86,7 @@ func (c *cluster) check() {
 
 		c.Lock()
 		for _, n := range c.nodes {
-			if time.Now().Sub(n.last) > nodeLost {
+			if time.Since(n.last) > nodeLost {
 				c.onNodeExpired(n.host)
 				delete(c.nodes, n.host)
 			}
@@ -182,6 +184,7 @@ func (c *cluster) onNodeArrived(host string) (meta.Region, error) {
 	return n, nil
 }
 
+/*
 func (c *cluster) marshal() (string, error) {
 	buf, err := c.regions.Marshal()
 	if err != nil {
@@ -190,3 +193,4 @@ func (c *cluster) marshal() (string, error) {
 
 	return string(buf), nil
 }
+*/

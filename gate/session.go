@@ -8,8 +8,8 @@ import (
 
 // sid:Subscribe id.
 type session struct {
-	user  int64 // 用户ID
-	sid   int64
+	user int64 // 用户ID
+	//sid   int64
 	conns []*connection // 来自不同设备的所有连接
 	sync.RWMutex
 }
@@ -18,9 +18,11 @@ func newSession(id int64, c *connection) *session {
 	return &session{user: id, conns: []*connection{c}}
 }
 
+/*
 func (s *session) getUser() int64 {
 	return s.user
 }
+*/
 
 func (s *session) addConnection(conn *connection) {
 	log.Debugf("%d token:%d, dev:%s", s.user, conn.getToken(), conn.getDevice())

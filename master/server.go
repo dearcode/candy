@@ -1,11 +1,11 @@
 package master
 
 import (
+	"context"
 	"net"
 	"sync"
 
 	"github.com/juju/errors"
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"

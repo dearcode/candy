@@ -43,7 +43,7 @@ func (c *connection) waitClose(stream meta.Gate_StreamServer) {
 	log.Debugf("wait token:%d timeout", c.token)
 	for {
 		<-t.C
-		if time.Now().Sub(c.last) > connectionLost {
+		if time.Since(c.last) > connectionLost {
 			log.Debugf("%d timeout, last:%v, now:%v", c.token, c.last, time.Now())
 			break
 		}

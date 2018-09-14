@@ -9,11 +9,6 @@ import (
 	"github.com/dearcode/candy/util/log"
 )
 
-type pushRequest struct {
-	ids []meta.PushID
-	msg meta.PushMessage
-}
-
 type broker struct {
 	users  map[int64]devices
 	sender brokerSender
@@ -39,8 +34,8 @@ func (b *broker) classify(pids []meta.PushID) map[string][]meta.PushID {
 		}
 
 		for _, dev := range devs {
-			if ids, ok := hosts[dev.host]; ok {
-				ids = append(ids, id)
+			if _, ok := hosts[dev.host]; ok {
+				hosts[dev.host] = append(hosts[dev.host], id)
 				continue
 			}
 			hosts[dev.host] = []meta.PushID{id}

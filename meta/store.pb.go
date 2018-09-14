@@ -7,7 +7,7 @@ import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
-// skipping weak import gogoproto "gogoproto"
+// skipping weak import gogoproto "github.com/gogo/protobuf/gogoproto"
 
 import (
 	context "golang.org/x/net/context"
@@ -21,24 +21,86 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 type StoreRecentContactRequest struct {
 	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
 }
 
-func (m *StoreRecentContactRequest) Reset()                    { *m = StoreRecentContactRequest{} }
-func (m *StoreRecentContactRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreRecentContactRequest) ProtoMessage()               {}
-func (*StoreRecentContactRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{0} }
+func (m *StoreRecentContactRequest) Reset()         { *m = StoreRecentContactRequest{} }
+func (m *StoreRecentContactRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreRecentContactRequest) ProtoMessage()    {}
+func (*StoreRecentContactRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{0}
+}
+func (m *StoreRecentContactRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreRecentContactRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreRecentContactRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreRecentContactRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreRecentContactRequest.Merge(dst, src)
+}
+func (m *StoreRecentContactRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreRecentContactRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreRecentContactRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreRecentContactRequest proto.InternalMessageInfo
 
 type StoreRecentContactResponse struct {
 	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Contacts []RecentContact `protobuf:"bytes,2,rep,name=Contacts" json:"Contacts"`
 }
 
-func (m *StoreRecentContactResponse) Reset()                    { *m = StoreRecentContactResponse{} }
-func (m *StoreRecentContactResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreRecentContactResponse) ProtoMessage()               {}
-func (*StoreRecentContactResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{1} }
+func (m *StoreRecentContactResponse) Reset()         { *m = StoreRecentContactResponse{} }
+func (m *StoreRecentContactResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreRecentContactResponse) ProtoMessage()    {}
+func (*StoreRecentContactResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{1}
+}
+func (m *StoreRecentContactResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreRecentContactResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreRecentContactResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreRecentContactResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreRecentContactResponse.Merge(dst, src)
+}
+func (m *StoreRecentContactResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreRecentContactResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreRecentContactResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreRecentContactResponse proto.InternalMessageInfo
 
 func (m *StoreRecentContactResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -59,10 +121,38 @@ type StoreFindUserRequest struct {
 	Name          string `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
 }
 
-func (m *StoreFindUserRequest) Reset()                    { *m = StoreFindUserRequest{} }
-func (m *StoreFindUserRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreFindUserRequest) ProtoMessage()               {}
-func (*StoreFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{2} }
+func (m *StoreFindUserRequest) Reset()         { *m = StoreFindUserRequest{} }
+func (m *StoreFindUserRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreFindUserRequest) ProtoMessage()    {}
+func (*StoreFindUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{2}
+}
+func (m *StoreFindUserRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreFindUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreFindUserRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreFindUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreFindUserRequest.Merge(dst, src)
+}
+func (m *StoreFindUserRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreFindUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreFindUserRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreFindUserRequest proto.InternalMessageInfo
 
 func (m *StoreFindUserRequest) GetName() string {
 	if m != nil {
@@ -76,10 +166,38 @@ type StoreFindUserResponse struct {
 	Users  []string        `protobuf:"bytes,2,rep,name=Users" json:"Users,omitempty"`
 }
 
-func (m *StoreFindUserResponse) Reset()                    { *m = StoreFindUserResponse{} }
-func (m *StoreFindUserResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreFindUserResponse) ProtoMessage()               {}
-func (*StoreFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{3} }
+func (m *StoreFindUserResponse) Reset()         { *m = StoreFindUserResponse{} }
+func (m *StoreFindUserResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreFindUserResponse) ProtoMessage()    {}
+func (*StoreFindUserResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{3}
+}
+func (m *StoreFindUserResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreFindUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreFindUserResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreFindUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreFindUserResponse.Merge(dst, src)
+}
+func (m *StoreFindUserResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreFindUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreFindUserResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreFindUserResponse proto.InternalMessageInfo
 
 func (m *StoreFindUserResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -103,10 +221,38 @@ type StoreFriendRequest struct {
 	Msg           string   `protobuf:"bytes,5,opt,name=Msg,proto3" json:"Msg,omitempty"`
 }
 
-func (m *StoreFriendRequest) Reset()                    { *m = StoreFriendRequest{} }
-func (m *StoreFriendRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreFriendRequest) ProtoMessage()               {}
-func (*StoreFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{4} }
+func (m *StoreFriendRequest) Reset()         { *m = StoreFriendRequest{} }
+func (m *StoreFriendRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreFriendRequest) ProtoMessage()    {}
+func (*StoreFriendRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{4}
+}
+func (m *StoreFriendRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreFriendRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreFriendRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreFriendRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreFriendRequest.Merge(dst, src)
+}
+func (m *StoreFriendRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreFriendRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreFriendRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreFriendRequest proto.InternalMessageInfo
 
 func (m *StoreFriendRequest) GetOperate() Relation {
 	if m != nil {
@@ -140,10 +286,38 @@ type StoreFriendResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreFriendResponse) Reset()                    { *m = StoreFriendResponse{} }
-func (m *StoreFriendResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreFriendResponse) ProtoMessage()               {}
-func (*StoreFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{5} }
+func (m *StoreFriendResponse) Reset()         { *m = StoreFriendResponse{} }
+func (m *StoreFriendResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreFriendResponse) ProtoMessage()    {}
+func (*StoreFriendResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{5}
+}
+func (m *StoreFriendResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreFriendResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreFriendResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreFriendResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreFriendResponse.Merge(dst, src)
+}
+func (m *StoreFriendResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreFriendResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreFriendResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreFriendResponse proto.InternalMessageInfo
 
 func (m *StoreFriendResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -158,10 +332,38 @@ type StoreRegisterRequest struct {
 	Password string `protobuf:"bytes,3,opt,name=Password,proto3" json:"Password,omitempty"`
 }
 
-func (m *StoreRegisterRequest) Reset()                    { *m = StoreRegisterRequest{} }
-func (m *StoreRegisterRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreRegisterRequest) ProtoMessage()               {}
-func (*StoreRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{6} }
+func (m *StoreRegisterRequest) Reset()         { *m = StoreRegisterRequest{} }
+func (m *StoreRegisterRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreRegisterRequest) ProtoMessage()    {}
+func (*StoreRegisterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{6}
+}
+func (m *StoreRegisterRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreRegisterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreRegisterRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreRegisterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreRegisterRequest.Merge(dst, src)
+}
+func (m *StoreRegisterRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreRegisterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreRegisterRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreRegisterRequest proto.InternalMessageInfo
 
 func (m *StoreRegisterRequest) GetID() int64 {
 	if m != nil {
@@ -188,10 +390,38 @@ type StoreRegisterResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreRegisterResponse) Reset()                    { *m = StoreRegisterResponse{} }
-func (m *StoreRegisterResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreRegisterResponse) ProtoMessage()               {}
-func (*StoreRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{7} }
+func (m *StoreRegisterResponse) Reset()         { *m = StoreRegisterResponse{} }
+func (m *StoreRegisterResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreRegisterResponse) ProtoMessage()    {}
+func (*StoreRegisterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{7}
+}
+func (m *StoreRegisterResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreRegisterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreRegisterResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreRegisterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreRegisterResponse.Merge(dst, src)
+}
+func (m *StoreRegisterResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreRegisterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreRegisterResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreRegisterResponse proto.InternalMessageInfo
 
 func (m *StoreRegisterResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -207,10 +437,38 @@ type StoreUpdateUserInfoRequest struct {
 	Avatar        string `protobuf:"bytes,4,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
 }
 
-func (m *StoreUpdateUserInfoRequest) Reset()                    { *m = StoreUpdateUserInfoRequest{} }
-func (m *StoreUpdateUserInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreUpdateUserInfoRequest) ProtoMessage()               {}
-func (*StoreUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{8} }
+func (m *StoreUpdateUserInfoRequest) Reset()         { *m = StoreUpdateUserInfoRequest{} }
+func (m *StoreUpdateUserInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreUpdateUserInfoRequest) ProtoMessage()    {}
+func (*StoreUpdateUserInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{8}
+}
+func (m *StoreUpdateUserInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUpdateUserInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUpdateUserInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUpdateUserInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUpdateUserInfoRequest.Merge(dst, src)
+}
+func (m *StoreUpdateUserInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUpdateUserInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUpdateUserInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUpdateUserInfoRequest proto.InternalMessageInfo
 
 func (m *StoreUpdateUserInfoRequest) GetName() string {
 	if m != nil {
@@ -237,10 +495,38 @@ type StoreUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreUpdateUserInfoResponse) Reset()                    { *m = StoreUpdateUserInfoResponse{} }
-func (m *StoreUpdateUserInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreUpdateUserInfoResponse) ProtoMessage()               {}
-func (*StoreUpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{9} }
+func (m *StoreUpdateUserInfoResponse) Reset()         { *m = StoreUpdateUserInfoResponse{} }
+func (m *StoreUpdateUserInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreUpdateUserInfoResponse) ProtoMessage()    {}
+func (*StoreUpdateUserInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{9}
+}
+func (m *StoreUpdateUserInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUpdateUserInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUpdateUserInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUpdateUserInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUpdateUserInfoResponse.Merge(dst, src)
+}
+func (m *StoreUpdateUserInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUpdateUserInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUpdateUserInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUpdateUserInfoResponse proto.InternalMessageInfo
 
 func (m *StoreUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -260,8 +546,34 @@ func (m *StoreUpdateUserPasswordRequest) Reset()         { *m = StoreUpdateUserP
 func (m *StoreUpdateUserPasswordRequest) String() string { return proto.CompactTextString(m) }
 func (*StoreUpdateUserPasswordRequest) ProtoMessage()    {}
 func (*StoreUpdateUserPasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptorStore, []int{10}
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{10}
 }
+func (m *StoreUpdateUserPasswordRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUpdateUserPasswordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUpdateUserPasswordRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUpdateUserPasswordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUpdateUserPasswordRequest.Merge(dst, src)
+}
+func (m *StoreUpdateUserPasswordRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUpdateUserPasswordRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUpdateUserPasswordRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUpdateUserPasswordRequest proto.InternalMessageInfo
 
 func (m *StoreUpdateUserPasswordRequest) GetName() string {
 	if m != nil {
@@ -292,8 +604,34 @@ func (m *StoreUpdateUserPasswordResponse) Reset()         { *m = StoreUpdateUser
 func (m *StoreUpdateUserPasswordResponse) String() string { return proto.CompactTextString(m) }
 func (*StoreUpdateUserPasswordResponse) ProtoMessage()    {}
 func (*StoreUpdateUserPasswordResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptorStore, []int{11}
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{11}
 }
+func (m *StoreUpdateUserPasswordResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUpdateUserPasswordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUpdateUserPasswordResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUpdateUserPasswordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUpdateUserPasswordResponse.Merge(dst, src)
+}
+func (m *StoreUpdateUserPasswordResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUpdateUserPasswordResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUpdateUserPasswordResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUpdateUserPasswordResponse proto.InternalMessageInfo
 
 func (m *StoreUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -309,10 +647,38 @@ type StoreGetUserInfoRequest struct {
 	ID            int64  `protobuf:"varint,4,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *StoreGetUserInfoRequest) Reset()                    { *m = StoreGetUserInfoRequest{} }
-func (m *StoreGetUserInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreGetUserInfoRequest) ProtoMessage()               {}
-func (*StoreGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{12} }
+func (m *StoreGetUserInfoRequest) Reset()         { *m = StoreGetUserInfoRequest{} }
+func (m *StoreGetUserInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreGetUserInfoRequest) ProtoMessage()    {}
+func (*StoreGetUserInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{12}
+}
+func (m *StoreGetUserInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGetUserInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGetUserInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGetUserInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGetUserInfoRequest.Merge(dst, src)
+}
+func (m *StoreGetUserInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGetUserInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGetUserInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGetUserInfoRequest proto.InternalMessageInfo
 
 func (m *StoreGetUserInfoRequest) GetByName() bool {
 	if m != nil {
@@ -344,10 +710,38 @@ type StoreGetUserInfoResponse struct {
 	Signature string          `protobuf:"bytes,6,opt,name=Signature,proto3" json:"Signature,omitempty"`
 }
 
-func (m *StoreGetUserInfoResponse) Reset()                    { *m = StoreGetUserInfoResponse{} }
-func (m *StoreGetUserInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreGetUserInfoResponse) ProtoMessage()               {}
-func (*StoreGetUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{13} }
+func (m *StoreGetUserInfoResponse) Reset()         { *m = StoreGetUserInfoResponse{} }
+func (m *StoreGetUserInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreGetUserInfoResponse) ProtoMessage()    {}
+func (*StoreGetUserInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{13}
+}
+func (m *StoreGetUserInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGetUserInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGetUserInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGetUserInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGetUserInfoResponse.Merge(dst, src)
+}
+func (m *StoreGetUserInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGetUserInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGetUserInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGetUserInfoResponse proto.InternalMessageInfo
 
 func (m *StoreGetUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -396,10 +790,38 @@ type StoreAuthRequest struct {
 	Password string `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"`
 }
 
-func (m *StoreAuthRequest) Reset()                    { *m = StoreAuthRequest{} }
-func (m *StoreAuthRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreAuthRequest) ProtoMessage()               {}
-func (*StoreAuthRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{14} }
+func (m *StoreAuthRequest) Reset()         { *m = StoreAuthRequest{} }
+func (m *StoreAuthRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreAuthRequest) ProtoMessage()    {}
+func (*StoreAuthRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{14}
+}
+func (m *StoreAuthRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreAuthRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreAuthRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreAuthRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreAuthRequest.Merge(dst, src)
+}
+func (m *StoreAuthRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreAuthRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreAuthRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreAuthRequest proto.InternalMessageInfo
 
 func (m *StoreAuthRequest) GetUser() string {
 	if m != nil {
@@ -420,10 +842,38 @@ type StoreAuthResponse struct {
 	ID     int64           `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *StoreAuthResponse) Reset()                    { *m = StoreAuthResponse{} }
-func (m *StoreAuthResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreAuthResponse) ProtoMessage()               {}
-func (*StoreAuthResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{15} }
+func (m *StoreAuthResponse) Reset()         { *m = StoreAuthResponse{} }
+func (m *StoreAuthResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreAuthResponse) ProtoMessage()    {}
+func (*StoreAuthResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{15}
+}
+func (m *StoreAuthResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreAuthResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreAuthResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreAuthResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreAuthResponse.Merge(dst, src)
+}
+func (m *StoreAuthResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreAuthResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreAuthResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreAuthResponse proto.InternalMessageInfo
 
 func (m *StoreAuthResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -445,10 +895,38 @@ type StoreGroupCreateRequest struct {
 	Name          string `protobuf:"bytes,3,opt,name=Name,proto3" json:"Name,omitempty"`
 }
 
-func (m *StoreGroupCreateRequest) Reset()                    { *m = StoreGroupCreateRequest{} }
-func (m *StoreGroupCreateRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreGroupCreateRequest) ProtoMessage()               {}
-func (*StoreGroupCreateRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{16} }
+func (m *StoreGroupCreateRequest) Reset()         { *m = StoreGroupCreateRequest{} }
+func (m *StoreGroupCreateRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreGroupCreateRequest) ProtoMessage()    {}
+func (*StoreGroupCreateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{16}
+}
+func (m *StoreGroupCreateRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGroupCreateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGroupCreateRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGroupCreateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGroupCreateRequest.Merge(dst, src)
+}
+func (m *StoreGroupCreateRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGroupCreateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGroupCreateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGroupCreateRequest proto.InternalMessageInfo
 
 func (m *StoreGroupCreateRequest) GetID() int64 {
 	if m != nil {
@@ -468,10 +946,38 @@ type StoreGroupCreateResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreGroupCreateResponse) Reset()                    { *m = StoreGroupCreateResponse{} }
-func (m *StoreGroupCreateResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreGroupCreateResponse) ProtoMessage()               {}
-func (*StoreGroupCreateResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{17} }
+func (m *StoreGroupCreateResponse) Reset()         { *m = StoreGroupCreateResponse{} }
+func (m *StoreGroupCreateResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreGroupCreateResponse) ProtoMessage()    {}
+func (*StoreGroupCreateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{17}
+}
+func (m *StoreGroupCreateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGroupCreateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGroupCreateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGroupCreateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGroupCreateResponse.Merge(dst, src)
+}
+func (m *StoreGroupCreateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGroupCreateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGroupCreateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGroupCreateResponse proto.InternalMessageInfo
 
 func (m *StoreGroupCreateResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -495,10 +1001,38 @@ type StoreGroupRequest struct {
 	Users         []int64  `protobuf:"varint,5,rep,packed,name=Users" json:"Users,omitempty"`
 }
 
-func (m *StoreGroupRequest) Reset()                    { *m = StoreGroupRequest{} }
-func (m *StoreGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreGroupRequest) ProtoMessage()               {}
-func (*StoreGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{18} }
+func (m *StoreGroupRequest) Reset()         { *m = StoreGroupRequest{} }
+func (m *StoreGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreGroupRequest) ProtoMessage()    {}
+func (*StoreGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{18}
+}
+func (m *StoreGroupRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGroupRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGroupRequest.Merge(dst, src)
+}
+func (m *StoreGroupRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGroupRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGroupRequest proto.InternalMessageInfo
 
 func (m *StoreGroupRequest) GetID() int64 {
 	if m != nil {
@@ -532,10 +1066,38 @@ type StoreGroupResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreGroupResponse) Reset()                    { *m = StoreGroupResponse{} }
-func (m *StoreGroupResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreGroupResponse) ProtoMessage()               {}
-func (*StoreGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{19} }
+func (m *StoreGroupResponse) Reset()         { *m = StoreGroupResponse{} }
+func (m *StoreGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreGroupResponse) ProtoMessage()    {}
+func (*StoreGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{19}
+}
+func (m *StoreGroupResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGroupResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGroupResponse.Merge(dst, src)
+}
+func (m *StoreGroupResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGroupResponse proto.InternalMessageInfo
 
 func (m *StoreGroupResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -549,10 +1111,38 @@ type StoreGroupDeleteRequest struct {
 	ID            int64 `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *StoreGroupDeleteRequest) Reset()                    { *m = StoreGroupDeleteRequest{} }
-func (m *StoreGroupDeleteRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreGroupDeleteRequest) ProtoMessage()               {}
-func (*StoreGroupDeleteRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{20} }
+func (m *StoreGroupDeleteRequest) Reset()         { *m = StoreGroupDeleteRequest{} }
+func (m *StoreGroupDeleteRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreGroupDeleteRequest) ProtoMessage()    {}
+func (*StoreGroupDeleteRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{20}
+}
+func (m *StoreGroupDeleteRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGroupDeleteRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGroupDeleteRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGroupDeleteRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGroupDeleteRequest.Merge(dst, src)
+}
+func (m *StoreGroupDeleteRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGroupDeleteRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGroupDeleteRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGroupDeleteRequest proto.InternalMessageInfo
 
 func (m *StoreGroupDeleteRequest) GetID() int64 {
 	if m != nil {
@@ -565,10 +1155,38 @@ type StoreGroupDeleteResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreGroupDeleteResponse) Reset()                    { *m = StoreGroupDeleteResponse{} }
-func (m *StoreGroupDeleteResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreGroupDeleteResponse) ProtoMessage()               {}
-func (*StoreGroupDeleteResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{21} }
+func (m *StoreGroupDeleteResponse) Reset()         { *m = StoreGroupDeleteResponse{} }
+func (m *StoreGroupDeleteResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreGroupDeleteResponse) ProtoMessage()    {}
+func (*StoreGroupDeleteResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{21}
+}
+func (m *StoreGroupDeleteResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreGroupDeleteResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreGroupDeleteResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreGroupDeleteResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreGroupDeleteResponse.Merge(dst, src)
+}
+func (m *StoreGroupDeleteResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreGroupDeleteResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreGroupDeleteResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreGroupDeleteResponse proto.InternalMessageInfo
 
 func (m *StoreGroupDeleteResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -582,10 +1200,38 @@ type StoreNewMessageRequest struct {
 	Msg           Message `protobuf:"bytes,2,opt,name=Msg" json:"Msg"`
 }
 
-func (m *StoreNewMessageRequest) Reset()                    { *m = StoreNewMessageRequest{} }
-func (m *StoreNewMessageRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreNewMessageRequest) ProtoMessage()               {}
-func (*StoreNewMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{22} }
+func (m *StoreNewMessageRequest) Reset()         { *m = StoreNewMessageRequest{} }
+func (m *StoreNewMessageRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreNewMessageRequest) ProtoMessage()    {}
+func (*StoreNewMessageRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{22}
+}
+func (m *StoreNewMessageRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreNewMessageRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreNewMessageRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreNewMessageRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreNewMessageRequest.Merge(dst, src)
+}
+func (m *StoreNewMessageRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreNewMessageRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreNewMessageRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreNewMessageRequest proto.InternalMessageInfo
 
 func (m *StoreNewMessageRequest) GetMsg() Message {
 	if m != nil {
@@ -598,10 +1244,38 @@ type StoreNewMessageResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreNewMessageResponse) Reset()                    { *m = StoreNewMessageResponse{} }
-func (m *StoreNewMessageResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreNewMessageResponse) ProtoMessage()               {}
-func (*StoreNewMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{23} }
+func (m *StoreNewMessageResponse) Reset()         { *m = StoreNewMessageResponse{} }
+func (m *StoreNewMessageResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreNewMessageResponse) ProtoMessage()    {}
+func (*StoreNewMessageResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{23}
+}
+func (m *StoreNewMessageResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreNewMessageResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreNewMessageResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreNewMessageResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreNewMessageResponse.Merge(dst, src)
+}
+func (m *StoreNewMessageResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreNewMessageResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreNewMessageResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreNewMessageResponse proto.InternalMessageInfo
 
 func (m *StoreNewMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -615,10 +1289,38 @@ type StoreUploadFileRequest struct {
 	File          []byte `protobuf:"bytes,2,opt,name=File,proto3" json:"File,omitempty"`
 }
 
-func (m *StoreUploadFileRequest) Reset()                    { *m = StoreUploadFileRequest{} }
-func (m *StoreUploadFileRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreUploadFileRequest) ProtoMessage()               {}
-func (*StoreUploadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{24} }
+func (m *StoreUploadFileRequest) Reset()         { *m = StoreUploadFileRequest{} }
+func (m *StoreUploadFileRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreUploadFileRequest) ProtoMessage()    {}
+func (*StoreUploadFileRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{24}
+}
+func (m *StoreUploadFileRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUploadFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUploadFileRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUploadFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUploadFileRequest.Merge(dst, src)
+}
+func (m *StoreUploadFileRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUploadFileRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUploadFileRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUploadFileRequest proto.InternalMessageInfo
 
 func (m *StoreUploadFileRequest) GetFile() []byte {
 	if m != nil {
@@ -631,10 +1333,38 @@ type StoreUploadFileResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *StoreUploadFileResponse) Reset()                    { *m = StoreUploadFileResponse{} }
-func (m *StoreUploadFileResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreUploadFileResponse) ProtoMessage()               {}
-func (*StoreUploadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{25} }
+func (m *StoreUploadFileResponse) Reset()         { *m = StoreUploadFileResponse{} }
+func (m *StoreUploadFileResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreUploadFileResponse) ProtoMessage()    {}
+func (*StoreUploadFileResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{25}
+}
+func (m *StoreUploadFileResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUploadFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUploadFileResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUploadFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUploadFileResponse.Merge(dst, src)
+}
+func (m *StoreUploadFileResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUploadFileResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUploadFileResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUploadFileResponse proto.InternalMessageInfo
 
 func (m *StoreUploadFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -648,10 +1378,38 @@ type StoreCheckFileRequest struct {
 	Names         []string `protobuf:"bytes,2,rep,name=Names" json:"Names,omitempty"`
 }
 
-func (m *StoreCheckFileRequest) Reset()                    { *m = StoreCheckFileRequest{} }
-func (m *StoreCheckFileRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreCheckFileRequest) ProtoMessage()               {}
-func (*StoreCheckFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{26} }
+func (m *StoreCheckFileRequest) Reset()         { *m = StoreCheckFileRequest{} }
+func (m *StoreCheckFileRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreCheckFileRequest) ProtoMessage()    {}
+func (*StoreCheckFileRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{26}
+}
+func (m *StoreCheckFileRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreCheckFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreCheckFileRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreCheckFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreCheckFileRequest.Merge(dst, src)
+}
+func (m *StoreCheckFileRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreCheckFileRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreCheckFileRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreCheckFileRequest proto.InternalMessageInfo
 
 func (m *StoreCheckFileRequest) GetNames() []string {
 	if m != nil {
@@ -665,10 +1423,38 @@ type StoreCheckFileResponse struct {
 	Names  []string        `protobuf:"bytes,2,rep,name=Names" json:"Names,omitempty"`
 }
 
-func (m *StoreCheckFileResponse) Reset()                    { *m = StoreCheckFileResponse{} }
-func (m *StoreCheckFileResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreCheckFileResponse) ProtoMessage()               {}
-func (*StoreCheckFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{27} }
+func (m *StoreCheckFileResponse) Reset()         { *m = StoreCheckFileResponse{} }
+func (m *StoreCheckFileResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreCheckFileResponse) ProtoMessage()    {}
+func (*StoreCheckFileResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{27}
+}
+func (m *StoreCheckFileResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreCheckFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreCheckFileResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreCheckFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreCheckFileResponse.Merge(dst, src)
+}
+func (m *StoreCheckFileResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreCheckFileResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreCheckFileResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreCheckFileResponse proto.InternalMessageInfo
 
 func (m *StoreCheckFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -689,10 +1475,38 @@ type StoreDownloadFileRequest struct {
 	Names         []string `protobuf:"bytes,2,rep,name=Names" json:"Names,omitempty"`
 }
 
-func (m *StoreDownloadFileRequest) Reset()                    { *m = StoreDownloadFileRequest{} }
-func (m *StoreDownloadFileRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreDownloadFileRequest) ProtoMessage()               {}
-func (*StoreDownloadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{28} }
+func (m *StoreDownloadFileRequest) Reset()         { *m = StoreDownloadFileRequest{} }
+func (m *StoreDownloadFileRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreDownloadFileRequest) ProtoMessage()    {}
+func (*StoreDownloadFileRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{28}
+}
+func (m *StoreDownloadFileRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreDownloadFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreDownloadFileRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreDownloadFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreDownloadFileRequest.Merge(dst, src)
+}
+func (m *StoreDownloadFileRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreDownloadFileRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreDownloadFileRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreDownloadFileRequest proto.InternalMessageInfo
 
 func (m *StoreDownloadFileRequest) GetNames() []string {
 	if m != nil {
@@ -706,10 +1520,38 @@ type StoreDownloadFileResponse struct {
 	Files  map[string][]byte `protobuf:"bytes,2,rep,name=Files" json:"Files,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *StoreDownloadFileResponse) Reset()                    { *m = StoreDownloadFileResponse{} }
-func (m *StoreDownloadFileResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreDownloadFileResponse) ProtoMessage()               {}
-func (*StoreDownloadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{29} }
+func (m *StoreDownloadFileResponse) Reset()         { *m = StoreDownloadFileResponse{} }
+func (m *StoreDownloadFileResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreDownloadFileResponse) ProtoMessage()    {}
+func (*StoreDownloadFileResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{29}
+}
+func (m *StoreDownloadFileResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreDownloadFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreDownloadFileResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreDownloadFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreDownloadFileResponse.Merge(dst, src)
+}
+func (m *StoreDownloadFileResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreDownloadFileResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreDownloadFileResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreDownloadFileResponse proto.InternalMessageInfo
 
 func (m *StoreDownloadFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -731,10 +1573,38 @@ type StoreLoadMessageRequest struct {
 	Reverse       bool  `protobuf:"varint,3,opt,name=Reverse,proto3" json:"Reverse,omitempty"`
 }
 
-func (m *StoreLoadMessageRequest) Reset()                    { *m = StoreLoadMessageRequest{} }
-func (m *StoreLoadMessageRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreLoadMessageRequest) ProtoMessage()               {}
-func (*StoreLoadMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{30} }
+func (m *StoreLoadMessageRequest) Reset()         { *m = StoreLoadMessageRequest{} }
+func (m *StoreLoadMessageRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreLoadMessageRequest) ProtoMessage()    {}
+func (*StoreLoadMessageRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{30}
+}
+func (m *StoreLoadMessageRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreLoadMessageRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreLoadMessageRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreLoadMessageRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreLoadMessageRequest.Merge(dst, src)
+}
+func (m *StoreLoadMessageRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreLoadMessageRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreLoadMessageRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreLoadMessageRequest proto.InternalMessageInfo
 
 func (m *StoreLoadMessageRequest) GetID() int64 {
 	if m != nil {
@@ -755,10 +1625,38 @@ type StoreLoadMessageResponse struct {
 	Msgs   []*PushMessage  `protobuf:"bytes,2,rep,name=Msgs" json:"Msgs,omitempty"`
 }
 
-func (m *StoreLoadMessageResponse) Reset()                    { *m = StoreLoadMessageResponse{} }
-func (m *StoreLoadMessageResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreLoadMessageResponse) ProtoMessage()               {}
-func (*StoreLoadMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{31} }
+func (m *StoreLoadMessageResponse) Reset()         { *m = StoreLoadMessageResponse{} }
+func (m *StoreLoadMessageResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreLoadMessageResponse) ProtoMessage()    {}
+func (*StoreLoadMessageResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{31}
+}
+func (m *StoreLoadMessageResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreLoadMessageResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreLoadMessageResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreLoadMessageResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreLoadMessageResponse.Merge(dst, src)
+}
+func (m *StoreLoadMessageResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreLoadMessageResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreLoadMessageResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreLoadMessageResponse proto.InternalMessageInfo
 
 func (m *StoreLoadMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -778,20 +1676,76 @@ type StoreLoadGroupListRequest struct {
 	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
 }
 
-func (m *StoreLoadGroupListRequest) Reset()                    { *m = StoreLoadGroupListRequest{} }
-func (m *StoreLoadGroupListRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreLoadGroupListRequest) ProtoMessage()               {}
-func (*StoreLoadGroupListRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{32} }
+func (m *StoreLoadGroupListRequest) Reset()         { *m = StoreLoadGroupListRequest{} }
+func (m *StoreLoadGroupListRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreLoadGroupListRequest) ProtoMessage()    {}
+func (*StoreLoadGroupListRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{32}
+}
+func (m *StoreLoadGroupListRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreLoadGroupListRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreLoadGroupListRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreLoadGroupListRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreLoadGroupListRequest.Merge(dst, src)
+}
+func (m *StoreLoadGroupListRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreLoadGroupListRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreLoadGroupListRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreLoadGroupListRequest proto.InternalMessageInfo
 
 type StoreLoadGroupListResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Groups []*GroupInfo    `protobuf:"bytes,2,rep,name=groups" json:"groups,omitempty"`
 }
 
-func (m *StoreLoadGroupListResponse) Reset()                    { *m = StoreLoadGroupListResponse{} }
-func (m *StoreLoadGroupListResponse) String() string            { return proto.CompactTextString(m) }
-func (*StoreLoadGroupListResponse) ProtoMessage()               {}
-func (*StoreLoadGroupListResponse) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{33} }
+func (m *StoreLoadGroupListResponse) Reset()         { *m = StoreLoadGroupListResponse{} }
+func (m *StoreLoadGroupListResponse) String() string { return proto.CompactTextString(m) }
+func (*StoreLoadGroupListResponse) ProtoMessage()    {}
+func (*StoreLoadGroupListResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{33}
+}
+func (m *StoreLoadGroupListResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreLoadGroupListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreLoadGroupListResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreLoadGroupListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreLoadGroupListResponse.Merge(dst, src)
+}
+func (m *StoreLoadGroupListResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreLoadGroupListResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreLoadGroupListResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreLoadGroupListResponse proto.InternalMessageInfo
 
 func (m *StoreLoadGroupListResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -811,10 +1765,38 @@ type StoreLoadFriendListRequest struct {
 	RequestHeader `protobuf:"bytes,1,opt,name=header,embedded=header" json:"header"`
 }
 
-func (m *StoreLoadFriendListRequest) Reset()                    { *m = StoreLoadFriendListRequest{} }
-func (m *StoreLoadFriendListRequest) String() string            { return proto.CompactTextString(m) }
-func (*StoreLoadFriendListRequest) ProtoMessage()               {}
-func (*StoreLoadFriendListRequest) Descriptor() ([]byte, []int) { return fileDescriptorStore, []int{34} }
+func (m *StoreLoadFriendListRequest) Reset()         { *m = StoreLoadFriendListRequest{} }
+func (m *StoreLoadFriendListRequest) String() string { return proto.CompactTextString(m) }
+func (*StoreLoadFriendListRequest) ProtoMessage()    {}
+func (*StoreLoadFriendListRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{34}
+}
+func (m *StoreLoadFriendListRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreLoadFriendListRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreLoadFriendListRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreLoadFriendListRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreLoadFriendListRequest.Merge(dst, src)
+}
+func (m *StoreLoadFriendListRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreLoadFriendListRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreLoadFriendListRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreLoadFriendListRequest proto.InternalMessageInfo
 
 type StoreLoadFriendListResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
@@ -825,8 +1807,34 @@ func (m *StoreLoadFriendListResponse) Reset()         { *m = StoreLoadFriendList
 func (m *StoreLoadFriendListResponse) String() string { return proto.CompactTextString(m) }
 func (*StoreLoadFriendListResponse) ProtoMessage()    {}
 func (*StoreLoadFriendListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptorStore, []int{35}
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{35}
 }
+func (m *StoreLoadFriendListResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreLoadFriendListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreLoadFriendListResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreLoadFriendListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreLoadFriendListResponse.Merge(dst, src)
+}
+func (m *StoreLoadFriendListResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreLoadFriendListResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreLoadFriendListResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreLoadFriendListResponse proto.InternalMessageInfo
 
 func (m *StoreLoadFriendListResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -852,8 +1860,34 @@ func (m *StoreUpdateSignatureRequest) Reset()         { *m = StoreUpdateSignatur
 func (m *StoreUpdateSignatureRequest) String() string { return proto.CompactTextString(m) }
 func (*StoreUpdateSignatureRequest) ProtoMessage()    {}
 func (*StoreUpdateSignatureRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptorStore, []int{36}
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{36}
 }
+func (m *StoreUpdateSignatureRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUpdateSignatureRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUpdateSignatureRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUpdateSignatureRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUpdateSignatureRequest.Merge(dst, src)
+}
+func (m *StoreUpdateSignatureRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUpdateSignatureRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUpdateSignatureRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUpdateSignatureRequest proto.InternalMessageInfo
 
 func (m *StoreUpdateSignatureRequest) GetName() string {
 	if m != nil {
@@ -877,8 +1911,34 @@ func (m *StoreUpdateSignatureResponse) Reset()         { *m = StoreUpdateSignatu
 func (m *StoreUpdateSignatureResponse) String() string { return proto.CompactTextString(m) }
 func (*StoreUpdateSignatureResponse) ProtoMessage()    {}
 func (*StoreUpdateSignatureResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptorStore, []int{37}
+	return fileDescriptor_store_16bf9239a5f5c4a0, []int{37}
 }
+func (m *StoreUpdateSignatureResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *StoreUpdateSignatureResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_StoreUpdateSignatureResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *StoreUpdateSignatureResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StoreUpdateSignatureResponse.Merge(dst, src)
+}
+func (m *StoreUpdateSignatureResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *StoreUpdateSignatureResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StoreUpdateSignatureResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StoreUpdateSignatureResponse proto.InternalMessageInfo
 
 func (m *StoreUpdateSignatureResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -918,6 +1978,7 @@ func init() {
 	proto.RegisterType((*StoreCheckFileResponse)(nil), "candy.meta.StoreCheckFileResponse")
 	proto.RegisterType((*StoreDownloadFileRequest)(nil), "candy.meta.StoreDownloadFileRequest")
 	proto.RegisterType((*StoreDownloadFileResponse)(nil), "candy.meta.StoreDownloadFileResponse")
+	proto.RegisterMapType((map[string][]byte)(nil), "candy.meta.StoreDownloadFileResponse.FilesEntry")
 	proto.RegisterType((*StoreLoadMessageRequest)(nil), "candy.meta.StoreLoadMessageRequest")
 	proto.RegisterType((*StoreLoadMessageResponse)(nil), "candy.meta.StoreLoadMessageResponse")
 	proto.RegisterType((*StoreLoadGroupListRequest)(nil), "candy.meta.StoreLoadGroupListRequest")
@@ -936,8 +1997,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for Store service
-
+// StoreClient is the client API for Store service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type StoreClient interface {
 	Register(ctx context.Context, in *StoreRegisterRequest, opts ...grpc.CallOption) (*StoreRegisterResponse, error)
 	// UpdateUserInfo 更新用户信息 昵称-头像
@@ -986,7 +2048,7 @@ func NewStoreClient(cc *grpc.ClientConn) StoreClient {
 
 func (c *storeClient) Register(ctx context.Context, in *StoreRegisterRequest, opts ...grpc.CallOption) (*StoreRegisterResponse, error) {
 	out := new(StoreRegisterResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/Register", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -995,7 +2057,7 @@ func (c *storeClient) Register(ctx context.Context, in *StoreRegisterRequest, op
 
 func (c *storeClient) UpdateUserInfo(ctx context.Context, in *StoreUpdateUserInfoRequest, opts ...grpc.CallOption) (*StoreUpdateUserInfoResponse, error) {
 	out := new(StoreUpdateUserInfoResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/UpdateUserInfo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/UpdateUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1004,7 +2066,7 @@ func (c *storeClient) UpdateUserInfo(ctx context.Context, in *StoreUpdateUserInf
 
 func (c *storeClient) UpdateSignature(ctx context.Context, in *StoreUpdateSignatureRequest, opts ...grpc.CallOption) (*StoreUpdateSignatureResponse, error) {
 	out := new(StoreUpdateSignatureResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/UpdateSignature", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/UpdateSignature", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1013,7 +2075,7 @@ func (c *storeClient) UpdateSignature(ctx context.Context, in *StoreUpdateSignat
 
 func (c *storeClient) UpdateUserPassword(ctx context.Context, in *StoreUpdateUserPasswordRequest, opts ...grpc.CallOption) (*StoreUpdateUserPasswordResponse, error) {
 	out := new(StoreUpdateUserPasswordResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/UpdateUserPassword", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/UpdateUserPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1022,7 +2084,7 @@ func (c *storeClient) UpdateUserPassword(ctx context.Context, in *StoreUpdateUse
 
 func (c *storeClient) GetUserInfo(ctx context.Context, in *StoreGetUserInfoRequest, opts ...grpc.CallOption) (*StoreGetUserInfoResponse, error) {
 	out := new(StoreGetUserInfoResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/GetUserInfo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/GetUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1031,7 +2093,7 @@ func (c *storeClient) GetUserInfo(ctx context.Context, in *StoreGetUserInfoReque
 
 func (c *storeClient) Auth(ctx context.Context, in *StoreAuthRequest, opts ...grpc.CallOption) (*StoreAuthResponse, error) {
 	out := new(StoreAuthResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/Auth", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/Auth", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1040,7 +2102,7 @@ func (c *storeClient) Auth(ctx context.Context, in *StoreAuthRequest, opts ...gr
 
 func (c *storeClient) Friend(ctx context.Context, in *StoreFriendRequest, opts ...grpc.CallOption) (*StoreFriendResponse, error) {
 	out := new(StoreFriendResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/Friend", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/Friend", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1049,7 +2111,7 @@ func (c *storeClient) Friend(ctx context.Context, in *StoreFriendRequest, opts .
 
 func (c *storeClient) LoadFriendList(ctx context.Context, in *StoreLoadFriendListRequest, opts ...grpc.CallOption) (*StoreLoadFriendListResponse, error) {
 	out := new(StoreLoadFriendListResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/LoadFriendList", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/LoadFriendList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1058,7 +2120,7 @@ func (c *storeClient) LoadFriendList(ctx context.Context, in *StoreLoadFriendLis
 
 func (c *storeClient) FindUser(ctx context.Context, in *StoreFindUserRequest, opts ...grpc.CallOption) (*StoreFindUserResponse, error) {
 	out := new(StoreFindUserResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/FindUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/FindUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1067,7 +2129,7 @@ func (c *storeClient) FindUser(ctx context.Context, in *StoreFindUserRequest, op
 
 func (c *storeClient) GroupCreate(ctx context.Context, in *StoreGroupCreateRequest, opts ...grpc.CallOption) (*StoreGroupCreateResponse, error) {
 	out := new(StoreGroupCreateResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/GroupCreate", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/GroupCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1076,7 +2138,7 @@ func (c *storeClient) GroupCreate(ctx context.Context, in *StoreGroupCreateReque
 
 func (c *storeClient) Group(ctx context.Context, in *StoreGroupRequest, opts ...grpc.CallOption) (*StoreGroupResponse, error) {
 	out := new(StoreGroupResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/Group", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/Group", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1085,7 +2147,7 @@ func (c *storeClient) Group(ctx context.Context, in *StoreGroupRequest, opts ...
 
 func (c *storeClient) GroupDelete(ctx context.Context, in *StoreGroupDeleteRequest, opts ...grpc.CallOption) (*StoreGroupDeleteResponse, error) {
 	out := new(StoreGroupDeleteResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/GroupDelete", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/GroupDelete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1094,7 +2156,7 @@ func (c *storeClient) GroupDelete(ctx context.Context, in *StoreGroupDeleteReque
 
 func (c *storeClient) LoadGroupList(ctx context.Context, in *StoreLoadGroupListRequest, opts ...grpc.CallOption) (*StoreLoadGroupListResponse, error) {
 	out := new(StoreLoadGroupListResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/LoadGroupList", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/LoadGroupList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1103,7 +2165,7 @@ func (c *storeClient) LoadGroupList(ctx context.Context, in *StoreLoadGroupListR
 
 func (c *storeClient) NewMessage(ctx context.Context, in *StoreNewMessageRequest, opts ...grpc.CallOption) (*StoreNewMessageResponse, error) {
 	out := new(StoreNewMessageResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/NewMessage", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/NewMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1112,7 +2174,7 @@ func (c *storeClient) NewMessage(ctx context.Context, in *StoreNewMessageRequest
 
 func (c *storeClient) UploadFile(ctx context.Context, in *StoreUploadFileRequest, opts ...grpc.CallOption) (*StoreUploadFileResponse, error) {
 	out := new(StoreUploadFileResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/UploadFile", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/UploadFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1121,7 +2183,7 @@ func (c *storeClient) UploadFile(ctx context.Context, in *StoreUploadFileRequest
 
 func (c *storeClient) CheckFile(ctx context.Context, in *StoreCheckFileRequest, opts ...grpc.CallOption) (*StoreCheckFileResponse, error) {
 	out := new(StoreCheckFileResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/CheckFile", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/CheckFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1130,7 +2192,7 @@ func (c *storeClient) CheckFile(ctx context.Context, in *StoreCheckFileRequest, 
 
 func (c *storeClient) DownloadFile(ctx context.Context, in *StoreDownloadFileRequest, opts ...grpc.CallOption) (*StoreDownloadFileResponse, error) {
 	out := new(StoreDownloadFileResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/DownloadFile", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/DownloadFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1139,7 +2201,7 @@ func (c *storeClient) DownloadFile(ctx context.Context, in *StoreDownloadFileReq
 
 func (c *storeClient) LoadMessage(ctx context.Context, in *StoreLoadMessageRequest, opts ...grpc.CallOption) (*StoreLoadMessageResponse, error) {
 	out := new(StoreLoadMessageResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/LoadMessage", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/LoadMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1148,15 +2210,14 @@ func (c *storeClient) LoadMessage(ctx context.Context, in *StoreLoadMessageReque
 
 func (c *storeClient) LoadRecentContact(ctx context.Context, in *StoreRecentContactRequest, opts ...grpc.CallOption) (*StoreRecentContactResponse, error) {
 	out := new(StoreRecentContactResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Store/LoadRecentContact", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Store/LoadRecentContact", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for Store service
-
+// StoreServer is the server API for Store service.
 type StoreServer interface {
 	Register(context.Context, *StoreRegisterRequest) (*StoreRegisterResponse, error)
 	// UpdateUserInfo 更新用户信息 昵称-头像
@@ -3011,24 +4072,6 @@ func (m *StoreUpdateSignatureResponse) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func encodeFixed64Store(dAtA []byte, offset int, v uint64) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	dAtA[offset+4] = uint8(v >> 32)
-	dAtA[offset+5] = uint8(v >> 40)
-	dAtA[offset+6] = uint8(v >> 48)
-	dAtA[offset+7] = uint8(v >> 56)
-	return offset + 8
-}
-func encodeFixed32Store(dAtA []byte, offset int, v uint32) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	return offset + 4
-}
 func encodeVarintStore(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -3039,6 +4082,9 @@ func encodeVarintStore(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *StoreRecentContactRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3047,6 +4093,9 @@ func (m *StoreRecentContactRequest) Size() (n int) {
 }
 
 func (m *StoreRecentContactResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3063,6 +4112,9 @@ func (m *StoreRecentContactResponse) Size() (n int) {
 }
 
 func (m *StoreFindUserRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3075,6 +4127,9 @@ func (m *StoreFindUserRequest) Size() (n int) {
 }
 
 func (m *StoreFindUserResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3091,6 +4146,9 @@ func (m *StoreFindUserResponse) Size() (n int) {
 }
 
 func (m *StoreFriendRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3112,6 +4170,9 @@ func (m *StoreFriendRequest) Size() (n int) {
 }
 
 func (m *StoreFriendResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3122,6 +4183,9 @@ func (m *StoreFriendResponse) Size() (n int) {
 }
 
 func (m *StoreRegisterRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -3139,6 +4203,9 @@ func (m *StoreRegisterRequest) Size() (n int) {
 }
 
 func (m *StoreRegisterResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3149,6 +4216,9 @@ func (m *StoreRegisterResponse) Size() (n int) {
 }
 
 func (m *StoreUpdateUserInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3169,6 +4239,9 @@ func (m *StoreUpdateUserInfoRequest) Size() (n int) {
 }
 
 func (m *StoreUpdateUserInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3179,6 +4252,9 @@ func (m *StoreUpdateUserInfoResponse) Size() (n int) {
 }
 
 func (m *StoreUpdateUserPasswordRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3199,6 +4275,9 @@ func (m *StoreUpdateUserPasswordRequest) Size() (n int) {
 }
 
 func (m *StoreUpdateUserPasswordResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3209,6 +4288,9 @@ func (m *StoreUpdateUserPasswordResponse) Size() (n int) {
 }
 
 func (m *StoreGetUserInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3227,6 +4309,9 @@ func (m *StoreGetUserInfoRequest) Size() (n int) {
 }
 
 func (m *StoreGetUserInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3256,6 +4341,9 @@ func (m *StoreGetUserInfoResponse) Size() (n int) {
 }
 
 func (m *StoreAuthRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.User)
@@ -3270,6 +4358,9 @@ func (m *StoreAuthRequest) Size() (n int) {
 }
 
 func (m *StoreAuthResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3283,6 +4374,9 @@ func (m *StoreAuthResponse) Size() (n int) {
 }
 
 func (m *StoreGroupCreateRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3298,6 +4392,9 @@ func (m *StoreGroupCreateRequest) Size() (n int) {
 }
 
 func (m *StoreGroupCreateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3308,6 +4405,9 @@ func (m *StoreGroupCreateResponse) Size() (n int) {
 }
 
 func (m *StoreGroupRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3333,6 +4433,9 @@ func (m *StoreGroupRequest) Size() (n int) {
 }
 
 func (m *StoreGroupResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3343,6 +4446,9 @@ func (m *StoreGroupResponse) Size() (n int) {
 }
 
 func (m *StoreGroupDeleteRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3354,6 +4460,9 @@ func (m *StoreGroupDeleteRequest) Size() (n int) {
 }
 
 func (m *StoreGroupDeleteResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3364,6 +4473,9 @@ func (m *StoreGroupDeleteResponse) Size() (n int) {
 }
 
 func (m *StoreNewMessageRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3374,6 +4486,9 @@ func (m *StoreNewMessageRequest) Size() (n int) {
 }
 
 func (m *StoreNewMessageResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3384,6 +4499,9 @@ func (m *StoreNewMessageResponse) Size() (n int) {
 }
 
 func (m *StoreUploadFileRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3396,6 +4514,9 @@ func (m *StoreUploadFileRequest) Size() (n int) {
 }
 
 func (m *StoreUploadFileResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3406,6 +4527,9 @@ func (m *StoreUploadFileResponse) Size() (n int) {
 }
 
 func (m *StoreCheckFileRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3420,6 +4544,9 @@ func (m *StoreCheckFileRequest) Size() (n int) {
 }
 
 func (m *StoreCheckFileResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3436,6 +4563,9 @@ func (m *StoreCheckFileResponse) Size() (n int) {
 }
 
 func (m *StoreDownloadFileRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3450,6 +4580,9 @@ func (m *StoreDownloadFileRequest) Size() (n int) {
 }
 
 func (m *StoreDownloadFileResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3472,6 +4605,9 @@ func (m *StoreDownloadFileResponse) Size() (n int) {
 }
 
 func (m *StoreLoadMessageRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3486,6 +4622,9 @@ func (m *StoreLoadMessageRequest) Size() (n int) {
 }
 
 func (m *StoreLoadMessageResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3502,6 +4641,9 @@ func (m *StoreLoadMessageResponse) Size() (n int) {
 }
 
 func (m *StoreLoadGroupListRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3510,6 +4652,9 @@ func (m *StoreLoadGroupListRequest) Size() (n int) {
 }
 
 func (m *StoreLoadGroupListResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3526,6 +4671,9 @@ func (m *StoreLoadGroupListResponse) Size() (n int) {
 }
 
 func (m *StoreLoadFriendListRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3534,6 +4682,9 @@ func (m *StoreLoadFriendListRequest) Size() (n int) {
 }
 
 func (m *StoreLoadFriendListResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3551,6 +4702,9 @@ func (m *StoreLoadFriendListResponse) Size() (n int) {
 }
 
 func (m *StoreUpdateSignatureRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = m.RequestHeader.Size()
@@ -3567,6 +4721,9 @@ func (m *StoreUpdateSignatureRequest) Size() (n int) {
 }
 
 func (m *StoreUpdateSignatureResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -8121,90 +9278,91 @@ var (
 	ErrIntOverflowStore   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("store.proto", fileDescriptorStore) }
+func init() { proto.RegisterFile("store.proto", fileDescriptor_store_16bf9239a5f5c4a0) }
 
-var fileDescriptorStore = []byte{
-	// 1311 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x58, 0x4d, 0x6f, 0xdc, 0xc4,
-	0x1b, 0x8f, 0xd7, 0xbb, 0xdb, 0xdd, 0x27, 0x69, 0xfe, 0xed, 0x34, 0x4d, 0xb7, 0xfe, 0xa7, 0x9b,
-	0x65, 0xfa, 0x42, 0x44, 0xc4, 0x82, 0xc2, 0xa5, 0xa2, 0xa7, 0x26, 0x21, 0x34, 0xa2, 0x49, 0x8a,
-	0xdb, 0x40, 0x00, 0x09, 0xc9, 0xd9, 0x9d, 0x3a, 0x4b, 0xb2, 0xf6, 0x62, 0x7b, 0x13, 0x05, 0x0e,
-	0x20, 0xce, 0x20, 0x21, 0xbe, 0x01, 0x27, 0x8e, 0x1c, 0xe1, 0x03, 0x70, 0xe8, 0xb1, 0x7c, 0x81,
-	0x0a, 0x85, 0x2f, 0x82, 0x66, 0x3c, 0x63, 0x8f, 0xed, 0x71, 0x12, 0xd5, 0xce, 0xcd, 0x63, 0x3f,
-	0xcf, 0xef, 0x79, 0x1d, 0xcf, 0xef, 0x19, 0x98, 0xf4, 0x03, 0xd7, 0x23, 0xdd, 0x91, 0xe7, 0x06,
-	0x2e, 0x82, 0x9e, 0xe5, 0xf4, 0x8f, 0xbb, 0x43, 0x12, 0x58, 0xc6, 0x8c, 0xed, 0xda, 0x2e, 0x7b,
-	0xfd, 0x0e, 0x7d, 0x0a, 0x25, 0x8c, 0xa9, 0x9e, 0x3b, 0x1c, 0xba, 0x4e, 0xb8, 0xc2, 0x3b, 0x70,
-	0xf3, 0x29, 0x55, 0x37, 0x49, 0x8f, 0x38, 0xc1, 0x8a, 0xeb, 0x04, 0x56, 0x2f, 0x30, 0xc9, 0xd7,
-	0x63, 0xe2, 0x07, 0xe8, 0x01, 0xd4, 0xf7, 0x88, 0xd5, 0x27, 0x5e, 0x4b, 0xeb, 0x68, 0x0b, 0x93,
-	0x4b, 0x37, 0xbb, 0x31, 0x7a, 0x97, 0x0b, 0x3d, 0x62, 0x02, 0xcb, 0x8d, 0x17, 0xaf, 0xe6, 0x27,
-	0x5e, 0xbe, 0x9a, 0xd7, 0x4c, 0xae, 0x82, 0x7f, 0xd2, 0xc0, 0x50, 0x41, 0xfb, 0x23, 0xd7, 0xf1,
-	0x09, 0x5a, 0x4a, 0x61, 0x1b, 0x49, 0xec, 0x50, 0x2a, 0x04, 0x17, 0x90, 0xe8, 0x01, 0x34, 0x38,
-	0x8c, 0xdf, 0xaa, 0x74, 0xf4, 0xac, 0x47, 0x92, 0xa1, 0xe5, 0x2a, 0xf5, 0xc8, 0x8c, 0x14, 0xb0,
-	0x0d, 0x33, 0xcc, 0x9d, 0xb5, 0x81, 0xd3, 0xdf, 0xf6, 0x89, 0x57, 0x46, 0x90, 0x08, 0x41, 0x75,
-	0xd3, 0x1a, 0x92, 0x56, 0xa5, 0xa3, 0x2d, 0x34, 0x4d, 0xf6, 0x8c, 0x2d, 0xb8, 0x9e, 0x32, 0x54,
-	0x20, 0xe4, 0x19, 0xa8, 0x51, 0x8c, 0x30, 0xde, 0xa6, 0x19, 0x2e, 0xf0, 0x1f, 0x1a, 0xa0, 0xd0,
-	0x86, 0x37, 0x20, 0x4e, 0xbf, 0x94, 0x50, 0xba, 0x70, 0x69, 0x6b, 0x44, 0x3c, 0x2b, 0x08, 0xa3,
-	0x99, 0x5e, 0x9a, 0x49, 0x6a, 0x1f, 0x58, 0xc1, 0xc0, 0x75, 0x4c, 0x21, 0x44, 0x43, 0x5f, 0xf3,
-	0xdc, 0x61, 0x4b, 0xef, 0x68, 0x0b, 0xba, 0xc9, 0x9e, 0xd1, 0x34, 0x54, 0x9e, 0xb9, 0xad, 0x2a,
-	0x7b, 0x53, 0x79, 0xe6, 0xa2, 0x2b, 0xa0, 0x6f, 0xf8, 0x76, 0xab, 0xc6, 0xb2, 0x43, 0x1f, 0xf1,
-	0x3a, 0x5c, 0x4b, 0x38, 0xfe, 0xfa, 0xa9, 0xc1, 0x9f, 0xf0, 0x82, 0x9a, 0xc4, 0x1e, 0xf8, 0x41,
-	0x5c, 0xd0, 0x69, 0xa8, 0xac, 0xaf, 0x32, 0x1c, 0xdd, 0xac, 0xac, 0xaf, 0x52, 0x47, 0x69, 0xd6,
-	0x44, 0x8d, 0xe8, 0x33, 0x32, 0xa0, 0xf1, 0xc4, 0xf2, 0xfd, 0x23, 0xd7, 0xeb, 0xb3, 0x00, 0x9a,
-	0x66, 0xb4, 0xc6, 0x1f, 0xf1, 0xfa, 0xc5, 0xb8, 0x05, 0x9c, 0xfc, 0x55, 0xec, 0x82, 0xed, 0x51,
-	0xdf, 0x0a, 0x08, 0x35, 0xbe, 0xee, 0x3c, 0x77, 0x2f, 0xaa, 0xf9, 0x68, 0x60, 0x9b, 0x83, 0xde,
-	0x3e, 0x7b, 0xcf, 0x03, 0x13, 0x6b, 0x34, 0x0b, 0xf5, 0x87, 0x87, 0x56, 0x60, 0x79, 0xac, 0x42,
-	0x4d, 0x93, 0xaf, 0xf0, 0xc7, 0xf0, 0x7f, 0xa5, 0x8b, 0x05, 0xc2, 0xfe, 0x5d, 0x83, 0x76, 0x0a,
-	0x53, 0xe4, 0xf7, 0x22, 0x43, 0xcf, 0xab, 0x29, 0xea, 0xc0, 0xe4, 0x26, 0x39, 0x8a, 0x3e, 0x87,
-	0xf1, 0xcb, 0xaf, 0xf0, 0x36, 0xcc, 0xe7, 0x3a, 0x5c, 0x20, 0x11, 0xbf, 0x68, 0x70, 0x83, 0xe1,
-	0x7e, 0x48, 0x82, 0x52, 0x8b, 0x3f, 0x0b, 0xf5, 0xe5, 0xe3, 0x28, 0x07, 0x0d, 0x93, 0xaf, 0xa2,
-	0xcc, 0xe8, 0x52, 0x66, 0xc2, 0x1d, 0x51, 0x15, 0x3b, 0x02, 0xff, 0xa5, 0x41, 0x2b, 0xeb, 0x54,
-	0x81, 0xbf, 0x54, 0x68, 0xa0, 0x92, 0xd9, 0x72, 0x7a, 0x72, 0xcb, 0x45, 0x9d, 0x59, 0xcd, 0xed,
-	0xcc, 0x9a, 0xdc, 0x99, 0x68, 0x0e, 0x9a, 0x4f, 0x07, 0xb6, 0x63, 0x05, 0x63, 0x8f, 0xb4, 0xea,
-	0xec, 0x53, 0xfc, 0x02, 0x2f, 0xc3, 0x15, 0x16, 0xc5, 0xc3, 0x71, 0xb0, 0x27, 0x72, 0x2a, 0x2c,
-	0x6b, 0x39, 0x9b, 0xbd, 0x92, 0xda, 0xec, 0x9f, 0xc2, 0x55, 0x09, 0xa3, 0xbc, 0x14, 0xe0, 0x6f,
-	0x44, 0xdd, 0x3d, 0x77, 0x3c, 0x5a, 0xf1, 0x88, 0x15, 0x90, 0x52, 0xea, 0xae, 0x48, 0x75, 0xba,
-	0xde, 0x78, 0x53, 0x94, 0x57, 0xb6, 0x5d, 0xa0, 0x89, 0xff, 0xd4, 0x78, 0x96, 0x18, 0xe0, 0x85,
-	0x84, 0x21, 0x9d, 0x3e, 0xfa, 0x79, 0x4e, 0x1f, 0x7e, 0xb2, 0x54, 0xa3, 0x93, 0x25, 0x3e, 0x29,
-	0x6b, 0x1d, 0x7d, 0x41, 0x17, 0x27, 0xe5, 0x23, 0x7e, 0x50, 0x72, 0xcf, 0x0b, 0x24, 0xe1, 0xb9,
-	0x5c, 0xd0, 0x55, 0x72, 0x40, 0x2e, 0xa6, 0xa0, 0xc9, 0xe2, 0x09, 0x3b, 0x05, 0xfc, 0xfe, 0x41,
-	0x83, 0x59, 0x06, 0xb8, 0x49, 0x8e, 0x36, 0x88, 0xef, 0x5b, 0x76, 0x39, 0x7e, 0x2f, 0x86, 0x15,
-	0xa8, 0x30, 0xcd, 0x6b, 0xb2, 0x26, 0xb7, 0xc2, 0x19, 0x18, 0x3b, 0xf6, 0x37, 0x78, 0xf2, 0x64,
-	0x1f, 0x0a, 0xc4, 0x34, 0xe0, 0x21, 0x6d, 0x8f, 0x0e, 0x5c, 0xab, 0xbf, 0x36, 0x38, 0x20, 0x65,
-	0x9d, 0x2a, 0x14, 0x8b, 0xc5, 0x34, 0x65, 0xb2, 0xe7, 0xc8, 0x73, 0xd9, 0x54, 0x01, 0xcf, 0xbf,
-	0xe2, 0xe4, 0x62, 0x65, 0x8f, 0xf4, 0xf6, 0x4b, 0x73, 0x7c, 0x06, 0x6a, 0x74, 0xe3, 0x47, 0x2c,
-	0x91, 0x2d, 0xf0, 0x2e, 0xcf, 0x92, 0x64, 0xab, 0x18, 0x13, 0x55, 0xd8, 0x18, 0xf2, 0x6e, 0x5d,
-	0x75, 0x8f, 0x9c, 0x52, 0x6b, 0xa1, 0x36, 0xf7, 0xb7, 0xc6, 0xe7, 0x95, 0xa4, 0xbd, 0x02, 0x61,
-	0xad, 0x41, 0x8d, 0x62, 0x88, 0x81, 0xe2, 0x5d, 0x59, 0x25, 0xd7, 0x52, 0x97, 0xa9, 0x7c, 0xe0,
-	0x04, 0xde, 0xb1, 0x19, 0xaa, 0x1b, 0xf7, 0x01, 0xe2, 0x97, 0xf4, 0xf7, 0xb4, 0x4f, 0x8e, 0xf9,
-	0x29, 0x44, 0x1f, 0x69, 0x3c, 0x87, 0xd6, 0xc1, 0x58, 0x34, 0x57, 0xb8, 0x78, 0xbf, 0x72, 0x5f,
-	0xc3, 0xdf, 0x0b, 0x8a, 0xf0, 0xd8, 0xb5, 0xfa, 0x65, 0xee, 0xd0, 0xf4, 0x3f, 0xb6, 0x05, 0x97,
-	0x4c, 0x72, 0x48, 0x3c, 0x3f, 0xfc, 0xc7, 0x36, 0x4c, 0xb1, 0xc4, 0xdf, 0xf2, 0x2a, 0x26, 0x3c,
-	0x28, 0x90, 0xd4, 0x45, 0xa8, 0x6e, 0xf8, 0xb6, 0xc8, 0xe9, 0x0d, 0x59, 0xe3, 0xc9, 0xd8, 0xdf,
-	0x13, 0x26, 0x98, 0x50, 0x34, 0x82, 0x52, 0xe3, 0xec, 0xa7, 0xf7, 0x78, 0xe0, 0x97, 0x33, 0x82,
-	0x7e, 0xc7, 0xb9, 0x77, 0x0a, 0xb9, 0x40, 0x60, 0x6f, 0x43, 0xdd, 0xa6, 0x40, 0x22, 0xb4, 0xeb,
-	0xb2, 0x0e, 0x33, 0xc1, 0xb8, 0x14, 0x17, 0xc2, 0x9f, 0x49, 0x0e, 0x84, 0x13, 0x4f, 0x69, 0xb1,
-	0xd9, 0x9c, 0xb4, 0xa7, 0xa1, 0x8b, 0xed, 0xf0, 0x71, 0x34, 0x6b, 0xea, 0x66, 0xb8, 0xc0, 0x3f,
-	0x6a, 0x89, 0xf1, 0x20, 0xa2, 0x5f, 0x17, 0xc6, 0xe3, 0x13, 0xa4, 0x4f, 0x4f, 0x93, 0x3e, 0x13,
-	0xe6, 0xd4, 0xde, 0xbc, 0x7e, 0xe0, 0x4b, 0xbf, 0x5d, 0x86, 0x1a, 0x03, 0x45, 0x5b, 0xd0, 0x10,
-	0x63, 0x1f, 0xea, 0x64, 0x7e, 0x05, 0xa9, 0x49, 0xd3, 0x78, 0xe3, 0x14, 0x09, 0xee, 0x8e, 0x05,
-	0xd3, 0xc9, 0xb1, 0x0a, 0xdd, 0xcb, 0x28, 0x29, 0x47, 0x43, 0xe3, 0xcd, 0x33, 0xe5, 0xb8, 0x89,
-	0x3e, 0xfc, 0x2f, 0x95, 0x0c, 0x94, 0xa7, 0x9b, 0x2e, 0x9e, 0xb1, 0x70, 0xb6, 0x20, 0xb7, 0x32,
-	0x04, 0x94, 0x1d, 0x8d, 0xd0, 0x5b, 0xa7, 0x38, 0x99, 0x1a, 0xf8, 0x8c, 0xc5, 0x73, 0xc9, 0x72,
-	0x73, 0x3b, 0x30, 0x29, 0x0d, 0x27, 0xe8, 0x76, 0x46, 0x37, 0x3b, 0x4f, 0x19, 0x77, 0x4e, 0x17,
-	0xe2, 0xc8, 0x2b, 0x50, 0xa5, 0x64, 0x1f, 0xcd, 0x65, 0xa4, 0xa5, 0x39, 0xc2, 0xb8, 0x95, 0xf3,
-	0x95, 0x83, 0xac, 0x43, 0x3d, 0xdc, 0x74, 0xa8, 0x9d, 0x11, 0x4c, 0xdc, 0xc9, 0x18, 0xf3, 0xb9,
-	0xdf, 0xe3, 0x0e, 0x49, 0xee, 0x61, 0x45, 0x87, 0x28, 0xff, 0x1f, 0x8a, 0x0e, 0xc9, 0xf9, 0x19,
-	0x6c, 0x41, 0x43, 0x5c, 0x46, 0x29, 0xba, 0x3a, 0x75, 0x21, 0xa6, 0xe8, 0xea, 0xcc, 0x4d, 0x16,
-	0xad, 0x4e, 0x3c, 0x5b, 0xa8, 0xaa, 0x93, 0x99, 0x7a, 0x54, 0xd5, 0x51, 0x8c, 0x27, 0x6b, 0x50,
-	0x63, 0xaf, 0xd1, 0x2d, 0xb5, 0xb8, 0x40, 0x6b, 0xe7, 0x7d, 0x4e, 0x79, 0x18, 0x12, 0xe8, 0x3c,
-	0x0f, 0x13, 0x34, 0x3e, 0xcf, 0xc3, 0x14, 0x07, 0xff, 0x12, 0x2e, 0x27, 0xce, 0x13, 0x74, 0x57,
-	0x59, 0x86, 0xf4, 0x49, 0x66, 0xdc, 0x3b, 0x4b, 0x8c, 0xe3, 0x6f, 0x03, 0xc4, 0x2c, 0x19, 0xe1,
-	0x8c, 0x56, 0x86, 0xc6, 0x1b, 0xb7, 0x4f, 0x95, 0x89, 0x61, 0x63, 0x0a, 0xab, 0x80, 0xcd, 0x50,
-	0x69, 0x05, 0xac, 0x82, 0x03, 0x9b, 0xd0, 0x8c, 0xe8, 0x25, 0xca, 0x76, 0x4e, 0x9a, 0xe6, 0x1a,
-	0xf8, 0x34, 0x11, 0x8e, 0xf9, 0x05, 0x4c, 0xc9, 0xa4, 0x0b, 0xdd, 0x39, 0x83, 0x93, 0x85, 0xc8,
-	0x77, 0xcf, 0xc5, 0xdc, 0x68, 0x63, 0x48, 0x2c, 0x47, 0xd1, 0x18, 0x59, 0x16, 0xa6, 0x68, 0x0c,
-	0x15, 0x51, 0xda, 0x85, 0xab, 0xf4, 0x75, 0xe2, 0x16, 0x5a, 0xd1, 0x1c, 0xaa, 0x9b, 0x76, 0x45,
-	0x73, 0x28, 0x6f, 0xcd, 0x97, 0x67, 0x5f, 0x9c, 0xb4, 0xb5, 0x97, 0x27, 0x6d, 0xed, 0x9f, 0x93,
-	0xb6, 0xf6, 0xf3, 0xbf, 0xed, 0x89, 0xcf, 0xab, 0x54, 0x65, 0x67, 0x62, 0xb7, 0xce, 0xee, 0xf3,
-	0xdf, 0xfb, 0x2f, 0x00, 0x00, 0xff, 0xff, 0xe0, 0x49, 0x3d, 0x54, 0x0e, 0x18, 0x00, 0x00,
+var fileDescriptor_store_16bf9239a5f5c4a0 = []byte{
+	// 1319 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x58, 0x4f, 0x6f, 0xdc, 0x44,
+	0x14, 0x8f, 0xd7, 0xbb, 0xdb, 0xdd, 0x97, 0x34, 0xb4, 0xd3, 0x34, 0xdd, 0x9a, 0x74, 0xb3, 0x4c,
+	0xff, 0x10, 0x11, 0xb1, 0xa0, 0x70, 0xa9, 0xe8, 0xa9, 0x49, 0x08, 0x8d, 0x68, 0x92, 0xe2, 0x36,
+	0x10, 0x40, 0x42, 0x72, 0x76, 0xa7, 0x9b, 0x25, 0x59, 0x7b, 0xb1, 0xbd, 0x89, 0x02, 0x07, 0x10,
+	0x67, 0x90, 0x10, 0xdf, 0x80, 0x13, 0x47, 0x8e, 0xf0, 0x01, 0x38, 0xf4, 0x18, 0x6e, 0x9c, 0x2a,
+	0x94, 0x7c, 0x91, 0x6a, 0xc6, 0x33, 0xf6, 0xd8, 0x1e, 0x27, 0x51, 0xed, 0xdc, 0x3c, 0xf6, 0x7b,
+	0xbf, 0xf7, 0x77, 0x3c, 0xbf, 0x37, 0x30, 0xee, 0xf9, 0x8e, 0x4b, 0xda, 0x43, 0xd7, 0xf1, 0x1d,
+	0x04, 0x1d, 0xcb, 0xee, 0x1e, 0xb6, 0x07, 0xc4, 0xb7, 0x8c, 0xa9, 0x9e, 0xd3, 0x73, 0xd8, 0xeb,
+	0xf7, 0xe8, 0x53, 0x20, 0x61, 0x4c, 0x74, 0x9c, 0xc1, 0xc0, 0xb1, 0x83, 0x15, 0xde, 0x82, 0x9b,
+	0x4f, 0xa9, 0xba, 0x49, 0x3a, 0xc4, 0xf6, 0x97, 0x1c, 0xdb, 0xb7, 0x3a, 0xbe, 0x49, 0xbe, 0x1d,
+	0x11, 0xcf, 0x47, 0x0f, 0xa0, 0xba, 0x43, 0xac, 0x2e, 0x71, 0x1b, 0x5a, 0x4b, 0x9b, 0x1b, 0x5f,
+	0xb8, 0xd9, 0x8e, 0xd0, 0xdb, 0x5c, 0xe8, 0x11, 0x13, 0x58, 0xac, 0xbd, 0x78, 0x39, 0x3b, 0x76,
+	0xf4, 0x72, 0x56, 0x33, 0xb9, 0x0a, 0xfe, 0x45, 0x03, 0x43, 0x05, 0xed, 0x0d, 0x1d, 0xdb, 0x23,
+	0x68, 0x21, 0x81, 0x6d, 0xc4, 0xb1, 0x03, 0xa9, 0x00, 0x5c, 0x40, 0xa2, 0x07, 0x50, 0xe3, 0x30,
+	0x5e, 0xa3, 0xd4, 0xd2, 0xd3, 0x1e, 0x49, 0x86, 0x16, 0xcb, 0xd4, 0x23, 0x33, 0x54, 0xc0, 0x3d,
+	0x98, 0x62, 0xee, 0xac, 0xf4, 0xed, 0xee, 0xa6, 0x47, 0xdc, 0x22, 0x82, 0x44, 0x08, 0xca, 0xeb,
+	0xd6, 0x80, 0x34, 0x4a, 0x2d, 0x6d, 0xae, 0x6e, 0xb2, 0x67, 0x6c, 0xc1, 0xf5, 0x84, 0xa1, 0x1c,
+	0x21, 0x4f, 0x41, 0x85, 0x62, 0x04, 0xf1, 0xd6, 0xcd, 0x60, 0x81, 0xff, 0xd2, 0x00, 0x05, 0x36,
+	0xdc, 0x3e, 0xb1, 0xbb, 0x85, 0x84, 0xd2, 0x86, 0x4b, 0x1b, 0x43, 0xe2, 0x5a, 0x7e, 0x10, 0xcd,
+	0xe4, 0xc2, 0x54, 0x5c, 0x7b, 0xcf, 0xf2, 0xfb, 0x8e, 0x6d, 0x0a, 0x21, 0x1a, 0xfa, 0x8a, 0xeb,
+	0x0c, 0x1a, 0x7a, 0x4b, 0x9b, 0xd3, 0x4d, 0xf6, 0x8c, 0x26, 0xa1, 0xf4, 0xcc, 0x69, 0x94, 0xd9,
+	0x9b, 0xd2, 0x33, 0x07, 0x5d, 0x01, 0x7d, 0xcd, 0xeb, 0x35, 0x2a, 0x2c, 0x3b, 0xf4, 0x11, 0xaf,
+	0xc2, 0xb5, 0x98, 0xe3, 0xaf, 0x9f, 0x1a, 0xfc, 0x19, 0x2f, 0xa8, 0x49, 0x7a, 0x7d, 0xcf, 0x8f,
+	0x0a, 0x3a, 0x09, 0xa5, 0xd5, 0x65, 0x86, 0xa3, 0x9b, 0xa5, 0xd5, 0x65, 0xea, 0x28, 0xcd, 0x9a,
+	0xa8, 0x11, 0x7d, 0x46, 0x06, 0xd4, 0x9e, 0x58, 0x9e, 0x77, 0xe0, 0xb8, 0x5d, 0x16, 0x40, 0xdd,
+	0x0c, 0xd7, 0xf8, 0x13, 0x5e, 0xbf, 0x08, 0x37, 0x87, 0x93, 0xbf, 0x8b, 0x5d, 0xb0, 0x39, 0xec,
+	0x5a, 0x3e, 0xa1, 0xc6, 0x57, 0xed, 0xe7, 0xce, 0x45, 0x35, 0x1f, 0x0d, 0x6c, 0xbd, 0xdf, 0xd9,
+	0x65, 0xef, 0x79, 0x60, 0x62, 0x8d, 0xa6, 0xa1, 0xfa, 0x70, 0xdf, 0xf2, 0x2d, 0x97, 0x55, 0xa8,
+	0x6e, 0xf2, 0x15, 0xfe, 0x14, 0xde, 0x54, 0xba, 0x98, 0x23, 0xec, 0x3f, 0x35, 0x68, 0x26, 0x30,
+	0x45, 0x7e, 0x2f, 0x32, 0xf4, 0xac, 0x9a, 0xa2, 0x16, 0x8c, 0xaf, 0x93, 0x83, 0xf0, 0x73, 0x10,
+	0xbf, 0xfc, 0x0a, 0x6f, 0xc2, 0x6c, 0xa6, 0xc3, 0x39, 0x12, 0xf1, 0x9b, 0x06, 0x37, 0x18, 0xee,
+	0xc7, 0xc4, 0x2f, 0xb4, 0xf8, 0xd3, 0x50, 0x5d, 0x3c, 0x0c, 0x73, 0x50, 0x33, 0xf9, 0x2a, 0xcc,
+	0x8c, 0x2e, 0x65, 0x26, 0xd8, 0x11, 0x65, 0xb1, 0x23, 0xf0, 0x3f, 0x1a, 0x34, 0xd2, 0x4e, 0xe5,
+	0xf8, 0x4b, 0x05, 0x06, 0x4a, 0xa9, 0x2d, 0xa7, 0xc7, 0xb7, 0x5c, 0xd8, 0x99, 0xe5, 0xcc, 0xce,
+	0xac, 0xc8, 0x9d, 0x89, 0x66, 0xa0, 0xfe, 0xb4, 0xdf, 0xb3, 0x2d, 0x7f, 0xe4, 0x92, 0x46, 0x95,
+	0x7d, 0x8a, 0x5e, 0xe0, 0x45, 0xb8, 0xc2, 0xa2, 0x78, 0x38, 0xf2, 0x77, 0x44, 0x4e, 0x85, 0x65,
+	0x2d, 0x63, 0xb3, 0x97, 0x12, 0x9b, 0xfd, 0x73, 0xb8, 0x2a, 0x61, 0x14, 0x97, 0x02, 0xfc, 0x9d,
+	0xa8, 0xbb, 0xeb, 0x8c, 0x86, 0x4b, 0x2e, 0xb1, 0x7c, 0x52, 0x48, 0xdd, 0x15, 0xa9, 0x4e, 0xd6,
+	0x1b, 0xaf, 0x8b, 0xf2, 0xca, 0xb6, 0x73, 0x34, 0xf1, 0xdf, 0x1a, 0xcf, 0x12, 0x03, 0xbc, 0x90,
+	0x30, 0xa4, 0xd3, 0x47, 0x3f, 0xcf, 0xe9, 0xc3, 0x4f, 0x96, 0x72, 0x78, 0xb2, 0x44, 0x27, 0x65,
+	0xa5, 0xa5, 0xcf, 0xe9, 0xe2, 0xa4, 0x7c, 0xc4, 0x0f, 0x4a, 0xee, 0x79, 0x8e, 0x24, 0x3c, 0x97,
+	0x0b, 0xba, 0x4c, 0xf6, 0xc8, 0xc5, 0x14, 0x34, 0x5e, 0x3c, 0x61, 0x27, 0x87, 0xdf, 0x3f, 0x69,
+	0x30, 0xcd, 0x00, 0xd7, 0xc9, 0xc1, 0x1a, 0xf1, 0x3c, 0xab, 0x57, 0x8c, 0xdf, 0xf3, 0x41, 0x05,
+	0x4a, 0x4c, 0xf3, 0x9a, 0xac, 0xc9, 0xad, 0x70, 0x06, 0xc6, 0x8e, 0xfd, 0x35, 0x9e, 0x3c, 0xd9,
+	0x87, 0x1c, 0x31, 0xf5, 0x79, 0x48, 0x9b, 0xc3, 0x3d, 0xc7, 0xea, 0xae, 0xf4, 0xf7, 0x48, 0x51,
+	0xa7, 0x0a, 0xc5, 0x62, 0x31, 0x4d, 0x98, 0xec, 0x39, 0xf4, 0x5c, 0x36, 0x95, 0xc3, 0xf3, 0x6f,
+	0x38, 0xb9, 0x58, 0xda, 0x21, 0x9d, 0xdd, 0xc2, 0x1c, 0x9f, 0x82, 0x0a, 0xdd, 0xf8, 0x21, 0x4b,
+	0x64, 0x0b, 0xbc, 0xcd, 0xb3, 0x24, 0xd9, 0xca, 0xc7, 0x44, 0x15, 0x36, 0x06, 0xbc, 0x5b, 0x97,
+	0x9d, 0x03, 0xbb, 0xd0, 0x5a, 0xa8, 0xcd, 0xfd, 0xab, 0xf1, 0x79, 0x25, 0x6e, 0x2f, 0x47, 0x58,
+	0x2b, 0x50, 0xa1, 0x18, 0x62, 0xa0, 0x78, 0x5f, 0x56, 0xc9, 0xb4, 0xd4, 0x66, 0x2a, 0x1f, 0xd9,
+	0xbe, 0x7b, 0x68, 0x06, 0xea, 0xc6, 0x7d, 0x80, 0xe8, 0x25, 0xfd, 0x3d, 0xed, 0x92, 0x43, 0x7e,
+	0x0a, 0xd1, 0x47, 0x1a, 0xcf, 0xbe, 0xb5, 0x37, 0x12, 0xcd, 0x15, 0x2c, 0x3e, 0x2c, 0xdd, 0xd7,
+	0xf0, 0x8f, 0x82, 0x22, 0x3c, 0x76, 0xac, 0x6e, 0x91, 0x3b, 0x34, 0xf9, 0x8f, 0x6d, 0xc0, 0x25,
+	0x93, 0xec, 0x13, 0xd7, 0x0b, 0xfe, 0xb1, 0x35, 0x53, 0x2c, 0xf1, 0xf7, 0xbc, 0x8a, 0x31, 0x0f,
+	0x72, 0x24, 0x75, 0x1e, 0xca, 0x6b, 0x5e, 0x4f, 0xe4, 0xf4, 0x86, 0xac, 0xf1, 0x64, 0xe4, 0xed,
+	0x08, 0x13, 0x4c, 0x28, 0x1c, 0x41, 0xa9, 0x71, 0xf6, 0xd3, 0x7b, 0xdc, 0xf7, 0x8a, 0x19, 0x41,
+	0x7f, 0xe0, 0xdc, 0x3b, 0x81, 0x9c, 0x23, 0xb0, 0x77, 0xa1, 0xda, 0xa3, 0x40, 0x22, 0xb4, 0xeb,
+	0xb2, 0x0e, 0x33, 0xc1, 0xb8, 0x14, 0x17, 0xc2, 0x5f, 0x48, 0x0e, 0x04, 0x13, 0x4f, 0x61, 0xb1,
+	0xf5, 0x38, 0x69, 0x4f, 0x42, 0xe7, 0xdb, 0xe1, 0xa3, 0x70, 0xd6, 0xd4, 0xcd, 0x60, 0x81, 0x7f,
+	0xd6, 0x62, 0xe3, 0x41, 0x48, 0xbf, 0x2e, 0x8c, 0xc7, 0xc7, 0x48, 0x9f, 0x9e, 0x24, 0x7d, 0x26,
+	0xcc, 0xa8, 0xbd, 0x79, 0xfd, 0xc0, 0x17, 0xfe, 0xb8, 0x0c, 0x15, 0x06, 0x8a, 0x36, 0xa0, 0x26,
+	0xc6, 0x3e, 0xd4, 0x4a, 0xfd, 0x0a, 0x12, 0x93, 0xa6, 0xf1, 0xd6, 0x29, 0x12, 0xdc, 0x1d, 0x0b,
+	0x26, 0xe3, 0x63, 0x15, 0xba, 0x97, 0x52, 0x52, 0x8e, 0x86, 0xc6, 0xdb, 0x67, 0xca, 0x71, 0x13,
+	0x5d, 0x78, 0x23, 0x91, 0x0c, 0x94, 0xa5, 0x9b, 0x2c, 0x9e, 0x31, 0x77, 0xb6, 0x20, 0xb7, 0x32,
+	0x00, 0x94, 0x1e, 0x8d, 0xd0, 0x3b, 0xa7, 0x38, 0x99, 0x18, 0xf8, 0x8c, 0xf9, 0x73, 0xc9, 0x72,
+	0x73, 0x5b, 0x30, 0x2e, 0x0d, 0x27, 0xe8, 0x76, 0x4a, 0x37, 0x3d, 0x4f, 0x19, 0x77, 0x4e, 0x17,
+	0xe2, 0xc8, 0x4b, 0x50, 0xa6, 0x64, 0x1f, 0xcd, 0xa4, 0xa4, 0xa5, 0x39, 0xc2, 0xb8, 0x95, 0xf1,
+	0x95, 0x83, 0xac, 0x42, 0x35, 0xd8, 0x74, 0xa8, 0x99, 0x12, 0x8c, 0xdd, 0xc9, 0x18, 0xb3, 0x99,
+	0xdf, 0xa3, 0x0e, 0x89, 0xef, 0x61, 0x45, 0x87, 0x28, 0xff, 0x1f, 0x8a, 0x0e, 0xc9, 0xf8, 0x19,
+	0x6c, 0x40, 0x4d, 0x5c, 0x46, 0x29, 0xba, 0x3a, 0x71, 0x21, 0xa6, 0xe8, 0xea, 0xd4, 0x4d, 0x16,
+	0xad, 0x4e, 0x34, 0x5b, 0xa8, 0xaa, 0x93, 0x9a, 0x7a, 0x54, 0xd5, 0x51, 0x8c, 0x27, 0x2b, 0x50,
+	0x61, 0xaf, 0xd1, 0x2d, 0xb5, 0xb8, 0x40, 0x6b, 0x66, 0x7d, 0x4e, 0x78, 0x18, 0x10, 0xe8, 0x2c,
+	0x0f, 0x63, 0x34, 0x3e, 0xcb, 0xc3, 0x04, 0x07, 0xff, 0x1a, 0x2e, 0xc7, 0xce, 0x13, 0x74, 0x57,
+	0x59, 0x86, 0xe4, 0x49, 0x66, 0xdc, 0x3b, 0x4b, 0x8c, 0xe3, 0x6f, 0x02, 0x44, 0x2c, 0x19, 0xe1,
+	0x94, 0x56, 0x8a, 0xc6, 0x1b, 0xb7, 0x4f, 0x95, 0x89, 0x60, 0x23, 0x0a, 0xab, 0x80, 0x4d, 0x51,
+	0x69, 0x05, 0xac, 0x82, 0x03, 0x9b, 0x50, 0x0f, 0xe9, 0x25, 0x4a, 0x77, 0x4e, 0x92, 0xe6, 0x1a,
+	0xf8, 0x34, 0x11, 0x8e, 0xf9, 0x15, 0x4c, 0xc8, 0xa4, 0x0b, 0xdd, 0x39, 0x83, 0x93, 0x05, 0xc8,
+	0x77, 0xcf, 0xc5, 0xdc, 0x68, 0x63, 0x48, 0x2c, 0x47, 0xd1, 0x18, 0x69, 0x16, 0xa6, 0x68, 0x0c,
+	0x15, 0x51, 0xda, 0x86, 0xab, 0xf4, 0x75, 0xec, 0x16, 0x5a, 0xd1, 0x1c, 0xaa, 0x9b, 0x76, 0x45,
+	0x73, 0x28, 0x6f, 0xcd, 0x17, 0x9b, 0x2f, 0x8e, 0x9b, 0xda, 0xd1, 0x71, 0x53, 0xfb, 0xff, 0xb8,
+	0xa9, 0xfd, 0x7a, 0xd2, 0x1c, 0x3b, 0x3a, 0x69, 0x8e, 0xfd, 0x77, 0xd2, 0x1c, 0xfb, 0xb2, 0x4c,
+	0x55, 0xb7, 0xc6, 0xb6, 0xab, 0xec, 0x5e, 0xff, 0x83, 0x57, 0x01, 0x00, 0x00, 0xff, 0xff, 0x7a,
+	0xc9, 0xf7, 0x8e, 0x16, 0x18, 0x00, 0x00,
 }

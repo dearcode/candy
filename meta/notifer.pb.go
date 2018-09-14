@@ -7,7 +7,7 @@ import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
-// skipping weak import gogoproto "gogoproto"
+// skipping weak import gogoproto "github.com/gogo/protobuf/gogoproto"
 
 import (
 	context "golang.org/x/net/context"
@@ -21,15 +21,49 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 type RegionSetRequest struct {
 	Begin int32 `protobuf:"varint,1,opt,name=Begin,proto3" json:"Begin,omitempty"`
 	End   int32 `protobuf:"varint,2,opt,name=End,proto3" json:"End,omitempty"`
 }
 
-func (m *RegionSetRequest) Reset()                    { *m = RegionSetRequest{} }
-func (m *RegionSetRequest) String() string            { return proto.CompactTextString(m) }
-func (*RegionSetRequest) ProtoMessage()               {}
-func (*RegionSetRequest) Descriptor() ([]byte, []int) { return fileDescriptorNotifer, []int{0} }
+func (m *RegionSetRequest) Reset()         { *m = RegionSetRequest{} }
+func (m *RegionSetRequest) String() string { return proto.CompactTextString(m) }
+func (*RegionSetRequest) ProtoMessage()    {}
+func (*RegionSetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_notifer_5431c3b8c580c5b5, []int{0}
+}
+func (m *RegionSetRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RegionSetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RegionSetRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *RegionSetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegionSetRequest.Merge(dst, src)
+}
+func (m *RegionSetRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *RegionSetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegionSetRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegionSetRequest proto.InternalMessageInfo
 
 func (m *RegionSetRequest) GetBegin() int32 {
 	if m != nil {
@@ -49,10 +83,38 @@ type RegionSetResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *RegionSetResponse) Reset()                    { *m = RegionSetResponse{} }
-func (m *RegionSetResponse) String() string            { return proto.CompactTextString(m) }
-func (*RegionSetResponse) ProtoMessage()               {}
-func (*RegionSetResponse) Descriptor() ([]byte, []int) { return fileDescriptorNotifer, []int{1} }
+func (m *RegionSetResponse) Reset()         { *m = RegionSetResponse{} }
+func (m *RegionSetResponse) String() string { return proto.CompactTextString(m) }
+func (*RegionSetResponse) ProtoMessage()    {}
+func (*RegionSetResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_notifer_5431c3b8c580c5b5, []int{1}
+}
+func (m *RegionSetResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RegionSetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RegionSetResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *RegionSetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegionSetResponse.Merge(dst, src)
+}
+func (m *RegionSetResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *RegionSetResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegionSetResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegionSetResponse proto.InternalMessageInfo
 
 func (m *RegionSetResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -69,10 +131,38 @@ type SubscribeRequest struct {
 	Token  int64  `protobuf:"varint,4,opt,name=Token,proto3" json:"Token,omitempty"`
 }
 
-func (m *SubscribeRequest) Reset()                    { *m = SubscribeRequest{} }
-func (m *SubscribeRequest) String() string            { return proto.CompactTextString(m) }
-func (*SubscribeRequest) ProtoMessage()               {}
-func (*SubscribeRequest) Descriptor() ([]byte, []int) { return fileDescriptorNotifer, []int{2} }
+func (m *SubscribeRequest) Reset()         { *m = SubscribeRequest{} }
+func (m *SubscribeRequest) String() string { return proto.CompactTextString(m) }
+func (*SubscribeRequest) ProtoMessage()    {}
+func (*SubscribeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_notifer_5431c3b8c580c5b5, []int{2}
+}
+func (m *SubscribeRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SubscribeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SubscribeRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *SubscribeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeRequest.Merge(dst, src)
+}
+func (m *SubscribeRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *SubscribeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubscribeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubscribeRequest proto.InternalMessageInfo
 
 func (m *SubscribeRequest) GetID() int64 {
 	if m != nil {
@@ -107,10 +197,38 @@ type SubscribeResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *SubscribeResponse) Reset()                    { *m = SubscribeResponse{} }
-func (m *SubscribeResponse) String() string            { return proto.CompactTextString(m) }
-func (*SubscribeResponse) ProtoMessage()               {}
-func (*SubscribeResponse) Descriptor() ([]byte, []int) { return fileDescriptorNotifer, []int{3} }
+func (m *SubscribeResponse) Reset()         { *m = SubscribeResponse{} }
+func (m *SubscribeResponse) String() string { return proto.CompactTextString(m) }
+func (*SubscribeResponse) ProtoMessage()    {}
+func (*SubscribeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_notifer_5431c3b8c580c5b5, []int{3}
+}
+func (m *SubscribeResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SubscribeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SubscribeResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *SubscribeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeResponse.Merge(dst, src)
+}
+func (m *SubscribeResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *SubscribeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubscribeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubscribeResponse proto.InternalMessageInfo
 
 func (m *SubscribeResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -127,10 +245,38 @@ type UnSubscribeRequest struct {
 	Token  int64  `protobuf:"varint,4,opt,name=Token,proto3" json:"Token,omitempty"`
 }
 
-func (m *UnSubscribeRequest) Reset()                    { *m = UnSubscribeRequest{} }
-func (m *UnSubscribeRequest) String() string            { return proto.CompactTextString(m) }
-func (*UnSubscribeRequest) ProtoMessage()               {}
-func (*UnSubscribeRequest) Descriptor() ([]byte, []int) { return fileDescriptorNotifer, []int{4} }
+func (m *UnSubscribeRequest) Reset()         { *m = UnSubscribeRequest{} }
+func (m *UnSubscribeRequest) String() string { return proto.CompactTextString(m) }
+func (*UnSubscribeRequest) ProtoMessage()    {}
+func (*UnSubscribeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_notifer_5431c3b8c580c5b5, []int{4}
+}
+func (m *UnSubscribeRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UnSubscribeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UnSubscribeRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *UnSubscribeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnSubscribeRequest.Merge(dst, src)
+}
+func (m *UnSubscribeRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *UnSubscribeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnSubscribeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnSubscribeRequest proto.InternalMessageInfo
 
 func (m *UnSubscribeRequest) GetID() int64 {
 	if m != nil {
@@ -165,10 +311,38 @@ type UnSubscribeResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *UnSubscribeResponse) Reset()                    { *m = UnSubscribeResponse{} }
-func (m *UnSubscribeResponse) String() string            { return proto.CompactTextString(m) }
-func (*UnSubscribeResponse) ProtoMessage()               {}
-func (*UnSubscribeResponse) Descriptor() ([]byte, []int) { return fileDescriptorNotifer, []int{5} }
+func (m *UnSubscribeResponse) Reset()         { *m = UnSubscribeResponse{} }
+func (m *UnSubscribeResponse) String() string { return proto.CompactTextString(m) }
+func (*UnSubscribeResponse) ProtoMessage()    {}
+func (*UnSubscribeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_notifer_5431c3b8c580c5b5, []int{5}
+}
+func (m *UnSubscribeResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UnSubscribeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UnSubscribeResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *UnSubscribeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnSubscribeResponse.Merge(dst, src)
+}
+func (m *UnSubscribeResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *UnSubscribeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnSubscribeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnSubscribeResponse proto.InternalMessageInfo
 
 func (m *UnSubscribeResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -194,8 +368,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for Notifer service
-
+// NotiferClient is the client API for Notifer service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type NotiferClient interface {
 	// Subscribe 用户上线，接受在线推送
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error)
@@ -217,7 +392,7 @@ func NewNotiferClient(cc *grpc.ClientConn) NotiferClient {
 
 func (c *notiferClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error) {
 	out := new(SubscribeResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Notifer/Subscribe", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Notifer/Subscribe", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +401,7 @@ func (c *notiferClient) Subscribe(ctx context.Context, in *SubscribeRequest, opt
 
 func (c *notiferClient) UnSubscribe(ctx context.Context, in *UnSubscribeRequest, opts ...grpc.CallOption) (*UnSubscribeResponse, error) {
 	out := new(UnSubscribeResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Notifer/UnSubscribe", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Notifer/UnSubscribe", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +410,7 @@ func (c *notiferClient) UnSubscribe(ctx context.Context, in *UnSubscribeRequest,
 
 func (c *notiferClient) RegionSet(ctx context.Context, in *RegionSetRequest, opts ...grpc.CallOption) (*RegionSetResponse, error) {
 	out := new(RegionSetResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Notifer/RegionSet", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Notifer/RegionSet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -244,15 +419,14 @@ func (c *notiferClient) RegionSet(ctx context.Context, in *RegionSetRequest, opt
 
 func (c *notiferClient) Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error) {
 	out := new(PushResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Notifer/Push", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Notifer/Push", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for Notifer service
-
+// NotiferServer is the server API for Notifer service.
 type NotiferServer interface {
 	// Subscribe 用户上线，接受在线推送
 	Subscribe(context.Context, *SubscribeRequest) (*SubscribeResponse, error)
@@ -557,24 +731,6 @@ func (m *UnSubscribeResponse) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func encodeFixed64Notifer(dAtA []byte, offset int, v uint64) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	dAtA[offset+4] = uint8(v >> 32)
-	dAtA[offset+5] = uint8(v >> 40)
-	dAtA[offset+6] = uint8(v >> 48)
-	dAtA[offset+7] = uint8(v >> 56)
-	return offset + 8
-}
-func encodeFixed32Notifer(dAtA []byte, offset int, v uint32) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	return offset + 4
-}
 func encodeVarintNotifer(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -585,6 +741,9 @@ func encodeVarintNotifer(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *RegionSetRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Begin != 0 {
@@ -597,6 +756,9 @@ func (m *RegionSetRequest) Size() (n int) {
 }
 
 func (m *RegionSetResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -607,6 +769,9 @@ func (m *RegionSetResponse) Size() (n int) {
 }
 
 func (m *SubscribeRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -627,6 +792,9 @@ func (m *SubscribeRequest) Size() (n int) {
 }
 
 func (m *SubscribeResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -637,6 +805,9 @@ func (m *SubscribeResponse) Size() (n int) {
 }
 
 func (m *UnSubscribeRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -657,6 +828,9 @@ func (m *UnSubscribeRequest) Size() (n int) {
 }
 
 func (m *UnSubscribeResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -1413,31 +1587,32 @@ var (
 	ErrIntOverflowNotifer   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("notifer.proto", fileDescriptorNotifer) }
+func init() { proto.RegisterFile("notifer.proto", fileDescriptor_notifer_5431c3b8c580c5b5) }
 
-var fileDescriptorNotifer = []byte{
-	// 362 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x93, 0x4f, 0x4e, 0xc2, 0x50,
-	0x10, 0xc6, 0x69, 0x29, 0x18, 0x06, 0x35, 0x38, 0x12, 0x6c, 0x1a, 0xad, 0x86, 0x95, 0xab, 0x9a,
-	0xe0, 0x4a, 0x97, 0x04, 0x63, 0xd9, 0x10, 0x53, 0x34, 0x31, 0xee, 0xa0, 0x1d, 0x4a, 0x63, 0x78,
-	0x0f, 0xdb, 0x62, 0xe2, 0x2d, 0x3c, 0x86, 0x47, 0x71, 0xe9, 0x11, 0x0c, 0x5e, 0xc4, 0xf4, 0xb5,
-	0xe0, 0x83, 0x86, 0x8d, 0x26, 0xee, 0xe6, 0xcf, 0xf7, 0xcd, 0xfb, 0x4d, 0x33, 0x85, 0x1d, 0xc6,
-	0xe3, 0x60, 0x44, 0xa1, 0x35, 0x0d, 0x79, 0xcc, 0x11, 0xdc, 0x01, 0xf3, 0x5e, 0xac, 0x09, 0xc5,
-	0x03, 0xa3, 0xee, 0x73, 0x9f, 0x8b, 0xf2, 0x59, 0x12, 0xa5, 0x0a, 0x63, 0xdb, 0xe5, 0x93, 0x09,
-	0x67, 0x69, 0xd6, 0xbc, 0x84, 0x9a, 0x43, 0x7e, 0xc0, 0x59, 0x9f, 0x62, 0x87, 0x9e, 0x66, 0x14,
-	0xc5, 0x58, 0x87, 0x52, 0x9b, 0xfc, 0x80, 0xe9, 0xca, 0x89, 0x72, 0x5a, 0x72, 0xd2, 0x04, 0x6b,
-	0x50, 0xbc, 0x62, 0x9e, 0xae, 0x8a, 0x5a, 0x12, 0x36, 0xaf, 0x61, 0x4f, 0xf2, 0x46, 0x53, 0xce,
-	0x22, 0xc2, 0x16, 0x94, 0xc7, 0x34, 0xf0, 0x28, 0x14, 0xee, 0x6a, 0xcb, 0xb0, 0x7e, 0x88, 0xac,
-	0x85, 0xca, 0x16, 0x0a, 0x27, 0x53, 0x36, 0x3d, 0xa8, 0xf5, 0x67, 0xc3, 0xc8, 0x0d, 0x83, 0x21,
-	0x2d, 0x20, 0x76, 0x41, 0xed, 0x76, 0xc4, 0x8c, 0xa2, 0xa3, 0x76, 0x3b, 0xd8, 0x80, 0x72, 0x87,
-	0x9e, 0x03, 0x97, 0x04, 0x41, 0xc5, 0xc9, 0x32, 0x44, 0xd0, 0x6c, 0x1e, 0xc5, 0x7a, 0x51, 0x54,
-	0x45, 0x9c, 0x2c, 0x70, 0xcb, 0x1f, 0x89, 0xe9, 0x9a, 0xb0, 0xa7, 0x49, 0x82, 0x2b, 0xbd, 0xf2,
-	0x07, 0xdc, 0x11, 0xe0, 0x1d, 0xfb, 0x07, 0xe0, 0x2e, 0xec, 0xaf, 0xbc, 0xf3, 0x7b, 0xe4, 0xd6,
-	0x9b, 0x0a, 0x5b, 0xbd, 0xf4, 0x50, 0xd0, 0x86, 0xca, 0x72, 0x28, 0x1e, 0xca, 0xe6, 0xf5, 0x9d,
-	0x8c, 0xa3, 0x0d, 0xdd, 0x8c, 0xa4, 0x07, 0x55, 0x09, 0x10, 0x4d, 0x59, 0x9d, 0xff, 0x42, 0xc6,
-	0xf1, 0xc6, 0x7e, 0x36, 0xcf, 0x86, 0xca, 0xf2, 0xa0, 0x56, 0xc9, 0xd6, 0x6f, 0x74, 0x95, 0x2c,
-	0x7f, 0x85, 0x17, 0xa0, 0xdd, 0xcc, 0xa2, 0x31, 0x1e, 0xc8, 0xb2, 0xa4, 0xb2, 0xf0, 0xeb, 0xf9,
-	0x46, 0x6a, 0x6d, 0x37, 0xde, 0xe7, 0xa6, 0xf2, 0x31, 0x37, 0x95, 0xcf, 0xb9, 0xa9, 0xbc, 0x7e,
-	0x99, 0x85, 0x07, 0x2d, 0x11, 0xdd, 0x17, 0x86, 0x65, 0xf1, 0xcb, 0x9c, 0x7f, 0x07, 0x00, 0x00,
-	0xff, 0xff, 0x52, 0x9a, 0xdf, 0xf5, 0x73, 0x03, 0x00, 0x00,
+var fileDescriptor_notifer_5431c3b8c580c5b5 = []byte{
+	// 369 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x93, 0xcf, 0x4e, 0xc2, 0x40,
+	0x10, 0xc6, 0xdb, 0x52, 0x30, 0x0c, 0x6a, 0x70, 0x25, 0xda, 0x34, 0xba, 0x1a, 0x4e, 0x9e, 0x6a,
+	0x82, 0x27, 0x3d, 0x12, 0x8c, 0xe5, 0x42, 0x4c, 0xd1, 0xc4, 0x78, 0x83, 0x76, 0x28, 0x8d, 0x61,
+	0x17, 0xdb, 0x62, 0xe2, 0x5b, 0xf8, 0x18, 0x3e, 0x8a, 0x47, 0x8e, 0x1e, 0x0d, 0xbc, 0x88, 0xe9,
+	0xb6, 0xe0, 0x42, 0xc3, 0x45, 0x13, 0x6f, 0xf3, 0xe7, 0xfb, 0x66, 0x7f, 0xd3, 0x4c, 0x61, 0x87,
+	0xf1, 0x38, 0x18, 0x60, 0x68, 0x8d, 0x43, 0x1e, 0x73, 0x02, 0x6e, 0x8f, 0x79, 0xaf, 0xd6, 0x08,
+	0xe3, 0x9e, 0x59, 0xf3, 0xb9, 0xcf, 0x45, 0xf9, 0x3c, 0x89, 0x52, 0x85, 0xb9, 0xed, 0xf2, 0xd1,
+	0x88, 0xb3, 0x34, 0xab, 0x5f, 0x41, 0xd5, 0x41, 0x3f, 0xe0, 0xac, 0x8b, 0xb1, 0x83, 0xcf, 0x13,
+	0x8c, 0x62, 0x52, 0x83, 0x62, 0x13, 0xfd, 0x80, 0x19, 0xea, 0xa9, 0x7a, 0x56, 0x74, 0xd2, 0x84,
+	0x54, 0xa1, 0x70, 0xcd, 0x3c, 0x43, 0x13, 0xb5, 0x24, 0xac, 0xdf, 0xc0, 0x9e, 0xe4, 0x8d, 0xc6,
+	0x9c, 0x45, 0x48, 0x1a, 0x50, 0x1a, 0x62, 0xcf, 0xc3, 0x50, 0xb8, 0x2b, 0x0d, 0xd3, 0xfa, 0x21,
+	0xb2, 0x16, 0x2a, 0x5b, 0x28, 0x9c, 0x4c, 0x59, 0xf7, 0xa0, 0xda, 0x9d, 0xf4, 0x23, 0x37, 0x0c,
+	0xfa, 0xb8, 0x80, 0xd8, 0x05, 0xad, 0xdd, 0x12, 0x33, 0x0a, 0x8e, 0xd6, 0x6e, 0x91, 0x03, 0x28,
+	0xb5, 0xf0, 0x25, 0x70, 0x51, 0x10, 0x94, 0x9d, 0x2c, 0x23, 0x04, 0x74, 0x9b, 0x47, 0xb1, 0x51,
+	0x10, 0x55, 0x11, 0x27, 0x0b, 0xdc, 0xf1, 0x27, 0x64, 0x86, 0x2e, 0xec, 0x69, 0x92, 0xe0, 0x4a,
+	0xaf, 0xfc, 0x01, 0x77, 0x00, 0xe4, 0x9e, 0xfd, 0x03, 0x70, 0x1b, 0xf6, 0x57, 0xde, 0xf9, 0x3d,
+	0x72, 0xe3, 0x5d, 0x83, 0xad, 0x4e, 0x7a, 0x28, 0xc4, 0x86, 0xf2, 0x72, 0x28, 0x39, 0x92, 0xcd,
+	0xeb, 0x3b, 0x99, 0xc7, 0x1b, 0xba, 0x19, 0x49, 0x07, 0x2a, 0x12, 0x20, 0xa1, 0xb2, 0x3a, 0xff,
+	0x85, 0xcc, 0x93, 0x8d, 0xfd, 0x6c, 0x9e, 0x0d, 0xe5, 0xe5, 0x41, 0xad, 0x92, 0xad, 0xdf, 0xe8,
+	0x2a, 0x59, 0xfe, 0x0a, 0x2f, 0x41, 0xbf, 0x9d, 0x44, 0x43, 0x72, 0x28, 0xcb, 0x92, 0xca, 0xc2,
+	0x6f, 0xe4, 0x1b, 0xa9, 0xb5, 0x49, 0x3f, 0x66, 0x54, 0x9d, 0xce, 0xa8, 0xfa, 0x35, 0xa3, 0xea,
+	0xdb, 0x9c, 0x2a, 0xd3, 0x39, 0x55, 0x3e, 0xe7, 0x54, 0x79, 0xd4, 0x13, 0xf1, 0x83, 0xd2, 0x2f,
+	0x89, 0x5f, 0xe7, 0xe2, 0x3b, 0x00, 0x00, 0xff, 0xff, 0xd7, 0x0d, 0xc4, 0x96, 0x7b, 0x03, 0x00,
+	0x00,
 }

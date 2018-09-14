@@ -15,8 +15,7 @@ import (
 )
 
 const (
-	networkTimeout  = time.Second * 3
-	defaultChanSize = 1000
+	networkTimeout = time.Second * 3
 )
 
 // Notifer recv client request.

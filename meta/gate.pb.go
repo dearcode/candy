@@ -7,7 +7,7 @@ import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
-// skipping weak import gogoproto "gogoproto"
+// skipping weak import gogoproto "github.com/gogo/protobuf/gogoproto"
 
 import (
 	context "golang.org/x/net/context"
@@ -21,23 +21,85 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 type GateRecentContactRequest struct {
 }
 
-func (m *GateRecentContactRequest) Reset()                    { *m = GateRecentContactRequest{} }
-func (m *GateRecentContactRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateRecentContactRequest) ProtoMessage()               {}
-func (*GateRecentContactRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{0} }
+func (m *GateRecentContactRequest) Reset()         { *m = GateRecentContactRequest{} }
+func (m *GateRecentContactRequest) String() string { return proto.CompactTextString(m) }
+func (*GateRecentContactRequest) ProtoMessage()    {}
+func (*GateRecentContactRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{0}
+}
+func (m *GateRecentContactRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateRecentContactRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateRecentContactRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateRecentContactRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateRecentContactRequest.Merge(dst, src)
+}
+func (m *GateRecentContactRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateRecentContactRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateRecentContactRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateRecentContactRequest proto.InternalMessageInfo
 
 type GateRecentContactResponse struct {
 	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Contacts []RecentContact `protobuf:"bytes,2,rep,name=Contacts" json:"Contacts"`
 }
 
-func (m *GateRecentContactResponse) Reset()                    { *m = GateRecentContactResponse{} }
-func (m *GateRecentContactResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateRecentContactResponse) ProtoMessage()               {}
-func (*GateRecentContactResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{1} }
+func (m *GateRecentContactResponse) Reset()         { *m = GateRecentContactResponse{} }
+func (m *GateRecentContactResponse) String() string { return proto.CompactTextString(m) }
+func (*GateRecentContactResponse) ProtoMessage()    {}
+func (*GateRecentContactResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{1}
+}
+func (m *GateRecentContactResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateRecentContactResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateRecentContactResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateRecentContactResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateRecentContactResponse.Merge(dst, src)
+}
+func (m *GateRecentContactResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateRecentContactResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateRecentContactResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateRecentContactResponse proto.InternalMessageInfo
 
 func (m *GateRecentContactResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -56,19 +118,75 @@ func (m *GateRecentContactResponse) GetContacts() []RecentContact {
 type HeartbeatRequest struct {
 }
 
-func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
-func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
-func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{2} }
+func (m *HeartbeatRequest) Reset()         { *m = HeartbeatRequest{} }
+func (m *HeartbeatRequest) String() string { return proto.CompactTextString(m) }
+func (*HeartbeatRequest) ProtoMessage()    {}
+func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{2}
+}
+func (m *HeartbeatRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *HeartbeatRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_HeartbeatRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *HeartbeatRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatRequest.Merge(dst, src)
+}
+func (m *HeartbeatRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *HeartbeatRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeartbeatRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeartbeatRequest proto.InternalMessageInfo
 
 type HeartbeatResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *HeartbeatResponse) Reset()                    { *m = HeartbeatResponse{} }
-func (m *HeartbeatResponse) String() string            { return proto.CompactTextString(m) }
-func (*HeartbeatResponse) ProtoMessage()               {}
-func (*HeartbeatResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{3} }
+func (m *HeartbeatResponse) Reset()         { *m = HeartbeatResponse{} }
+func (m *HeartbeatResponse) String() string { return proto.CompactTextString(m) }
+func (*HeartbeatResponse) ProtoMessage()    {}
+func (*HeartbeatResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{3}
+}
+func (m *HeartbeatResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *HeartbeatResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_HeartbeatResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *HeartbeatResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatResponse.Merge(dst, src)
+}
+func (m *HeartbeatResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *HeartbeatResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeartbeatResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeartbeatResponse proto.InternalMessageInfo
 
 func (m *HeartbeatResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -83,10 +201,38 @@ type GateStreamRequest struct {
 	Token int64 `protobuf:"varint,2,opt,name=Token,proto3" json:"Token,omitempty"`
 }
 
-func (m *GateStreamRequest) Reset()                    { *m = GateStreamRequest{} }
-func (m *GateStreamRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateStreamRequest) ProtoMessage()               {}
-func (*GateStreamRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{4} }
+func (m *GateStreamRequest) Reset()         { *m = GateStreamRequest{} }
+func (m *GateStreamRequest) String() string { return proto.CompactTextString(m) }
+func (*GateStreamRequest) ProtoMessage()    {}
+func (*GateStreamRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{4}
+}
+func (m *GateStreamRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateStreamRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateStreamRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateStreamRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateStreamRequest.Merge(dst, src)
+}
+func (m *GateStreamRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateStreamRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateStreamRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateStreamRequest proto.InternalMessageInfo
 
 func (m *GateStreamRequest) GetID() int64 {
 	if m != nil {
@@ -106,10 +252,38 @@ type GateFindUserRequest struct {
 	User string `protobuf:"bytes,1,opt,name=User,proto3" json:"User,omitempty"`
 }
 
-func (m *GateFindUserRequest) Reset()                    { *m = GateFindUserRequest{} }
-func (m *GateFindUserRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateFindUserRequest) ProtoMessage()               {}
-func (*GateFindUserRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{5} }
+func (m *GateFindUserRequest) Reset()         { *m = GateFindUserRequest{} }
+func (m *GateFindUserRequest) String() string { return proto.CompactTextString(m) }
+func (*GateFindUserRequest) ProtoMessage()    {}
+func (*GateFindUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{5}
+}
+func (m *GateFindUserRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateFindUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateFindUserRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateFindUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateFindUserRequest.Merge(dst, src)
+}
+func (m *GateFindUserRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateFindUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateFindUserRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateFindUserRequest proto.InternalMessageInfo
 
 func (m *GateFindUserRequest) GetUser() string {
 	if m != nil {
@@ -123,10 +297,38 @@ type GateFindUserResponse struct {
 	Users  []string        `protobuf:"bytes,2,rep,name=users" json:"users,omitempty"`
 }
 
-func (m *GateFindUserResponse) Reset()                    { *m = GateFindUserResponse{} }
-func (m *GateFindUserResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateFindUserResponse) ProtoMessage()               {}
-func (*GateFindUserResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{6} }
+func (m *GateFindUserResponse) Reset()         { *m = GateFindUserResponse{} }
+func (m *GateFindUserResponse) String() string { return proto.CompactTextString(m) }
+func (*GateFindUserResponse) ProtoMessage()    {}
+func (*GateFindUserResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{6}
+}
+func (m *GateFindUserResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateFindUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateFindUserResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateFindUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateFindUserResponse.Merge(dst, src)
+}
+func (m *GateFindUserResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateFindUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateFindUserResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateFindUserResponse proto.InternalMessageInfo
 
 func (m *GateFindUserResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -148,10 +350,38 @@ type GateFriendRequest struct {
 	Msg     string   `protobuf:"bytes,3,opt,name=Msg,proto3" json:"Msg,omitempty"`
 }
 
-func (m *GateFriendRequest) Reset()                    { *m = GateFriendRequest{} }
-func (m *GateFriendRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateFriendRequest) ProtoMessage()               {}
-func (*GateFriendRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{7} }
+func (m *GateFriendRequest) Reset()         { *m = GateFriendRequest{} }
+func (m *GateFriendRequest) String() string { return proto.CompactTextString(m) }
+func (*GateFriendRequest) ProtoMessage()    {}
+func (*GateFriendRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{7}
+}
+func (m *GateFriendRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateFriendRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateFriendRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateFriendRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateFriendRequest.Merge(dst, src)
+}
+func (m *GateFriendRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateFriendRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateFriendRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateFriendRequest proto.InternalMessageInfo
 
 func (m *GateFriendRequest) GetUserID() int64 {
 	if m != nil {
@@ -178,10 +408,38 @@ type GateFriendResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateFriendResponse) Reset()                    { *m = GateFriendResponse{} }
-func (m *GateFriendResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateFriendResponse) ProtoMessage()               {}
-func (*GateFriendResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{8} }
+func (m *GateFriendResponse) Reset()         { *m = GateFriendResponse{} }
+func (m *GateFriendResponse) String() string { return proto.CompactTextString(m) }
+func (*GateFriendResponse) ProtoMessage()    {}
+func (*GateFriendResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{8}
+}
+func (m *GateFriendResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateFriendResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateFriendResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateFriendResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateFriendResponse.Merge(dst, src)
+}
+func (m *GateFriendResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateFriendResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateFriendResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateFriendResponse proto.InternalMessageInfo
 
 func (m *GateFriendResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -194,10 +452,38 @@ type GateCreateGroupRequest struct {
 	GroupName string `protobuf:"bytes,1,opt,name=GroupName,proto3" json:"GroupName,omitempty"`
 }
 
-func (m *GateCreateGroupRequest) Reset()                    { *m = GateCreateGroupRequest{} }
-func (m *GateCreateGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateCreateGroupRequest) ProtoMessage()               {}
-func (*GateCreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{9} }
+func (m *GateCreateGroupRequest) Reset()         { *m = GateCreateGroupRequest{} }
+func (m *GateCreateGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*GateCreateGroupRequest) ProtoMessage()    {}
+func (*GateCreateGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{9}
+}
+func (m *GateCreateGroupRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateCreateGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateCreateGroupRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateCreateGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateCreateGroupRequest.Merge(dst, src)
+}
+func (m *GateCreateGroupRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateCreateGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateCreateGroupRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateCreateGroupRequest proto.InternalMessageInfo
 
 func (m *GateCreateGroupRequest) GetGroupName() string {
 	if m != nil {
@@ -211,10 +497,38 @@ type GateCreateGroupResponse struct {
 	ID     int64           `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *GateCreateGroupResponse) Reset()                    { *m = GateCreateGroupResponse{} }
-func (m *GateCreateGroupResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateCreateGroupResponse) ProtoMessage()               {}
-func (*GateCreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{10} }
+func (m *GateCreateGroupResponse) Reset()         { *m = GateCreateGroupResponse{} }
+func (m *GateCreateGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*GateCreateGroupResponse) ProtoMessage()    {}
+func (*GateCreateGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{10}
+}
+func (m *GateCreateGroupResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateCreateGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateCreateGroupResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateCreateGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateCreateGroupResponse.Merge(dst, src)
+}
+func (m *GateCreateGroupResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateCreateGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateCreateGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateCreateGroupResponse proto.InternalMessageInfo
 
 func (m *GateCreateGroupResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -235,10 +549,38 @@ type GateRegisterRequest struct {
 	Password string `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"`
 }
 
-func (m *GateRegisterRequest) Reset()                    { *m = GateRegisterRequest{} }
-func (m *GateRegisterRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateRegisterRequest) ProtoMessage()               {}
-func (*GateRegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{11} }
+func (m *GateRegisterRequest) Reset()         { *m = GateRegisterRequest{} }
+func (m *GateRegisterRequest) String() string { return proto.CompactTextString(m) }
+func (*GateRegisterRequest) ProtoMessage()    {}
+func (*GateRegisterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{11}
+}
+func (m *GateRegisterRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateRegisterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateRegisterRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateRegisterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateRegisterRequest.Merge(dst, src)
+}
+func (m *GateRegisterRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateRegisterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateRegisterRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateRegisterRequest proto.InternalMessageInfo
 
 func (m *GateRegisterRequest) GetUser() string {
 	if m != nil {
@@ -259,10 +601,38 @@ type GateRegisterResponse struct {
 	ID     int64           `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *GateRegisterResponse) Reset()                    { *m = GateRegisterResponse{} }
-func (m *GateRegisterResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateRegisterResponse) ProtoMessage()               {}
-func (*GateRegisterResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{12} }
+func (m *GateRegisterResponse) Reset()         { *m = GateRegisterResponse{} }
+func (m *GateRegisterResponse) String() string { return proto.CompactTextString(m) }
+func (*GateRegisterResponse) ProtoMessage()    {}
+func (*GateRegisterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{12}
+}
+func (m *GateRegisterResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateRegisterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateRegisterResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateRegisterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateRegisterResponse.Merge(dst, src)
+}
+func (m *GateRegisterResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateRegisterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateRegisterResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateRegisterResponse proto.InternalMessageInfo
 
 func (m *GateRegisterResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -284,10 +654,38 @@ type GateUpdateUserInfoRequest struct {
 	Avatar   string `protobuf:"bytes,3,opt,name=Avatar,proto3" json:"Avatar,omitempty"`
 }
 
-func (m *GateUpdateUserInfoRequest) Reset()                    { *m = GateUpdateUserInfoRequest{} }
-func (m *GateUpdateUserInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateUpdateUserInfoRequest) ProtoMessage()               {}
-func (*GateUpdateUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{13} }
+func (m *GateUpdateUserInfoRequest) Reset()         { *m = GateUpdateUserInfoRequest{} }
+func (m *GateUpdateUserInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*GateUpdateUserInfoRequest) ProtoMessage()    {}
+func (*GateUpdateUserInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{13}
+}
+func (m *GateUpdateUserInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUpdateUserInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUpdateUserInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUpdateUserInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUpdateUserInfoRequest.Merge(dst, src)
+}
+func (m *GateUpdateUserInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUpdateUserInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUpdateUserInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUpdateUserInfoRequest proto.InternalMessageInfo
 
 func (m *GateUpdateUserInfoRequest) GetName() string {
 	if m != nil {
@@ -314,10 +712,38 @@ type GateUpdateUserInfoResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateUpdateUserInfoResponse) Reset()                    { *m = GateUpdateUserInfoResponse{} }
-func (m *GateUpdateUserInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateUpdateUserInfoResponse) ProtoMessage()               {}
-func (*GateUpdateUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{14} }
+func (m *GateUpdateUserInfoResponse) Reset()         { *m = GateUpdateUserInfoResponse{} }
+func (m *GateUpdateUserInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*GateUpdateUserInfoResponse) ProtoMessage()    {}
+func (*GateUpdateUserInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{14}
+}
+func (m *GateUpdateUserInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUpdateUserInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUpdateUserInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUpdateUserInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUpdateUserInfoResponse.Merge(dst, src)
+}
+func (m *GateUpdateUserInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUpdateUserInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUpdateUserInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUpdateUserInfoResponse proto.InternalMessageInfo
 
 func (m *GateUpdateUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -336,8 +762,34 @@ func (m *GateUpdateUserPasswordRequest) Reset()         { *m = GateUpdateUserPas
 func (m *GateUpdateUserPasswordRequest) String() string { return proto.CompactTextString(m) }
 func (*GateUpdateUserPasswordRequest) ProtoMessage()    {}
 func (*GateUpdateUserPasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptorGate, []int{15}
+	return fileDescriptor_gate_a84e12900aff6dae, []int{15}
 }
+func (m *GateUpdateUserPasswordRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUpdateUserPasswordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUpdateUserPasswordRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUpdateUserPasswordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUpdateUserPasswordRequest.Merge(dst, src)
+}
+func (m *GateUpdateUserPasswordRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUpdateUserPasswordRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUpdateUserPasswordRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUpdateUserPasswordRequest proto.InternalMessageInfo
 
 func (m *GateUpdateUserPasswordRequest) GetName() string {
 	if m != nil {
@@ -368,8 +820,34 @@ func (m *GateUpdateUserPasswordResponse) Reset()         { *m = GateUpdateUserPa
 func (m *GateUpdateUserPasswordResponse) String() string { return proto.CompactTextString(m) }
 func (*GateUpdateUserPasswordResponse) ProtoMessage()    {}
 func (*GateUpdateUserPasswordResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptorGate, []int{16}
+	return fileDescriptor_gate_a84e12900aff6dae, []int{16}
 }
+func (m *GateUpdateUserPasswordResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUpdateUserPasswordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUpdateUserPasswordResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUpdateUserPasswordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUpdateUserPasswordResponse.Merge(dst, src)
+}
+func (m *GateUpdateUserPasswordResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUpdateUserPasswordResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUpdateUserPasswordResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUpdateUserPasswordResponse proto.InternalMessageInfo
 
 func (m *GateUpdateUserPasswordResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -384,10 +862,38 @@ type GateGetUserInfoRequest struct {
 	UserID     int64  `protobuf:"varint,3,opt,name=UserID,proto3" json:"UserID,omitempty"`
 }
 
-func (m *GateGetUserInfoRequest) Reset()                    { *m = GateGetUserInfoRequest{} }
-func (m *GateGetUserInfoRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateGetUserInfoRequest) ProtoMessage()               {}
-func (*GateGetUserInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{17} }
+func (m *GateGetUserInfoRequest) Reset()         { *m = GateGetUserInfoRequest{} }
+func (m *GateGetUserInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*GateGetUserInfoRequest) ProtoMessage()    {}
+func (*GateGetUserInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{17}
+}
+func (m *GateGetUserInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGetUserInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGetUserInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGetUserInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGetUserInfoRequest.Merge(dst, src)
+}
+func (m *GateGetUserInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGetUserInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGetUserInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGetUserInfoRequest proto.InternalMessageInfo
 
 func (m *GateGetUserInfoRequest) GetFindByName() bool {
 	if m != nil {
@@ -419,10 +925,38 @@ type GateGetUserInfoResponse struct {
 	Signature string          `protobuf:"bytes,6,opt,name=Signature,proto3" json:"Signature,omitempty"`
 }
 
-func (m *GateGetUserInfoResponse) Reset()                    { *m = GateGetUserInfoResponse{} }
-func (m *GateGetUserInfoResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateGetUserInfoResponse) ProtoMessage()               {}
-func (*GateGetUserInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{18} }
+func (m *GateGetUserInfoResponse) Reset()         { *m = GateGetUserInfoResponse{} }
+func (m *GateGetUserInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*GateGetUserInfoResponse) ProtoMessage()    {}
+func (*GateGetUserInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{18}
+}
+func (m *GateGetUserInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGetUserInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGetUserInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGetUserInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGetUserInfoResponse.Merge(dst, src)
+}
+func (m *GateGetUserInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGetUserInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGetUserInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGetUserInfoResponse proto.InternalMessageInfo
 
 func (m *GateGetUserInfoResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -473,10 +1007,38 @@ type GateUserLoginRequest struct {
 	Device string `protobuf:"bytes,3,opt,name=Device,proto3" json:"Device,omitempty"`
 }
 
-func (m *GateUserLoginRequest) Reset()                    { *m = GateUserLoginRequest{} }
-func (m *GateUserLoginRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateUserLoginRequest) ProtoMessage()               {}
-func (*GateUserLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{19} }
+func (m *GateUserLoginRequest) Reset()         { *m = GateUserLoginRequest{} }
+func (m *GateUserLoginRequest) String() string { return proto.CompactTextString(m) }
+func (*GateUserLoginRequest) ProtoMessage()    {}
+func (*GateUserLoginRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{19}
+}
+func (m *GateUserLoginRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUserLoginRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUserLoginRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUserLoginRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUserLoginRequest.Merge(dst, src)
+}
+func (m *GateUserLoginRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUserLoginRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUserLoginRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUserLoginRequest proto.InternalMessageInfo
 
 func (m *GateUserLoginRequest) GetUser() string {
 	if m != nil {
@@ -506,10 +1068,38 @@ type GateUserLoginResponse struct {
 	Token  int64           `protobuf:"varint,3,opt,name=Token,proto3" json:"Token,omitempty"`
 }
 
-func (m *GateUserLoginResponse) Reset()                    { *m = GateUserLoginResponse{} }
-func (m *GateUserLoginResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateUserLoginResponse) ProtoMessage()               {}
-func (*GateUserLoginResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{20} }
+func (m *GateUserLoginResponse) Reset()         { *m = GateUserLoginResponse{} }
+func (m *GateUserLoginResponse) String() string { return proto.CompactTextString(m) }
+func (*GateUserLoginResponse) ProtoMessage()    {}
+func (*GateUserLoginResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{20}
+}
+func (m *GateUserLoginResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUserLoginResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUserLoginResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUserLoginResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUserLoginResponse.Merge(dst, src)
+}
+func (m *GateUserLoginResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUserLoginResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUserLoginResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUserLoginResponse proto.InternalMessageInfo
 
 func (m *GateUserLoginResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -538,10 +1128,38 @@ type GateUserLogoutRequest struct {
 	Token int64 `protobuf:"varint,2,opt,name=Token,proto3" json:"Token,omitempty"`
 }
 
-func (m *GateUserLogoutRequest) Reset()                    { *m = GateUserLogoutRequest{} }
-func (m *GateUserLogoutRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateUserLogoutRequest) ProtoMessage()               {}
-func (*GateUserLogoutRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{21} }
+func (m *GateUserLogoutRequest) Reset()         { *m = GateUserLogoutRequest{} }
+func (m *GateUserLogoutRequest) String() string { return proto.CompactTextString(m) }
+func (*GateUserLogoutRequest) ProtoMessage()    {}
+func (*GateUserLogoutRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{21}
+}
+func (m *GateUserLogoutRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUserLogoutRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUserLogoutRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUserLogoutRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUserLogoutRequest.Merge(dst, src)
+}
+func (m *GateUserLogoutRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUserLogoutRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUserLogoutRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUserLogoutRequest proto.InternalMessageInfo
 
 func (m *GateUserLogoutRequest) GetID() int64 {
 	if m != nil {
@@ -561,10 +1179,38 @@ type GateUserLogoutResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateUserLogoutResponse) Reset()                    { *m = GateUserLogoutResponse{} }
-func (m *GateUserLogoutResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateUserLogoutResponse) ProtoMessage()               {}
-func (*GateUserLogoutResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{22} }
+func (m *GateUserLogoutResponse) Reset()         { *m = GateUserLogoutResponse{} }
+func (m *GateUserLogoutResponse) String() string { return proto.CompactTextString(m) }
+func (*GateUserLogoutResponse) ProtoMessage()    {}
+func (*GateUserLogoutResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{22}
+}
+func (m *GateUserLogoutResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUserLogoutResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUserLogoutResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUserLogoutResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUserLogoutResponse.Merge(dst, src)
+}
+func (m *GateUserLogoutResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUserLogoutResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUserLogoutResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUserLogoutResponse proto.InternalMessageInfo
 
 func (m *GateUserLogoutResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -577,10 +1223,38 @@ type GateUploadFileRequest struct {
 	File []byte `protobuf:"bytes,1,opt,name=File,proto3" json:"File,omitempty"`
 }
 
-func (m *GateUploadFileRequest) Reset()                    { *m = GateUploadFileRequest{} }
-func (m *GateUploadFileRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateUploadFileRequest) ProtoMessage()               {}
-func (*GateUploadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{23} }
+func (m *GateUploadFileRequest) Reset()         { *m = GateUploadFileRequest{} }
+func (m *GateUploadFileRequest) String() string { return proto.CompactTextString(m) }
+func (*GateUploadFileRequest) ProtoMessage()    {}
+func (*GateUploadFileRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{23}
+}
+func (m *GateUploadFileRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUploadFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUploadFileRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUploadFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUploadFileRequest.Merge(dst, src)
+}
+func (m *GateUploadFileRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUploadFileRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUploadFileRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUploadFileRequest proto.InternalMessageInfo
 
 func (m *GateUploadFileRequest) GetFile() []byte {
 	if m != nil {
@@ -593,10 +1267,38 @@ type GateUploadFileResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateUploadFileResponse) Reset()                    { *m = GateUploadFileResponse{} }
-func (m *GateUploadFileResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateUploadFileResponse) ProtoMessage()               {}
-func (*GateUploadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{24} }
+func (m *GateUploadFileResponse) Reset()         { *m = GateUploadFileResponse{} }
+func (m *GateUploadFileResponse) String() string { return proto.CompactTextString(m) }
+func (*GateUploadFileResponse) ProtoMessage()    {}
+func (*GateUploadFileResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{24}
+}
+func (m *GateUploadFileResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUploadFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUploadFileResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUploadFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUploadFileResponse.Merge(dst, src)
+}
+func (m *GateUploadFileResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUploadFileResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUploadFileResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUploadFileResponse proto.InternalMessageInfo
 
 func (m *GateUploadFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -609,10 +1311,38 @@ type GateCheckFileRequest struct {
 	Names []string `protobuf:"bytes,1,rep,name=Names" json:"Names,omitempty"`
 }
 
-func (m *GateCheckFileRequest) Reset()                    { *m = GateCheckFileRequest{} }
-func (m *GateCheckFileRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateCheckFileRequest) ProtoMessage()               {}
-func (*GateCheckFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{25} }
+func (m *GateCheckFileRequest) Reset()         { *m = GateCheckFileRequest{} }
+func (m *GateCheckFileRequest) String() string { return proto.CompactTextString(m) }
+func (*GateCheckFileRequest) ProtoMessage()    {}
+func (*GateCheckFileRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{25}
+}
+func (m *GateCheckFileRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateCheckFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateCheckFileRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateCheckFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateCheckFileRequest.Merge(dst, src)
+}
+func (m *GateCheckFileRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateCheckFileRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateCheckFileRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateCheckFileRequest proto.InternalMessageInfo
 
 func (m *GateCheckFileRequest) GetNames() []string {
 	if m != nil {
@@ -626,10 +1356,38 @@ type GateCheckFileResponse struct {
 	Names  []string        `protobuf:"bytes,2,rep,name=Names" json:"Names,omitempty"`
 }
 
-func (m *GateCheckFileResponse) Reset()                    { *m = GateCheckFileResponse{} }
-func (m *GateCheckFileResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateCheckFileResponse) ProtoMessage()               {}
-func (*GateCheckFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{26} }
+func (m *GateCheckFileResponse) Reset()         { *m = GateCheckFileResponse{} }
+func (m *GateCheckFileResponse) String() string { return proto.CompactTextString(m) }
+func (*GateCheckFileResponse) ProtoMessage()    {}
+func (*GateCheckFileResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{26}
+}
+func (m *GateCheckFileResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateCheckFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateCheckFileResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateCheckFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateCheckFileResponse.Merge(dst, src)
+}
+func (m *GateCheckFileResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateCheckFileResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateCheckFileResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateCheckFileResponse proto.InternalMessageInfo
 
 func (m *GateCheckFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -649,10 +1407,38 @@ type GateDownloadFileRequest struct {
 	Names []string `protobuf:"bytes,1,rep,name=Names" json:"Names,omitempty"`
 }
 
-func (m *GateDownloadFileRequest) Reset()                    { *m = GateDownloadFileRequest{} }
-func (m *GateDownloadFileRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateDownloadFileRequest) ProtoMessage()               {}
-func (*GateDownloadFileRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{27} }
+func (m *GateDownloadFileRequest) Reset()         { *m = GateDownloadFileRequest{} }
+func (m *GateDownloadFileRequest) String() string { return proto.CompactTextString(m) }
+func (*GateDownloadFileRequest) ProtoMessage()    {}
+func (*GateDownloadFileRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{27}
+}
+func (m *GateDownloadFileRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateDownloadFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateDownloadFileRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateDownloadFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateDownloadFileRequest.Merge(dst, src)
+}
+func (m *GateDownloadFileRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateDownloadFileRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateDownloadFileRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateDownloadFileRequest proto.InternalMessageInfo
 
 func (m *GateDownloadFileRequest) GetNames() []string {
 	if m != nil {
@@ -666,10 +1452,38 @@ type GateDownloadFileResponse struct {
 	Files  map[string][]byte `protobuf:"bytes,2,rep,name=Files" json:"Files,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *GateDownloadFileResponse) Reset()                    { *m = GateDownloadFileResponse{} }
-func (m *GateDownloadFileResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateDownloadFileResponse) ProtoMessage()               {}
-func (*GateDownloadFileResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{28} }
+func (m *GateDownloadFileResponse) Reset()         { *m = GateDownloadFileResponse{} }
+func (m *GateDownloadFileResponse) String() string { return proto.CompactTextString(m) }
+func (*GateDownloadFileResponse) ProtoMessage()    {}
+func (*GateDownloadFileResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{28}
+}
+func (m *GateDownloadFileResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateDownloadFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateDownloadFileResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateDownloadFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateDownloadFileResponse.Merge(dst, src)
+}
+func (m *GateDownloadFileResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateDownloadFileResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateDownloadFileResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateDownloadFileResponse proto.InternalMessageInfo
 
 func (m *GateDownloadFileResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -690,10 +1504,38 @@ type GateLoadMessageRequest struct {
 	Reverse bool  `protobuf:"varint,2,opt,name=Reverse,proto3" json:"Reverse,omitempty"`
 }
 
-func (m *GateLoadMessageRequest) Reset()                    { *m = GateLoadMessageRequest{} }
-func (m *GateLoadMessageRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateLoadMessageRequest) ProtoMessage()               {}
-func (*GateLoadMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{29} }
+func (m *GateLoadMessageRequest) Reset()         { *m = GateLoadMessageRequest{} }
+func (m *GateLoadMessageRequest) String() string { return proto.CompactTextString(m) }
+func (*GateLoadMessageRequest) ProtoMessage()    {}
+func (*GateLoadMessageRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{29}
+}
+func (m *GateLoadMessageRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateLoadMessageRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateLoadMessageRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateLoadMessageRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateLoadMessageRequest.Merge(dst, src)
+}
+func (m *GateLoadMessageRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateLoadMessageRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateLoadMessageRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateLoadMessageRequest proto.InternalMessageInfo
 
 func (m *GateLoadMessageRequest) GetID() int64 {
 	if m != nil {
@@ -714,10 +1556,38 @@ type GateLoadMessageResponse struct {
 	Msgs   []*PushMessage  `protobuf:"bytes,2,rep,name=Msgs" json:"Msgs,omitempty"`
 }
 
-func (m *GateLoadMessageResponse) Reset()                    { *m = GateLoadMessageResponse{} }
-func (m *GateLoadMessageResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateLoadMessageResponse) ProtoMessage()               {}
-func (*GateLoadMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{30} }
+func (m *GateLoadMessageResponse) Reset()         { *m = GateLoadMessageResponse{} }
+func (m *GateLoadMessageResponse) String() string { return proto.CompactTextString(m) }
+func (*GateLoadMessageResponse) ProtoMessage()    {}
+func (*GateLoadMessageResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{30}
+}
+func (m *GateLoadMessageResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateLoadMessageResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateLoadMessageResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateLoadMessageResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateLoadMessageResponse.Merge(dst, src)
+}
+func (m *GateLoadMessageResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateLoadMessageResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateLoadMessageResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateLoadMessageResponse proto.InternalMessageInfo
 
 func (m *GateLoadMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -736,20 +1606,76 @@ func (m *GateLoadMessageResponse) GetMsgs() []*PushMessage {
 type GateLoadGroupListRequest struct {
 }
 
-func (m *GateLoadGroupListRequest) Reset()                    { *m = GateLoadGroupListRequest{} }
-func (m *GateLoadGroupListRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateLoadGroupListRequest) ProtoMessage()               {}
-func (*GateLoadGroupListRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{31} }
+func (m *GateLoadGroupListRequest) Reset()         { *m = GateLoadGroupListRequest{} }
+func (m *GateLoadGroupListRequest) String() string { return proto.CompactTextString(m) }
+func (*GateLoadGroupListRequest) ProtoMessage()    {}
+func (*GateLoadGroupListRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{31}
+}
+func (m *GateLoadGroupListRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateLoadGroupListRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateLoadGroupListRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateLoadGroupListRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateLoadGroupListRequest.Merge(dst, src)
+}
+func (m *GateLoadGroupListRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateLoadGroupListRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateLoadGroupListRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateLoadGroupListRequest proto.InternalMessageInfo
 
 type GateLoadGroupListResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Groups []*GroupInfo    `protobuf:"bytes,2,rep,name=groups" json:"groups,omitempty"`
 }
 
-func (m *GateLoadGroupListResponse) Reset()                    { *m = GateLoadGroupListResponse{} }
-func (m *GateLoadGroupListResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateLoadGroupListResponse) ProtoMessage()               {}
-func (*GateLoadGroupListResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{32} }
+func (m *GateLoadGroupListResponse) Reset()         { *m = GateLoadGroupListResponse{} }
+func (m *GateLoadGroupListResponse) String() string { return proto.CompactTextString(m) }
+func (*GateLoadGroupListResponse) ProtoMessage()    {}
+func (*GateLoadGroupListResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{32}
+}
+func (m *GateLoadGroupListResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateLoadGroupListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateLoadGroupListResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateLoadGroupListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateLoadGroupListResponse.Merge(dst, src)
+}
+func (m *GateLoadGroupListResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateLoadGroupListResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateLoadGroupListResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateLoadGroupListResponse proto.InternalMessageInfo
 
 func (m *GateLoadGroupListResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -768,20 +1694,76 @@ func (m *GateLoadGroupListResponse) GetGroups() []*GroupInfo {
 type GateLoadFriendListRequest struct {
 }
 
-func (m *GateLoadFriendListRequest) Reset()                    { *m = GateLoadFriendListRequest{} }
-func (m *GateLoadFriendListRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateLoadFriendListRequest) ProtoMessage()               {}
-func (*GateLoadFriendListRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{33} }
+func (m *GateLoadFriendListRequest) Reset()         { *m = GateLoadFriendListRequest{} }
+func (m *GateLoadFriendListRequest) String() string { return proto.CompactTextString(m) }
+func (*GateLoadFriendListRequest) ProtoMessage()    {}
+func (*GateLoadFriendListRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{33}
+}
+func (m *GateLoadFriendListRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateLoadFriendListRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateLoadFriendListRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateLoadFriendListRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateLoadFriendListRequest.Merge(dst, src)
+}
+func (m *GateLoadFriendListRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateLoadFriendListRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateLoadFriendListRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateLoadFriendListRequest proto.InternalMessageInfo
 
 type GateLoadFriendListResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 	Users  []int64         `protobuf:"varint,2,rep,packed,name=users" json:"users,omitempty"`
 }
 
-func (m *GateLoadFriendListResponse) Reset()                    { *m = GateLoadFriendListResponse{} }
-func (m *GateLoadFriendListResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateLoadFriendListResponse) ProtoMessage()               {}
-func (*GateLoadFriendListResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{34} }
+func (m *GateLoadFriendListResponse) Reset()         { *m = GateLoadFriendListResponse{} }
+func (m *GateLoadFriendListResponse) String() string { return proto.CompactTextString(m) }
+func (*GateLoadFriendListResponse) ProtoMessage()    {}
+func (*GateLoadFriendListResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{34}
+}
+func (m *GateLoadFriendListResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateLoadFriendListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateLoadFriendListResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateLoadFriendListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateLoadFriendListResponse.Merge(dst, src)
+}
+func (m *GateLoadFriendListResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateLoadFriendListResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateLoadFriendListResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateLoadFriendListResponse proto.InternalMessageInfo
 
 func (m *GateLoadFriendListResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -801,10 +1783,38 @@ type GateSendMessageRequest struct {
 	Msg *Message `protobuf:"bytes,1,opt,name=Msg" json:"Msg,omitempty"`
 }
 
-func (m *GateSendMessageRequest) Reset()                    { *m = GateSendMessageRequest{} }
-func (m *GateSendMessageRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateSendMessageRequest) ProtoMessage()               {}
-func (*GateSendMessageRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{35} }
+func (m *GateSendMessageRequest) Reset()         { *m = GateSendMessageRequest{} }
+func (m *GateSendMessageRequest) String() string { return proto.CompactTextString(m) }
+func (*GateSendMessageRequest) ProtoMessage()    {}
+func (*GateSendMessageRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{35}
+}
+func (m *GateSendMessageRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateSendMessageRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateSendMessageRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateSendMessageRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateSendMessageRequest.Merge(dst, src)
+}
+func (m *GateSendMessageRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateSendMessageRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateSendMessageRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateSendMessageRequest proto.InternalMessageInfo
 
 func (m *GateSendMessageRequest) GetMsg() *Message {
 	if m != nil {
@@ -818,10 +1828,38 @@ type GateSendMessageResponse struct {
 	ID     int64           `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *GateSendMessageResponse) Reset()                    { *m = GateSendMessageResponse{} }
-func (m *GateSendMessageResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateSendMessageResponse) ProtoMessage()               {}
-func (*GateSendMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{36} }
+func (m *GateSendMessageResponse) Reset()         { *m = GateSendMessageResponse{} }
+func (m *GateSendMessageResponse) String() string { return proto.CompactTextString(m) }
+func (*GateSendMessageResponse) ProtoMessage()    {}
+func (*GateSendMessageResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{36}
+}
+func (m *GateSendMessageResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateSendMessageResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateSendMessageResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateSendMessageResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateSendMessageResponse.Merge(dst, src)
+}
+func (m *GateSendMessageResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateSendMessageResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateSendMessageResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateSendMessageResponse proto.InternalMessageInfo
 
 func (m *GateSendMessageResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -862,10 +1900,38 @@ type GateGroupRequest struct {
 	User    int64    `protobuf:"varint,4,opt,name=User,proto3" json:"User,omitempty"`
 }
 
-func (m *GateGroupRequest) Reset()                    { *m = GateGroupRequest{} }
-func (m *GateGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateGroupRequest) ProtoMessage()               {}
-func (*GateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{37} }
+func (m *GateGroupRequest) Reset()         { *m = GateGroupRequest{} }
+func (m *GateGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*GateGroupRequest) ProtoMessage()    {}
+func (*GateGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{37}
+}
+func (m *GateGroupRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGroupRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGroupRequest.Merge(dst, src)
+}
+func (m *GateGroupRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGroupRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGroupRequest proto.InternalMessageInfo
 
 func (m *GateGroupRequest) GetID() int64 {
 	if m != nil {
@@ -899,10 +1965,38 @@ type GateGroupResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateGroupResponse) Reset()                    { *m = GateGroupResponse{} }
-func (m *GateGroupResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateGroupResponse) ProtoMessage()               {}
-func (*GateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{38} }
+func (m *GateGroupResponse) Reset()         { *m = GateGroupResponse{} }
+func (m *GateGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*GateGroupResponse) ProtoMessage()    {}
+func (*GateGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{38}
+}
+func (m *GateGroupResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGroupResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGroupResponse.Merge(dst, src)
+}
+func (m *GateGroupResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGroupResponse proto.InternalMessageInfo
 
 func (m *GateGroupResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -916,10 +2010,38 @@ type GateGroupCreateRequest struct {
 	Name string `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
 }
 
-func (m *GateGroupCreateRequest) Reset()                    { *m = GateGroupCreateRequest{} }
-func (m *GateGroupCreateRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateGroupCreateRequest) ProtoMessage()               {}
-func (*GateGroupCreateRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{39} }
+func (m *GateGroupCreateRequest) Reset()         { *m = GateGroupCreateRequest{} }
+func (m *GateGroupCreateRequest) String() string { return proto.CompactTextString(m) }
+func (*GateGroupCreateRequest) ProtoMessage()    {}
+func (*GateGroupCreateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{39}
+}
+func (m *GateGroupCreateRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGroupCreateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGroupCreateRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGroupCreateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGroupCreateRequest.Merge(dst, src)
+}
+func (m *GateGroupCreateRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGroupCreateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGroupCreateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGroupCreateRequest proto.InternalMessageInfo
 
 func (m *GateGroupCreateRequest) GetName() string {
 	if m != nil {
@@ -933,10 +2055,38 @@ type GateGroupCreateResponse struct {
 	ID     int64           `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *GateGroupCreateResponse) Reset()                    { *m = GateGroupCreateResponse{} }
-func (m *GateGroupCreateResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateGroupCreateResponse) ProtoMessage()               {}
-func (*GateGroupCreateResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{40} }
+func (m *GateGroupCreateResponse) Reset()         { *m = GateGroupCreateResponse{} }
+func (m *GateGroupCreateResponse) String() string { return proto.CompactTextString(m) }
+func (*GateGroupCreateResponse) ProtoMessage()    {}
+func (*GateGroupCreateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{40}
+}
+func (m *GateGroupCreateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGroupCreateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGroupCreateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGroupCreateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGroupCreateResponse.Merge(dst, src)
+}
+func (m *GateGroupCreateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGroupCreateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGroupCreateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGroupCreateResponse proto.InternalMessageInfo
 
 func (m *GateGroupCreateResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -957,10 +2107,38 @@ type GateGroupDeleteRequest struct {
 	ID int64 `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
 }
 
-func (m *GateGroupDeleteRequest) Reset()                    { *m = GateGroupDeleteRequest{} }
-func (m *GateGroupDeleteRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateGroupDeleteRequest) ProtoMessage()               {}
-func (*GateGroupDeleteRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{41} }
+func (m *GateGroupDeleteRequest) Reset()         { *m = GateGroupDeleteRequest{} }
+func (m *GateGroupDeleteRequest) String() string { return proto.CompactTextString(m) }
+func (*GateGroupDeleteRequest) ProtoMessage()    {}
+func (*GateGroupDeleteRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{41}
+}
+func (m *GateGroupDeleteRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGroupDeleteRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGroupDeleteRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGroupDeleteRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGroupDeleteRequest.Merge(dst, src)
+}
+func (m *GateGroupDeleteRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGroupDeleteRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGroupDeleteRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGroupDeleteRequest proto.InternalMessageInfo
 
 func (m *GateGroupDeleteRequest) GetID() int64 {
 	if m != nil {
@@ -973,10 +2151,38 @@ type GateGroupDeleteResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateGroupDeleteResponse) Reset()                    { *m = GateGroupDeleteResponse{} }
-func (m *GateGroupDeleteResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateGroupDeleteResponse) ProtoMessage()               {}
-func (*GateGroupDeleteResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{42} }
+func (m *GateGroupDeleteResponse) Reset()         { *m = GateGroupDeleteResponse{} }
+func (m *GateGroupDeleteResponse) String() string { return proto.CompactTextString(m) }
+func (*GateGroupDeleteResponse) ProtoMessage()    {}
+func (*GateGroupDeleteResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{42}
+}
+func (m *GateGroupDeleteResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateGroupDeleteResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateGroupDeleteResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateGroupDeleteResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateGroupDeleteResponse.Merge(dst, src)
+}
+func (m *GateGroupDeleteResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateGroupDeleteResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateGroupDeleteResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateGroupDeleteResponse proto.InternalMessageInfo
 
 func (m *GateGroupDeleteResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -991,10 +2197,38 @@ type GateUpdateSignatureRequest struct {
 	Signature string `protobuf:"bytes,2,opt,name=Signature,proto3" json:"Signature,omitempty"`
 }
 
-func (m *GateUpdateSignatureRequest) Reset()                    { *m = GateUpdateSignatureRequest{} }
-func (m *GateUpdateSignatureRequest) String() string            { return proto.CompactTextString(m) }
-func (*GateUpdateSignatureRequest) ProtoMessage()               {}
-func (*GateUpdateSignatureRequest) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{43} }
+func (m *GateUpdateSignatureRequest) Reset()         { *m = GateUpdateSignatureRequest{} }
+func (m *GateUpdateSignatureRequest) String() string { return proto.CompactTextString(m) }
+func (*GateUpdateSignatureRequest) ProtoMessage()    {}
+func (*GateUpdateSignatureRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{43}
+}
+func (m *GateUpdateSignatureRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUpdateSignatureRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUpdateSignatureRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUpdateSignatureRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUpdateSignatureRequest.Merge(dst, src)
+}
+func (m *GateUpdateSignatureRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUpdateSignatureRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUpdateSignatureRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUpdateSignatureRequest proto.InternalMessageInfo
 
 func (m *GateUpdateSignatureRequest) GetName() string {
 	if m != nil {
@@ -1014,10 +2248,38 @@ type GateUpdateSignatureResponse struct {
 	Header *ResponseHeader `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`
 }
 
-func (m *GateUpdateSignatureResponse) Reset()                    { *m = GateUpdateSignatureResponse{} }
-func (m *GateUpdateSignatureResponse) String() string            { return proto.CompactTextString(m) }
-func (*GateUpdateSignatureResponse) ProtoMessage()               {}
-func (*GateUpdateSignatureResponse) Descriptor() ([]byte, []int) { return fileDescriptorGate, []int{44} }
+func (m *GateUpdateSignatureResponse) Reset()         { *m = GateUpdateSignatureResponse{} }
+func (m *GateUpdateSignatureResponse) String() string { return proto.CompactTextString(m) }
+func (*GateUpdateSignatureResponse) ProtoMessage()    {}
+func (*GateUpdateSignatureResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_gate_a84e12900aff6dae, []int{44}
+}
+func (m *GateUpdateSignatureResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GateUpdateSignatureResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GateUpdateSignatureResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *GateUpdateSignatureResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GateUpdateSignatureResponse.Merge(dst, src)
+}
+func (m *GateUpdateSignatureResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GateUpdateSignatureResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GateUpdateSignatureResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GateUpdateSignatureResponse proto.InternalMessageInfo
 
 func (m *GateUpdateSignatureResponse) GetHeader() *ResponseHeader {
 	if m != nil {
@@ -1056,6 +2318,7 @@ func init() {
 	proto.RegisterType((*GateCheckFileResponse)(nil), "candy.meta.GateCheckFileResponse")
 	proto.RegisterType((*GateDownloadFileRequest)(nil), "candy.meta.GateDownloadFileRequest")
 	proto.RegisterType((*GateDownloadFileResponse)(nil), "candy.meta.GateDownloadFileResponse")
+	proto.RegisterMapType((map[string][]byte)(nil), "candy.meta.GateDownloadFileResponse.FilesEntry")
 	proto.RegisterType((*GateLoadMessageRequest)(nil), "candy.meta.GateLoadMessageRequest")
 	proto.RegisterType((*GateLoadMessageResponse)(nil), "candy.meta.GateLoadMessageResponse")
 	proto.RegisterType((*GateLoadGroupListRequest)(nil), "candy.meta.GateLoadGroupListRequest")
@@ -1082,8 +2345,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for Gate service
-
+// GateClient is the client API for Gate service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type GateClient interface {
 	Register(ctx context.Context, in *GateRegisterRequest, opts ...grpc.CallOption) (*GateRegisterResponse, error)
 	// UpdateUserInfo 更新用户信息
@@ -1141,7 +2405,7 @@ func NewGateClient(cc *grpc.ClientConn) GateClient {
 
 func (c *gateClient) Register(ctx context.Context, in *GateRegisterRequest, opts ...grpc.CallOption) (*GateRegisterResponse, error) {
 	out := new(GateRegisterResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/Register", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1150,7 +2414,7 @@ func (c *gateClient) Register(ctx context.Context, in *GateRegisterRequest, opts
 
 func (c *gateClient) UpdateUserInfo(ctx context.Context, in *GateUpdateUserInfoRequest, opts ...grpc.CallOption) (*GateUpdateUserInfoResponse, error) {
 	out := new(GateUpdateUserInfoResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/UpdateUserInfo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/UpdateUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1159,7 +2423,7 @@ func (c *gateClient) UpdateUserInfo(ctx context.Context, in *GateUpdateUserInfoR
 
 func (c *gateClient) UpdateSignature(ctx context.Context, in *GateUpdateSignatureRequest, opts ...grpc.CallOption) (*GateUpdateSignatureResponse, error) {
 	out := new(GateUpdateSignatureResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/UpdateSignature", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/UpdateSignature", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1168,7 +2432,7 @@ func (c *gateClient) UpdateSignature(ctx context.Context, in *GateUpdateSignatur
 
 func (c *gateClient) UpdateUserPassword(ctx context.Context, in *GateUpdateUserPasswordRequest, opts ...grpc.CallOption) (*GateUpdateUserPasswordResponse, error) {
 	out := new(GateUpdateUserPasswordResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/UpdateUserPassword", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/UpdateUserPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1177,7 +2441,7 @@ func (c *gateClient) UpdateUserPassword(ctx context.Context, in *GateUpdateUserP
 
 func (c *gateClient) GetUserInfo(ctx context.Context, in *GateGetUserInfoRequest, opts ...grpc.CallOption) (*GateGetUserInfoResponse, error) {
 	out := new(GateGetUserInfoResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/GetUserInfo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/GetUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1186,7 +2450,7 @@ func (c *gateClient) GetUserInfo(ctx context.Context, in *GateGetUserInfoRequest
 
 func (c *gateClient) Login(ctx context.Context, in *GateUserLoginRequest, opts ...grpc.CallOption) (*GateUserLoginResponse, error) {
 	out := new(GateUserLoginResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/Login", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1195,7 +2459,7 @@ func (c *gateClient) Login(ctx context.Context, in *GateUserLoginRequest, opts .
 
 func (c *gateClient) Logout(ctx context.Context, in *GateUserLogoutRequest, opts ...grpc.CallOption) (*GateUserLogoutResponse, error) {
 	out := new(GateUserLogoutResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/Logout", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/Logout", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1204,7 +2468,7 @@ func (c *gateClient) Logout(ctx context.Context, in *GateUserLogoutRequest, opts
 
 func (c *gateClient) FindUser(ctx context.Context, in *GateFindUserRequest, opts ...grpc.CallOption) (*GateFindUserResponse, error) {
 	out := new(GateFindUserResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/FindUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/FindUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1213,7 +2477,7 @@ func (c *gateClient) FindUser(ctx context.Context, in *GateFindUserRequest, opts
 
 func (c *gateClient) SendMessage(ctx context.Context, in *GateSendMessageRequest, opts ...grpc.CallOption) (*GateSendMessageResponse, error) {
 	out := new(GateSendMessageResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/SendMessage", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/SendMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1221,7 +2485,7 @@ func (c *gateClient) SendMessage(ctx context.Context, in *GateSendMessageRequest
 }
 
 func (c *gateClient) Stream(ctx context.Context, in *GateStreamRequest, opts ...grpc.CallOption) (Gate_StreamClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_Gate_serviceDesc.Streams[0], c.cc, "/candy.meta.Gate/Stream", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Gate_serviceDesc.Streams[0], "/candy.meta.Gate/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1254,7 +2518,7 @@ func (x *gateStreamClient) Recv() (*PushMessage, error) {
 
 func (c *gateClient) Friend(ctx context.Context, in *GateFriendRequest, opts ...grpc.CallOption) (*GateFriendResponse, error) {
 	out := new(GateFriendResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/Friend", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/Friend", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1263,7 +2527,7 @@ func (c *gateClient) Friend(ctx context.Context, in *GateFriendRequest, opts ...
 
 func (c *gateClient) LoadFriendList(ctx context.Context, in *GateLoadFriendListRequest, opts ...grpc.CallOption) (*GateLoadFriendListResponse, error) {
 	out := new(GateLoadFriendListResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/LoadFriendList", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/LoadFriendList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1272,7 +2536,7 @@ func (c *gateClient) LoadFriendList(ctx context.Context, in *GateLoadFriendListR
 
 func (c *gateClient) Group(ctx context.Context, in *GateGroupRequest, opts ...grpc.CallOption) (*GateGroupResponse, error) {
 	out := new(GateGroupResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/Group", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/Group", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1281,7 +2545,7 @@ func (c *gateClient) Group(ctx context.Context, in *GateGroupRequest, opts ...gr
 
 func (c *gateClient) GroupCreate(ctx context.Context, in *GateGroupCreateRequest, opts ...grpc.CallOption) (*GateGroupCreateResponse, error) {
 	out := new(GateGroupCreateResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/GroupCreate", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/GroupCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1290,7 +2554,7 @@ func (c *gateClient) GroupCreate(ctx context.Context, in *GateGroupCreateRequest
 
 func (c *gateClient) GroupDelete(ctx context.Context, in *GateGroupDeleteRequest, opts ...grpc.CallOption) (*GateGroupDeleteResponse, error) {
 	out := new(GateGroupDeleteResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/GroupDelete", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/GroupDelete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1299,7 +2563,7 @@ func (c *gateClient) GroupDelete(ctx context.Context, in *GateGroupDeleteRequest
 
 func (c *gateClient) LoadGroupList(ctx context.Context, in *GateLoadGroupListRequest, opts ...grpc.CallOption) (*GateLoadGroupListResponse, error) {
 	out := new(GateLoadGroupListResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/LoadGroupList", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/LoadGroupList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1308,7 +2572,7 @@ func (c *gateClient) LoadGroupList(ctx context.Context, in *GateLoadGroupListReq
 
 func (c *gateClient) LoadRecentContact(ctx context.Context, in *GateRecentContactRequest, opts ...grpc.CallOption) (*GateRecentContactResponse, error) {
 	out := new(GateRecentContactResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/LoadRecentContact", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/LoadRecentContact", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1317,7 +2581,7 @@ func (c *gateClient) LoadRecentContact(ctx context.Context, in *GateRecentContac
 
 func (c *gateClient) UploadFile(ctx context.Context, in *GateUploadFileRequest, opts ...grpc.CallOption) (*GateUploadFileResponse, error) {
 	out := new(GateUploadFileResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/UploadFile", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/UploadFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1326,7 +2590,7 @@ func (c *gateClient) UploadFile(ctx context.Context, in *GateUploadFileRequest, 
 
 func (c *gateClient) CheckFile(ctx context.Context, in *GateCheckFileRequest, opts ...grpc.CallOption) (*GateCheckFileResponse, error) {
 	out := new(GateCheckFileResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/CheckFile", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/CheckFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1335,7 +2599,7 @@ func (c *gateClient) CheckFile(ctx context.Context, in *GateCheckFileRequest, op
 
 func (c *gateClient) DownloadFile(ctx context.Context, in *GateDownloadFileRequest, opts ...grpc.CallOption) (*GateDownloadFileResponse, error) {
 	out := new(GateDownloadFileResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/DownloadFile", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/DownloadFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1344,7 +2608,7 @@ func (c *gateClient) DownloadFile(ctx context.Context, in *GateDownloadFileReque
 
 func (c *gateClient) LoadMessage(ctx context.Context, in *GateLoadMessageRequest, opts ...grpc.CallOption) (*GateLoadMessageResponse, error) {
 	out := new(GateLoadMessageResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/LoadMessage", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/LoadMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1353,7 +2617,7 @@ func (c *gateClient) LoadMessage(ctx context.Context, in *GateLoadMessageRequest
 
 func (c *gateClient) Push(ctx context.Context, in *PushRequest, opts ...grpc.CallOption) (*PushResponse, error) {
 	out := new(PushResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/Push", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/Push", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1362,15 +2626,14 @@ func (c *gateClient) Push(ctx context.Context, in *PushRequest, opts ...grpc.Cal
 
 func (c *gateClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error) {
 	out := new(HeartbeatResponse)
-	err := grpc.Invoke(ctx, "/candy.meta.Gate/Heartbeat", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/candy.meta.Gate/Heartbeat", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for Gate service
-
+// GateServer is the server API for Gate service.
 type GateServer interface {
 	Register(context.Context, *GateRegisterRequest) (*GateRegisterResponse, error)
 	// UpdateUserInfo 更新用户信息
@@ -3378,24 +4641,6 @@ func (m *GateUpdateSignatureResponse) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func encodeFixed64Gate(dAtA []byte, offset int, v uint64) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	dAtA[offset+4] = uint8(v >> 32)
-	dAtA[offset+5] = uint8(v >> 40)
-	dAtA[offset+6] = uint8(v >> 48)
-	dAtA[offset+7] = uint8(v >> 56)
-	return offset + 8
-}
-func encodeFixed32Gate(dAtA []byte, offset int, v uint32) int {
-	dAtA[offset] = uint8(v)
-	dAtA[offset+1] = uint8(v >> 8)
-	dAtA[offset+2] = uint8(v >> 16)
-	dAtA[offset+3] = uint8(v >> 24)
-	return offset + 4
-}
 func encodeVarintGate(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -3406,12 +4651,18 @@ func encodeVarintGate(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *GateRecentContactRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	return n
 }
 
 func (m *GateRecentContactResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3428,12 +4679,18 @@ func (m *GateRecentContactResponse) Size() (n int) {
 }
 
 func (m *HeartbeatRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	return n
 }
 
 func (m *HeartbeatResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3444,6 +4701,9 @@ func (m *HeartbeatResponse) Size() (n int) {
 }
 
 func (m *GateStreamRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -3456,6 +4716,9 @@ func (m *GateStreamRequest) Size() (n int) {
 }
 
 func (m *GateFindUserRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.User)
@@ -3466,6 +4729,9 @@ func (m *GateFindUserRequest) Size() (n int) {
 }
 
 func (m *GateFindUserResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3482,6 +4748,9 @@ func (m *GateFindUserResponse) Size() (n int) {
 }
 
 func (m *GateFriendRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.UserID != 0 {
@@ -3498,6 +4767,9 @@ func (m *GateFriendRequest) Size() (n int) {
 }
 
 func (m *GateFriendResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3508,6 +4780,9 @@ func (m *GateFriendResponse) Size() (n int) {
 }
 
 func (m *GateCreateGroupRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.GroupName)
@@ -3518,6 +4793,9 @@ func (m *GateCreateGroupRequest) Size() (n int) {
 }
 
 func (m *GateCreateGroupResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3531,6 +4809,9 @@ func (m *GateCreateGroupResponse) Size() (n int) {
 }
 
 func (m *GateRegisterRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.User)
@@ -3545,6 +4826,9 @@ func (m *GateRegisterRequest) Size() (n int) {
 }
 
 func (m *GateRegisterResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3558,6 +4842,9 @@ func (m *GateRegisterResponse) Size() (n int) {
 }
 
 func (m *GateUpdateUserInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -3576,6 +4863,9 @@ func (m *GateUpdateUserInfoRequest) Size() (n int) {
 }
 
 func (m *GateUpdateUserInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3586,6 +4876,9 @@ func (m *GateUpdateUserInfoResponse) Size() (n int) {
 }
 
 func (m *GateUpdateUserPasswordRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -3604,6 +4897,9 @@ func (m *GateUpdateUserPasswordRequest) Size() (n int) {
 }
 
 func (m *GateUpdateUserPasswordResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3614,6 +4910,9 @@ func (m *GateUpdateUserPasswordResponse) Size() (n int) {
 }
 
 func (m *GateGetUserInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.FindByName {
@@ -3630,6 +4929,9 @@ func (m *GateGetUserInfoRequest) Size() (n int) {
 }
 
 func (m *GateGetUserInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3659,6 +4961,9 @@ func (m *GateGetUserInfoResponse) Size() (n int) {
 }
 
 func (m *GateUserLoginRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.User)
@@ -3677,6 +4982,9 @@ func (m *GateUserLoginRequest) Size() (n int) {
 }
 
 func (m *GateUserLoginResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3693,6 +5001,9 @@ func (m *GateUserLoginResponse) Size() (n int) {
 }
 
 func (m *GateUserLogoutRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -3705,6 +5016,9 @@ func (m *GateUserLogoutRequest) Size() (n int) {
 }
 
 func (m *GateUserLogoutResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3715,6 +5029,9 @@ func (m *GateUserLogoutResponse) Size() (n int) {
 }
 
 func (m *GateUploadFileRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.File)
@@ -3725,6 +5042,9 @@ func (m *GateUploadFileRequest) Size() (n int) {
 }
 
 func (m *GateUploadFileResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3735,6 +5055,9 @@ func (m *GateUploadFileResponse) Size() (n int) {
 }
 
 func (m *GateCheckFileRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Names) > 0 {
@@ -3747,6 +5070,9 @@ func (m *GateCheckFileRequest) Size() (n int) {
 }
 
 func (m *GateCheckFileResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3763,6 +5089,9 @@ func (m *GateCheckFileResponse) Size() (n int) {
 }
 
 func (m *GateDownloadFileRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Names) > 0 {
@@ -3775,6 +5104,9 @@ func (m *GateDownloadFileRequest) Size() (n int) {
 }
 
 func (m *GateDownloadFileResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3797,6 +5129,9 @@ func (m *GateDownloadFileResponse) Size() (n int) {
 }
 
 func (m *GateLoadMessageRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -3809,6 +5144,9 @@ func (m *GateLoadMessageRequest) Size() (n int) {
 }
 
 func (m *GateLoadMessageResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3825,12 +5163,18 @@ func (m *GateLoadMessageResponse) Size() (n int) {
 }
 
 func (m *GateLoadGroupListRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	return n
 }
 
 func (m *GateLoadGroupListResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3847,12 +5191,18 @@ func (m *GateLoadGroupListResponse) Size() (n int) {
 }
 
 func (m *GateLoadFriendListRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	return n
 }
 
 func (m *GateLoadFriendListResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3870,6 +5220,9 @@ func (m *GateLoadFriendListResponse) Size() (n int) {
 }
 
 func (m *GateSendMessageRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Msg != nil {
@@ -3880,6 +5233,9 @@ func (m *GateSendMessageRequest) Size() (n int) {
 }
 
 func (m *GateSendMessageResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3893,6 +5249,9 @@ func (m *GateSendMessageResponse) Size() (n int) {
 }
 
 func (m *GateGroupRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -3912,6 +5271,9 @@ func (m *GateGroupRequest) Size() (n int) {
 }
 
 func (m *GateGroupResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3922,6 +5284,9 @@ func (m *GateGroupResponse) Size() (n int) {
 }
 
 func (m *GateGroupCreateRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -3932,6 +5297,9 @@ func (m *GateGroupCreateRequest) Size() (n int) {
 }
 
 func (m *GateGroupCreateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3945,6 +5313,9 @@ func (m *GateGroupCreateResponse) Size() (n int) {
 }
 
 func (m *GateGroupDeleteRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ID != 0 {
@@ -3954,6 +5325,9 @@ func (m *GateGroupDeleteRequest) Size() (n int) {
 }
 
 func (m *GateGroupDeleteResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -3964,6 +5338,9 @@ func (m *GateGroupDeleteResponse) Size() (n int) {
 }
 
 func (m *GateUpdateSignatureRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -3978,6 +5355,9 @@ func (m *GateUpdateSignatureRequest) Size() (n int) {
 }
 
 func (m *GateUpdateSignatureResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Header != nil {
@@ -8603,96 +9983,96 @@ var (
 	ErrIntOverflowGate   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("gate.proto", fileDescriptorGate) }
+func init() { proto.RegisterFile("gate.proto", fileDescriptor_gate_a84e12900aff6dae) }
 
-var fileDescriptorGate = []byte{
-	// 1400 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x58, 0xdb, 0x6e, 0x1b, 0xc5,
-	0x1b, 0xaf, 0x8f, 0xb5, 0xbf, 0xe4, 0xdf, 0xc3, 0xd4, 0x6d, 0xdd, 0x6d, 0xeb, 0xe6, 0x3f, 0x6d,
-	0x20, 0xa5, 0xc5, 0x41, 0x41, 0x42, 0x2d, 0x08, 0x21, 0x12, 0x27, 0x76, 0xa5, 0x38, 0x0d, 0x9b,
-	0xb6, 0x82, 0x8a, 0x43, 0x37, 0xf6, 0xd4, 0xb1, 0x62, 0xef, 0x3a, 0xbb, 0xeb, 0x84, 0x70, 0xc1,
-	0x13, 0x70, 0xc1, 0x63, 0xf0, 0x1e, 0xdc, 0xf4, 0x0e, 0x9e, 0x00, 0xa1, 0xf0, 0x22, 0x68, 0x66,
-	0x76, 0xd6, 0xb3, 0x33, 0xbb, 0x4e, 0xc8, 0xfa, 0xc6, 0xf2, 0x37, 0xf3, 0x9d, 0xe6, 0x3b, 0xcc,
-	0xf7, 0xdb, 0x01, 0xe8, 0x59, 0x3e, 0xa9, 0x8f, 0x5c, 0xc7, 0x77, 0x10, 0x74, 0x2c, 0xbb, 0x7b,
-	0x5c, 0x1f, 0x12, 0xdf, 0x32, 0x2a, 0x3d, 0xa7, 0xe7, 0xb0, 0xe5, 0x65, 0xfa, 0x8f, 0x73, 0x18,
-	0xf3, 0x1d, 0x67, 0x38, 0x74, 0x6c, 0x4e, 0x61, 0x03, 0xaa, 0x4d, 0xcb, 0x27, 0x26, 0xe9, 0x10,
-	0xdb, 0x5f, 0x73, 0x6c, 0xdf, 0xea, 0xf8, 0x26, 0x39, 0x18, 0x13, 0xcf, 0xc7, 0xbf, 0x64, 0xe0,
-	0x56, 0xcc, 0xa6, 0x37, 0x72, 0x6c, 0x8f, 0xa0, 0x15, 0x28, 0xee, 0x11, 0xab, 0x4b, 0xdc, 0x6a,
-	0x66, 0x21, 0xb3, 0x34, 0xb7, 0x62, 0xd4, 0x27, 0xa6, 0xeb, 0x82, 0xab, 0xc5, 0x38, 0xcc, 0x80,
-	0x13, 0x7d, 0x06, 0xa5, 0x40, 0x8d, 0x57, 0xcd, 0x2e, 0xe4, 0x96, 0xe6, 0x56, 0x6e, 0x45, 0xa5,
-	0x24, 0x43, 0xab, 0xf9, 0x77, 0x7f, 0xdd, 0xbb, 0x60, 0x86, 0x02, 0x18, 0xc1, 0x95, 0x16, 0xb1,
-	0x5c, 0x7f, 0x97, 0x58, 0xa1, 0x8b, 0x4d, 0xb8, 0x2a, 0xad, 0x9d, 0xdf, 0x33, 0xfc, 0x14, 0xae,
-	0xd2, 0xa3, 0xee, 0xf8, 0x2e, 0xb1, 0x86, 0x81, 0x76, 0x74, 0x09, 0xb2, 0xcf, 0x1a, 0x4c, 0x49,
-	0xce, 0xcc, 0x3e, 0x6b, 0xa0, 0x0a, 0x14, 0x5e, 0x38, 0xfb, 0xc4, 0xae, 0x66, 0xd9, 0x12, 0x27,
-	0xf0, 0x43, 0xb8, 0x46, 0x45, 0x37, 0xfa, 0x76, 0xf7, 0xa5, 0x47, 0x5c, 0x21, 0x8c, 0x20, 0x4f,
-	0x49, 0x26, 0x5e, 0x36, 0xd9, 0x7f, 0xfc, 0x06, 0x2a, 0x51, 0xd6, 0x14, 0xb1, 0xac, 0x40, 0x61,
-	0xec, 0x11, 0x97, 0x07, 0xb2, 0x6c, 0x72, 0x02, 0x0f, 0xf9, 0x39, 0x36, 0xdc, 0x3e, 0xb1, 0xbb,
-	0xc2, 0x95, 0x1b, 0x50, 0xa4, 0xe6, 0xc2, 0xb3, 0x04, 0x14, 0xaa, 0xc3, 0xc5, 0xe7, 0x23, 0xe2,
-	0x5a, 0x3e, 0x61, 0x27, 0xba, 0xb4, 0x52, 0x89, 0xda, 0x1d, 0x58, 0x7e, 0xdf, 0xb1, 0x4d, 0xc1,
-	0x84, 0xae, 0x40, 0xae, 0xed, 0xf5, 0xaa, 0x39, 0x76, 0x22, 0xfa, 0x17, 0xb7, 0x00, 0xc9, 0xe6,
-	0x52, 0x24, 0xe0, 0x13, 0xb8, 0x41, 0x35, 0xad, 0xb9, 0xc4, 0xf2, 0x49, 0xd3, 0x75, 0xc6, 0x23,
-	0xe1, 0xfd, 0x1d, 0x28, 0x33, 0x7a, 0xcb, 0x1a, 0x92, 0x20, 0x9a, 0x93, 0x05, 0xfc, 0x1d, 0xdc,
-	0xd4, 0xe4, 0x52, 0x44, 0x95, 0xa7, 0x3c, 0x2b, 0x52, 0x8e, 0xd7, 0x79, 0x72, 0x4d, 0xd2, 0xeb,
-	0x7b, 0xfe, 0xd4, 0xe4, 0x22, 0x03, 0x4a, 0xdb, 0x96, 0xe7, 0x1d, 0x39, 0x6e, 0x97, 0x29, 0x28,
-	0x9b, 0x21, 0x8d, 0x5f, 0xf3, 0xc4, 0x4f, 0xd4, 0xcc, 0xd0, 0xc5, 0x0e, 0xef, 0xd2, 0x97, 0xa3,
-	0x2e, 0xfd, 0xa5, 0x99, 0xb5, 0xdf, 0x3a, 0x92, 0xa3, 0x52, 0xdc, 0xd8, 0x7f, 0xea, 0xe8, 0x56,
-	0xbf, 0xb3, 0xcf, 0xd6, 0x03, 0x47, 0x05, 0x4d, 0x4b, 0xe5, 0xcb, 0x43, 0xcb, 0xb7, 0xdc, 0x20,
-	0xcb, 0x01, 0x85, 0xb7, 0xc1, 0x88, 0x33, 0x92, 0x22, 0xe1, 0x07, 0x70, 0x37, 0xaa, 0x51, 0x04,
-	0xeb, 0x14, 0xd7, 0x93, 0x62, 0x8c, 0x16, 0x60, 0x6e, 0x8b, 0x1c, 0x85, 0xdb, 0xdc, 0x7f, 0x79,
-	0x09, 0xbf, 0x80, 0x5a, 0x92, 0xc9, 0x14, 0x07, 0x19, 0xf0, 0xca, 0x6d, 0x12, 0x5f, 0x0d, 0x7e,
-	0x0d, 0x80, 0xb6, 0xfa, 0xea, 0x71, 0x78, 0x8e, 0x92, 0x29, 0xad, 0xd0, 0xd3, 0x50, 0x11, 0x39,
-	0x11, 0x82, 0x96, 0x7a, 0x36, 0x27, 0xf7, 0x2c, 0xfe, 0x3d, 0xc3, 0x0b, 0x3e, 0x62, 0x6e, 0x76,
-	0xd5, 0x14, 0x56, 0x76, 0x2e, 0x5a, 0xd9, 0x61, 0xc1, 0xe4, 0x13, 0x0b, 0xa6, 0x20, 0x17, 0x0c,
-	0xed, 0xda, 0x9d, 0x7e, 0xcf, 0xb6, 0xfc, 0xb1, 0x4b, 0xaa, 0x45, 0xde, 0xb5, 0xe1, 0x02, 0xfe,
-	0x9e, 0xf7, 0x03, 0xd5, 0xbe, 0xe9, 0xf4, 0xfa, 0xf6, 0x39, 0xfb, 0x8a, 0x5a, 0x6f, 0x90, 0xc3,
-	0x7e, 0x87, 0x88, 0x72, 0xe5, 0x14, 0x3e, 0x80, 0xeb, 0x8a, 0xfe, 0x19, 0x86, 0x28, 0x1c, 0x03,
-	0x39, 0x79, 0x0c, 0x7c, 0x1e, 0x31, 0xe9, 0x8c, 0xfd, 0xff, 0x36, 0x45, 0x36, 0x79, 0x15, 0xc9,
-	0xe2, 0x29, 0x6a, 0xf2, 0x51, 0xe0, 0xcc, 0x68, 0xe0, 0x58, 0xdd, 0x8d, 0xfe, 0x80, 0x48, 0x01,
-	0xa6, 0x24, 0x53, 0x35, 0x6f, 0xb2, 0xff, 0xa1, 0x69, 0x89, 0x39, 0x85, 0xe9, 0xc7, 0x3c, 0xb5,
-	0x6b, 0x7b, 0xa4, 0xb3, 0x2f, 0x5b, 0xae, 0x40, 0x81, 0x16, 0x8c, 0x57, 0xcd, 0xf0, 0x79, 0xc5,
-	0x08, 0x6c, 0x71, 0x47, 0x25, 0xee, 0x89, 0xe9, 0xd6, 0x99, 0x4d, 0xb7, 0xc2, 0x91, 0xc8, 0x4d,
-	0x64, 0x65, 0x13, 0xcb, 0xbc, 0x61, 0x1a, 0xce, 0x91, 0xad, 0x46, 0x23, 0xde, 0xa7, 0x3f, 0x32,
-	0x1c, 0x14, 0x45, 0x25, 0x52, 0x14, 0xd0, 0x3a, 0x14, 0xa8, 0x0e, 0x81, 0x79, 0x96, 0x65, 0x91,
-	0x24, 0x43, 0x75, 0x26, 0xb1, 0x6e, 0xfb, 0xee, 0xb1, 0xc9, 0xa5, 0x8d, 0x27, 0xf4, 0x3a, 0x11,
-	0x8b, 0x74, 0x18, 0xef, 0x93, 0xe3, 0xa0, 0x53, 0xe8, 0x5f, 0x7a, 0x9a, 0x43, 0x6b, 0x30, 0xe6,
-	0x77, 0xc9, 0xbc, 0xc9, 0x89, 0x4f, 0xb3, 0x4f, 0x32, 0x78, 0x95, 0x67, 0x78, 0xd3, 0xb1, 0xba,
-	0x6d, 0xe2, 0x79, 0x56, 0x8f, 0x24, 0x15, 0x67, 0x15, 0x2e, 0x9a, 0xe4, 0x90, 0xb8, 0x1e, 0xd7,
-	0x52, 0x32, 0x05, 0x89, 0x7f, 0xe2, 0x61, 0x8c, 0xe8, 0x48, 0x11, 0x93, 0x47, 0x90, 0x6f, 0x7b,
-	0x3d, 0x11, 0x92, 0x9b, 0xb2, 0xc4, 0xf6, 0xd8, 0xdb, 0x13, 0x26, 0x18, 0x93, 0x40, 0xa9, 0xd4,
-	0x36, 0x1b, 0xf1, 0x9b, 0x7d, 0x2f, 0x84, 0x80, 0x3f, 0xf3, 0xf1, 0xa7, 0xec, 0xa5, 0xf0, 0xec,
-	0x43, 0x28, 0xf6, 0xa8, 0x22, 0xe1, 0xdb, 0xf5, 0x48, 0xba, 0xe8, 0x0e, 0xbb, 0x74, 0x03, 0x26,
-	0x7c, 0x7b, 0x62, 0x9f, 0xc3, 0x20, 0xd9, 0xb9, 0xb7, 0x7c, 0x6c, 0xaa, 0x9b, 0xb3, 0x82, 0x7d,
-	0x39, 0x01, 0xfb, 0xbe, 0xe0, 0x09, 0xde, 0x21, 0xb6, 0x9a, 0xe0, 0x45, 0x8e, 0xd9, 0xb8, 0x81,
-	0x6b, 0xb2, 0x01, 0xc1, 0xc8, 0x80, 0x5c, 0x00, 0xa3, 0x22, 0x0a, 0x66, 0x88, 0x51, 0x7e, 0x84,
-	0x2b, 0x4d, 0x15, 0xd7, 0xa9, 0xa5, 0x97, 0x1a, 0x8d, 0x86, 0xd3, 0x23, 0xcf, 0x74, 0x72, 0xc8,
-	0xdd, 0xe4, 0x80, 0x38, 0x35, 0x32, 0xc4, 0x8f, 0x83, 0x31, 0x4f, 0x15, 0x71, 0xb4, 0x39, 0x05,
-	0xa8, 0x88, 0x78, 0x46, 0xb8, 0x67, 0x18, 0xcf, 0x25, 0xc9, 0x99, 0x06, 0x19, 0x10, 0x5f, 0x69,
-	0xe8, 0x09, 0x67, 0x5b, 0x72, 0x44, 0x70, 0xa6, 0x88, 0xc2, 0x96, 0x8c, 0x03, 0xc3, 0x79, 0x3e,
-	0x0d, 0xb2, 0x45, 0x80, 0x40, 0x56, 0x05, 0x02, 0x5f, 0xc1, 0xed, 0x58, 0x7d, 0xe7, 0x77, 0x71,
-	0xe5, 0xb7, 0xcb, 0x90, 0xa7, 0x3a, 0x51, 0x1b, 0x4a, 0x02, 0x70, 0xa3, 0x7b, 0xea, 0x9d, 0xab,
-	0x20, 0x7a, 0x63, 0x21, 0x99, 0x21, 0xf0, 0xe5, 0x07, 0xb8, 0x14, 0x85, 0xbf, 0x68, 0x51, 0x95,
-	0x89, 0xc5, 0xe0, 0xc6, 0x7b, 0xa7, 0xb1, 0x05, 0x06, 0x76, 0xe1, 0xb2, 0x12, 0x07, 0x94, 0x20,
-	0xaa, 0x06, 0xde, 0x78, 0xff, 0x54, 0xbe, 0xc0, 0xc6, 0x3e, 0x20, 0x1d, 0xfe, 0xa2, 0x87, 0xc9,
-	0x1e, 0x2a, 0xa8, 0xdc, 0xf8, 0xe0, 0x2c, 0xac, 0x81, 0xb1, 0x57, 0x30, 0x27, 0xc1, 0x54, 0x84,
-	0x55, 0x51, 0x1d, 0x32, 0x1b, 0xf7, 0xa7, 0xf2, 0x04, 0x7a, 0x37, 0xa1, 0xc0, 0x50, 0x1d, 0xd2,
-	0x92, 0xa6, 0x02, 0x4a, 0xe3, 0xff, 0x53, 0x38, 0x02, 0x6d, 0xcf, 0xa1, 0xc8, 0x11, 0x17, 0x4a,
-	0x62, 0x9e, 0x80, 0x39, 0x03, 0x4f, 0x63, 0x09, 0x14, 0xb6, 0xa1, 0x24, 0xbe, 0xf0, 0xf5, 0xba,
-	0x53, 0x9e, 0x09, 0xf4, 0xba, 0xd3, 0x1e, 0x07, 0x5e, 0xc1, 0x9c, 0x74, 0x2d, 0xeb, 0x51, 0xd4,
-	0x2f, 0x7d, 0x3d, 0x8a, 0x71, 0xf7, 0xfa, 0x2a, 0x14, 0xf9, 0x73, 0x07, 0xba, 0xab, 0xb1, 0xcb,
-	0xcf, 0x20, 0x46, 0xd2, 0x70, 0xfe, 0x28, 0x83, 0x9a, 0x50, 0xe4, 0x73, 0x4d, 0xd7, 0x11, 0x79,
-	0x82, 0x30, 0x6a, 0x49, 0xdb, 0x93, 0xe6, 0x8a, 0x0e, 0x49, 0xbd, 0xb9, 0x62, 0x27, 0xac, 0xde,
-	0x5c, 0x09, 0xb3, 0xb6, 0x01, 0x05, 0x76, 0x07, 0xa2, 0x3b, 0x5a, 0x85, 0x49, 0x43, 0xc9, 0xb8,
-	0x9b, 0xb0, 0x2b, 0x55, 0xf4, 0xe4, 0x4a, 0x8f, 0xa9, 0x68, 0x6d, 0x3a, 0xc4, 0x54, 0x74, 0xcc,
-	0x4c, 0x10, 0x7a, 0xf9, 0x0d, 0x9d, 0xa0, 0x37, 0x72, 0xd1, 0x27, 0xe8, 0x55, 0xae, 0xf8, 0x6f,
-	0xe1, 0x7f, 0x11, 0x60, 0x84, 0x1e, 0xc4, 0x85, 0x4b, 0xc5, 0x54, 0xc6, 0xe2, 0x29, 0x5c, 0x81,
-	0xf6, 0x37, 0x70, 0x95, 0x6e, 0x44, 0x9e, 0xed, 0x74, 0x0b, 0x71, 0x6f, 0x8b, 0xba, 0x85, 0xf8,
-	0x47, 0xc6, 0x1d, 0x80, 0xc9, 0x67, 0x49, 0x4c, 0x7f, 0xaa, 0xdf, 0x37, 0x31, 0xfd, 0xa9, 0x7f,
-	0xd5, 0x6c, 0x43, 0x39, 0xfc, 0xde, 0xd0, 0xaf, 0x10, 0xf5, 0xc3, 0x45, 0xbf, 0x42, 0xf4, 0x8f,
-	0x95, 0x6f, 0x60, 0x5e, 0xc6, 0xf0, 0xe8, 0xfe, 0x74, 0x84, 0xcf, 0xf5, 0x3e, 0x38, 0xcb, 0x67,
-	0x00, 0xad, 0x0c, 0x09, 0x72, 0xeb, 0x95, 0xa1, 0x63, 0x7a, 0xbd, 0x32, 0xe2, 0x30, 0xfb, 0x53,
-	0xc8, 0xd3, 0x56, 0x46, 0x5a, 0x73, 0x0b, 0x2d, 0x55, 0x7d, 0x23, 0x10, 0x6d, 0x41, 0x39, 0x7c,
-	0x74, 0x8d, 0xb6, 0x93, 0xfa, 0x3e, 0x1b, 0x6d, 0x27, 0xed, 0xa5, 0x76, 0xf5, 0xc6, 0xbb, 0x93,
-	0x5a, 0xe6, 0xcf, 0x93, 0x5a, 0xe6, 0xef, 0x93, 0x5a, 0xe6, 0xd7, 0x7f, 0x6a, 0x17, 0x5e, 0xe7,
-	0x29, 0xe7, 0xd7, 0x17, 0x76, 0x8b, 0xec, 0x79, 0xfa, 0xe3, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff,
-	0xf3, 0x8c, 0xf2, 0x07, 0xdc, 0x16, 0x00, 0x00,
+var fileDescriptor_gate_a84e12900aff6dae = []byte{
+	// 1408 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x58, 0xdd, 0x52, 0xdb, 0x46,
+	0x14, 0xc6, 0xbf, 0xb1, 0x0f, 0x94, 0xc0, 0xc6, 0x49, 0x1c, 0x25, 0x38, 0x54, 0x09, 0x2d, 0x69,
+	0x52, 0xd3, 0xa1, 0x33, 0x9d, 0xa4, 0x9d, 0x4e, 0xa7, 0x60, 0xb0, 0x33, 0x83, 0x09, 0x15, 0x49,
+	0xa6, 0xcd, 0xf4, 0x27, 0xc2, 0xde, 0x18, 0x0f, 0xb6, 0x64, 0x24, 0x19, 0x4a, 0x2f, 0xfa, 0x04,
+	0xbd, 0xe8, 0x63, 0xf4, 0x3d, 0x7a, 0x93, 0xbb, 0xe6, 0xb2, 0x57, 0x9d, 0x0e, 0xbc, 0x48, 0x67,
+	0x77, 0xb5, 0xf2, 0x6a, 0x57, 0x32, 0x14, 0xf9, 0xc6, 0xe3, 0xb3, 0x7b, 0xfe, 0xf6, 0xfc, 0xec,
+	0xf9, 0xb4, 0x00, 0x1d, 0xd3, 0xc3, 0xd5, 0x81, 0x63, 0x7b, 0x36, 0x82, 0x96, 0x69, 0xb5, 0x4f,
+	0xaa, 0x7d, 0xec, 0x99, 0x5a, 0xa9, 0x63, 0x77, 0x6c, 0xba, 0xbc, 0x42, 0xfe, 0x31, 0x0e, 0x6d,
+	0xa6, 0x65, 0xf7, 0xfb, 0xb6, 0xc5, 0x28, 0x5d, 0x83, 0x72, 0xdd, 0xf4, 0xb0, 0x81, 0x5b, 0xd8,
+	0xf2, 0xd6, 0x6d, 0xcb, 0x33, 0x5b, 0x9e, 0x81, 0x0f, 0x87, 0xd8, 0xf5, 0xf4, 0xdf, 0x52, 0x70,
+	0x2b, 0x62, 0xd3, 0x1d, 0xd8, 0x96, 0x8b, 0xd1, 0x2a, 0xe4, 0xf7, 0xb1, 0xd9, 0xc6, 0x4e, 0x39,
+	0xb5, 0x98, 0x5a, 0x9e, 0x5e, 0xd5, 0xaa, 0x23, 0xd3, 0x55, 0xce, 0xd5, 0xa0, 0x1c, 0x86, 0xcf,
+	0x89, 0xbe, 0x80, 0x82, 0xaf, 0xc6, 0x2d, 0xa7, 0x17, 0x33, 0xcb, 0xd3, 0xab, 0xb7, 0xc2, 0x52,
+	0x82, 0xa1, 0xb5, 0xec, 0xdb, 0x7f, 0xee, 0x4e, 0x19, 0x81, 0x80, 0x8e, 0x60, 0xae, 0x81, 0x4d,
+	0xc7, 0xdb, 0xc3, 0x66, 0xe0, 0x62, 0x1d, 0xe6, 0x85, 0xb5, 0xcb, 0x7b, 0xa6, 0x3f, 0x81, 0x79,
+	0x72, 0xd4, 0x5d, 0xcf, 0xc1, 0x66, 0xdf, 0xd7, 0x8e, 0x66, 0x21, 0xfd, 0xb4, 0x46, 0x95, 0x64,
+	0x8c, 0xf4, 0xd3, 0x1a, 0x2a, 0x41, 0xee, 0xb9, 0x7d, 0x80, 0xad, 0x72, 0x9a, 0x2e, 0x31, 0x42,
+	0x7f, 0x00, 0xd7, 0x88, 0xe8, 0x66, 0xd7, 0x6a, 0xbf, 0x70, 0xb1, 0xc3, 0x85, 0x11, 0x64, 0x09,
+	0x49, 0xc5, 0x8b, 0x06, 0xfd, 0xaf, 0xbf, 0x86, 0x52, 0x98, 0x35, 0x41, 0x2c, 0x4b, 0x90, 0x1b,
+	0xba, 0xd8, 0x61, 0x81, 0x2c, 0x1a, 0x8c, 0xd0, 0xfb, 0xec, 0x1c, 0x9b, 0x4e, 0x17, 0x5b, 0x6d,
+	0xee, 0xca, 0x0d, 0xc8, 0x13, 0x73, 0xc1, 0x59, 0x7c, 0x0a, 0x55, 0xe1, 0xca, 0xb3, 0x01, 0x76,
+	0x4c, 0x0f, 0xd3, 0x13, 0xcd, 0xae, 0x96, 0xc2, 0x76, 0x7b, 0xa6, 0xd7, 0xb5, 0x2d, 0x83, 0x33,
+	0xa1, 0x39, 0xc8, 0x34, 0xdd, 0x4e, 0x39, 0x43, 0x4f, 0x44, 0xfe, 0xea, 0x0d, 0x40, 0xa2, 0xb9,
+	0x04, 0x09, 0xf8, 0x0c, 0x6e, 0x10, 0x4d, 0xeb, 0x0e, 0x36, 0x3d, 0x5c, 0x77, 0xec, 0xe1, 0x80,
+	0x7b, 0x7f, 0x07, 0x8a, 0x94, 0xde, 0x36, 0xfb, 0xd8, 0x8f, 0xe6, 0x68, 0x41, 0xff, 0x01, 0x6e,
+	0x2a, 0x72, 0x09, 0xa2, 0xca, 0x52, 0x9e, 0xe6, 0x29, 0xd7, 0x37, 0x58, 0x72, 0x0d, 0xdc, 0xe9,
+	0xba, 0xde, 0xd8, 0xe4, 0x22, 0x0d, 0x0a, 0x3b, 0xa6, 0xeb, 0x1e, 0xdb, 0x4e, 0x9b, 0x2a, 0x28,
+	0x1a, 0x01, 0xad, 0xbf, 0x62, 0x89, 0x1f, 0xa9, 0x99, 0xa0, 0x8b, 0x2d, 0xd6, 0xa5, 0x2f, 0x06,
+	0x6d, 0xf2, 0x4b, 0x32, 0x6b, 0xbd, 0xb1, 0x05, 0x47, 0x85, 0xb8, 0xd1, 0xff, 0xc4, 0xd1, 0xed,
+	0x6e, 0xeb, 0x80, 0xae, 0xfb, 0x8e, 0x72, 0x9a, 0x94, 0xca, 0xd7, 0x47, 0xa6, 0x67, 0x3a, 0x7e,
+	0x96, 0x7d, 0x4a, 0xdf, 0x01, 0x2d, 0xca, 0x48, 0x82, 0x84, 0x1f, 0xc2, 0x42, 0x58, 0x23, 0x0f,
+	0xd6, 0x39, 0xae, 0xc7, 0xc5, 0x18, 0x2d, 0xc2, 0xf4, 0x36, 0x3e, 0x0e, 0xb6, 0x99, 0xff, 0xe2,
+	0x92, 0xfe, 0x1c, 0x2a, 0x71, 0x26, 0x13, 0x1c, 0xa4, 0xc7, 0x2a, 0xb7, 0x8e, 0x3d, 0x39, 0xf8,
+	0x15, 0x00, 0xd2, 0xea, 0x6b, 0x27, 0xc1, 0x39, 0x0a, 0x86, 0xb0, 0x42, 0x4e, 0x43, 0x44, 0xc4,
+	0x44, 0x70, 0x5a, 0xe8, 0xd9, 0x8c, 0xd8, 0xb3, 0xfa, 0x9f, 0x29, 0x56, 0xf0, 0x21, 0x73, 0x93,
+	0xab, 0xa6, 0xa0, 0xb2, 0x33, 0xe1, 0xca, 0x0e, 0x0a, 0x26, 0x1b, 0x5b, 0x30, 0x39, 0xb1, 0x60,
+	0x48, 0xd7, 0xee, 0x76, 0x3b, 0x96, 0xe9, 0x0d, 0x1d, 0x5c, 0xce, 0xb3, 0xae, 0x0d, 0x16, 0xf4,
+	0x1f, 0x59, 0x3f, 0x10, 0xed, 0x5b, 0x76, 0xa7, 0x6b, 0x5d, 0xb2, 0xaf, 0x88, 0xf5, 0x1a, 0x3e,
+	0xea, 0xb6, 0x30, 0x2f, 0x57, 0x46, 0xe9, 0x87, 0x70, 0x5d, 0xd2, 0x3f, 0xc1, 0x10, 0x05, 0x63,
+	0x20, 0x23, 0x8e, 0x81, 0x2f, 0x43, 0x26, 0xed, 0xa1, 0xf7, 0xff, 0xa6, 0xc8, 0x16, 0xab, 0x22,
+	0x51, 0x3c, 0x41, 0x4d, 0x3e, 0xf4, 0x9d, 0x19, 0xf4, 0x6c, 0xb3, 0xbd, 0xd9, 0xed, 0x61, 0x21,
+	0xc0, 0x84, 0xa4, 0xaa, 0x66, 0x0c, 0xfa, 0x3f, 0x30, 0x2d, 0x30, 0x27, 0x30, 0xfd, 0x88, 0xa5,
+	0x76, 0x7d, 0x1f, 0xb7, 0x0e, 0x44, 0xcb, 0x25, 0xc8, 0x91, 0x82, 0x71, 0xcb, 0x29, 0x36, 0xaf,
+	0x28, 0xa1, 0x9b, 0xcc, 0x51, 0x81, 0x7b, 0x64, 0xba, 0x71, 0x61, 0xd3, 0x8d, 0x60, 0x24, 0x32,
+	0x13, 0x69, 0xd1, 0xc4, 0x0a, 0x6b, 0x98, 0x9a, 0x7d, 0x6c, 0xc9, 0xd1, 0x88, 0xf6, 0xe9, 0xaf,
+	0x14, 0x03, 0x45, 0x61, 0x89, 0x04, 0x05, 0xb4, 0x01, 0x39, 0xa2, 0x83, 0x63, 0x9e, 0x15, 0x51,
+	0x24, 0xce, 0x50, 0x95, 0x4a, 0x6c, 0x58, 0x9e, 0x73, 0x62, 0x30, 0x69, 0xed, 0x31, 0xb9, 0x4e,
+	0xf8, 0x22, 0x19, 0xc6, 0x07, 0xf8, 0xc4, 0xef, 0x14, 0xf2, 0x97, 0x9c, 0xe6, 0xc8, 0xec, 0x0d,
+	0xd9, 0x5d, 0x32, 0x63, 0x30, 0xe2, 0xf3, 0xf4, 0xe3, 0x94, 0xbe, 0xc6, 0x32, 0xbc, 0x65, 0x9b,
+	0xed, 0x26, 0x76, 0x5d, 0xb3, 0x83, 0xe3, 0x8a, 0xb3, 0x0c, 0x57, 0x0c, 0x7c, 0x84, 0x1d, 0x97,
+	0x69, 0x29, 0x18, 0x9c, 0xd4, 0x7f, 0x61, 0x61, 0x0c, 0xe9, 0x48, 0x10, 0x93, 0x87, 0x90, 0x6d,
+	0xba, 0x1d, 0x1e, 0x92, 0x9b, 0xa2, 0xc4, 0xce, 0xd0, 0xdd, 0xe7, 0x26, 0x28, 0x13, 0x47, 0xa9,
+	0xc4, 0x36, 0x1d, 0xf1, 0x5b, 0x5d, 0x37, 0x80, 0x80, 0xbf, 0xb2, 0xf1, 0x27, 0xed, 0x25, 0xf0,
+	0xec, 0x63, 0xc8, 0x77, 0x88, 0x22, 0xee, 0xdb, 0xf5, 0x50, 0xba, 0xc8, 0x0e, 0xbd, 0x74, 0x7d,
+	0x26, 0xfd, 0xf6, 0xc8, 0x3e, 0x83, 0x41, 0xa2, 0x73, 0x6f, 0xd8, 0xd8, 0x94, 0x37, 0x27, 0x05,
+	0xfb, 0x32, 0x1c, 0xf6, 0x7d, 0xc5, 0x12, 0xbc, 0x8b, 0x2d, 0x39, 0xc1, 0x4b, 0x0c, 0xb3, 0x31,
+	0x03, 0xd7, 0x44, 0x03, 0x9c, 0x91, 0x02, 0x39, 0x1f, 0x46, 0x85, 0x14, 0x4c, 0x10, 0xa3, 0xfc,
+	0x0c, 0x73, 0x75, 0x19, 0xd7, 0xc9, 0xa5, 0x97, 0x18, 0x8d, 0x06, 0xd3, 0x23, 0x4b, 0x75, 0x32,
+	0xc8, 0x5d, 0x67, 0x80, 0x38, 0x31, 0x32, 0xd4, 0x1f, 0xf9, 0x63, 0x9e, 0x28, 0x62, 0x68, 0x73,
+	0x0c, 0x50, 0xe1, 0xf1, 0x0c, 0x71, 0x4f, 0x30, 0x9e, 0xcb, 0x82, 0x33, 0x35, 0xdc, 0xc3, 0x9e,
+	0xd4, 0xd0, 0x23, 0xce, 0xa6, 0xe0, 0x08, 0xe7, 0x4c, 0x10, 0x85, 0x6d, 0x11, 0x07, 0x06, 0xf3,
+	0x7c, 0x1c, 0x64, 0x0b, 0x01, 0x81, 0xb4, 0x0c, 0x04, 0xbe, 0x81, 0xdb, 0x91, 0xfa, 0x2e, 0xef,
+	0xe2, 0xea, 0x1f, 0x57, 0x21, 0x4b, 0x74, 0xa2, 0x26, 0x14, 0x38, 0xe0, 0x46, 0x77, 0xe5, 0x3b,
+	0x57, 0x42, 0xf4, 0xda, 0x62, 0x3c, 0x83, 0xef, 0xcb, 0x4f, 0x30, 0x1b, 0x86, 0xbf, 0x68, 0x49,
+	0x96, 0x89, 0xc4, 0xe0, 0xda, 0x07, 0xe7, 0xb1, 0xf9, 0x06, 0xf6, 0xe0, 0xaa, 0x14, 0x07, 0x14,
+	0x23, 0x2a, 0x07, 0x5e, 0xfb, 0xf0, 0x5c, 0x3e, 0xdf, 0xc6, 0x01, 0x20, 0x15, 0xfe, 0xa2, 0x07,
+	0xf1, 0x1e, 0x4a, 0xa8, 0x5c, 0xfb, 0xe8, 0x22, 0xac, 0xbe, 0xb1, 0x97, 0x30, 0x2d, 0xc0, 0x54,
+	0xa4, 0xcb, 0xa2, 0x2a, 0x64, 0xd6, 0xee, 0x8d, 0xe5, 0xf1, 0xf5, 0x6e, 0x41, 0x8e, 0xa2, 0x3a,
+	0xa4, 0x24, 0x4d, 0x06, 0x94, 0xda, 0xfb, 0x63, 0x38, 0x7c, 0x6d, 0xcf, 0x20, 0xcf, 0x10, 0x17,
+	0x8a, 0x63, 0x1e, 0x81, 0x39, 0x4d, 0x1f, 0xc7, 0xe2, 0x2b, 0x6c, 0x42, 0x81, 0x7f, 0xe1, 0xab,
+	0x75, 0x27, 0x3d, 0x13, 0xa8, 0x75, 0xa7, 0x3c, 0x0e, 0xbc, 0x84, 0x69, 0xe1, 0x5a, 0x56, 0xa3,
+	0xa8, 0x5e, 0xfa, 0x6a, 0x14, 0xa3, 0xee, 0xf5, 0x35, 0xc8, 0xb3, 0xe7, 0x0e, 0xb4, 0xa0, 0xb0,
+	0x8b, 0xcf, 0x20, 0x5a, 0xdc, 0x70, 0xfe, 0x24, 0x85, 0xea, 0x90, 0x67, 0x73, 0x4d, 0xd5, 0x11,
+	0x7a, 0x82, 0xd0, 0x2a, 0x71, 0xdb, 0xa3, 0xe6, 0x0a, 0x0f, 0x49, 0xb5, 0xb9, 0x22, 0x27, 0xac,
+	0xda, 0x5c, 0x31, 0xb3, 0xb6, 0x06, 0x39, 0x7a, 0x07, 0xa2, 0x3b, 0x4a, 0x85, 0x09, 0x43, 0x49,
+	0x5b, 0x88, 0xd9, 0x15, 0x2a, 0x7a, 0x74, 0xa5, 0x47, 0x54, 0xb4, 0x32, 0x1d, 0x22, 0x2a, 0x3a,
+	0x62, 0x26, 0x70, 0xbd, 0xec, 0x86, 0x8e, 0xd1, 0x1b, 0xba, 0xe8, 0x63, 0xf4, 0x4a, 0x57, 0xfc,
+	0xf7, 0xf0, 0x5e, 0x08, 0x18, 0xa1, 0xfb, 0x51, 0xe1, 0x92, 0x31, 0x95, 0xb6, 0x74, 0x0e, 0x97,
+	0xaf, 0xfd, 0x35, 0xcc, 0x93, 0x8d, 0xd0, 0xb3, 0x9d, 0x6a, 0x21, 0xea, 0x6d, 0x51, 0xb5, 0x10,
+	0xfd, 0xc8, 0xb8, 0x0b, 0x30, 0xfa, 0x2c, 0x89, 0xe8, 0x4f, 0xf9, 0xfb, 0x26, 0xa2, 0x3f, 0xd5,
+	0xaf, 0x9a, 0x1d, 0x28, 0x06, 0xdf, 0x1b, 0xea, 0x15, 0x22, 0x7f, 0xb8, 0xa8, 0x57, 0x88, 0xfa,
+	0xb1, 0xf2, 0x1d, 0xcc, 0x88, 0x18, 0x1e, 0xdd, 0x1b, 0x8f, 0xf0, 0x99, 0xde, 0xfb, 0x17, 0xf9,
+	0x0c, 0x20, 0x95, 0x21, 0x40, 0x6e, 0xb5, 0x32, 0x54, 0x4c, 0xaf, 0x56, 0x46, 0x14, 0x66, 0x7f,
+	0x02, 0x59, 0xd2, 0xca, 0x48, 0x69, 0x6e, 0xae, 0xa5, 0xac, 0x6e, 0xf8, 0xa2, 0x0d, 0x28, 0x06,
+	0x8f, 0xae, 0xe1, 0x76, 0x92, 0xdf, 0x67, 0xc3, 0xed, 0xa4, 0xbc, 0xd4, 0xae, 0x55, 0xde, 0x9e,
+	0x56, 0x52, 0xef, 0x4e, 0x2b, 0xa9, 0x7f, 0x4f, 0x2b, 0xa9, 0xdf, 0xcf, 0x2a, 0x53, 0xef, 0xce,
+	0x2a, 0x53, 0x7f, 0x9f, 0x55, 0xa6, 0x5e, 0x65, 0x89, 0xc4, 0xb7, 0x53, 0x7b, 0x79, 0xfa, 0x4c,
+	0xfd, 0xe9, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xe4, 0x56, 0xeb, 0x7d, 0xe4, 0x16, 0x00, 0x00,
 }

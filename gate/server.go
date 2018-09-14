@@ -1,10 +1,10 @@
 package gate
 
 import (
+	"context"
 	"net"
 
 	"github.com/juju/errors"
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
@@ -95,7 +95,7 @@ func (g *Gate) UpdateUserInfo(ctx context.Context, req *meta.GateUpdateUserInfoR
 		return &meta.GateUpdateUserInfoResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
-	log.Debug("%d name:%v nickname:%v avatar:%v", c.getUser(), req.Name, req.NickName, req.Avatar)
+	log.Debugf("%d name:%v nickname:%v avatar:%v", c.getUser(), req.Name, req.NickName, req.Avatar)
 
 	if req.NickName == "" && req.Avatar == "" {
 		log.Errorf("%d name:%v nickname:%v avatar:%v", c.getUser(), req.Name, req.NickName, req.Avatar)
@@ -135,7 +135,7 @@ func (g *Gate) UpdateUserPassword(ctx context.Context, req *meta.GateUpdateUserP
 		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorGetSession, Msg: "login first"}}, nil
 	}
 
-	log.Debug("%d name:%v passwd old:%v new:%v", c.getUser(), req.Name, req.Password, req.NewPassword)
+	log.Debugf("%d name:%v passwd old:%v new:%v", c.getUser(), req.Name, req.Password, req.NewPassword)
 	if req.NewPassword == "" {
 		return &meta.GateUpdateUserPasswordResponse{Header: &meta.ResponseHeader{Code: util.ErrorUpdateUserPasswd, Msg: "new password is nil"}}, nil
 	}

@@ -1,7 +1,10 @@
-all: fmt lint vet store master notifer gate tool client 
+all: lint store master notifer gate tool client 
 
-LDFLAGS += -X "github.com/dearcode/candy/util.BuildTime=$(shell date -R)"
-LDFLAGS += -X "github.com/dearcode/candy/util.BuildVersion=$(shell git rev-parse HEAD)"
+GitTime = github.com/dearcode/candy/util.GitTime
+GitMessage = github.com/dearcode/candy/util.GitMessage
+
+LDFLAGS += -X "$(GitTime)=$(shell git log --pretty=format:'%ct' -1)"
+LDFLAGS += -X "$(GitMessage)=$(shell git log --pretty=format:'%cn %s %b' -1)"
 
 FILES := $$(find . -name '*.go' | grep -vE 'vendor') 
 SOURCE_PATH := store master notifer gate util
@@ -12,21 +15,21 @@ golint:
 godep:
 	go get github.com/tools/godep
 
+megacheck:
+	go get honnef.co/go/tools/cmd/megacheck
 
 meta:
 	@cd meta; make; cd ..; 
 
-lint: golint
-	@for path in $(SOURCE_PATH); do echo "golint $$path"; golint $$path; done;
+lint: golint megacheck
+	@for path in $(SOURCE_PATH); do golint $$path; done;
+	@for path in $(SOURCE_PATH); do gofmt -s -l -w $$path;  done;
+	go tool vet $(FILES) 2>&1
+	megacheck ./...
 
 clean:
 	@rm -rf bin
 
-fmt: 
-	@for path in $(SOURCE_PATH); do echo "gofmt -s -l -w $$path";  gofmt -s -l -w $$path;  done;
-
-vet:
-	@for path in $(SOURCE_PATH); do echo "go tool vet $$path"; go tool vet $$path; done;
 
 store:godep
 	godep go build -o bin/$@ -ldflags '$(LDFLAGS)' cmd/$@/main.go 

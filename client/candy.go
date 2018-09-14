@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"context"
 
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
@@ -41,7 +41,7 @@ type CandyClient struct {
 	conn    *grpc.ClientConn
 	gate    meta.GateClient
 	handler MessageHandler
-	stream  meta.Gate_StreamClient
+	//stream  meta.Gate_StreamClient
 	id      int64
 	token   int64
 	user    string
@@ -558,7 +558,7 @@ func (c *CandyClient) healthCheck() {
 		case <-t.C:
 		}
 		c.mu.RLock()
-		if c.token == 0 || time.Now().Sub(c.last) < time.Minute {
+		if c.token == 0 || time.Since(c.last) < time.Minute {
 			c.mu.RUnlock()
 			continue
 		}

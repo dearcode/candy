@@ -144,6 +144,7 @@ func (u *userDB) auth(user, passwd string) (int64, error) {
 	return a.ID, nil
 }
 
+/*
 // resetUserPassword 后台接口，直接重置用户密码
 func (u *userDB) resetUserPassword(name, passwd string) error {
 	log.Debugf("begin user:%s reset passwd:%s", name, passwd)
@@ -185,6 +186,7 @@ func (u *userDB) resetUserPassword(name, passwd string) error {
 
 	return nil
 }
+*/
 
 // updateUserPassword 用户自己修改密码，需要原密码
 func (u *userDB) updateUserPassword(id int64, name, oldPasswd, newPasswd string) error {

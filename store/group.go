@@ -75,6 +75,7 @@ func (g *groupDB) delGroup(gid, uid int64) error {
 	return errors.Trace(g.db.Delete(key, nil))
 }
 
+/*
 func (g *groupDB) addAdmin(gid int64, ids ...int64) error {
 	for _, uid := range ids {
 		key := GroupAdminKey(gid, uid)
@@ -84,6 +85,7 @@ func (g *groupDB) addAdmin(gid int64, ids ...int64) error {
 	}
 	return nil
 }
+*/
 
 func (g *groupDB) getAdmins(gid int64) []int64 {
 	var users []int64

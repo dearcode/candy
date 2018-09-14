@@ -2,20 +2,12 @@ package util
 
 import (
 	"crypto/md5"
-	"fmt"
 	"strings"
 	"time"
 
 	"github.com/juju/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
-)
-
-var (
-	// BuildTime 编译时间.
-	BuildTime = ""
-	// BuildVersion git版本.
-	BuildVersion = ""
 )
 
 const (
@@ -60,13 +52,6 @@ const (
 	// NetworkTimeout 超时.
 	NetworkTimeout = time.Second * 3
 )
-
-// PrintVersion 输出当前程序编译信息.
-func PrintVersion() {
-	fmt.Printf("Candy\n")
-	fmt.Printf("Build Time: %s\n", BuildTime)
-	fmt.Printf("Git Version: %s\n", BuildVersion)
-}
 
 // EncodeInt64 编码int64到[]byte.
 func EncodeInt64(v int64) []byte {

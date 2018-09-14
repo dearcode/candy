@@ -1,8 +1,9 @@
 package gate
 
 import (
+	"context"
+
 	"github.com/juju/errors"
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/dearcode/candy/meta"
@@ -66,7 +67,7 @@ func (s *storeClient) updateUserInfo(id int64, name, nickName, avatar string) er
 		return errors.Trace(err)
 	}
 
-	log.Debugf("%d finished, id:%d, err:%v", id, resp.Header.Error())
+	log.Debugf("%d finished, err:%v", id, resp.Header.Error())
 	return errors.Trace(resp.Header.Error())
 }
 
